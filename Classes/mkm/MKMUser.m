@@ -16,4 +16,13 @@
 
 @implementation MKMUser
 
+- (void)addContact:(const MKMContact *)contact {
+    // TODO: add contact
+}
+
+- (MKMContact *)getContactByID:(const MKMID *)ID {
+    // TODO: get contact
+    return nil;
+}
+
 @end

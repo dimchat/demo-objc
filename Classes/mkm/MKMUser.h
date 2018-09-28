@@ -19,13 +19,23 @@ typedef NS_ENUM(SInt32, MKMUserGender) {
     MKMUserGenderFemail = 2,
 };
 
+@class MKMID;
+@class MKMContact;
+
 @interface MKMUser : MKMAccount {
     
-    NSString * _names;
+    NSArray * _names;
 }
 
 @property (readonly, strong, nonatomic) const NSString *name;
-@property (nonatomic) MKMUserGender gender;
+@property (readonly, nonatomic) const MKMUserGender gender;
+
+@property (readonly, strong, nonatomic) const NSString *avatar; // URL
+
+@property (readonly, strong, nonatomic) const NSArray *contacts;
+
+- (void)addContact:(const MKMContact *)contact;
+- (MKMContact *)getContactByID:(const MKMID *)ID;
 
 @end
 

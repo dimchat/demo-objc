@@ -10,6 +10,9 @@
 
 #import "base58.h"
 
+#import "NSObject+JsON.h"
+#import "NSString+Crypto.h"
+
 #import "NSData+Crypto.h"
 
 @implementation NSData (Encode)
@@ -87,7 +90,7 @@
 - (NSData *)ripemd160 {
     NSData *output = nil;
     // TODO: RIPEMD-160 algorithm
-    output = [[self sha224] subdataWithRange:NSMakeRange(0, 20)];
+    output = [self sha1];
     
     return output;
 }
@@ -99,7 +102,7 @@
 - (NSData *)aesEncrypt:(const NSString *)passphrase {
     NSData *output = nil;
     // TODO: AES algorithm
-    output = self;
+    output = [[self base64Encode] data];
     
     return output;
 }
@@ -107,7 +110,7 @@
 - (NSData *)aesDecrypt:(const NSString *)passphrase {
     NSData *output = nil;
     // TODO: AES algorithm
-    output = self;
+    output = [[self UTF8String] base64Decode];
     
     return output;
 }

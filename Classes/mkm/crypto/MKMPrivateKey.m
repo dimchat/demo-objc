@@ -6,6 +6,10 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import "NSObject+JsON.h"
+#import "NSString+Crypto.h"
+#import "NSData+Crypto.h"
+
 #import "MKMPublicKey.h"
 
 #import "MKMPrivateKey.h"
@@ -39,28 +43,28 @@
     return _publicKey;
 }
 
-- (NSData *)sign:(const NSData *)plaintext {
-    NSData *ciphertext = nil;
-    if ([_algorithm isEqualToString:ACAlgorithmECC]) {
-        // TODO: ECC encrypt
-        ciphertext = plaintext;
-    } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
-        // TODO: RSA encrypt
-        ciphertext = plaintext;
-    }
-    return ciphertext;
-}
-
 - (NSData *)decrypt:(const NSData *)ciphertext {
     NSData *plaintext = nil;
     if ([_algorithm isEqualToString:ACAlgorithmECC]) {
         // TODO: ECC encrypt
-        plaintext = ciphertext;
+        plaintext = [[ciphertext UTF8String] base58Decode];
     } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
         // TODO: RSA encrypt
-        plaintext = ciphertext;
+        plaintext = [[ciphertext UTF8String] base64Decode];
     }
     return plaintext;
+}
+
+- (NSData *)sign:(const NSData *)plaintext {
+    NSData *ciphertext = nil;
+    if ([_algorithm isEqualToString:ACAlgorithmECC]) {
+        // TODO: ECC encrypt
+        ciphertext = [[plaintext base58Encode] data];
+    } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
+        // TODO: RSA encrypt
+        ciphertext = [[plaintext base64Encode] data];
+    }
+    return ciphertext;
 }
 
 @end
