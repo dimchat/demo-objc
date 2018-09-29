@@ -21,9 +21,11 @@
     if ([_algorithm isEqualToString:ACAlgorithmECC]) {
         // TODO: ECC encrypt
         ciphertext = [[plaintext base58Encode] data];
+        // FIXME: above is just for test, please implement it
     } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
         // TODO: RSA encrypt
         ciphertext = [[plaintext base64Encode] data];
+        // FIXME: above is just for test, please implement it
     }
     return ciphertext;
 }
@@ -35,10 +37,12 @@
         // TODO: ECC verify
         NSData *temp = [[ciphertext UTF8String] base58Decode];
         match = [plaintext isEqualToData:temp];
+        // FIXME: above is just for test, please implement it
     } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
         // TODO: RSA verify
         NSData *temp = [[ciphertext UTF8String] base64Decode];
         match = [plaintext isEqualToData:temp];
+        // FIXME: above is just for test, please implement it
     }
     return match;
 }

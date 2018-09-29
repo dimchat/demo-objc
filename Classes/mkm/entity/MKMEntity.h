@@ -18,8 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MKMEntity : NSObject
 
 @property (readonly, strong, nonatomic) const MKMID *ID;
-@property (readonly, nonatomic) BOOL isValid;
 
+@property (readonly, nonatomic) NSUInteger number;
 
 /**
  Initialize a contact without checking
@@ -51,7 +51,7 @@ NS_DESIGNATED_INITIALIZER;
 - (NSUInteger)runHistory:(const MKMHistory *)history;
 
 /**
- Run one new history record, check before run it
+ Run one new history record
 
  @param record - history record
  @return YES when success
@@ -59,7 +59,7 @@ NS_DESIGNATED_INITIALIZER;
 - (BOOL)runHistoryRecord:(const MKMHistoryRecord *)record;
 
 /**
- Check the historyn record
+ Check the new history record
 
  @param record - history record
  @return YES when correct

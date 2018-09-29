@@ -113,6 +113,7 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     if (!_merkleRoot) {
         // TODO: calculate merkle root for events
         _merkleRoot = [[_events jsonData] md5];
+        // FIXME: above is just for test, please implement it
         
         // clear for refresh
         _signature = nil;

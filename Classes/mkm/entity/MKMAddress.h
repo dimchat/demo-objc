@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define MKMAddressDefaultVersion 0x01
 
-typedef NS_ENUM(UInt8, MKMNetworkType) {
+typedef NS_ENUM(UInt8, MKMNetworkID) {
     //MKMNetwork_BitCoin = 0x00,
     MKMNetwork_Main    = 0x08,  // 0000 1000
     MKMNetwork_Group   = 0x10,  // 0001 0000
@@ -22,21 +22,21 @@ typedef NS_ENUM(UInt8, MKMNetworkType) {
 /**
  *  Address
  *
- *      data format: "network+hash+check"
- *          network -- 1 byte
- *          hash    -- 20 bytes
- *          check   -- 4 bytes
+ *      data format: "network+hash+checkcode"
+ *          network   -- 1 byte
+ *          hash      -- 20 bytes
+ *          checkcode -- 4 bytes
  *
  *      algorithm:
  *          CT = sign(seed, SK);
  *          hash = ripemd160(sha256(CT));
- *          check = sha256(sha256(network+hash)).prefix(4)
+ *          code = sha256(sha256(network+hash)).prefix(4)
  *          addr = base58(network+hash+check)
  */
 @interface MKMAddress : MKMString
 
-@property (readonly, nonatomic) MKMNetworkType network; // Network ID
-@property (readonly, nonatomic) UInt32 number; // User number
+@property (readonly, nonatomic) MKMNetworkID network; // Network ID
+@property (readonly, nonatomic) UInt32 code; // check code
 
 @property (readonly, nonatomic) BOOL isValid;
 
@@ -57,7 +57,7 @@ typedef NS_ENUM(UInt8, MKMNetworkType) {
  @return Address object
  */
 - (instancetype)initWithFingerprint:(const NSData *)CT
-                            network:(MKMNetworkType)type
+                            network:(MKMNetworkID)type
                             version:(NSUInteger)metaVersion;
 
 @end

@@ -10,8 +10,15 @@
 
 @implementation MKMDictionary
 
+- (instancetype)init {
+    if (self = [super init]) {
+        _storeDictionary = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
 - (instancetype)initWithDictionary:(NSDictionary *)otherDictionary {
-    if (self = [self init]) {
+    if (self = [super init]) {
         _storeDictionary = [otherDictionary mutableCopy];
     }
     return self;

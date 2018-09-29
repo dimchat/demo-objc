@@ -10,10 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMContact : MKMAccount {
-    
-    NSArray *_names;
-}
+@interface MKMContact : MKMAccount
 
 @property (readonly, strong, nonatomic) const NSString *name;
 @property (readonly, strong, nonatomic) const NSString *avatar; // URL

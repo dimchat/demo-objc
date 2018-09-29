@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableDictionary *_storeDictionary; // inner dictionary
 }
 
+- (instancetype)init;
 - (instancetype)initWithDictionary:(NSDictionary *)otherDictionary;
 
 - (NSUInteger)count;

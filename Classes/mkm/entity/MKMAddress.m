@@ -14,20 +14,50 @@
 #import "MKMAddress.h"
 
 /**
- Get check code
+ Get hash of the fingerprint
 
- @param input - ciphertext
+ @param fingerprint - ciphertext
+ @return hash of CT
+ */
+static NSData *btc_hash(const NSData *fingerprint) {
+    return [[fingerprint sha256] ripemd160];
+}
+
+/**
+ Get check code of the address
+
+ @param network_hash - ciphertext
  @return prefix 4 bytes after sha256*2
  */
-static NSData * check_code(const NSData *input) {
-    assert([input length] == 21);
-    NSData *data = [[input sha256] sha256];
+static NSData * btc_checkcode(const NSData *network_hash) {
+    assert([network_hash length] == 21);
+    NSData *data = [[network_hash sha256] sha256];
     assert([data length] == 32);
     return [data subdataWithRange:NSMakeRange(0, 4)];
 }
 
 /**
- User number
+ Get address like BitCoin
+
+ @param CT - fingerprint
+ @param network - Network ID
+ @return address
+ */
+static NSString *btc_address(const NSData * CT, MKMNetworkID network) {
+    // 1. hash = ripemd160(sha256(CT))
+    NSData *hash = btc_hash(CT);
+    // 2. str = 0x00 + hash
+    NSMutableData *str = [NSMutableData dataWithBytes:&network length:1];
+    [str appendData:hash];
+    // 3. cc = sha256(sha256(str)).prefix(4)
+    NSData *cc = btc_checkcode(str);
+    // 4. addr = base58(str + cc)
+    [str appendData:cc];
+    return [str base58Encode];
+}
+
+/**
+ Get user number, which for remembering and searching user
 
  @param cc - check code
  @return unsigned integer
@@ -45,21 +75,12 @@ static UInt32 user_number(const NSData *cc) {
  @param CT - fingerprint
  @return address
  */
-static NSString *build_address(const NSData * CT, MKMNetworkType network, NSUInteger version) {
+static NSString *build_address(const NSData * CT, MKMNetworkID network, NSUInteger version) {
     assert(version == MKMAddressDefaultVersion);
     NSString *addr = nil;
     switch (version) {
         case 0x01: {
-            // 1. hash = ripemd160(sha256(CT))
-            NSData *hash = [[CT sha256] ripemd160];
-            // 2. str = 0x00 + hash
-            NSMutableData *str = [NSMutableData dataWithBytes:&network length:1];
-            [str appendData:hash];
-            // 3. cc = sha256(sha256(str)).prefix(4)
-            NSData *cc = check_code(str);
-            // 4. addr = base58(str + cc)
-            [str appendData:cc];
-            addr = [str base58Encode];
+            addr = btc_address(CT, network);
         }
             break;
             
@@ -76,8 +97,8 @@ static NSString *build_address(const NSData * CT, MKMNetworkType network, NSUInt
 
 @interface MKMAddress ()
 
-@property (nonatomic) MKMNetworkType network;
-@property (nonatomic) UInt32 number;
+@property (nonatomic) MKMNetworkID network;
+@property (nonatomic) UInt32 code;
 
 @property (nonatomic) BOOL isValid;
 
@@ -93,9 +114,11 @@ static NSString *build_address(const NSData * CT, MKMNetworkType network, NSUInt
 }
 
 - (instancetype)initWithFingerprint:(const NSData *)CT
-                            network:(MKMNetworkType)type
+                            network:(MKMNetworkID)type
                             version:(NSUInteger)metaVersion {
+    NSAssert(metaVersion == MKMAddressDefaultVersion, @"version error");
     NSString *addr = build_address(CT, type, metaVersion);
+    
     if (self = [self initWithString:addr]) {
         NSAssert(_network == type, @"error");
         NSAssert(_isValid, @"error");
@@ -110,32 +133,34 @@ static NSString *build_address(const NSData * CT, MKMNetworkType network, NSUInt
 - (BOOL)analyse {
     NSData *addr = [_storeString base58Decode];
     NSUInteger len = [addr length];
-    NSAssert(len == 25, @"address length error");
-    if (len < 25) {
-        // address length should be 25 bytes
-        return NO;
+    NSAssert(len == 25, @"only support BTC address now");
+    
+    if (len == 25) {
+        // address like BTC
+        const char *bytes = [addr bytes];
+        UInt8 network = bytes[0];
+        if (network != MKMNetwork_Main &&
+            network != MKMNetwork_Group &&
+            network != MKMNetwork_Moments) {
+            // network id error
+            return NO;
+        }
+        
+        NSData *prefix = [addr subdataWithRange:NSMakeRange(0, len-4)];
+        NSData *suffix = [addr subdataWithRange:NSMakeRange(len-4, 4)];
+        NSData *cc = btc_checkcode(prefix);
+        if (![cc isEqualToData:suffix]) {
+            // check code error
+            return NO;
+        }
+        
+        _network = network;
+        _code = user_number(cc);
+        
+        return YES;
     }
     
-    NSData *prefix = [addr subdataWithRange:NSMakeRange(0, len-4)];
-    NSData *suffix = [addr subdataWithRange:NSMakeRange(len-4, 4)];
-    
-    NSData *cc = check_code(prefix);
-    if (![cc isEqualToData:suffix]) {
-        // check code error
-        return NO;
-    }
-    
-    const char *bytes = [addr bytes];
-    if (bytes[0] != MKMNetwork_Main &&
-        bytes[0] != MKMNetwork_Group &&
-        bytes[0] != MKMNetwork_Moments) {
-        // network id error
-        return NO;
-    }
-    _network = bytes[0];
-    
-    _number = user_number(cc);
-    return YES;
+    return NO;
 }
 
 @end

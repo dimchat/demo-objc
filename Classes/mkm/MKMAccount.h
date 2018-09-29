@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMPublicKey;
 @class MKMPrivateKey;
 
+@class MKMProfile;
+
 typedef NS_ENUM(SInt32, MKMAccountStatus) {
     MKMAccountStatusInitialized = 0,
     MKMAccountStatusRegistered = 1,
@@ -25,8 +27,14 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
 
-@property (readonly, nonatomic) NSUInteger number;
 @property (readonly, nonatomic) MKMAccountStatus status;
+
+@property (readonly, strong, nonatomic) MKMProfile *profile;
+
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+                   history:(const MKMHistory *)history
+NS_DESIGNATED_INITIALIZER;
 
 /**
  Create a new account

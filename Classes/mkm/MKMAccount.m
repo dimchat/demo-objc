@@ -14,6 +14,8 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
+#import "MKMProfile.h"
+
 #import "MKMAccount.h"
 
 @interface MKMAccount ()
@@ -24,12 +26,18 @@
 
 @implementation MKMAccount
 
-- (const MKMPublicKey *)publicKey {
-    return self.ID.publicKey;
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+                   history:(const MKMHistory *)history {
+    if (self = [super initWithID:ID meta:meta history:history]) {
+        _profile = [[MKMProfile alloc] init];
+    }
+    
+    return self;
 }
 
-- (NSUInteger)number {
-    return self.ID.number;
+- (const MKMPublicKey *)publicKey {
+    return self.ID.publicKey;
 }
 
 + (instancetype)registerWithName:(const NSString *)seed publicKey:(const MKMPublicKey *)PK privateKey:(const MKMPrivateKey *)SK {

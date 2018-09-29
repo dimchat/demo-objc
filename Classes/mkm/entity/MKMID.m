@@ -25,7 +25,7 @@
 @implementation MKMID
 
 - (instancetype)initWithString:(NSString *)aString {
-    NSArray *pair = [_storeString componentsSeparatedByString:@"@"];
+    NSArray *pair = [aString componentsSeparatedByString:@"@"];
     NSAssert([pair count] == 2, @"ID format error: %@", aString);
     
     // get name
@@ -48,6 +48,7 @@
 - (instancetype)initWithName:(const NSString *)seed
                      address:(const MKMAddress *)addr {
     NSString *string = [NSString stringWithFormat:@"%@@%@", seed, addr];
+    
     if (self = [super initWithString:string]) {
         self.name = seed;
         self.address = addr;
@@ -59,10 +60,6 @@
     return [[MKMID alloc] initWithName:_name address:_address];
 }
 
-- (NSUInteger)number {
-    return _address.number;
-}
-
 - (BOOL)isValid {
     return _address.isValid && _name.length > 0;
 }
@@ -70,7 +67,7 @@
 - (BOOL)checkMeta:(const MKMMeta *)meta {
     BOOL correct = [meta match:self];
     if (correct) {
-        self.publicKey = meta.publicKey;
+        self.publicKey = meta.key;
     }
     return correct;
 }

@@ -35,9 +35,11 @@
         if ([_algorithm isEqualToString:ACAlgorithmECC]) {
             // TODO: ECC encrypt
             _publicKey = [[MKMPublicKey alloc] initWithDictionary:self];
+            // FIXME: above is just for test, please implement it
         } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
             // TODO: RSA encrypt
             _publicKey = [[MKMPublicKey alloc] initWithDictionary:self];
+            // FIXME: above is just for test, please implement it
         }
     }
     return _publicKey;
@@ -48,9 +50,11 @@
     if ([_algorithm isEqualToString:ACAlgorithmECC]) {
         // TODO: ECC encrypt
         plaintext = [[ciphertext UTF8String] base58Decode];
+        // FIXME: above is just for test, please implement it
     } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
         // TODO: RSA encrypt
         plaintext = [[ciphertext UTF8String] base64Decode];
+        // FIXME: above is just for test, please implement it
     }
     return plaintext;
 }
@@ -60,9 +64,11 @@
     if ([_algorithm isEqualToString:ACAlgorithmECC]) {
         // TODO: ECC encrypt
         ciphertext = [[plaintext base58Encode] data];
+        // FIXME: above is just for test, please implement it
     } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
         // TODO: RSA encrypt
         ciphertext = [[plaintext base64Encode] data];
+        // FIXME: above is just for test, please implement it
     }
     return ciphertext;
 }

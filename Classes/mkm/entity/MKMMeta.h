@@ -22,10 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
  *  Account/Group Meta data
  *
  *      data format: {
- *          version: 1,     // algorithm version
- *          seed: "moKy",   // user/group name
- *          publicKey: "",  // PK = secp256k1(SK);
- *          fingerprint: "" // CT = sign(seed, SK);
+ *          version: 1,          // algorithm version
+ *          seed: "moKy",        // user/group name
+ *          key: "{public key}", // PK = secp256k1(SK);
+ *          fingerprint: "..."   // CT = sign(seed, SK);
  *      }
  *
  *      algorithm:
@@ -45,10 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, nonatomic) NSUInteger version;
 
-@property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
-@property (readonly, strong, nonatomic) const NSData *fingerprint;
-
 @property (readonly, strong, nonatomic) const NSString *seed;
+@property (readonly, strong, nonatomic) const MKMPublicKey *key;
+@property (readonly, strong, nonatomic) const NSData *fingerprint;
 
 /**
  *  Copy meta data from JsON String(dictionary)

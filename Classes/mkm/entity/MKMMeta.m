@@ -21,10 +21,9 @@
 
 @property (nonatomic) NSUInteger version;
 
-@property (strong, nonatomic) const MKMPublicKey *publicKey; // PK
-@property (strong, nonatomic) const NSData *fingerprint;  // CT
-
 @property (strong, nonatomic) const NSString *seed;
+@property (strong, nonatomic) const MKMPublicKey *key;
+@property (strong, nonatomic) const NSData *fingerprint;
 
 @end
 
@@ -66,7 +65,7 @@
     if (self) {
         self.version = ver;
         self.seed = seed;
-        self.publicKey = PK;
+        self.key = PK;
         self.fingerprint = CT;
     }
     
@@ -97,7 +96,7 @@
     if (self) {
         self.version = ver;
         self.seed = name;
-        self.publicKey = PK;
+        self.key = PK;
         self.fingerprint = CT;
     }
     
@@ -119,7 +118,7 @@
 }
 
 - (id)copy {
-    return [[MKMMeta alloc] initWithSeed:_seed publicKey:_publicKey fingerprint:_fingerprint version:_version];
+    return [[MKMMeta alloc] initWithSeed:_seed publicKey:_key fingerprint:_fingerprint version:_version];
 }
 
 - (BOOL)match:(const MKMID *)ID {
@@ -128,12 +127,19 @@
 }
 
 - (BOOL)matchAddress:(const MKMAddress *)address {
-    NSAssert(_version == 0x01, @"version error");
+    // 1. check "address <=> CT"
+    //    address == btc_hash(network, CT)
     MKMAddress *addr;
     addr = [[MKMAddress alloc] initWithFingerprint:_fingerprint
                                            network:address.network
                                            version:_version];
-    return [address isEqualToString:addr];
+    if (![address isEqualToString:addr]) {
+        return NO;
+    }
+    
+    // 2. check "seed <=> CT & PK"
+    //    verify(seed, CT, PK)
+    return [_key verify:[_seed data] signature:_fingerprint];
 }
 
 @end

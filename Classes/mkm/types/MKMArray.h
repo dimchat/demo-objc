@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray *_storeArray; // inner array
 }
 
+- (instancetype)init;
 - (instancetype)initWithArray:(NSArray *)array;
 
 - (NSUInteger)count;
