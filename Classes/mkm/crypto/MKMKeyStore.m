@@ -6,6 +6,9 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import "NSObject+JsON.h"
+#import "NSData+Crypto.h"
+
 #import "MKMKeyStore.h"
 
 @interface MKMKeyStore ()
@@ -23,14 +26,16 @@
 }
 
 - (instancetype)initWithAlgorithm:(const NSString *)name {
-    MKMPrivateKey *SK = nil;
-    MKMPublicKey *PK = nil;
-    if ([name isEqualToString:ACAlgorithmECC]) {
-        // TODO: ECC keys generation
-    } else if ([name isEqualToString:ACAlgorithmRSA]) {
-        // TODO: RSA keys generation
-    }
+    const NSDictionary *info;
+    const MKMPrivateKey *SK;
+    const MKMPublicKey *PK;
+    
+    info = @{@"algorithm":name};
+    SK = [[MKMPrivateKey alloc] initWithAlgorithm:name keyInfo:info];
+    PK = [SK publicKey];
+    
     self = [self initWithPublicKey:PK privateKey:SK];
+    
     return self;
 }
 
@@ -49,10 +54,14 @@
     return _publicKey.algorithm;
 }
 
-- (NSData *)storeKey:(const NSString *)passphrase {
-    NSData *SK = nil;
-    // TODO: encrypt private key with passphrase
-    return SK;
+- (NSData *)privateKeyStoredWithPassword:(const NSString *)passphrase {
+    NSData *KS = nil;
+    
+    const MKMPrivateKey *SK = _privateKey;
+    NSData *data = [SK jsonData];
+    KS = [data aesEncrypt:passphrase];
+    
+    return KS;
 }
 
 @end

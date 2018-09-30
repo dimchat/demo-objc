@@ -15,7 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *_storeString; // inner string
 }
 
-- (instancetype)initWithString:(NSString *)aString;
+- (instancetype)initWithString:(NSString *)aString
+NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)init
+NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder
+NS_DESIGNATED_INITIALIZER;
 
 - (NSUInteger)length;
 - (unichar)characterAtIndex:(NSUInteger)index;

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPrivateKey;
 
-@interface MKMPublicKey : MKMAsymmetricKey
+@protocol MKMPublicKey
 
 /**
  *  CT = encrypt(text, PK)
@@ -26,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)verify:(const NSData *)plaintext
      signature:(const NSData *)ciphertext;
+
+@end
+
+@interface MKMPublicKey : MKMAsymmetricKey<MKMPublicKey>
+
+- (instancetype)initWithAlgorithm:(const NSString *)algorithm
+                          keyInfo:(const NSDictionary *)info;
 
 - (BOOL)isMatch:(const MKMPrivateKey *)SK;
 

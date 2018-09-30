@@ -12,12 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPublicKey;
 
-@interface MKMPrivateKey : MKMAsymmetricKey
+@protocol MKMPrivateKey
 
-@property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
+/**
+ Get public key from private key
 
-- (instancetype)initWithJSONString:(const NSString *)json
-                         publicKey:(const MKMPublicKey *)PK;
+ @return public key
+ */
+- (const MKMPublicKey *)publicKey;
 
 /**
  *  signature = sign(text, SK);
@@ -28,6 +30,16 @@ NS_ASSUME_NONNULL_BEGIN
  *  text = decrypt(CT, SK);
  */
 - (NSData *)decrypt:(const NSData *)ciphertext;
+
+@end
+
+@interface MKMPrivateKey : MKMAsymmetricKey<MKMPrivateKey>
+
+- (instancetype)initWithJSONString:(const NSString *)json
+                         publicKey:(const MKMPublicKey *)PK;
+
+- (instancetype)initWithAlgorithm:(const NSString *)algorithm
+                          keyInfo:(const NSDictionary *)info;
 
 @end
 

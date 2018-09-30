@@ -6,19 +6,11 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
-#import "NSObject+JsON.h"
-#import "NSString+Crypto.h"
-#import "NSData+Crypto.h"
-
 #import "MKMPublicKey.h"
+#import "MKMRSAPrivateKey.h"
+#import "MKMECCPrivateKey.h"
 
 #import "MKMPrivateKey.h"
-
-@interface MKMPrivateKey ()
-
-@property (strong, nonatomic) const MKMPublicKey *publicKey;
-
-@end
 
 @implementation MKMPrivateKey
 
@@ -30,47 +22,42 @@
     return self;
 }
 
-- (const MKMPublicKey *)publicKey {
-    if (!_publicKey) {
-        if ([_algorithm isEqualToString:ACAlgorithmECC]) {
-            // TODO: ECC encrypt
-            _publicKey = [[MKMPublicKey alloc] initWithDictionary:self];
-            // FIXME: above is just for test, please implement it
-        } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
-            // TODO: RSA encrypt
-            _publicKey = [[MKMPublicKey alloc] initWithDictionary:self];
-            // FIXME: above is just for test, please implement it
+- (instancetype)initWithAlgorithm:(const NSString *)algorithm
+                          keyInfo:(const NSDictionary *)info {
+    NSDictionary *dict = [info copy];
+    NSAssert([algorithm isEqualToString:[dict objectForKey:@"algorithm"]], @"error");
+    
+    if ([self isMemberOfClass:[MKMPrivateKey class]]) {
+        if ([algorithm isEqualToString:ACAlgorithmECC]) {
+            self = [[MKMECCPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+        } else if ([algorithm isEqualToString:ACAlgorithmRSA]) {
+            self = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+        } else {
+            self = nil;
+            NSAssert(self, @"algorithm not support: %@", algorithm);
         }
+    } else {
+        NSAssert([[self class] isSubclassOfClass:[MKMPrivateKey class]], @"error");
+        // subclass
+        self = [super initWithAlgorithm:algorithm keyInfo:info];
     }
-    return _publicKey;
+    
+    return self;
+}
+
+- (const MKMPublicKey *)publicKey {
+    // implements in subclass
+    return nil;
 }
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
-    NSData *plaintext = nil;
-    if ([_algorithm isEqualToString:ACAlgorithmECC]) {
-        // TODO: ECC encrypt
-        plaintext = [[ciphertext UTF8String] base58Decode];
-        // FIXME: above is just for test, please implement it
-    } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
-        // TODO: RSA encrypt
-        plaintext = [[ciphertext UTF8String] base64Decode];
-        // FIXME: above is just for test, please implement it
-    }
-    return plaintext;
+    // implements in subclass
+    return nil;;
 }
 
 - (NSData *)sign:(const NSData *)plaintext {
-    NSData *ciphertext = nil;
-    if ([_algorithm isEqualToString:ACAlgorithmECC]) {
-        // TODO: ECC encrypt
-        ciphertext = [[plaintext base58Encode] data];
-        // FIXME: above is just for test, please implement it
-    } else if ([_algorithm isEqualToString:ACAlgorithmRSA]) {
-        // TODO: RSA encrypt
-        ciphertext = [[plaintext base64Encode] data];
-        // FIXME: above is just for test, please implement it
-    }
-    return ciphertext;
+    // implements in subclass
+    return nil;;
 }
 
 @end

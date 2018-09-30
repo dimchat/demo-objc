@@ -10,6 +10,15 @@
 
 @implementation MKMArray
 
+/* designated initializer */
+- (instancetype)initWithArray:(NSArray *)array {
+    if (self = [super init]) {
+        _storeArray = [array mutableCopy];
+    }
+    return self;
+}
+
+/* designated initializer */
 - (instancetype)init {
     if (self = [super init]) {
         _storeArray = [[NSMutableArray alloc] init];
@@ -17,9 +26,23 @@
     return self;
 }
 
-- (instancetype)initWithArray:(NSArray *)array {
+/* designated initializer */
+- (instancetype)initWithObjects:(const id _Nonnull [_Nullable])objects count:(NSUInteger)cnt {
     if (self = [super init]) {
-        _storeArray = [array mutableCopy];
+        _storeArray = [[NSMutableArray alloc] initWithObjects:objects count:cnt];
+    }
+    return self;
+}
+
+/* designated initializer */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    NSMutableArray *arr = [[NSMutableArray alloc] initWithCoder:aDecoder];
+    if (arr) {
+        if (self = [super init]) {
+            _storeArray = arr;
+        }
+    } else {
+        self = nil;
     }
     return self;
 }
@@ -40,9 +63,20 @@
     return [_storeArray objectEnumerator];
 }
 
+- (NSEnumerator *)reverseObjectEnumerator {
+    return [_storeArray reverseObjectEnumerator];
+}
+
 @end
 
 @implementation MKMArray (Mutable)
+
+- (instancetype)initWithCapacity:(NSUInteger)numItems {
+    if (self = [self init]) {
+        _storeArray = [[NSMutableArray alloc] initWithCapacity:numItems];
+    }
+    return self;
+}
 
 - (id)mutableCopy {
     return [self copy];

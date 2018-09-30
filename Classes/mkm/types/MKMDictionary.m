@@ -10,6 +10,15 @@
 
 @implementation MKMDictionary
 
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    if (self = [super init]) {
+        _storeDictionary = [dict mutableCopy];
+    }
+    return self;
+}
+
+/* designated initializer */
 - (instancetype)init {
     if (self = [super init]) {
         _storeDictionary = [[NSMutableDictionary alloc] init];
@@ -17,9 +26,26 @@
     return self;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)otherDictionary {
+/* designated initializer */
+- (instancetype)initWithObjects:(const id _Nonnull [_Nullable])objects
+                        forKeys:(const id <NSCopying> _Nonnull [_Nullable])keys
+                          count:(NSUInteger)cnt {
     if (self = [super init]) {
-        _storeDictionary = [otherDictionary mutableCopy];
+        _storeDictionary = [[NSMutableDictionary alloc] initWithObjects:objects forKeys:keys count:cnt];
+    }
+    return self;
+}
+
+/* designated initializer */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    NSMutableDictionary *dict;
+    dict = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
+    if (dict) {
+        if (self = [super init]) {
+            _storeDictionary = dict;
+        }
+    } else {
+        self = nil;
     }
     return self;
 }
@@ -40,9 +66,20 @@
     return [_storeDictionary keyEnumerator];
 }
 
+- (NSEnumerator *)objectEnumerator {
+    return [_storeDictionary objectEnumerator];
+}
+
 @end
 
 @implementation MKMDictionary (Mutable)
+
+- (instancetype)initWithCapacity:(NSUInteger)numItems {
+    if (self = [self init]) {
+        _storeDictionary = [[NSMutableDictionary alloc] initWithCapacity:numItems];
+    }
+    return self;
+}
 
 - (id)mutableCopy {
     return [self copy];

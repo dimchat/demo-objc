@@ -17,6 +17,7 @@
 
 - (NSData *)hexDecode {
     NSData *output = nil;
+    
     // TODO: decode hex string
     
     return output;

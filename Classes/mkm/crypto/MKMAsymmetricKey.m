@@ -33,11 +33,11 @@
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
+    NSString *algor = [info objectForKey:@"algorithm"];
     if (algorithm) {
-        NSString *algor = [info objectForKey:@"algorithm"];
         NSAssert([algorithm isEqualToString:algor], @"key data error");
     } else {
-        algorithm = [info objectForKey:@"algorithm"];
+        algorithm = algor;
     }
     
     if (self = [self initWithDictionary:[info copy]]) {
@@ -45,10 +45,6 @@
         self.acKeyInfo = info;
     }
     return self;
-}
-
-- (BOOL)isEqual:(const MKMAsymmetricKey *)aKey {
-    return [aKey isEqualToDictionary:self];
 }
 
 @end

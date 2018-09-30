@@ -89,9 +89,11 @@
 
 - (NSData *)ripemd160 {
     NSData *output = nil;
+    
     // TODO: RIPEMD-160 algorithm
     output = [self sha1];
     // FIXME: above is just for test, please implement it
+    
     return output;
 }
 
@@ -101,17 +103,21 @@
 
 - (NSData *)aesEncrypt:(const NSString *)passphrase {
     NSData *output = nil;
+    
     // TODO: AES algorithm
     output = [[self base64Encode] data];
     // FIXME: above is just for test, please implement it
+    
     return output;
 }
 
 - (NSData *)aesDecrypt:(const NSString *)passphrase {
     NSData *output = nil;
+    
     // TODO: AES algorithm
     output = [[self UTF8String] base64Decode];
     // FIXME: above is just for test, please implement it
+    
     return output;
 }
 

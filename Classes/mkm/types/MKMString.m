@@ -10,11 +10,28 @@
 
 @implementation MKMString
 
+/* designated initializer */
 - (instancetype)initWithString:(NSString *)aString {
-    if (self = [self init]) {
-        _storeString = [aString copy];
+    if (self = [super init]) {
+        _storeString = [[NSString alloc] initWithString:aString];
     }
     
+    return self;
+}
+
+/* designated initializer */
+- (instancetype)init {
+    if (self = [super init]) {
+        _storeString = [[NSString alloc] init];
+    }
+    return self;
+}
+
+/* designated initializer */
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        _storeString = [[NSString alloc] initWithCoder:aDecoder];
+    }
     return self;
 }
 

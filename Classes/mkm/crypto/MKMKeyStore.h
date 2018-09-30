@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
                        privateKey:(const MKMPrivateKey *)SK
 NS_DESIGNATED_INITIALIZER;
 
-- (NSData *)storeKey:(const NSString *)passphrase;
+- (NSData *)privateKeyStoredWithPassword:(const NSString *)passphrase;
 
 @end
 
