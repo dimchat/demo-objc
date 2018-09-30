@@ -71,28 +71,21 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     return self;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)otherDictionary {
-    NSArray *events = [otherDictionary objectForKey:@"events"];
-    NSAssert(events, @"history record error");
-    NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:[events count]];
-    for (id event in events) {
-        if ([event isKindOfClass:[NSDictionary class]]) {
-            [mArray addObject:[event jsonString]];
-        } else {
-            [mArray addObject:event];
-        }
-    }
-    NSMutableDictionary *mDict = [NSMutableDictionary dictionaryWithDictionary:otherDictionary];
-    [mDict setObject:mArray forKey:@"events"];
-    
-    if (self = [super initWithDictionary:mDict]) {
-        NSString *merkle = [mDict objectForKey:@"merkle"];
-        NSString *signature = [mDict objectForKey:@"signature"];
-        NSData *hash = [merkle base64Decode];
-        NSData *CT = [signature base64Decode];
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    if (self = [super initWithDictionary:dict]) {
+        // events
+        NSArray *events = [dict objectForKey:@"events"];
+        NSAssert(events, @"history record error");
+        _events = [events mutableCopy];
         
-        _events = mArray;
+        // merkle
+        NSString *merkle = [dict objectForKey:@"merkle"];
+        NSData *hash = [merkle base64Decode];
         self.merkleRoot = hash;
+        
+        // signature
+        NSString *signature = [dict objectForKey:@"signature"];
+        NSData *CT = [signature base64Decode];
         self.signature = CT;
     }
     return self;
@@ -124,7 +117,7 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
 - (const NSData *)merkleRoot {
     if (!_merkleRoot) {
         // TODO: calculate merkle root for events
-        _merkleRoot = [[_events jsonData] md5];
+        _merkleRoot = [[_events jsonData] sha256];
         // FIXME: above is just for test, please implement it
         
         // clear for refresh

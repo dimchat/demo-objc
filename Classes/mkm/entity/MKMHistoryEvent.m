@@ -59,8 +59,7 @@ static NSDate *date(NSTimeInterval time) {
     return self;
 }
 
-- (instancetype)initWithDictionary:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
     NSString *op = [dict objectForKey:@"operate"];
     NSNumber *ti = [dict objectForKey:@"time"];
     NSDate *time = date([ti unsignedIntegerValue]);
@@ -150,8 +149,7 @@ static NSDate *date(NSTimeInterval time) {
     return self;
 }
 
-- (instancetype)initWithDictionary:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
     id operation = [dict objectForKey:@"operation"];
     NSString *operator = [dict objectForKey:@"operator"];
     NSString *signature = [dict objectForKey:@"signature"];
@@ -163,7 +161,7 @@ static NSDate *date(NSTimeInterval time) {
         self.operation = op;
         
         if (operator && signature) {
-            NSAssert([operation isKindOfClass:[NSString class]], @"event info error: %@", info);
+            NSAssert([operation isKindOfClass:[NSString class]], @"event info error: %@", dict);
             operation = [operation data];
             
             MKMID *ID = [MKMID IDWithID:operator];

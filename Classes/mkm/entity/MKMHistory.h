@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Copy history record from JsON String(dictionary)
  */
 - (instancetype)initWithJSONString:(const NSString *)jsonString;
-- (instancetype)initWithDictionary:(const NSDictionary *)info;
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 /**
  Copy history record from network

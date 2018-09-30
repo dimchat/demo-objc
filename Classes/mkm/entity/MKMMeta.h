@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  Copy meta data from JsON String(dictionary)
  */
 - (instancetype)initWithJSONString:(const NSString *)jsonString;
-- (instancetype)initWithDictionary:(const NSDictionary *)info;
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 /**
  *  Copy meta data from network

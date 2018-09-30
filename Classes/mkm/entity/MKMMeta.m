@@ -49,9 +49,7 @@
     return self;
 }
 
-- (instancetype)initWithDictionary:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
-    
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
     NSNumber *version = [dict objectForKey:@"version"];
     id publicKey = [dict objectForKey:@"publicKey"];
     NSString *fingerprint = [dict objectForKey:@"fingerprint"];
