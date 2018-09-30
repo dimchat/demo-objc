@@ -38,7 +38,9 @@
 - (NSData *)decrypt:(const NSData *)ciphertext {
     NSData *plaintext = nil;
     
+    // TODO: AES algorithm
     plaintext = [[ciphertext UTF8String] base64Decode];
+    // FIXME: above is just for test, please implement it
     
     return plaintext;
 }

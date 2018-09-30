@@ -10,7 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMGroup : MKMSocialEntity
+@interface MKMGroup : MKMSocialEntity {
+    
+    const NSMutableArray *_administrators;
+}
 
 @property (readonly, strong, nonatomic) const NSArray *administrators;
 

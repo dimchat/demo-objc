@@ -12,47 +12,41 @@
 
 #import "MKMUser.h"
 
-@interface MKMUser ()
-
-@property (strong, nonatomic) const NSMutableDictionary *contacts;
-
-@end
-
 @implementation MKMUser
 
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta {
+    if (self = [super initWithID:ID meta:meta]) {
+        _contacts = [[NSMutableDictionary alloc] init];
+    }
+    
+    return self;
+}
+
 - (const NSString *)name {
-    NSArray *names = [self.profile objectForKey:@"names"];
+    NSArray *names = [_profile objectForKey:@"names"];
     return names.firstObject;
 }
 
-- (const MKMUserGender)gender {
-    id gender = [self.profile objectForKey:@"gender"];
+- (const MKMGender)gender {
+    id gender = [_profile objectForKey:@"gender"];
     if ([gender isKindOfClass:[NSString class]]) {
         if ([gender isEqualToString:@"male"]) {
-            return MKMUserGenderMale;
+            return MKMGender_Male;
         } else if ([gender isEqualToString:@"female"]) {
-            return MKMUserGenderFemail;
+            return MKMGender_Femail;
         } else {
-            return MKMUserGenderUnknown;
+            return MKMGender_Unknown;
         }
     } else if ([gender isKindOfClass:[NSNumber class]]) {
         return [gender intValue];
     }
-    return MKMUserGenderUnknown;
+    return MKMGender_Unknown;
 }
 
 - (const NSString *)avatar {
-    NSArray *photos = [self.profile objectForKey:@"photos"];
+    NSArray *photos = [_profile objectForKey:@"photos"];
     return photos.firstObject;
-}
-
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-                   history:(const MKMHistory *)history {
-    if (self = [super initWithID:ID meta:meta history:history]) {
-        _contacts = [[NSMutableDictionary alloc] init];
-    }
-    return self;
 }
 
 - (BOOL)addContact:(const MKMContact *)contact {

@@ -10,4 +10,19 @@
 
 @implementation MKMSocialEntity
 
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta {
+    if (self = [super initWithID:ID meta:meta]) {
+        _members = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
+- (BOOL)checkHistoryRecord:(const MKMHistoryRecord *)record {
+    // TODO: check the history to get the founder
+    //       and the first owner
+    return NO;
+}
+
 @end

@@ -15,7 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMHistoryRecord;
 @class MKMHistory;
 
-@interface MKMEntity : NSObject
+@interface MKMEntity : NSObject {
+    
+    const MKMHistory *_history;
+}
 
 @property (readonly, strong, nonatomic) const MKMID *ID;
 
@@ -34,12 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param ID - User/Group ID
  @param meta - meta info includes PK, CT, ...
- @param history - Entity history
  @return Entity object
  */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
-                   history:(const MKMHistory *)history
 NS_DESIGNATED_INITIALIZER;
 
 /**

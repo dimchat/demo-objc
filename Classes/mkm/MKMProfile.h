@@ -12,8 +12,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMProfile : MKMDictionary
 
+/**
+ Profile fields that anyone can read
+ */
 @property (strong, nonatomic) NSMutableArray *publicFields;
+
+/**
+ Profile fields only the MKM network can read
+ */
 @property (strong, nonatomic) NSMutableArray *protectedFields;
+
+/**
+ Extra fields only the user itself can read
+ */
 @property (strong, nonatomic) NSMutableArray *privateFields;
 
 - (instancetype)init;

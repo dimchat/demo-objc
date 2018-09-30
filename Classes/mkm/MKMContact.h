@@ -10,10 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMContact : MKMAccount
+@class MKMMemo;
+
+@interface MKMContact : MKMAccount {
+    
+    const MKMMemo *_memo; // same keys to the profile
+}
 
 @property (readonly, strong, nonatomic) const NSString *name;
+@property (readonly, nonatomic) const MKMGender gender;
 @property (readonly, strong, nonatomic) const NSString *avatar; // URL
+
+@property (readonly, strong, nonatomic) const MKMMemo *memo;
 
 @end
 

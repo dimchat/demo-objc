@@ -12,7 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMID;
 
-@interface MKMSocialEntity : MKMEntity
+@interface MKMSocialEntity : MKMEntity {
+    
+    // parse the history to update these fields
+    const MKMID *_founder;
+    const MKMID *_owner;
+    const NSMutableArray *_members;
+}
 
 @property (readonly, strong, nonatomic) const MKMID *founder; // just first owner
 @property (readonly, strong, nonatomic) const MKMID *owner;

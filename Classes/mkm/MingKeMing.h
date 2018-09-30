@@ -12,7 +12,6 @@
 #import "NSObject+JsON.h"
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
-#import "NSData+Asymmetric.h"
 
 //// Types
 //#import "MKMString.h"
@@ -20,11 +19,14 @@
 //#import "MKMDictionary.h"
 
 // Cryptography
+#import "MKMCryptographyKey.h"
+#import "MKMSymmetricKey.h"
 #import "MKMAsymmetricKey.h"
 #import "MKMPublicKey.h"
 #import "MKMPrivateKey.h"
 #import "MKMKeyStore.h"
 
+//#import "MKMAESKey.h"
 //#import "MKMRSAPublicKey.h"
 //#import "MKMRSAPrivateKey.h"
 //#import "MKMECCPublicKey.h"
@@ -40,8 +42,10 @@
 
 // User
 #import "MKMProfile.h"
+#import "MKMMemo.h"
 #import "MKMAccount.h"
 #import "MKMUser.h"
+#import "MKMUser+Register.h"
 #import "MKMContact.h"
 
 // Group

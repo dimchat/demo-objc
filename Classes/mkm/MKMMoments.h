@@ -10,7 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMMoments : MKMSocialEntity
+@interface MKMMoments : MKMSocialEntity {
+    
+    const NSMutableArray *_exclusions;
+    const NSMutableArray *_ignores;
+}
 
 // Don't Share My Moments
 @property (readonly, strong, nonatomic) const NSArray *exclusions;

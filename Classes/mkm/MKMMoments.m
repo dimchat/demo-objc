@@ -10,4 +10,14 @@
 
 @implementation MKMMoments
 
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta {
+    if (self = [super initWithID:ID meta:meta]) {
+        _exclusions = [[NSMutableArray alloc] init];
+        _ignores = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
 @end

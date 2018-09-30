@@ -18,18 +18,11 @@
 
 #import "MKMAccount.h"
 
-@interface MKMAccount ()
-
-@property (nonatomic) MKMAccountStatus status;
-
-@end
-
 @implementation MKMAccount
 
 - (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-                   history:(const MKMHistory *)history {
-    if (self = [super initWithID:ID meta:meta history:history]) {
+                      meta:(const MKMMeta *)meta {
+    if (self = [super initWithID:ID meta:meta]) {
         _profile = [[MKMProfile alloc] init];
     }
     
@@ -38,67 +31,6 @@
 
 - (const MKMPublicKey *)publicKey {
     return self.ID.publicKey;
-}
-
-+ (instancetype)registerWithName:(const NSString *)seed publicKey:(const MKMPublicKey *)PK privateKey:(const MKMPrivateKey *)SK {
-    NSAssert([seed length] > 2, @"seed error");
-    NSAssert([PK isMatch:SK], @"PK must match SK");
-    
-    // 1. generate meta
-    MKMMeta *meta;
-    meta = [[MKMMeta alloc] initWithSeed:seed publicKey:PK privateKey:SK];
-    NSLog(@"register meta: %@", meta);
-    
-    MKMAddress *address;
-    address = [[MKMAddress alloc] initWithFingerprint:meta.fingerprint
-                                              network:MKMNetwork_Main
-                                              version:MKMAddressDefaultVersion];
-    
-    // 2. generate ID
-    MKMID *ID = [[MKMID alloc] initWithName:seed address:address];
-    NSLog(@"register ID: %@", ID);
-    
-    // 3. generate history
-    MKMHistory *history;
-    MKMHistoryRecord *his;
-    MKMHistoryEvent *evt;
-    MKMHistoryOperation *op;
-    op = [[MKMHistoryOperation alloc] initWithOperate:@"register"];
-    evt = [[MKMHistoryEvent alloc] initWithOperation:op];
-    NSArray *events = [NSArray arrayWithObject:evt];
-    NSData *hash = nil;
-    NSData *CT = nil;
-    his = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
-    [his signWithPreviousMerkle:hash privateKey:SK];
-    NSArray *records = [NSArray arrayWithObject:his];
-    history = [[MKMHistory alloc] initWithArray:records];
-    NSLog(@"register history: %@", history);
-    
-    // 4. create
-    return [[[self class] alloc] initWithID:ID
-                                       meta:meta
-                                    history:history];
-}
-
-- (MKMHistoryRecord *)suicideWithMessage:(const NSString *)lastWords
-                              privateKey:(const MKMPrivateKey *)SK {
-    // 1. generate history record
-    MKMHistoryRecord *his;
-    MKMHistoryEvent *evt;
-    MKMHistoryOperation *op;
-    op = [[MKMHistoryOperation alloc] initWithOperate:@"suicide"];
-    evt = [[MKMHistoryEvent alloc] initWithOperation:op];
-    NSArray *events = [NSArray arrayWithObject:evt];
-    NSData *hash = nil;
-    NSData *CT = nil;
-    his = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
-    [his signWithPreviousMerkle:hash privateKey:SK];
-    
-    // 2. send the record
-    
-    // TODO: pack and send
-    
-    return his;
 }
 
 - (BOOL)checkHistoryRecord:(const MKMHistoryRecord *)record {

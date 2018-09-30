@@ -10,4 +10,13 @@
 
 @implementation MKMGroup
 
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta {
+    if (self = [super initWithID:ID meta:meta]) {
+        _administrators = [[NSMutableArray alloc] init];
+    }
+    
+    return self;
+}
+
 @end

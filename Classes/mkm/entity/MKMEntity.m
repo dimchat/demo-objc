@@ -18,43 +18,46 @@
 
 @property (strong, nonatomic) const MKMID *ID;
 @property (strong, nonatomic) const MKMMeta *meta;
-@property (strong, nonatomic) const MKMHistory *history;
 
 @end
 
 @implementation MKMEntity
 
 - (instancetype)init {
-    // TODO: prepare test account
+    // TODO: prepare test account (hulk@xxx) which cannot suiside
     const MKMID *ID = nil;
     const MKMMeta *meta = nil;
-    const MKMHistory *history = nil;
-    self = [self initWithID:ID meta:meta history:history];
+    self = [self initWithID:ID meta:meta];
     return self;
 }
 
 - (instancetype)initWithID:(const MKMID *)ID {
     const MKMMeta *meta = nil;
-    const MKMHistory *history = nil;
-    self = [self initWithID:ID meta:meta history:history];
+    self = [self initWithID:ID meta:meta];
     return self;
 }
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-                   history:(const MKMHistory *)history {
+                      meta:(const MKMMeta *)meta {
     if (self = [super init]) {
-        self.ID = ID;
-        self.meta = meta;
-        self.history = [[MKMHistory alloc] init];
-        
-        // check ID & meta
-        if (_ID.isValid && [_ID checkMeta:_meta]) {
-            NSAssert(history, @"history cannot be empty");
-            // run history
-            [self runHistory:history];
+        BOOL correct;
+        // ID
+        correct = ID.isValid;
+        NSAssert(correct, @"ID error");
+        if (correct) {
+            self.ID = ID;
         }
+        
+        // meta
+        correct = [ID checkMeta:meta];
+        NSAssert(correct, @"meta error");
+        if (correct) {
+            self.meta = meta;
+        }
+        
+        // history
+        _history = [[MKMHistory alloc] init];
     }
     
     return self;
@@ -65,6 +68,8 @@
 }
 
 - (NSUInteger)runHistory:(const MKMHistory *)history {
+    NSAssert(_ID, @"ID error");
+    NSAssert(_meta, @"meta error");
     NSAssert([history count] > 0, @"history cannot be empty");
     NSUInteger pos = 0;
     
