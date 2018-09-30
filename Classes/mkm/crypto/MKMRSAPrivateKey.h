@@ -10,6 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  RSA Private Key
+ *
+ *      keyInfo format: {
+ *          algorithm: "RSA",
+ *          ...
+ *      }
+ */
 @interface MKMRSAPrivateKey : MKMPrivateKey
 
 - (instancetype)initWithDictionary:(NSDictionary *)info;

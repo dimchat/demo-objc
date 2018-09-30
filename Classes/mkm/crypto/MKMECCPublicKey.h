@@ -10,6 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  ECC Public Key
+ *
+ *      keyInfo format: {
+ *          algorithm: "ECC",
+ *          ...
+ *      }
+ */
 @interface MKMECCPublicKey : MKMPublicKey
 
 - (instancetype)initWithDictionary:(NSDictionary *)info;

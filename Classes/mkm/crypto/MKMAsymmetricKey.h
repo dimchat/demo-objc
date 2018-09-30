@@ -6,36 +6,55 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-#import "MKMDictionary.h"
+#import "MKMCryptographyKey.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 #define ACAlgorithmRSA @"RSA"
 #define ACAlgorithmECC @"ECC"
 
+@protocol MKMPublicKey <NSObject>
+
 /**
- *  Asymmetric Cryptography Keys
+ *  CT = encrypt(text, PK)
+ */
+- (NSData *)encrypt:(const NSData *)plaintext;
+
+/**
+ *  OK = verify(text, signature, PK)
+ */
+- (BOOL)verify:(const NSData *)plaintext
+     signature:(const NSData *)ciphertext;
+
+@end
+
+@protocol MKMPrivateKey <NSObject>
+
+/**
+ *  text = decrypt(CT, SK);
+ */
+- (NSData *)decrypt:(const NSData *)ciphertext;
+
+/**
+ *  signature = sign(text, SK);
+ */
+- (NSData *)sign:(const NSData *)plaintext;
+
+@end
+
+//@protocol MKMAsymmetricKey <MKMPublicKey, MKMPrivateKey>
+//
+//@end
+
+/**
+ *  Asymmetric Cryptography Key
  *
- *      acKeyInfo format: {
- *          algorithm: "ECC",
- *          modulus: "....."  // Base64
+ *      keyInfo format: {
+ *          algorithm: "ECC", // RSA, ...
+ *          ...
  *      }
  */
-@interface MKMAsymmetricKey : MKMDictionary {
-    
-    const NSString *_algorithm;
-    const NSDictionary *_acKeyInfo;
-}
-
-// default: @"ECC"
-@property (readonly, strong, nonatomic) const NSString *algorithm;
-
-- (instancetype)initWithJSONString:(const NSString *)json;
-
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info;
+@interface MKMAsymmetricKey : MKMCryptographyKey
 
 @end
 

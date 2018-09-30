@@ -29,7 +29,7 @@
     MKMPublicKey *PK = nil;
     
     // TODO: RSA encrypt
-    PK = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm keyInfo:_acKeyInfo];
+    PK = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm keyInfo:_storeDictionary];
     // FIXME: above is just for test, please implement it
     
     return PK;

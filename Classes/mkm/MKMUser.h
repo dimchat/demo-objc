@@ -35,7 +35,7 @@ typedef NS_ENUM(SInt32, MKMUserGender) {
                    history:(const MKMHistory *)history
 NS_DESIGNATED_INITIALIZER;
 
-- (void)addContact:(const MKMContact *)contact;
+- (BOOL)addContact:(const MKMContact *)contact;
 - (MKMContact *)getContactByID:(const MKMID *)ID;
 
 @end

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#import "MKMSymmetricKey.h"
 #import "MKMPublicKey.h"
 #import "MKMPrivateKey.h"
 
@@ -40,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
                        privateKey:(const MKMPrivateKey *)SK
 NS_DESIGNATED_INITIALIZER;
 
-- (NSData *)privateKeyStoredWithPassword:(const NSString *)passphrase;
+- (NSData *)privateKeyStoredWithPassword:(const MKMSymmetricKey *)scKey;
 
 @end
 

@@ -14,21 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPrivateKey;
 
-@protocol MKMPublicKey
-
 /**
- *  CT = encrypt(text, PK)
+ *  AC Public Key
+ *
+ *      keyInfo format: {
+ *          algorithm: "ECC", // RSA, ...
+ *          ...
+ *      }
  */
-- (NSData *)encrypt:(const NSData *)plaintext;
-
-/**
- *  OK = verify(text, signature, PK)
- */
-- (BOOL)verify:(const NSData *)plaintext
-     signature:(const NSData *)ciphertext;
-
-@end
-
 @interface MKMPublicKey : MKMAsymmetricKey<MKMPublicKey>
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm

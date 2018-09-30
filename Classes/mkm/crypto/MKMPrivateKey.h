@@ -12,27 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPublicKey;
 
-@protocol MKMPrivateKey
-
 /**
- Get public key from private key
-
- @return public key
+ *  AC Private Key
+ *
+ *      keyInfo format: {
+ *          algorithm: "ECC", // RSA, ...
+ *          ...
+ *      }
  */
-- (const MKMPublicKey *)publicKey;
-
-/**
- *  signature = sign(text, SK);
- */
-- (NSData *)sign:(const NSData *)plaintext;
-
-/**
- *  text = decrypt(CT, SK);
- */
-- (NSData *)decrypt:(const NSData *)ciphertext;
-
-@end
-
 @interface MKMPrivateKey : MKMAsymmetricKey<MKMPrivateKey>
 
 - (instancetype)initWithJSONString:(const NSString *)json
@@ -40,6 +27,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info;
+
+/**
+ Get public key from private key
+ 
+ @return public key
+ */
+- (const MKMPublicKey *)publicKey;
 
 @end
 

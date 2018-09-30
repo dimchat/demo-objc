@@ -98,27 +98,3 @@
 }
 
 @end
-
-@implementation NSData (AES)
-
-- (NSData *)aesEncrypt:(const NSString *)passphrase {
-    NSData *output = nil;
-    
-    // TODO: AES algorithm
-    output = [[self base64Encode] data];
-    // FIXME: above is just for test, please implement it
-    
-    return output;
-}
-
-- (NSData *)aesDecrypt:(const NSString *)passphrase {
-    NSData *output = nil;
-    
-    // TODO: AES algorithm
-    output = [[self UTF8String] base64Decode];
-    // FIXME: above is just for test, please implement it
-    
-    return output;
-}
-
-@end

@@ -6,6 +6,7 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import "MKMID.h"
 #import "MKMProfile.h"
 #import "MKMContact.h"
 
@@ -54,11 +55,18 @@
     return self;
 }
 
-- (void)addContact:(const MKMContact *)contact {
-    // TODO: check contact
-    NSString *key = contact.ID;
+- (BOOL)addContact:(const MKMContact *)contact {
+    if (contact.ID.isValid == NO) {
+        // ID error
+        return NO;
+    }
+    if (contact.status != MKMAccountStatusRegistered) {
+        // status error
+        return NO;
+    }
     
-    [_contacts setObject:contact forKey:key];
+    [_contacts setObject:contact forKey:contact.ID];
+    return YES;
 }
 
 - (MKMContact *)getContactByID:(const MKMID *)ID {

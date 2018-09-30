@@ -54,12 +54,11 @@
     return _publicKey.algorithm;
 }
 
-- (NSData *)privateKeyStoredWithPassword:(const NSString *)passphrase {
+- (NSData *)privateKeyStoredWithPassword:(const MKMSymmetricKey *)scKey {
     NSData *KS = nil;
     
-    const MKMPrivateKey *SK = _privateKey;
-    NSData *data = [SK jsonData];
-    KS = [data aesEncrypt:passphrase];
+    NSData *data = [_privateKey jsonData];
+    KS = [scKey encrypt:data];
     
     return KS;
 }

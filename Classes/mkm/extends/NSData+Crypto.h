@@ -33,11 +33,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface NSData (AES)
-
-- (NSData *)aesEncrypt:(const NSString *)passphrase;
-- (NSData *)aesDecrypt:(const NSString *)passphrase;
-
-@end
-
 NS_ASSUME_NONNULL_END
