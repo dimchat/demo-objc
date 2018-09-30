@@ -1,6 +1,6 @@
 //
-//  MKMUser+Register.m
-//  iChat
+//  MKMUser+History.m
+//  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018年 DIM Group. All rights reserved.
@@ -16,9 +16,9 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
-#import "MKMUser+Register.h"
+#import "MKMUser+History.h"
 
-@implementation MKMUser (Register)
+@implementation MKMUser (History)
 
 + (MKMUser *)registerWithName:(const NSString *)seed
                     publicKey:(const MKMPublicKey *)PK

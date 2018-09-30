@@ -45,7 +45,7 @@
 #import "MKMMemo.h"
 #import "MKMAccount.h"
 #import "MKMUser.h"
-#import "MKMUser+Register.h"
+#import "MKMUser+History.h"
 #import "MKMContact.h"
 
 // Group

@@ -1,6 +1,6 @@
 //
-//  MKMUser+Register.h
-//  iChat
+//  MKMUser+History.h
+//  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018年 DIM Group. All rights reserved.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMUser (Register)
+@interface MKMUser (History)
 
 /**
  Create a new account
