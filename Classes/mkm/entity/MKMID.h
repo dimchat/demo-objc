@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
 
++ (instancetype)IDWithID:(id)ID;
+
 - (instancetype)initWithString:(NSString *)aString;
 - (instancetype)initWithName:(const NSString *)seed
                      address:(const MKMAddress *)addr;

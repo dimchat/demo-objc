@@ -24,6 +24,17 @@
 
 @implementation MKMID
 
++ (instancetype)IDWithID:(id)ID {
+    if ([ID isKindOfClass:[MKMID class]]) {
+        return ID;
+    } else if ([ID isKindOfClass:[NSString class]]) {
+        return [[[self class] alloc] initWithString:ID];
+    } else {
+        NSAssert(!ID, @"unexpected ID: %@", ID);
+        return nil;
+    }
+}
+
 - (instancetype)initWithString:(NSString *)aString {
     NSArray *pair = [aString componentsSeparatedByString:@"@"];
     NSAssert([pair count] == 2, @"ID format error: %@", aString);

@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          ...
  *      }
  */
-@interface MKMPrivateKey : MKMAsymmetricKey<MKMPrivateKey>
+@interface MKMPrivateKey : MKMAsymmetricKey <MKMPrivateKey>
 
 - (instancetype)initWithJSONString:(const NSString *)json
                          publicKey:(const MKMPublicKey *)PK;

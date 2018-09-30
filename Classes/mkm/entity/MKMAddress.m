@@ -106,6 +106,17 @@ static NSString *build_address(const NSData * CT, MKMNetworkID network, NSUInteg
 
 @implementation MKMAddress
 
++ (instancetype)addressWithAddress:(id)addr {
+    if ([addr isKindOfClass:[MKMAddress class]]) {
+        return addr;
+    } else if ([addr isKindOfClass:[NSString class]]) {
+        return [[[self class] alloc] initWithString:addr];
+    } else {
+        NSAssert(!addr, @"unexpected address: %@", addr);
+        return addr;
+    }
+}
+
 - (instancetype)initWithString:(NSString *)aString {
     if (self = [super initWithString:aString]) {
         _isValid = [self analyse];

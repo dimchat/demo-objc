@@ -24,17 +24,22 @@ NS_ASSUME_NONNULL_BEGIN
  *          signature: "..." // algorithm defined by version
  *      }
  */
-@interface MKMHistoryRecord : MKMDictionary
+@interface MKMHistoryRecord : MKMDictionary {
+    
+    const NSMutableArray *_events;
+}
 
 @property (readonly, strong, nonatomic) const NSArray *events;
 @property (readonly, strong, nonatomic) const NSData *merkleRoot;
 @property (readonly, strong, nonatomic) const NSData *signature;
 
++ (instancetype)recordWithRecord:(id)record;
+
 /**
  *  Copy history record from JsON String(dictionary)
  */
 - (instancetype)initWithJSONString:(const NSString *)jsonString;
-- (instancetype)initWithHistoryInfo:(const NSDictionary *)info;
+- (instancetype)initWithDictionary:(const NSDictionary *)info;
 
 /**
  Copy history record from network

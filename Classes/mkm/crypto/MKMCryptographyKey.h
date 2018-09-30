@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const NSString *algorithm;
 
++ (instancetype)keyWithKey:(id)key;
+
 - (instancetype)initWithJSONString:(const NSString *)json;
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm

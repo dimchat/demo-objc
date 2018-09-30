@@ -10,6 +10,8 @@
 #import "NSData+Crypto.h"
 #import "NSString+Crypto.h"
 
+#import "MKMPublicKey.h"
+
 #import "MKMID.h"
 
 #import "MKMHistoryEvent.h"
@@ -37,20 +39,33 @@ static NSDate *date(NSTimeInterval time) {
 
 @implementation MKMHistoryOperation
 
++ (instancetype)operationWithOperation:(id)op {
+    if ([op isKindOfClass:[MKMHistoryOperation class]]) {
+        return op;
+    } else if ([op isKindOfClass:[NSDictionary class]]) {
+        return [[[self class] alloc] initWithDictionary:op];
+    } else if ([op isKindOfClass:[NSString class]]) {
+        return [[[self class] alloc] initWithJSONString:op];
+    } else {
+        NSAssert(!op, @"unexpected operation: %@", op);
+        return op;
+    }
+}
+
 - (instancetype)initWithJSONString:(const NSString *)jsonString {
     NSData *data = [jsonString data];
     NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithOperationInfo:dict];
+    self = [self initWithDictionary:dict];
     return self;
 }
 
-- (instancetype)initWithOperationInfo:(const NSDictionary *)info {
+- (instancetype)initWithDictionary:(const NSDictionary *)info {
     NSDictionary *dict = [info copy];
     NSString *op = [dict objectForKey:@"operate"];
     NSNumber *ti = [dict objectForKey:@"time"];
     NSDate *time = date([ti unsignedIntegerValue]);
     
-    if (self = [self initWithDictionary:dict]) {
+    if (self = [super initWithDictionary:dict]) {
         self.operate = op;
         self.time = time;
     }
@@ -72,7 +87,7 @@ static NSDate *date(NSTimeInterval time) {
     [mDict setObject:op forKey:@"operate"];
     [mDict setObject:number forKey:@"time"];
     
-    if (self = [self initWithDictionary:mDict]) {
+    if (self = [super initWithDictionary:mDict]) {
         self.operate = op;
         self.time = time;
     }
@@ -115,60 +130,83 @@ static NSDate *date(NSTimeInterval time) {
 
 @implementation MKMHistoryEvent
 
++ (instancetype)eventWithEvent:(id)event {
+    if ([event isKindOfClass:[MKMHistoryEvent class]]) {
+        return event;
+    } else if ([event isKindOfClass:[NSDictionary class]]) {
+        return [[[self class] alloc] initWithDictionary:event];
+    } else if ([event isKindOfClass:[NSString class]]) {
+        return [[[self class] alloc] initWithJSONString:event];
+    } else {
+        NSAssert(!event, @"unexpected event: %@", event);
+        return event;
+    }
+}
+
 - (instancetype)initWithJSONString:(const NSString *)jsonString {
     NSData *data = [jsonString data];
     NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithEventInfo:dict];
+    self = [self initWithDictionary:dict];
     return self;
 }
 
-- (instancetype)initWithEventInfo:(const NSDictionary *)info {
+- (instancetype)initWithDictionary:(const NSDictionary *)info {
     NSDictionary *dict = [info copy];
-    if (self = [self initWithDictionary:dict]) {
-        NSString *operator = [dict objectForKey:@"operator"];
-        NSString *signature = [dict objectForKey:@"signature"];
-        id operation = [dict objectForKey:@"operation"];
-        MKMHistoryOperation *op = nil;
+    id operation = [dict objectForKey:@"operation"];
+    NSString *operator = [dict objectForKey:@"operator"];
+    NSString *signature = [dict objectForKey:@"signature"];
+    
+    MKMHistoryOperation *op = nil;
+    op = [MKMHistoryOperation operationWithOperation:operation];
+    
+    if (self = [super initWithDictionary:dict]) {
+        self.operation = op;
         
         if (operator && signature) {
             NSAssert([operation isKindOfClass:[NSString class]], @"event info error: %@", info);
-            op = [[MKMHistoryOperation alloc] initWithJSONString:operation];
+            operation = [operation data];
             
-            MKMID *ID = [[MKMID alloc] initWithString:operator];
+            MKMID *ID = [MKMID IDWithID:operator];
             NSData *CT = [signature base64Decode];
+            
+            const MKMPublicKey *PK = [ID publicKey];
+            BOOL OK = [PK verify:operation signature:CT];
+            NSAssert(!PK || OK, @"signature error");
+            
             self.operatorID = ID;
             self.signature = CT;
-        } else {
-            NSAssert([operation isKindOfClass:[NSDictionary class]], @"event info error: %@", info);
-            op = [[MKMHistoryOperation alloc] initWithOperationInfo:operation];
         }
-        self.operation = op;
     }
     
     return self;
 }
 
 - (instancetype)initWithOperation:(const MKMHistoryOperation *)op {
-    MKMID *ID = nil;
-    NSData *CT = nil;
-    self = [self initWithOperation:op operator:ID signature:CT];
+    NSDictionary *dict;
+    dict = [NSDictionary dictionaryWithObject:op forKey:@"operation"];
+    if (self = [super initWithDictionary:dict]) {
+        self.operation = op;
+    }
     return self;
 }
 
-- (instancetype)initWithOperation:(const MKMHistoryOperation *)op
+- (instancetype)initWithOperation:(const NSString *)operation
                          operator:(const MKMID *)ID
                         signature:(const NSData *)CT {
     NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:3];
-    if (ID && CT) {
-        NSString *str = [op jsonString];
-        [mDict setObject:str forKey:@"operation"];
-        [mDict setObject:ID forKey:@"operator"];
-        [mDict setObject:[CT base64Encode] forKey:@"signature"];
-    } else {
-        [mDict setObject:op forKey:@"operation"];
-    }
+    [mDict setObject:operation forKey:@"operation"];
+    [mDict setObject:ID forKey:@"operator"];
+    [mDict setObject:[CT base64Encode] forKey:@"signature"];
     
-    if (self = [self initWithDictionary:mDict]) {
+    const MKMPublicKey *PK = [ID publicKey];
+    NSData *data = [operation data];
+    BOOL OK = [PK verify:data signature:CT];
+    NSAssert(!PK || OK, @"signature error");
+    
+    MKMHistoryOperation *op;
+    op = [MKMHistoryOperation operationWithOperation:operation];
+    
+    if (self = [super initWithDictionary:mDict]) {
         self.operation = op;
         self.operatorID = ID;
         self.signature = CT;
@@ -178,7 +216,12 @@ static NSDate *date(NSTimeInterval time) {
 }
 
 - (id)copy {
-    return [[MKMHistoryEvent alloc] initWithOperation:_operation operator:_operatorID signature:_signature];
+    if (_operatorID && _signature) {
+        NSString *op = [[_operation jsonData] base64Encode];
+        return [[MKMHistoryEvent alloc] initWithOperation:op operator:_operatorID signature:_signature];
+    } else {
+        return [[MKMHistoryEvent alloc] initWithOperation:_operation];
+    }
 }
 
 @end

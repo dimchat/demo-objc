@@ -40,6 +40,8 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
 
 @property (readonly, nonatomic) BOOL isValid;
 
++ (instancetype)addressWithAddress:(id)addr;
+
 /**
  Copy address data
 

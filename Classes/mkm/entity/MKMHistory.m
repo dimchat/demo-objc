@@ -21,7 +21,6 @@
 
 @interface MKMHistoryRecord()
 
-@property (strong, nonatomic) const NSMutableArray *events;
 @property (strong, nonatomic) const NSData *merkleRoot;
 @property (strong, nonatomic) const NSData *signature;
 
@@ -44,11 +43,31 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
 
 @implementation MKMHistoryRecord
 
++ (instancetype)recordWithRecord:(id)record {
+    if ([record isKindOfClass:[MKMHistoryRecord class]]) {
+        return record;
+    } else if ([record isKindOfClass:[NSDictionary class]]) {
+        return [[[self class] alloc] initWithDictionary:record];
+    } else if ([record isKindOfClass:[NSString class]]) {
+        return [[[self class] alloc] initWithJSONString:record];
+    } else {
+        NSAssert(!record, @"unexpected record: %@", record);
+        return record;
+    }
+}
+
 - (instancetype)init {
     if (self = [super init]) {
         _events = [[NSMutableArray alloc] initWithCapacity:3];
     }
     
+    return self;
+}
+
+- (instancetype)initWithJSONString:(const NSString *)jsonString {
+    NSData *data = [jsonString data];
+    NSDictionary *dict = [data jsonDictionary];
+    self = [self initWithDictionary:dict];
     return self;
 }
 
@@ -72,23 +91,10 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
         NSData *hash = [merkle base64Decode];
         NSData *CT = [signature base64Decode];
         
-        self.events = mArray;
+        _events = mArray;
         self.merkleRoot = hash;
         self.signature = CT;
     }
-    return self;
-}
-
-- (instancetype)initWithJSONString:(const NSString *)jsonString {
-    NSData *data = [jsonString data];
-    NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithDictionary:dict];
-    return self;
-}
-
-- (instancetype)initWithHistoryInfo:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
-    self = [self initWithDictionary:dict];
     return self;
 }
 
@@ -101,7 +107,13 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
         [mDict setObject:[hash base64Encode] forKey:@"merkle"];
         [mDict setObject:[CT base64Encode] forKey:@"signature"];
     }
-    self = [self initWithDictionary:mDict];
+    
+    if (self = [super initWithDictionary:mDict]) {
+        _events = [events mutableCopy];
+        self.merkleRoot = hash;
+        self.signature = CT;
+    }
+    
     return self;
 }
 

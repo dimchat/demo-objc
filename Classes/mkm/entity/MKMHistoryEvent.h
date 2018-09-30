@@ -26,11 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) const NSString *operate;
 @property (readonly, strong, nonatomic) const NSDate *time;
 
++ (instancetype)operationWithOperation:(id)op;
+
 /**
  *  Copy history operation from JsON String(dictionary)
  */
 - (instancetype)initWithJSONString:(const NSString *)jsonString;
-- (instancetype)initWithOperationInfo:(const NSDictionary *)info;
+- (instancetype)initWithDictionary:(const NSDictionary *)info;
 
 - (instancetype)initWithOperate:(const NSString *)op;
 - (instancetype)initWithOperate:(const NSString *)op
@@ -56,11 +58,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) const MKMID *operatorID;
 @property (readonly, strong, nonatomic) const NSData *signature;
 
++ (instancetype)eventWithEvent:(id)event;
+
 /**
  *  Copy history event from JsON String(dictionary)
  */
 - (instancetype)initWithJSONString:(const NSString *)jsonString;
-- (instancetype)initWithEventInfo:(const NSDictionary *)info;
+- (instancetype)initWithDictionary:(const NSDictionary *)info;
 
 /**
  Initialize an operation without signature,
@@ -74,12 +78,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Initialize an operation with signature
 
- @param op - operation object
+ @param operation - JsON string of an operation
  @param ID - operator's ID
  @param CT - signature
  @return Event object
  */
-- (instancetype)initWithOperation:(const MKMHistoryOperation *)op
+- (instancetype)initWithOperation:(const NSString *)operation
                          operator:(const MKMID *)ID
                         signature:(const NSData *)CT;
 

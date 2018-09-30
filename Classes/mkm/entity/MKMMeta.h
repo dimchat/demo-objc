@@ -49,11 +49,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) const MKMPublicKey *key;
 @property (readonly, strong, nonatomic) const NSData *fingerprint;
 
++ (instancetype)metaWithMeta:(id)meta;
+
 /**
  *  Copy meta data from JsON String(dictionary)
  */
 - (instancetype)initWithJSONString:(const NSString *)jsonString;
-- (instancetype)initWithMetaInfo:(const NSDictionary *)info;
+- (instancetype)initWithDictionary:(const NSDictionary *)info;
 
 /**
  *  Copy meta data from network

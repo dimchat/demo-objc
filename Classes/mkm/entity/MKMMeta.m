@@ -29,14 +29,27 @@
 
 @implementation MKMMeta
 
++ (instancetype)metaWithMeta:(id)meta {
+    if ([meta isKindOfClass:[MKMMeta class]]) {
+        return meta;
+    } else if ([meta isKindOfClass:[NSDictionary class]]) {
+        return [[[self class] alloc] initWithDictionary:meta];
+    } else if ([meta isKindOfClass:[NSString class]]) {
+        return [[[self class] alloc] initWithJSONString:meta];
+    } else {
+        NSAssert(!meta, @"unexpected meta: %@", meta);
+        return meta;
+    }
+}
+
 - (instancetype)initWithJSONString:(const NSString *)jsonString {
     NSData *data = [jsonString data];
     NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithMetaInfo:dict];
+    self = [self initWithDictionary:dict];
     return self;
 }
 
-- (instancetype)initWithMetaInfo:(const NSDictionary *)info {
+- (instancetype)initWithDictionary:(const NSDictionary *)info {
     NSDictionary *dict = [info copy];
     
     NSNumber *version = [dict objectForKey:@"version"];
@@ -58,7 +71,7 @@
     BOOL correct = [PK verify:[seed data] signature:CT];
     NSAssert(correct, @"fingerprint error");
     if (correct) {
-        self = [self initWithDictionary:dict];
+        self = [super initWithDictionary:dict];
     } else {
         self = [self init];
     }
@@ -89,7 +102,7 @@
         [mDict setObject:name forKey:@"seed"];
         [mDict setObject:PK forKey:@"publicKey"];
         [mDict setObject:fingerprint forKey:@"fingerprint"];
-        self = [self initWithDictionary:mDict];
+        self = [super initWithDictionary:mDict];
     } else {
         self = [self init];
     }
