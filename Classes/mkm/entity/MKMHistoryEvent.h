@@ -29,12 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)operationWithOperation:(id)op;
 
 /**
- *  Copy history operation from JsON String(dictionary)
+ *  Copy history operation
  */
-- (instancetype)initWithJSONString:(const NSString *)jsonString;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 - (instancetype)initWithOperate:(const NSString *)op;
+
 - (instancetype)initWithOperate:(const NSString *)op
                            time:(const NSDate *)time;
 
@@ -61,9 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)eventWithEvent:(id)event;
 
 /**
- *  Copy history event from JsON String(dictionary)
+ *  Copy history event
  */
-- (instancetype)initWithJSONString:(const NSString *)jsonString;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 /**

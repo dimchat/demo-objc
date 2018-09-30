@@ -52,14 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)metaWithMeta:(id)meta;
 
 /**
- *  Copy meta data from JsON String(dictionary)
+ *  Copy meta data
  */
-- (instancetype)initWithJSONString:(const NSString *)jsonString;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-/**
- *  Copy meta data from network
- */
 - (instancetype)initWithSeed:(const NSString *)name
                    publicKey:(const MKMPublicKey *)PK
                  fingerprint:(const NSData *)CT

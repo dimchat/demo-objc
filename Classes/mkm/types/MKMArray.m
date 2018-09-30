@@ -6,9 +6,18 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import "NSObject+JsON.h"
+
 #import "MKMArray.h"
 
 @implementation MKMArray
+
+- (instancetype)initWithJSONString:(const NSString *)jsonString {
+    NSData *data = [jsonString data];
+    NSArray *array = [data jsonArray];
+    self = [self initWithArray:array];
+    return self;
+}
 
 /* designated initializer */
 - (instancetype)initWithArray:(NSArray *)array {

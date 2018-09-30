@@ -36,9 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)recordWithRecord:(id)record;
 
 /**
- *  Copy history record from JsON String(dictionary)
+ *  Copy history record
  */
-- (instancetype)initWithJSONString:(const NSString *)jsonString;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 /**
@@ -78,11 +77,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface MKMHistory : MKMArray
-
-/**
- *  Copy history data from JsON String(array)
- */
-- (instancetype)initWithJSONString:(const NSString *)jsonString;
 
 @end
 

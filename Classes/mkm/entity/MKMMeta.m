@@ -42,13 +42,6 @@
     }
 }
 
-- (instancetype)initWithJSONString:(const NSString *)jsonString {
-    NSData *data = [jsonString data];
-    NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithDictionary:dict];
-    return self;
-}
-
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     NSNumber *version = [dict objectForKey:@"version"];
     id publicKey = [dict objectForKey:@"publicKey"];

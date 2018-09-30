@@ -6,9 +6,18 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import "NSObject+JsON.h"
+
 #import "MKMDictionary.h"
 
 @implementation MKMDictionary
+
+- (instancetype)initWithJSONString:(const NSString *)jsonString {
+    NSData *data = [jsonString data];
+    NSDictionary *dict = [data jsonDictionary];
+    self = [self initWithDictionary:dict];
+    return self;
+}
 
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {

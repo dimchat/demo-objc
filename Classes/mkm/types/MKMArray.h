@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray *_storeArray; // inner array
 }
 
+- (instancetype)initWithJSONString:(const NSString *)jsonString;
+
 - (instancetype)initWithArray:(NSArray *)array
 NS_DESIGNATED_INITIALIZER;
 

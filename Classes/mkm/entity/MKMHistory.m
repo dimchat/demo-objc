@@ -41,6 +41,23 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     return mData;
 }
 
+static NSMutableArray *copy_events(const NSArray *events) {
+    NSMutableArray *mArray;
+    mArray = [[NSMutableArray alloc] initWithCapacity:[events count]];
+    
+    NSString *string;
+    for (id item in events) {
+        if (![item isKindOfClass:[NSString class]]) {
+            string = [item jsonString];
+        } else {
+            string = item;
+        }
+        [mArray addObject:string];
+    }
+    
+    return mArray;
+}
+
 @implementation MKMHistoryRecord
 
 + (instancetype)recordWithRecord:(id)record {
@@ -64,29 +81,29 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     return self;
 }
 
-- (instancetype)initWithJSONString:(const NSString *)jsonString {
-    NSData *data = [jsonString data];
-    NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithDictionary:dict];
-    return self;
-}
-
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        // events
-        NSArray *events = [dict objectForKey:@"events"];
-        NSAssert(events, @"history record error");
-        _events = [events mutableCopy];
+    id events = [dict objectForKey:@"events"];
+    NSString *merkle = [dict objectForKey:@"merkle"];
+    NSString *signature = [dict objectForKey:@"signature"];
+    
+    if (merkle && signature) {
+        NSMutableDictionary *mDict;
+        mDict = [[NSMutableDictionary alloc] initWithDictionary:dict];
+        events = copy_events(events);
+        NSAssert([events count] > 0, @"history record error");
+        [mDict setObject:events forKey:@"events"];
         
-        // merkle
-        NSString *merkle = [dict objectForKey:@"merkle"];
-        NSData *hash = [merkle base64Decode];
-        self.merkleRoot = hash;
+        self = [super initWithDictionary:mDict];
+    } else {
+        events = [events mutableCopy];
         
-        // signature
-        NSString *signature = [dict objectForKey:@"signature"];
-        NSData *CT = [signature base64Decode];
-        self.signature = CT;
+        self = [super initWithDictionary:dict];
+    }
+    
+    if (self) {
+        _events = events;
+        self.merkleRoot = [merkle base64Decode];
+        self.signature = [signature base64Decode];
     }
     return self;
 }
@@ -94,15 +111,22 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
 - (instancetype)initWithEvents:(const NSArray *)events
                         merkle:(const NSData *)hash
                      signature:(const NSData *)CT {
-    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:3];
-    [mDict setObject:events forKey:@"events"];
+    NSMutableDictionary *mDict;
+    mDict = [[NSMutableDictionary alloc] initWithCapacity:3];
+    
+    NSMutableArray *mArray;
     if (hash && CT) {
         [mDict setObject:[hash base64Encode] forKey:@"merkle"];
         [mDict setObject:[CT base64Encode] forKey:@"signature"];
+        mArray = copy_events(events);
+    } else {
+        mArray = [events mutableCopy];
     }
-    
+    NSAssert([mArray count] > 0, @"events error");
+    [mDict setObject:mArray forKey:@"events"];
+
     if (self = [super initWithDictionary:mDict]) {
-        _events = [events mutableCopy];
+        _events = copy_events(events);
         self.merkleRoot = hash;
         self.signature = CT;
     }
@@ -117,7 +141,8 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
 - (const NSData *)merkleRoot {
     if (!_merkleRoot) {
         // TODO: calculate merkle root for events
-        _merkleRoot = [[_events jsonData] sha256];
+        NSArray *events = copy_events(_events);
+        _merkleRoot = [[events jsonData] sha256];
         // FIXME: above is just for test, please implement it
         
         // clear for refresh
@@ -188,20 +213,12 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     NSAssert(_merkleRoot, @"merkle root cannot be empty");
     NSAssert(_signature, @"signature cannot be empty");
     
-    NSMutableArray *mArray = [NSMutableArray arrayWithCapacity:[_events count]];
-    for (id event in _events) {
-        if ([event isKindOfClass:[MKMHistoryEvent class]]) {
-            [mArray addObject:[event jsonString]];
-        } else {
-            [mArray addObject:event];
-        }
-    }
-    
+    NSArray *array = copy_events(_events);
     NSString *hash = [_merkleRoot base64Encode];
     NSString *CT = [_signature base64Encode];
     
     NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:4];
-    [mDict setObject:mArray forKey:@"events"];
+    [mDict setObject:array forKey:@"events"];
     [mDict setObject:hash forKey:@"merkle"];
     [mDict setObject:CT forKey:@"signature"];
     
@@ -216,13 +233,6 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
 @end
 
 @implementation MKMHistory
-
-- (instancetype)initWithJSONString:(const NSString *)jsonString {
-    NSData *data = [jsonString data];
-    NSArray *array = [data jsonArray];
-    self = [self initWithArray:array];
-    return self;
-}
 
 - (id)copy {
     return [[MKMHistory alloc] initWithArray:_storeArray];

@@ -52,13 +52,6 @@ static NSDate *date(NSTimeInterval time) {
     }
 }
 
-- (instancetype)initWithJSONString:(const NSString *)jsonString {
-    NSData *data = [jsonString data];
-    NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithDictionary:dict];
-    return self;
-}
-
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     NSString *op = [dict objectForKey:@"operate"];
     NSNumber *ti = [dict objectForKey:@"time"];
@@ -140,13 +133,6 @@ static NSDate *date(NSTimeInterval time) {
         NSAssert(!event, @"unexpected event: %@", event);
         return event;
     }
-}
-
-- (instancetype)initWithJSONString:(const NSString *)jsonString {
-    NSData *data = [jsonString data];
-    NSDictionary *dict = [data jsonDictionary];
-    self = [self initWithDictionary:dict];
-    return self;
 }
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
