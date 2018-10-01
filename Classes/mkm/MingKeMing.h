@@ -39,6 +39,7 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 #import "MKMEntity.h"
+#import "MKMEntityManager.h"
 
 // User
 #import "MKMProfile.h"

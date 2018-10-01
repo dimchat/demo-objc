@@ -11,6 +11,8 @@
 #import "MKMAddress.h"
 #import "MKMMeta.h"
 
+#import "MKMEntityManager.h"
+
 #import "MKMID.h"
 
 @interface MKMID ()
@@ -73,6 +75,17 @@
 
 - (BOOL)isValid {
     return _address.isValid && _name.length > 0;
+}
+
+- (const MKMPublicKey *)publicKey {
+    if (!_publicKey) {
+        MKMEntityManager *em = [MKMEntityManager sharedManager];
+        MKMMeta *meta = [em metaWithID:self];
+        if ([self checkMeta:meta]) {
+            //_publicKey = [meta key];
+        }
+    }
+    return _publicKey;
 }
 
 - (BOOL)isEqual:(id)object {

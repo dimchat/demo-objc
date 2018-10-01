@@ -87,23 +87,16 @@ static NSDate *date(NSTimeInterval time) {
     return self;
 }
 
-- (id)copy {
-    return [[MKMHistoryOperation alloc] initWithDictionary:self];
-}
-
-- (id)mutableCopy {
-    return [self copy];
-}
-
 - (void)setExtraValue:(id)value forKey:(NSString *)key {
-    NSAssert([value isKindOfClass:[NSString class]], @"value must be string");
+    NSAssert(key, @"key cannot be empty");
+    NSAssert(value, @"value cannot be empty");
     
     if ([key isEqualToString:@"operate"]) {
         return;
-    }
-    if ([key isEqualToString:@"time"]) {
+    } else if ([key isEqualToString:@"time"]) {
         return;
     }
+    
     [_storeDictionary setObject:value forKey:key];
 }
 
@@ -197,15 +190,6 @@ static NSDate *date(NSTimeInterval time) {
     }
     
     return self;
-}
-
-- (id)copy {
-    if (_operatorID && _signature) {
-        NSString *op = [[_operation jsonData] base64Encode];
-        return [[MKMHistoryEvent alloc] initWithOperation:op operator:_operatorID signature:_signature];
-    } else {
-        return [[MKMHistoryEvent alloc] initWithOperation:_operation];
-    }
 }
 
 @end

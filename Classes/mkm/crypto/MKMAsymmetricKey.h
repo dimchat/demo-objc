@@ -42,10 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-//@protocol MKMAsymmetricKey <MKMPublicKey, MKMPrivateKey>
-//
-//@end
-
 /**
  *  Asymmetric Cryptography Key
  *

@@ -46,4 +46,14 @@
     return self;
 }
 
+- (NSData *)decrypt:(const NSData *)ciphertext {
+    // implements in subclass
+    return nil;
+}
+
+- (NSData *)encrypt:(const NSData *)plaintext {
+    // implements in subclass
+    return nil;
+}
+
 @end

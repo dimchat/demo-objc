@@ -24,10 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          signature: "..." // algorithm defined by version
  *      }
  */
-@interface MKMHistoryRecord : MKMDictionary {
-    
-    const NSMutableArray *_events;
-}
+@interface MKMHistoryRecord : MKMDictionary
 
 @property (readonly, strong, nonatomic) const NSArray *events;
 @property (readonly, strong, nonatomic) const NSData *merkleRoot;

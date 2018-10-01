@@ -15,8 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MKMSymmetricKey <NSObject>
 
-@optional
-
 /**
  *  CT = encrypt(text, PW)
  */

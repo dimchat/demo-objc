@@ -58,6 +58,12 @@ static NSMutableArray *copy_events(const NSArray *events) {
     return mArray;
 }
 
+@interface MKMHistoryRecord ()
+
+@property (strong, nonatomic) const NSMutableArray *events;
+
+@end
+
 @implementation MKMHistoryRecord
 
 + (instancetype)recordWithRecord:(id)record {
@@ -132,10 +138,6 @@ static NSMutableArray *copy_events(const NSArray *events) {
     }
     
     return self;
-}
-
-- (id)copy {
-    return [[MKMHistoryRecord alloc] initWithEvents:_events merkle:_merkleRoot signature:_signature];
 }
 
 - (const NSData *)merkleRoot {
@@ -233,13 +235,5 @@ static NSMutableArray *copy_events(const NSArray *events) {
 @end
 
 @implementation MKMHistory
-
-- (id)copy {
-    return [[MKMHistory alloc] initWithArray:_storeArray];
-}
-
-- (id)mutableCopy {
-    return [self copy];
-}
 
 @end
