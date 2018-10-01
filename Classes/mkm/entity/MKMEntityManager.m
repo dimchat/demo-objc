@@ -9,8 +9,15 @@
 #import "MKMID.h"
 #import "MKMMeta.h"
 #import "MKMHistory.h"
+#import "MKMEntity.h"
 
 #import "MKMEntityManager.h"
+
+@interface MKMEntity (History)
+
+@property (strong, nonatomic) const MKMHistory *history;
+
+@end
 
 @interface MKMEntityManager () {
     
@@ -45,6 +52,7 @@ static MKMEntityManager *_sharedManager = nil;
 }
 
 - (MKMMeta *)metaWithID:(const MKMID *)ID {
+    NSAssert(ID, @"ID cannot be empty");
     MKMMeta *meta = [_metaMap objectForKey:ID];
     if (!meta && _delegate) {
         meta = [_delegate queryMetaWithID:ID];
@@ -55,7 +63,19 @@ static MKMEntityManager *_sharedManager = nil;
     return meta;
 }
 
+- (BOOL)setMeta:(const MKMMeta *)meta forID:(const MKMID *)ID {
+    NSAssert(meta, @"meta cannot be empty");
+    NSAssert(ID, @"ID cannot be empty");
+    BOOL correct = [ID checkMeta:meta];
+    if (correct) {
+        [_metaMap setObject:meta forKey:ID];
+        [_delegate postMeta:meta forID:ID];
+    }
+    return correct;
+}
+
 - (MKMHistory *)historyWithID:(const MKMID *)ID {
+    NSAssert(ID, @"ID cannot be empty");
     MKMHistory *history = [_historyMap objectForKey:ID];
     if (!history && _delegate) {
         history = [_delegate updateHistoryWithID:ID];
@@ -64,6 +84,68 @@ static MKMEntityManager *_sharedManager = nil;
         }
     }
     return history;
+}
+
+- (NSUInteger)setHistory:(const MKMHistory *)history forID:(const MKMID *)ID {
+    NSAssert(history, @"history cannot be empty");
+    NSAssert(ID, @"ID cannot be empty");
+    MKMMeta *meta = [self metaWithID:ID];
+    NSAssert(meta, @"meta not found: %@", ID);
+    
+    MKMEntity *entity = [[MKMEntity alloc] initWithID:ID meta:meta];
+    NSUInteger count = [entity runHistory:history];
+    if (count > 0) {
+        const MKMHistory *his = [entity history];
+        NSAssert(his, @"error");
+        [_historyMap setObject:his forKey:ID];
+        
+        [_delegate postHistory:history forID:ID];
+    }
+    return count;
+}
+
+- (BOOL)addHistoryRecord:(const MKMHistoryRecord *)record forID:(const MKMID *)ID {
+    NSAssert(record, @"record cannot be empty");
+    NSAssert(ID, @"ID cannot be empty");
+    MKMMeta *meta = [self metaWithID:ID];
+    NSAssert(meta, @"meta not found: %@", ID);
+    
+    MKMEntity *entity = [[MKMEntity alloc] initWithID:ID meta:meta];
+    BOOL correct = [entity runHistoryRecord:record];
+    if (correct) {
+        const MKMHistory *his = [entity history];
+        NSAssert(his, @"error");
+        [_historyMap setObject:his forKey:ID];
+        
+        [_delegate postHistoryRecord:record forID:ID];
+    }
+    return correct;
+}
+
+- (BOOL)setMeta:(const MKMMeta *)meta
+        history:(const MKMHistory *)history
+          forID:(const MKMID *)ID {
+    NSAssert(meta, @"meta cannot be empty");
+    NSAssert(history, @"history cannot be empty");
+    NSAssert(ID, @"ID cannot be empty");
+    BOOL correct = [ID checkMeta:meta];
+    if (correct) {
+        [_metaMap setObject:meta forKey:ID];
+    }
+    
+    MKMEntity *entity = [[MKMEntity alloc] initWithID:ID meta:meta];
+    NSUInteger count = [entity runHistory:history];
+    if (count > 0) {
+        const MKMHistory *his = [entity history];
+        NSAssert(his, @"error");
+        [_historyMap setObject:his forKey:ID];
+    }
+    
+    if (correct && count > 0) {
+        [_delegate postMeta:meta history:history forID:ID];
+        return YES;
+    }
+    return NO;
 }
 
 @end

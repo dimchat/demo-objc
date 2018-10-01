@@ -16,6 +16,8 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
+#import "MKMEntityManager.h"
+
 #import "MKMUser+History.h"
 
 @implementation MKMUser (History)
@@ -62,8 +64,9 @@
     NSAssert([history count] == count, @"history error");
     
     // 5. send the ID+meta+history out
-    
-    // TODO: pack and send
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    BOOL OK = [em setMeta:meta history:history forID:ID];
+    NSAssert(OK, @"error");
     
     return user;
 }
@@ -82,9 +85,10 @@
     his = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
     [his signWithPreviousMerkle:hash privateKey:SK];
     
-    // 2. send the record out
-    
-    // TODO: pack and send
+    // 2. send the history record out
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    BOOL OK = [em addHistoryRecord:his forID:self.ID];
+    NSAssert(OK, @"error");
     
     return his;
 }
