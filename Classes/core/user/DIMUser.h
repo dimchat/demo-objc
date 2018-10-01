@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
     const MKMKeyStore *_keyStore;
 }
 
++ (instancetype)registerWithName:(const NSString *)seed keyStore:(const MKMKeyStore *)store;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -23,8 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
  *          time     : 123,
  *          //-- content
  *          content  : "...",  // Base64(symmetric)
- *          //-- key
- *          secretKey: "..."   // Base64(asmmetric)
+ *          //-- key/keys
+ *          key      : "...",  // Base64(asymmetric)
+ *          keys     : []
  *      }
  */
 @interface DIMSecureMessage : DIMDictionary
@@ -39,10 +40,32 @@ NS_ASSUME_NONNULL_BEGIN
  *   secretKey = contact.privateKey.encrypt(symmetricKey);
  */
 @property (readonly, strong, nonatomic) const NSData *secretKey;
+@property (readonly, strong, nonatomic) const NSDictionary *secretKeys;
 
+/**
+ Secure Message for Personal
+
+ @param content - Data encrypted with a random symmetic key
+ @param env - Message envelope
+ @param key - Symmetic key encrypted with receiver's public key
+ @return SecureMessage object
+ */
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
                       secretKey:(const NSData *)key
+NS_DESIGNATED_INITIALIZER;
+
+/**
+ Secure Message for Group
+
+ @param content - Data encrypted with a random symmetic key
+ @param env - Message envelope
+ @param keys - Symmetic keys encrypted with group member's PKs
+ @return SecureMessage object
+ */
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                     secretKeys:(const NSDictionary *)keys
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

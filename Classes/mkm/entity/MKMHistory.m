@@ -64,9 +64,9 @@ static NSMutableArray *copy_events(const NSArray *events) {
     if ([record isKindOfClass:[MKMHistoryRecord class]]) {
         return record;
     } else if ([record isKindOfClass:[NSDictionary class]]) {
-        return [[[self class] alloc] initWithDictionary:record];
+        return [[self alloc] initWithDictionary:record];
     } else if ([record isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithJSONString:record];
+        return [[self alloc] initWithJSONString:record];
     } else {
         NSAssert(!record, @"unexpected record: %@", record);
         return record;

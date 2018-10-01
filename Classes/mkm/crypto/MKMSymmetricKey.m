@@ -15,7 +15,7 @@
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
     NSDictionary *dict = [info copy];
-    NSAssert([algorithm isEqualToString:[dict objectForKey:@"algorithm"]], @"error");
+    NSAssert([algorithm isEqualToString:[dict objectForKey:@"algorithm"]], @"algorithm error: %@, %@", algorithm, info);
     
     if ([self isMemberOfClass:[MKMSymmetricKey class]]) {
         // create instance with algorithm
@@ -40,7 +40,7 @@
         if (!PW) {
             PW = [dict objectForKey:@"password"];
         }
-        NSAssert(PW, @"key data error");
+        NSAssert(PW, @"key data error: %@", dict);
         _passphrase = [PW copy];
     }
     return self;

@@ -10,7 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMGroup : MKMGroup
+@class DIMInstantMessage;
+@class DIMSecureMessage;
+
+@protocol DIMGroup <NSObject>
+
+- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
+
+@end
+
+@interface DIMGroup : MKMGroup <DIMGroup>
+
+@property (strong, nonatomic) MKMSymmetricKey *passphrase;
 
 @end
 

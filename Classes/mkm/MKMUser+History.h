@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param SK - private key
  @return Account object
  */
-+ (MKMUser *)registerWithName:(const NSString *)seed
-                    publicKey:(const MKMPublicKey *)PK
-                   privateKey:(const MKMPrivateKey *)SK;
++ (instancetype)registerWithName:(const NSString *)seed
+                       publicKey:(const MKMPublicKey *)PK
+                      privateKey:(const MKMPrivateKey *)SK;
 
 /**
  Delete the account, FOREVER!

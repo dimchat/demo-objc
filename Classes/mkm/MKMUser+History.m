@@ -20,9 +20,9 @@
 
 @implementation MKMUser (History)
 
-+ (MKMUser *)registerWithName:(const NSString *)seed
-                    publicKey:(const MKMPublicKey *)PK
-                   privateKey:(const MKMPrivateKey *)SK {
++ (instancetype)registerWithName:(const NSString *)seed
+                       publicKey:(const MKMPublicKey *)PK
+                      privateKey:(const MKMPrivateKey *)SK {
     NSAssert([seed length] > 2, @"seed error");
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
@@ -57,7 +57,7 @@
     NSLog(@"register history: %@", history);
     
     // 4. create
-    MKMUser *user = [[MKMUser alloc] initWithID:ID meta:meta];
+    MKMUser *user = [[self alloc] initWithID:ID meta:meta];
     NSInteger count = [user runHistory:history];
     NSAssert([history count] == count, @"history error");
     

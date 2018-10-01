@@ -18,9 +18,9 @@
     } else if ([key isKindOfClass:[NSDictionary class]]) {
         NSString *algor = [key objectForKey:@"algorithm"];
         NSAssert(algor, @"key data error");
-        return [[[self class] alloc] initWithAlgorithm:algor keyInfo:key];
+        return [[self alloc] initWithAlgorithm:algor keyInfo:key];
     } else if ([key isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithJSONString:key];
+        return [[self alloc] initWithJSONString:key];
     } else {
         NSAssert(!key, @"unexpected key: %@", key);
         return key;

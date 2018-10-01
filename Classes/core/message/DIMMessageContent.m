@@ -14,9 +14,9 @@
     if ([content isKindOfClass:[DIMMessageContent class]]) {
         return content;
     } else if ([content isKindOfClass:[NSDictionary class]]) {
-        return [[[self class] alloc] initWithDictionary:content];
+        return [[self alloc] initWithDictionary:content];
     } else if ([content isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithJSONString:content];
+        return [[self alloc] initWithJSONString:content];
     } else {
         NSAssert(!content, @"unexpected message content: %@", content);
         return content;

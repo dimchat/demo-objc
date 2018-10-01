@@ -28,7 +28,7 @@
     if ([ID isKindOfClass:[MKMID class]]) {
         return ID;
     } else if ([ID isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithString:ID];
+        return [[self alloc] initWithString:ID];
     } else {
         NSAssert(!ID, @"unexpected ID: %@", ID);
         return nil;

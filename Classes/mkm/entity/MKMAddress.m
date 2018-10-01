@@ -110,7 +110,7 @@ static NSString *build_address(const NSData * CT, MKMNetworkID network, NSUInteg
     if ([addr isKindOfClass:[MKMAddress class]]) {
         return addr;
     } else if ([addr isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithString:addr];
+        return [[self alloc] initWithString:addr];
     } else {
         NSAssert(!addr, @"unexpected address: %@", addr);
         return addr;

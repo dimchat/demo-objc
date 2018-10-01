@@ -30,12 +30,43 @@
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
+                     secretKeys:(const NSDictionary *)keys {
+    NSAssert(false, @"DON'T call me");
+    NSData *CT = nil;
+    self = [self initWithContent:content
+                        envelope:env
+                      secretKeys:keys
+                       signature:CT];
+    return self;
+}
+
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
                       secretKey:(const NSData *)key
                       signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
     self = [super initWithContent:content
                         envelope:env
                        secretKey:key];
+    if (self) {
+        // signature
+        if (CT) {
+            [_storeDictionary setObject:[CT base64Encode]
+                                 forKey:@"signature"];
+            self.signature = CT;
+        }
+    }
+    return self;
+}
+
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                     secretKeys:(const NSDictionary *)keys
+                      signature:(const NSData *)CT {
+    NSAssert(CT, @"signature cannot be empty");
+    self = [super initWithContent:content
+                         envelope:env
+                       secretKeys:keys];
     if (self) {
         // signature
         if (CT) {

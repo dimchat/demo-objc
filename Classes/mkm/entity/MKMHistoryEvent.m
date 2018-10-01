@@ -43,9 +43,9 @@ static NSDate *date(NSTimeInterval time) {
     if ([op isKindOfClass:[MKMHistoryOperation class]]) {
         return op;
     } else if ([op isKindOfClass:[NSDictionary class]]) {
-        return [[[self class] alloc] initWithDictionary:op];
+        return [[self alloc] initWithDictionary:op];
     } else if ([op isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithJSONString:op];
+        return [[self alloc] initWithJSONString:op];
     } else {
         NSAssert(!op, @"unexpected operation: %@", op);
         return op;
@@ -126,9 +126,9 @@ static NSDate *date(NSTimeInterval time) {
     if ([event isKindOfClass:[MKMHistoryEvent class]]) {
         return event;
     } else if ([event isKindOfClass:[NSDictionary class]]) {
-        return [[[self class] alloc] initWithDictionary:event];
+        return [[self alloc] initWithDictionary:event];
     } else if ([event isKindOfClass:[NSString class]]) {
-        return [[[self class] alloc] initWithJSONString:event];
+        return [[self alloc] initWithJSONString:event];
     } else {
         NSAssert(!event, @"unexpected event: %@", event);
         return event;

@@ -14,7 +14,32 @@
 
 #import "DIMUser.h"
 
+@interface DIMUser ()
+
+@property (strong, nonatomic) const MKMKeyStore *keyStore;
+
+@end
+
 @implementation DIMUser
+
++ (instancetype)registerWithName:(const NSString *)seed
+                       publicKey:(const MKMPublicKey *)PK
+                      privateKey:(const MKMPrivateKey *)SK {
+    DIMUser *user = [super registerWithName:seed
+                                  publicKey:PK privateKey:SK];
+    user.keyStore = [[MKMKeyStore alloc] initWithPublicKey:PK
+                                                privateKey:SK];
+    return user;
+}
+
++ (instancetype)registerWithName:(const NSString *)seed
+                        keyStore:(const MKMKeyStore *)store {
+    DIMUser *user = [super registerWithName:seed
+                                  publicKey:store.publicKey
+                                 privateKey:store.privateKey];
+    user.keyStore = store;
+    return user;
+}
 
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     const DIMEnvelope *env = msg.envelope;

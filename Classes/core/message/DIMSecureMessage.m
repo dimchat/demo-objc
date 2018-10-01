@@ -37,6 +37,7 @@ static NSDate *number_time(const NSNumber *number) {
 @property (strong, nonatomic) const NSData *content;
 
 @property (strong, nonatomic) const NSData *secretKey;
+@property (strong, nonatomic) const NSDictionary *secretKeys;
 
 @end
 
@@ -59,17 +60,42 @@ static NSDate *number_time(const NSNumber *number) {
     NSAssert(env, @"envelope cannot be empty");
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithDictionary:(id)env];
+    
     // content
     NSAssert(content, @"content cannot be empty");
     [mDict setObject:[content base64Encode] forKey:@"content"];
+    
     // secret key
     NSAssert(key, @"key cannot be empty");
-    [mDict setObject:[key base64Encode] forKey:@"secretKey"];
+    [mDict setObject:[key base64Encode] forKey:@"key"];
     
     if (self = [super initWithDictionary:mDict]) {
         self.envelope = env;
         self.content = content;
         self.secretKey = key;
+    }
+    return self;
+}
+
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                     secretKeys:(const NSDictionary *)keys {
+    NSAssert(env, @"envelope cannot be empty");
+    NSMutableDictionary *mDict;
+    mDict = [[NSMutableDictionary alloc] initWithDictionary:(id)env];
+    
+    // content
+    NSAssert(content, @"content cannot be empty");
+    [mDict setObject:[content base64Encode] forKey:@"content"];
+    
+    // secret keys
+    NSAssert(keys, @"key cannot be empty");
+    [mDict setObject:keys forKey:@"keys"];
+    
+    if (self = [super initWithDictionary:mDict]) {
+        self.envelope = env;
+        self.content = content;
+        self.secretKeys = keys;
     }
     return self;
 }
@@ -106,6 +132,10 @@ static NSDate *number_time(const NSNumber *number) {
         // secret key
         NSString *secret = [dict objectForKey:@"key"];
         self.secretKey = [secret base64Decode];
+        
+        // secret keys
+        NSDictionary *keys = [dict objectForKey:@"keys"];
+        self.secretKeys = keys;
     }
     
     return self;
