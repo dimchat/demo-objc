@@ -10,7 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMInstantMessage;
+@class DIMSecureMessage;
+@class DIMCertifiedMessage;
+
 @protocol DIMUser <MKMPrivateKey>
+
+- (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg;
+
+- (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)msg;
 
 @end
 

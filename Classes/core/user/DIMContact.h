@@ -12,14 +12,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMInstantMessage;
 @class DIMSecureMessage;
+@class DIMCertifiedMessage;
 
 @protocol DIMContact <MKMPublicKey>
 
-- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)message;
+- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
+
+- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg;
 
 @end
 
 @interface DIMContact : MKMContact <DIMContact>
+
+@property (strong, nonatomic) MKMSymmetricKey *passphrase;
 
 @end
 

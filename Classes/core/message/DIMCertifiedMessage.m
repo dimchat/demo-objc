@@ -16,30 +16,41 @@
 
 @implementation DIMCertifiedMessage
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
-                         sender:(const MKMAccount *)from
-                       receiver:(const MKMAccount *)to
-                            key:(const MKMSymmetricKey *)key {
-    const NSData *CT = nil;
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                      secretKey:(const NSData *)key {
+    NSAssert(false, @"DON'T call me");
+    NSData *CT = nil;
     self = [self initWithContent:content
-                          sender:from
-                        receiver:to
-                             key:key
+                        envelope:env
+                       secretKey:key
                        signature:CT];
     return self;
 }
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
-                         sender:(const MKMAccount *)from
-                       receiver:(const MKMAccount *)to
-                            key:(const MKMSymmetricKey *)key
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                      secretKey:(const NSData *)key
                       signature:(const NSData *)CT {
+    NSAssert(CT, @"signature cannot be empty");
     self = [super initWithContent:content
-                           sender:from
-                         receiver:to
-                              key:key];
+                        envelope:env
+                       secretKey:key];
     if (self) {
-        self.signature = CT;
+        // signature
+        if (CT) {
+            [_storeDictionary setObject:[CT base64Encode]
+                                 forKey:@"signature"];
+            self.signature = CT;
+        }
+    }
+    return self;
+}
+
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    if (self = [super initWithDictionary:dict]) {
+        NSString *CT = [dict objectForKey:@"signature"];
+        self.signature = [CT base64Decode];
     }
     return self;
 }

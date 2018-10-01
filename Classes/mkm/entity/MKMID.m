@@ -75,6 +75,13 @@
     return _address.isValid && _name.length > 0;
 }
 
+- (BOOL)isEqual:(id)object {
+    if (![self isValid]) {
+        return NO;
+    }
+    return [_storeString isEqualToString:object];
+}
+
 - (BOOL)checkMeta:(const MKMMeta *)meta {
     BOOL correct = [meta match:self];
     if (correct) {

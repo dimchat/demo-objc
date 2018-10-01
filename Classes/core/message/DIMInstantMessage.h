@@ -10,19 +10,33 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMEnvelope;
 @class DIMMessageContent;
 
+/**
+ *  Instant Message
+ *
+ *      data format: {
+ *          //-- envelope
+ *          sender   : "moki@xxx",
+ *          receiver : "hulk@yyy",
+ *          time     : 123,
+ *          //-- content
+ *          content  : {...}
+ *      }
+ */
 @interface DIMInstantMessage : DIMDictionary
 
-@property (readonly, strong, nonatomic) const MKMID *sender;
-@property (readonly, strong, nonatomic) const MKMID *receiver;
-@property (readonly, strong, nonatomic) const NSDate *time;
-
+@property (readonly, strong, nonatomic) const DIMEnvelope *envelope;
 @property (readonly, strong, nonatomic) const DIMMessageContent *content;
 
 - (instancetype)initWithContent:(const DIMMessageContent *)content
                          sender:(const MKMID *)from
                        receiver:(const MKMID *)to
+                           time:(const NSDate *)time;
+
+- (instancetype)initWithContent:(const DIMMessageContent *)content
+                       envelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

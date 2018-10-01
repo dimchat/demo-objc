@@ -6,18 +6,43 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
-#import "DIMInstantMessage.h"
+#import "DIMDictionary.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMSecureMessage : DIMInstantMessage
+@class DIMEnvelope;
+@class DIMInstantMessage;
 
-@property (readonly, strong, nonatomic) const MKMSymmetricKey *scKey;
+/**
+ *  Instant Message encrypted by a symmetric key
+ *
+ *      data format: {
+ *          //-- envelope
+ *          sender   : "moki@xxx",
+ *          receiver : "hulk@yyy",
+ *          time     : 123,
+ *          //-- content
+ *          content  : "...",  // Base64(symmetric)
+ *          //-- key
+ *          secretKey: "..."   // Base64(asmmetric)
+ *      }
+ */
+@interface DIMSecureMessage : DIMDictionary
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
-                         sender:(const MKMAccount *)from
-                       receiver:(const MKMAccount *)to
-                            key:(const MKMSymmetricKey *)key
+@property (readonly, strong, nonatomic) const DIMEnvelope *envelope;
+@property (readonly, strong, nonatomic) const NSData *content;
+
+/**
+ * Password to decode the content, which encrypted by contact.PK
+ *
+ *   secureMessage.content = symmetricKey.encrypt(instantMessage.content);
+ *   secretKey = contact.privateKey.encrypt(symmetricKey);
+ */
+@property (readonly, strong, nonatomic) const NSData *secretKey;
+
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                      secretKey:(const NSData *)key
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

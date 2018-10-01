@@ -10,15 +10,32 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ *  Instant Message signed by an asymmetric key
+ *
+ *      data format: {
+ *          //-- envelope
+ *          sender   : "moki@xxx",
+ *          receiver : "hulk@yyy",
+ *          time     : 123,
+ *          //-- content & key
+ *          content  : "...",  // Base64(symmetricEncrypted)
+ *          secretKey: "...",  // Base64(asmmetricEncrypted)
+ *          //-- signature
+ *          signature: "..."   // Base64
+ *      }
+ */
 @interface DIMCertifiedMessage : DIMSecureMessage
 
 @property (readonly, strong, nonatomic) const NSData *signature;
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
-                         sender:(const MKMAccount *)from
-                       receiver:(const MKMAccount *)to
-                            key:(const MKMSymmetricKey *)key
+- (instancetype)initWithContent:(const NSData *)content
+                       envelope:(const DIMEnvelope *)env
+                      secretKey:(const NSData *)key
                       signature:(const NSData *)CT
+NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithDictionary:(NSDictionary *)dict
 NS_DESIGNATED_INITIALIZER;
 
 @end
