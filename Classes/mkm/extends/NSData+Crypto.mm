@@ -9,6 +9,7 @@
 #import <CommonCrypto/CommonDigest.h>
 
 #import "base58.h"
+#import "ripemd160.h"
 
 #import "NSObject+JsON.h"
 #import "NSString+Crypto.h"
@@ -90,9 +91,12 @@
 - (NSData *)ripemd160 {
     NSData *output = nil;
     
-    // TODO: RIPEMD-160 algorithm
-    output = [self sha1];
-    // FIXME: above is just for test, please implement it
+    unsigned char *buf = (unsigned char *)[self bytes];
+    size_t size = [self length];
+    size_t OUTPUT_SIZE = CRIPEMD160::OUTPUT_SIZE;;
+    unsigned char hash[OUTPUT_SIZE];
+    CRIPEMD160().Write(buf, size).Finalize(hash);
+    output = [[NSData alloc] initWithBytes:&hash length:OUTPUT_SIZE];
     
     return output;
 }
