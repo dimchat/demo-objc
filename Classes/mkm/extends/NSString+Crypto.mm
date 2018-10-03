@@ -32,9 +32,10 @@ static inline char hex_char(char ch) {
     NSMutableData *output = nil;
     
     NSString *str = [self copy];
-    // 1. remove ' ', ':', '\n'
+    // 1. remove ' ', ':', '-', '\n'
     str = [str stringByReplacingOccurrencesOfString:@" " withString:@""];
     str = [str stringByReplacingOccurrencesOfString:@":" withString:@""];
+    str = [str stringByReplacingOccurrencesOfString:@"-" withString:@""];
     str = [str stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     
     // 2. skip '0x' prefix

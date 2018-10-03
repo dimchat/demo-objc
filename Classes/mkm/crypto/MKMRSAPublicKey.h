@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      keyInfo format: {
  *          algorithm: "RSA",
- *          ...
+ *          data: "..."
  *      }
  */
 @interface MKMRSAPublicKey : MKMPublicKey
