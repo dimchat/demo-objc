@@ -7,8 +7,9 @@
 //
 
 #import "NSObject+JsON.h"
-#import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
+#import "NSString+Crypto.h"
+#import "NSArray+Merkle.h"
 
 #import "MKMPrivateKey.h"
 #import "MKMPublicKey.h"
@@ -28,11 +29,11 @@
 
 static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     if (!prev) {
-        prev = merkle;
+        return [merkle copy];
     }
     
-    NSData *left = [merkle copy];
-    NSData *right = [prev copy];
+    NSData *left = [prev copy];
+    NSData *right = [merkle copy];
     
     NSUInteger len = [left length] + [right length];
     NSMutableData *mData = [NSMutableData dataWithCapacity:len];
@@ -132,7 +133,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     [mDict setObject:mArray forKey:@"events"];
 
     if (self = [super initWithDictionary:mDict]) {
-        _events = copy_events(events);
+        _events = mArray;
         self.merkleRoot = hash;
         self.signature = CT;
     }
@@ -142,10 +143,9 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 - (const NSData *)merkleRoot {
     if (!_merkleRoot) {
-        // TODO: calculate merkle root for events
+        // calculate merkle root for events
         NSArray *events = copy_events(_events);
-        _merkleRoot = [[events jsonData] sha256];
-        // FIXME: above is just for test, please implement it
+        _merkleRoot = [events merkleRoot];
         
         // clear for refresh
         _signature = nil;

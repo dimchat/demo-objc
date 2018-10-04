@@ -10,8 +10,9 @@
 
 // Extends
 #import "NSObject+JsON.h"
-#import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
+#import "NSString+Crypto.h"
+#import "NSArray+Merkle.h"
 
 //// Types
 //#import "MKMString.h"
