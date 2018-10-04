@@ -11,10 +11,13 @@
 
 #import "NSArray+Merkle.h"
 
-static NSData *merge_data(const NSData *left, const NSData *right) {
-    NSMutableData *mData;
+static NSData *merge_data(const NSData *data1, const NSData *data2) {
+    assert(data1);
+    assert(data2);
+    NSData *left = [data1 copy];
+    NSData *right = [data2 copy];
     NSUInteger len = [left length] + [right length];
-    mData = [[NSMutableData alloc] initWithCapacity:len];
+    NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:len];
     [mData appendData:left];
     [mData appendData:right];
     return mData;
@@ -23,12 +26,12 @@ static NSData *merge_data(const NSData *left, const NSData *right) {
 @implementation NSArray (Merkle)
 
 - (NSData *)merkleRoot {
-    if ([self count] == 0) {
+    NSUInteger count = [self count];
+    if (count == 0) {
         return nil;
     }
     
     // 1. get all leaves with SHA256
-    NSUInteger count = [self count];
     NSMutableArray *mArray;
     mArray = [[NSMutableArray alloc] initWithCapacity:count];
     NSData *data;

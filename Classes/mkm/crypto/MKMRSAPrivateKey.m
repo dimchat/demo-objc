@@ -63,18 +63,23 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
 - (instancetype)initWithDictionary:(NSDictionary *)info {
     NSString *algor = [info objectForKey:@"algorithm"];
     NSAssert([algor isEqualToString:ACAlgorithmRSA], @"algorithm error");
+    // RSA key data
+    NSString *data = [info objectForKey:@"data"];
+    if (!data) {
+        data = [info objectForKey:@"content"];
+    }
+    if (!data) {
+        // TODO: generate RSA key pair data
+    }
     
     if (self = [super initWithDictionary:info]) {
-        // RSA algorithm arguments
-        
-        NSString *data = [info objectForKey:@"data"];
-        if (!data) {
-            data = [info objectForKey:@"content"];
-        }
+        // private key
         self.privateContent = rsa_key_data(data, @"PRIVATE");
         
-        // get public key
-        if ([data rangeOfString:@"PUBLIC KEY"].location != NSNotFound) {
+        // public key
+        NSRange range = [data rangeOfString:@"PUBLIC KEY"];
+        NSAssert(range.location != NSNotFound, @"PUBLIC KEY data not found");
+        if (range.location != NSNotFound) {
             NSString *PK = rsa_key_data(data, @"PUBLIC");
             NSDictionary *pDict = @{@"algorithm":_algorithm, @"data":PK};
             _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm

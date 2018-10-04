@@ -6,11 +6,20 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import <CommonCrypto/CommonCryptor.h>
+
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 #import "NSString+Crypto.h"
 
 #import "MKMAESKey.h"
+
+@interface MKMAESKey () {
+    
+    NSUInteger _keySize;
+}
+
+@end
 
 @implementation MKMAESKey
 
@@ -19,7 +28,16 @@
     NSAssert([algor isEqualToString:SCAlgorithmAES], @"algorithm error");
     
     if (self = [super initWithDictionary:info]) {
-        // TODO: AES algorithm arguments
+        // AES algorithm arguments
+        NSNumber *keySize = [info objectForKey:@"keySize"];
+        if (!keySize) {
+            keySize = [info objectForKey:@"size"];
+        }
+        if (keySize) {
+            _keySize = [keySize unsignedIntegerValue];
+        } else {
+            _keySize = kCCKeySizeAES256; // 32
+        }
     }
     
     return self;
@@ -27,20 +45,24 @@
 
 - (NSData *)encrypt:(const NSData *)plaintext {
     NSData *ciphertext = nil;
+    NSAssert(_keySize == kCCKeySizeAES256, @"only support AES-256 now");
     
-    // TODO: AES algorithm
-    ciphertext = [[plaintext base64Encode] data];
-    // FIXME: above is just for test, please implement it
+    // AES encrypt algorithm
+    if (_keySize == kCCKeySizeAES256) {
+        ciphertext = [plaintext AES256EncryptWithKey:_passphrase];
+    }
     
     return ciphertext;
 }
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
     NSData *plaintext = nil;
+    NSAssert(_keySize == kCCKeySizeAES256, @"only support AES-256 now");
     
-    // TODO: AES algorithm
-    plaintext = [[ciphertext UTF8String] base64Decode];
-    // FIXME: above is just for test, please implement it
+    // AES decrypt algorithm
+    if (_keySize == kCCKeySizeAES256) {
+        plaintext = [ciphertext AES256DecryptWithKey:_passphrase];
+    }
     
     return plaintext;
 }

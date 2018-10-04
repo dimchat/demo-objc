@@ -28,6 +28,7 @@
 @end
 
 static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
+    assert(merkle);
     if (!prev) {
         return [merkle copy];
     }
@@ -165,11 +166,11 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 - (NSData *)signWithPreviousMerkle:(const NSData *)prev
                           privateKey:(const MKMPrivateKey *)SK {
-    // hash = merkle + prev
+    // hash = prev + merkle
     const NSData *merkle = self.merkleRoot;
     merkle = link_merkle(merkle, prev);
     
-    // sign(merkle, SK)
+    // sign(hash, SK)
     NSData *signature = [SK sign:merkle];
     self.signature = signature;
     
@@ -179,11 +180,11 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 - (BOOL)verifyWithPreviousMerkle:(const NSData *)prev
                        publicKey:(const MKMPublicKey *)PK {
-    // hash = merkle + prev
+    // hash = prev + merkle
     const NSData *merkle = self.merkleRoot;
     merkle = link_merkle(merkle, prev);
     
-    // verify(merkle, signature, PK)
+    // verify(hash, signature, PK)
     BOOL correct = [PK verify:merkle signature:self.signature];
     
     return correct;
