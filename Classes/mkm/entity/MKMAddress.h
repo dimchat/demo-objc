@@ -13,14 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMAddressDefaultVersion 0x01
 
 typedef NS_ENUM(UInt8, MKMNetworkID) {
-    //MKMNetwork_BitCoin = 0x00,
+    // Network_BitCoin = 0x00,
     MKMNetwork_Main    = 0x08,  // 0000 1000
     MKMNetwork_Group   = 0x10,  // 0001 0000
     MKMNetwork_Moments = 0x20,  // 0010 0000
 };
 
 /**
- *  Address
+ *  Address like BitCoin
  *
  *      data format: "network+hash+checkcode"
  *          network   -- 1 byte
@@ -28,7 +28,7 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
  *          checkcode -- 4 bytes
  *
  *      algorithm:
- *          CT = sign(seed, SK);
+ *          CT   = sign(seed, SK);
  *          hash = ripemd160(sha256(CT));
  *          code = sha256(sha256(network+hash)).prefix(4)
  *          addr = base58(network+hash+check)

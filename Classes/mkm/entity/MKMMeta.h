@@ -29,24 +29,41 @@ NS_ASSUME_NONNULL_BEGIN
  *      }
  *
  *      algorithm:
- *          CT = sign(seed, SK);
- *              _h = ripemd160(sha256(CT));
- *              _n = sha256(sha256(0x00 + _h)).suffix(4);
- *          address = base58_encode(0x00 + _h + _n);
- *          number = uint(_n);
+ *          CT      = sign(seed, SK);
+ *          hash    = ripemd160(sha256(CT));
+ *          code    = sha256(sha256(network + hash)).prefix(4);
+ *          address = base58_encode(network + hash + code);
+ *          number  = uint(code);
  */
 @interface MKMMeta : MKMDictionary
 
 /**
- *  algorithm version
+ *  Algorithm version
  *
  *      0x01 - address algorithm like BitCoin
- *      0x02 - address algorithm like Ethereum
  */
 @property (readonly, nonatomic) NSUInteger version;
 
+/**
+ *  Seed to generate fingerprint
+ *
+ *      Username / Group-X
+ */
 @property (readonly, strong, nonatomic) const NSString *seed;
+
+/**
+ *  Public key
+ *
+ *      RSA / ECC
+ */
 @property (readonly, strong, nonatomic) const MKMPublicKey *key;
+
+/**
+ *  Fingerprint to verify ID and public key
+ *
+ *      Build: fingerprint = sign(seed, privateKey)
+ *      Check: verify(seed, fingerprint, publicKey)
+ */
 @property (readonly, strong, nonatomic) const NSData *fingerprint;
 
 + (instancetype)metaWithMeta:(id)meta;

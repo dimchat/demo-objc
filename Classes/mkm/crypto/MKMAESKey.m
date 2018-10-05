@@ -17,6 +17,7 @@
 @interface MKMAESKey () {
     
     NSUInteger _keySize;
+    NSString * _initVector;
 }
 
 @end
@@ -38,6 +39,14 @@
         } else {
             _keySize = kCCKeySizeAES256; // 32
         }
+        
+        NSString *initVector = [info objectForKey:@"initVector"];
+        if (!initVector) {
+            initVector = [info objectForKey:@"iv"];
+        }
+        if (initVector) {
+            _initVector = [initVector copy];
+        }
     }
     
     return self;
@@ -46,6 +55,7 @@
 - (NSData *)encrypt:(const NSData *)plaintext {
     NSData *ciphertext = nil;
     NSAssert(_keySize == kCCKeySizeAES256, @"only support AES-256 now");
+    NSAssert(!_initVector, @"do not support init vector now");
     
     // AES encrypt algorithm
     if (_keySize == kCCKeySizeAES256) {
@@ -58,6 +68,7 @@
 - (NSData *)decrypt:(const NSData *)ciphertext {
     NSData *plaintext = nil;
     NSAssert(_keySize == kCCKeySizeAES256, @"only support AES-256 now");
+    NSAssert(!_initVector, @"do not support init vector now");
     
     // AES decrypt algorithm
     if (_keySize == kCCKeySizeAES256) {

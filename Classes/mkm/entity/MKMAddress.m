@@ -26,12 +26,12 @@ static NSData *btc_hash(const NSData *fingerprint) {
 /**
  Get check code of the address
 
- @param network_hash - ciphertext
+ @param data - network + hash(CT)
  @return prefix 4 bytes after sha256*2
  */
-static NSData * btc_checkcode(const NSData *network_hash) {
-    assert([network_hash length] == 21);
-    NSData *data = [[network_hash sha256] sha256];
+static NSData * btc_checkcode(const NSData *data) {
+    assert([data length] == 21);
+    data = [[data sha256] sha256];
     assert([data length] == 32);
     return [data subdataWithRange:NSMakeRange(0, 4)];
 }
@@ -40,20 +40,21 @@ static NSData * btc_checkcode(const NSData *network_hash) {
  Get address like BitCoin
 
  @param CT - fingerprint
- @param network - Network ID
+ @param type - Network ID
  @return address
  */
-static NSString *btc_address(const NSData * CT, MKMNetworkID network) {
+static NSString *btc_address(const NSData * CT, MKMNetworkID type) {
     // 1. hash = ripemd160(sha256(CT))
     NSData *hash = btc_hash(CT);
-    // 2. str = 0x00 + hash
-    NSMutableData *str = [NSMutableData dataWithBytes:&network length:1];
-    [str appendData:hash];
-    // 3. cc = sha256(sha256(str)).prefix(4)
-    NSData *cc = btc_checkcode(str);
-    // 4. addr = base58(str + cc)
-    [str appendData:cc];
-    return [str base58Encode];
+    // 2. _h = network + hash
+    NSMutableData *data;
+    data = [[NSMutableData alloc] initWithBytes:&type length:1];
+    [data appendData:hash];
+    // 3. cc = sha256(sha256(_h)).prefix(4)
+    NSData *cc = btc_checkcode(data);
+    // 4. addr = base58(_h + cc)
+    [data appendData:cc];
+    return [data base58Encode];
 }
 
 /**
@@ -67,32 +68,6 @@ static UInt32 user_number(const NSData *cc) {
     UInt32 number;
     memcpy(&number, [cc bytes], 4);
     return number;
-}
-
-/**
- ID address
- 
- @param CT - fingerprint
- @return address
- */
-static NSString *build_address(const NSData * CT, MKMNetworkID network, NSUInteger version) {
-    assert(version == MKMAddressDefaultVersion);
-    NSString *addr = nil;
-    switch (version) {
-        case 0x01: {
-            addr = btc_address(CT, network);
-        }
-            break;
-            
-        case 0x02: {
-            // TODO: Ethereum address algorithm
-        }
-            break;
-            
-        default:
-            break;
-    }
-    return addr;
 }
 
 @interface MKMAddress ()
@@ -128,7 +103,14 @@ static NSString *build_address(const NSData * CT, MKMNetworkID network, NSUInteg
                             network:(MKMNetworkID)type
                             version:(NSUInteger)metaVersion {
     NSAssert(metaVersion == MKMAddressDefaultVersion, @"version error");
-    NSString *addr = build_address(CT, type, metaVersion);
+    NSString *addr = nil;
+    if (metaVersion == 0x01) {
+        //  BTC address:
+        //      hash = ripemd160(sha256(CT))
+        //      code = sha256(sha256(network + hash)).prefix(4)
+        //      addr = base58(network + hash + code)
+        addr = btc_address(CT, type);
+    }
     
     if (self = [self initWithString:addr]) {
         NSAssert(_network == type, @"error");
@@ -138,7 +120,7 @@ static NSString *build_address(const NSData * CT, MKMNetworkID network, NSUInteg
 }
 
 - (id)copy {
-    return [[MKMAddress alloc] initWithString:self];
+    return [[MKMAddress alloc] initWithString:_storeString];
 }
 
 - (BOOL)analyse {

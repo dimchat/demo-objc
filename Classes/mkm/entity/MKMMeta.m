@@ -63,14 +63,14 @@
     NSAssert(correct, @"fingerprint error");
     if (correct) {
         self = [super initWithDictionary:dict];
+        if (self) {
+            self.version = ver;
+            self.seed = seed;
+            self.key = PK;
+            self.fingerprint = CT;
+        }
     } else {
         self = [self init];
-    }
-    if (self) {
-        self.version = ver;
-        self.seed = seed;
-        self.key = PK;
-        self.fingerprint = CT;
     }
     
     return self;
@@ -93,15 +93,16 @@
         [mDict setObject:name forKey:@"seed"];
         [mDict setObject:PK forKey:@"publicKey"];
         [mDict setObject:fingerprint forKey:@"fingerprint"];
+        
         self = [super initWithDictionary:mDict];
+        if (self) {
+            self.version = ver;
+            self.seed = name;
+            self.key = PK;
+            self.fingerprint = CT;
+        }
     } else {
         self = [self init];
-    }
-    if (self) {
-        self.version = ver;
-        self.seed = name;
-        self.key = PK;
-        self.fingerprint = CT;
     }
     
     return self;
@@ -131,8 +132,8 @@
 }
 
 - (BOOL)matchAddress:(const MKMAddress *)address {
-    // 1. check "address <=> CT"
-    //    address == btc_hash(network, CT)
+    // 1. check "address <=> CT":
+    //    address == btc_address(network, CT)
     MKMAddress *addr;
     addr = [[MKMAddress alloc] initWithFingerprint:_fingerprint
                                            network:address.network
@@ -141,7 +142,7 @@
         return NO;
     }
     
-    // 2. check "seed <=> CT & PK"
+    // 2. check "seed <=> CT & PK":
     //    verify(seed, CT, PK)
     return [_key verify:[_seed data] signature:_fingerprint];
 }
