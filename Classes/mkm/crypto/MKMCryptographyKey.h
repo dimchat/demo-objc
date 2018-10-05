@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info;
 
+- (BOOL)isEqual:(const MKMCryptographyKey *)aKey;
 
 @end
 

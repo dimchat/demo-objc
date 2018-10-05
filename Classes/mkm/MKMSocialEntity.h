@@ -14,16 +14,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMSocialEntity : MKMEntity {
     
-    // parse the history to update these fields
-    const MKMID *_founder;
-    const MKMID *_owner;
     const NSMutableArray *_members;
 }
 
-@property (readonly, strong, nonatomic) const MKMID *founder; // just first owner
+@property (readonly, strong, nonatomic) const NSString *name;
+
+@property (readonly, strong, nonatomic) const MKMID *founder;
 @property (readonly, strong, nonatomic) const MKMID *owner;
 
 @property (readonly, strong, nonatomic) const NSArray *members;
+
+- (void)addMember:(const MKMID *)ID;
+- (void)removeMember:(const MKMID *)ID;
+- (BOOL)containsMember:(const MKMID *)ID;
 
 // +create(founder)
 // -setName(name)

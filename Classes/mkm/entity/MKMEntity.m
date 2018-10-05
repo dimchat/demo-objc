@@ -6,9 +6,12 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
+#import "MKMPublicKey.h"
+
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMMeta.h"
+#import "MKMAccount.h"
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
@@ -18,6 +21,7 @@
 
 @property (strong, nonatomic) const MKMID *ID;
 @property (strong, nonatomic) const MKMMeta *meta;
+@property (strong, nonatomic) const MKMHistory *history;
 
 @end
 
@@ -66,6 +70,77 @@
 - (NSUInteger)number {
     return _ID.address.code;
 }
+
+- (BOOL)recorder:(const MKMID *)ID
+  canWriteRecord:(const MKMHistoryRecord *)record
+        inEntity:(const MKMEntity *)entity {
+    NSAssert(!record.recorder || [record.recorder isEqual:ID], @"error");
+    
+    // check signature
+    MKMHistoryRecord *prev = entity.history.lastObject;
+    const MKMPublicKey *PK = ID.publicKey;
+    if (![record verifyWithPreviousMerkle:prev.merkleRoot
+                                publicKey:PK]) {
+        NSAssert(false, @"signature error");
+        return NO;
+    }
+    
+    // check events
+    MKMHistoryEvent *event;
+    const MKMID *commander;
+    for (id item in record.events) {
+        event = [MKMHistoryEvent eventWithEvent:item];
+        commander = event.commander;
+        if (!commander || [commander isEqual:ID]) {
+            // no need to check itself
+            continue;
+        }
+        
+        // check commander's permission
+        if (![self commander:commander
+                  canDoEvent:event
+                    inEntity:entity]) {
+            NSAssert(false, @"event permission denied: %@", event);
+            return NO;
+        }
+    }
+    
+    // let the subclass to define the recorder's permission
+    return YES;
+}
+
+- (BOOL)commander:(const MKMID *)ID
+       canDoEvent:(const MKMHistoryEvent *)event
+         inEntity:(const MKMEntity *)entity {
+    NSAssert(!event.commander || [event.commander isEqual:ID], @"error");
+    
+    // check the signature
+    const MKMPublicKey *PK = ID.publicKey;
+    const NSData *CT = event.signature;
+    if (CT) {
+        NSAssert(event.commander, @"error");
+        id operation = event.operation;
+        NSAssert([operation isKindOfClass:[NSString class]], @"error");
+        NSData *data = [operation data];
+        if (![PK verify:data signature:CT]) {
+            NSAssert(false, @"signature error");
+            return NO;
+        }
+    }
+    
+    // let the subclass to define the commander's permission
+    return YES;
+}
+
+- (void)commander:(const MKMID *)ID
+          execute:(const MKMHistoryOperation *)operation
+         inEntity:(const MKMEntity *)entity {
+    // let the subclass to execute the operation
+}
+
+@end
+
+@implementation MKMEntity (History)
 
 - (NSUInteger)runHistory:(const MKMHistory *)history {
     NSAssert(_ID, @"ID error");
@@ -118,24 +193,49 @@
 }
 
 - (BOOL)runHistoryRecord:(const MKMHistoryRecord *)record {
-    if ([self checkHistoryRecord:record]) {
-        [_history addObject:record];
-        return YES;
-    }
-    return NO;
-}
-
-- (BOOL)checkHistoryRecord:(const MKMHistoryRecord *)record {
-    // 1. verify signature
-    MKMHistoryRecord *prev = _history.lastObject;
-    BOOL correct = [record verifyWithPreviousMerkle:prev.merkleRoot publicKey:_ID.publicKey];
-    NSAssert(correct, @"history record incorrect");
-    if (!correct) {
-        // history record error
+    if (![self checkHistoryRecord:record]) {
+        // history error
         return NO;
     }
     
-    // 2. do other checking in subclass
+    const MKMID *ID = record.recorder;
+    if (!ID) {
+        NSAssert([self isKindOfClass:[MKMAccount class]], @"error");
+        ID = _ID;
+    }
+    
+    // execute operation in the event
+    MKMHistoryEvent *event;
+    const MKMID *commander;
+    for (id item in record.events) {
+        event = [MKMHistoryEvent eventWithEvent:item];
+        commander = event.commander;
+        if (!commander) {
+            commander = ID;
+        }
+        [_historyDelegate commander:commander
+                            execute:event.operation
+                           inEntity:self];
+    }
+    
+    [_history addObject:record];
+    return YES;
+}
+
+- (BOOL)checkHistoryRecord:(const MKMHistoryRecord *)record {
+    const MKMID *ID = record.recorder;
+    if (!ID) {
+        NSAssert([self isKindOfClass:[MKMAccount class]], @"error");
+        ID = _ID;
+    }
+    
+    // check recorder's permission
+    if (![_historyDelegate recorder:ID
+                     canWriteRecord:record
+                           inEntity:self]) {
+        NSAssert(false, @"record permission denied");
+        return NO;
+    }
     
     return YES;
 }

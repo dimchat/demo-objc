@@ -18,7 +18,7 @@
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     const DIMEnvelope *env = msg.envelope;
     const MKMID *to = env.receiver;
-    NSAssert([to isEqual:self.ID], @"recipient error");
+    NSAssert([to isEqual:_ID], @"recipient error");
     
     const DIMMessageContent *content = msg.content;
     NSAssert(content, @"content cannot be empty");

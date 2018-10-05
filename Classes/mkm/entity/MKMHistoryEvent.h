@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      data format: {
  *          operation: "{...}",
- *          operator: "moky@address", // user ID
+ *          commander: "moky@address", // user ID
  *          signature: "..." // algorithm defined by version
  *      }
  */
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const MKMHistoryOperation *operation;
 
-@property (readonly, strong, nonatomic) const MKMID *operatorID;
+@property (readonly, strong, nonatomic) const MKMID *commander;
 @property (readonly, strong, nonatomic) const NSData *signature;
 
 + (instancetype)eventWithEvent:(id)event;
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Initialize an operation without signature,
- while the operator is the recorder
+ while the commander is the recorder
 
  @param op - operation object
  @return Event object
@@ -78,12 +78,12 @@ NS_ASSUME_NONNULL_BEGIN
  Initialize an operation with signature
 
  @param operation - JsON string of an operation
- @param ID - operator's ID
+ @param ID - commander ID
  @param CT - signature
  @return Event object
  */
 - (instancetype)initWithOperation:(const NSString *)operation
-                         operator:(const MKMID *)ID
+                        commander:(const MKMID *)ID
                         signature:(const NSData *)CT;
 
 @end

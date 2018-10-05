@@ -108,7 +108,7 @@ static NSDate *date(NSTimeInterval time) {
 
 @property (strong, nonatomic) const MKMHistoryOperation *operation;
 
-@property (strong, nonatomic) const MKMID *operatorID;
+@property (strong, nonatomic) const MKMID *commander;
 @property (strong, nonatomic) const NSData *signature;
 
 @end
@@ -130,7 +130,7 @@ static NSDate *date(NSTimeInterval time) {
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     id operation = [dict objectForKey:@"operation"];
-    NSString *operator = [dict objectForKey:@"operator"];
+    NSString *commander = [dict objectForKey:@"commander"];
     NSString *signature = [dict objectForKey:@"signature"];
     
     MKMHistoryOperation *op = nil;
@@ -139,18 +139,18 @@ static NSDate *date(NSTimeInterval time) {
     if (self = [super initWithDictionary:dict]) {
         self.operation = op;
         
-        if (operator && signature) {
+        if (commander && signature) {
             NSAssert([operation isKindOfClass:[NSString class]], @"event info error: %@", dict);
             operation = [operation data];
             
-            MKMID *ID = [MKMID IDWithID:operator];
+            MKMID *ID = [MKMID IDWithID:commander];
             NSData *CT = [signature base64Decode];
             
             const MKMPublicKey *PK = [ID publicKey];
             BOOL OK = [PK verify:operation signature:CT];
             NSAssert(!PK || OK, @"signature error");
             
-            self.operatorID = ID;
+            self.commander = ID;
             self.signature = CT;
         }
     }
@@ -168,11 +168,11 @@ static NSDate *date(NSTimeInterval time) {
 }
 
 - (instancetype)initWithOperation:(const NSString *)operation
-                         operator:(const MKMID *)ID
+                        commander:(const MKMID *)ID
                         signature:(const NSData *)CT {
     NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:3];
     [mDict setObject:operation forKey:@"operation"];
-    [mDict setObject:ID forKey:@"operator"];
+    [mDict setObject:ID forKey:@"commander"];
     [mDict setObject:[CT base64Encode] forKey:@"signature"];
     
     const MKMPublicKey *PK = [ID publicKey];
@@ -185,7 +185,7 @@ static NSDate *date(NSTimeInterval time) {
     
     if (self = [super initWithDictionary:mDict]) {
         self.operation = op;
-        self.operatorID = ID;
+        self.commander = ID;
         self.signature = CT;
     }
     

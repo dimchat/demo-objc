@@ -53,4 +53,11 @@
     return self;
 }
 
+- (BOOL)isEqual:(const MKMCryptographyKey *)aKey {
+    if (![_algorithm isEqualToString:(NSString *)aKey.algorithm]) {
+        return NO;
+    }
+    return [self isEqualToDictionary:(NSDictionary *)aKey];
+}
+
 @end

@@ -17,6 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const NSArray *administrators;
 
+- (void)addAdmin:(const MKMID *)ID;
+- (void)removeAdmin:(const MKMID *)ID;
+- (BOOL)containsAdmin:(const MKMID *)ID;
+
 // -hire(admin, owner)
 // -fire(admin, owner)
 // -resign(admin)

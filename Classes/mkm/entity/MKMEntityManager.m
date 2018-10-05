@@ -13,7 +13,7 @@
 
 #import "MKMEntityManager.h"
 
-@interface MKMEntity (History)
+@interface MKMEntity (Hacking)
 
 @property (strong, nonatomic) const MKMHistory *history;
 

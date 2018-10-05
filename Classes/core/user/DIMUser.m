@@ -44,7 +44,7 @@
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     const DIMEnvelope *env = msg.envelope;
     const MKMID *to = env.receiver;
-    NSAssert([to isEqual:self.ID], @"recipient error");
+    NSAssert([to isEqual:_ID], @"recipient error");
     
     // 1. use the user's private key to decrypt the symmetric key
     const NSData *PW = msg.secretKey;
@@ -69,7 +69,7 @@
 - (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)msg {
     const DIMEnvelope *env = msg.envelope;
     const MKMID *from = env.sender;
-    NSAssert([from isEqual:self.ID], @"sender error");
+    NSAssert([from isEqual:_ID], @"sender error");
     
     const NSData *content = msg.content;
     NSAssert(content, @"content cannot be empty");

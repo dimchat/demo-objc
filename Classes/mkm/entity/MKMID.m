@@ -97,7 +97,7 @@
 
 - (BOOL)checkMeta:(const MKMMeta *)meta {
     BOOL correct = [meta match:self];
-    if (correct) {
+    if (correct && _address.network == MKMNetwork_Main) {
         self.publicKey = meta.key;
     }
     return correct;

@@ -30,56 +30,63 @@
 }
 
 - (const MKMPublicKey *)publicKey {
-    return self.ID.publicKey;
+    return _ID.publicKey;
 }
 
-- (BOOL)checkHistoryRecord:(const MKMHistoryRecord *)record {
-    if (![super checkHistoryRecord:record]) {
-        // error
+@end
+
+@implementation MKMAccount (HistoryDelegate)
+
+- (BOOL)commander:(const MKMID *)ID
+       canDoEvent:(const MKMHistoryEvent *)event
+         inEntity:(const MKMEntity *)entity {
+    if (![super commander:ID canDoEvent:event inEntity:entity]) {
+        return NO;
+    }
+    if (![entity.ID isEqual:ID]) {
+        NSAssert(false, @"only itself can do the event");
         return NO;
     }
     
-    // check events.operate
-    id event;
-    const NSString *op;
-    for (event in record.events) {
-        if (![event isKindOfClass:[MKMHistoryEvent class]]) {
-            if ([event isKindOfClass:[NSString class]]) {
-                event = [[MKMHistoryEvent alloc] initWithJSONString:event];
-            } else if ([event isKindOfClass:[NSDictionary class]]) {
-                event = [[MKMHistoryEvent alloc] initWithDictionary:event];
-            } else {
-                event = nil;
-            }
-        }
-        op = ((MKMHistoryEvent *)event).operation.operate;
-        if ([op isEqualToString:@"create"] ||
-            [op isEqualToString:@"register"]) {
-            // status: Init -> Registered
-            NSAssert(_status == MKMAccountStatusInitialized, @"status error");
-            if (_status == MKMAccountStatusInitialized) {
-                _status = MKMAccountStatusRegistered;
-            } else {
-                // status error
-                return NO;
-            }
-        } else if ([op isEqualToString:@"destroy"] ||
-                   [op isEqualToString:@"suicide"]) {
-            // status: Registerd -> Dead
-            NSAssert(_status == MKMAccountStatusRegistered, @"status error");
-            if (_status == MKMAccountStatusRegistered) {
-                _status = MKMAccountStatusDead;
-            } else {
-                // status error
-                return NO;
-            }
+    const NSString *op = event.operation.operate;
+    if ([op isEqualToString:@"register"] ||
+        [op isEqualToString:@"create"]) {
+        // status: Init -> Registered
+        if (_status == MKMAccountStatusInitialized) {
+            return YES;
         } else {
-            // operate error
+            return NO;
+        }
+    } else if ([op isEqualToString:@"suicide"] ||
+               [op isEqualToString:@"destroy"]) {
+        // status: Registerd -> Dead
+        if (_status == MKMAccountStatusRegistered) {
+            return YES;
+        } else {
             return NO;
         }
     }
     
     return YES;
+}
+
+- (void)commander:(const MKMID *)ID
+          execute:(const MKMHistoryOperation *)operation
+         inEntity:(const MKMEntity *)entity {
+    [super commander:ID execute:operation inEntity:entity];
+    
+    const NSString *op = operation.operate;
+    if ([op isEqualToString:@"register"] ||
+        [op isEqualToString:@"create"]) {
+        // status: Init -> Registered
+        NSAssert(_status == MKMAccountStatusInitialized, @"status error");
+        _status = MKMAccountStatusRegistered;
+    } else if ([op isEqualToString:@"suicide"] ||
+               [op isEqualToString:@"destroy"]) {
+        // status: Registerd -> Dead
+        NSAssert(_status == MKMAccountStatusRegistered, @"status error");
+        _status = MKMAccountStatusDead;
+    }
 }
 
 @end

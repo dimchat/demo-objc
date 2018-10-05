@@ -13,6 +13,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MKMPublicKey;
+@class MKMPrivateKey;
+
+@class MKMID;
 @class MKMHistoryEvent;
 
 /**
@@ -29,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) const NSArray *events;
 @property (readonly, strong, nonatomic) const NSData *merkleRoot;
 @property (readonly, strong, nonatomic) const NSData *signature;
+@property (readonly, strong, nonatomic) const MKMID *recorder;
 
 + (instancetype)recordWithRecord:(id)record;
 
@@ -48,6 +53,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithEvents:(const NSArray *)events
                         merkle:(const NSData *)hash
                      signature:(const NSData *)CT;
+/**
+ Copy history record from network
+
+ @param events - array of event string
+ @param hash - merkle root of events
+ @param CT - signature of the merkle root
+ @param ID - recorder ID
+ @return Record object
+ */
+- (instancetype)initWithEvents:(const NSArray *)events
+                        merkle:(const NSData *)hash
+                     signature:(const NSData *)CT
+                      recorder:(nullable const MKMID *)ID;
 
 - (void)addEvent:(const MKMHistoryEvent *)event;
 
