@@ -38,7 +38,7 @@
         return [[self alloc] initWithJSONString:meta];
     } else {
         NSAssert(!meta, @"unexpected meta: %@", meta);
-        return meta;
+        return nil;
     }
 }
 

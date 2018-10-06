@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "MKMEntity.h"
+#import "MKMEntityHistoryDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

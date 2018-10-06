@@ -48,7 +48,7 @@ static NSDate *date(NSTimeInterval time) {
         return [[self alloc] initWithJSONString:op];
     } else {
         NSAssert(!op, @"unexpected operation: %@", op);
-        return op;
+        return nil;
     }
 }
 
@@ -124,7 +124,7 @@ static NSDate *date(NSTimeInterval time) {
         return [[self alloc] initWithJSONString:event];
     } else {
         NSAssert(!event, @"unexpected event: %@", event);
-        return event;
+        return nil;
     }
 }
 

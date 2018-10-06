@@ -18,6 +18,7 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
+#import "MKMEntity+History.h"
 #import "MKMEntityManager.h"
 
 #import "MKMUser.h"

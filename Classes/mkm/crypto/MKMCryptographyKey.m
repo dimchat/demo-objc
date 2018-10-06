@@ -23,7 +23,7 @@
         return [[self alloc] initWithJSONString:key];
     } else {
         NSAssert(!key, @"unexpected key: %@", key);
-        return key;
+        return nil;
     }
 }
 

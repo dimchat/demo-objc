@@ -10,6 +10,9 @@
 #import "MKMMeta.h"
 #import "MKMHistory.h"
 #import "MKMEntity.h"
+#import "MKMEntity+History.h"
+
+#import "MKMEntityDelegate.h"
 
 #import "MKMEntityManager.h"
 

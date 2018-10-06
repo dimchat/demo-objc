@@ -88,7 +88,7 @@ static UInt32 user_number(const NSData *cc) {
         return [[self alloc] initWithString:addr];
     } else {
         NSAssert(!addr, @"unexpected address: %@", addr);
-        return addr;
+        return nil;
     }
 }
 

@@ -26,12 +26,18 @@
 #import "MKMPublicKey.h"
 #import "MKMPrivateKey.h"
 #import "MKMKeyStore.h"
-
 //#import "MKMAESKey.h"
 //#import "MKMRSAPublicKey.h"
 //#import "MKMRSAPrivateKey.h"
 //#import "MKMECCPublicKey.h"
 //#import "MKMECCPrivateKey.h"
+
+// Delegates
+#import "MKMEntityDelegate.h"
+#import "MKMEntityHistoryDelegate.h"
+#import "MKMSocialEntityHistoryDelegate.h"
+#import "MKMGroupHistoryDelegate.h"
+#import "MKMAccountHistoryDelegate.h"
 
 // Entity
 #import "MKMID.h"
@@ -40,6 +46,7 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 #import "MKMEntity.h"
+#import "MKMEntity+History.h"
 #import "MKMEntityManager.h"
 
 // User

@@ -24,9 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const NSArray *members;
 
+- (BOOL)isFounder:(const MKMID *)ID;
+- (BOOL)isOwner:(const MKMID *)ID;
+
 - (void)addMember:(const MKMID *)ID;
 - (void)removeMember:(const MKMID *)ID;
-- (BOOL)containsMember:(const MKMID *)ID;
+- (BOOL)isMember:(const MKMID *)ID;
 
 // +create(founder)
 // -setName(name)

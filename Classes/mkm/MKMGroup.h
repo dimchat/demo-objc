@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addAdmin:(const MKMID *)ID;
 - (void)removeAdmin:(const MKMID *)ID;
-- (BOOL)containsAdmin:(const MKMID *)ID;
+- (BOOL)isAdmin:(const MKMID *)ID;
 
 // -hire(admin, owner)
 // -fire(admin, owner)

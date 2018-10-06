@@ -73,7 +73,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
         return [[self alloc] initWithJSONString:record];
     } else {
         NSAssert(!record, @"unexpected record: %@", record);
-        return record;
+        return nil;
     }
 }
 
