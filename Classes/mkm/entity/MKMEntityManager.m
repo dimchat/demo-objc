@@ -81,7 +81,7 @@ static MKMEntityManager *_sharedManager = nil;
     NSAssert(ID, @"ID cannot be empty");
     MKMHistory *history = [_historyMap objectForKey:ID];
     if (!history && _delegate) {
-        history = [_delegate updateHistoryWithID:ID];
+        history = [_delegate queryHistoryWithID:ID];
         if (history) {
             [_historyMap setObject:history forKey:ID];
         }

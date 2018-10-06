@@ -162,7 +162,7 @@
         NSAssert(social.history.count == 0, @"only first record");
         NSAssert([social isFounder:ID], @"permission denied");
         // founder
-        MKMID *founder = [operation objectForKey:@"founder"];
+        MKMID *founder = [operation extraInfoForKey:@"founder"];
         if (founder) {
             NSAssert(!social.founder, @"founder error");
             NSAssert(!social.owner, @"owner error");
@@ -171,7 +171,7 @@
             social.owner = founder; // also the first owner
         }
         // first owner
-        MKMID *owner = [operation objectForKey:@"owner"];
+        MKMID *owner = [operation extraInfoForKey:@"owner"];
         if (owner) {
             NSAssert(!social.owner, @"owner error");
             owner = [MKMID IDWithID:owner];
@@ -181,7 +181,7 @@
         NSAssert(social.history.count > 0, @"history error");
         NSAssert([social isOwner:ID], @"permission denied");
         // abdicate the ownership
-        MKMID *owner = [operation objectForKey:@"owner"];
+        MKMID *owner = [operation extraInfoForKey:@"owner"];
         if (owner) {
             owner = [MKMID IDWithID:owner];
             social.owner = owner;
@@ -189,9 +189,9 @@
     } else if ([op isEqualToString:@"invite"]) {
         NSAssert(social.history.count > 0, @"history error");
         // invite user to member
-        MKMID *user = [operation objectForKey:@"user"];
+        MKMID *user = [operation extraInfoForKey:@"user"];
         if (!user) {
-            user = [operation objectForKey:@"member"];
+            user = [operation extraInfoForKey:@"member"];
         }
         if (user) {
             user = [MKMID IDWithID:user];
@@ -200,7 +200,7 @@
     } else if ([op isEqualToString:@"expel"]) {
         NSAssert(social.history.count > 0, @"history error");
         // expel member
-        MKMID *member = [operation objectForKey:@"member"];
+        MKMID *member = [operation extraInfoForKey:@"member"];
         if (member) {
             member = [MKMID IDWithID:member];
             [social removeMember:member];
@@ -217,7 +217,7 @@
                [op isEqualToString:@"setName"]) {
         NSAssert(social.history.count > 0, @"history error");
         // set name
-        NSString *name = [operation objectForKey:@"name"];
+        NSString *name = [operation extraInfoForKey:@"name"];
         if (name) {
             social.name = name;
         }

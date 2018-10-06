@@ -21,7 +21,7 @@
 @implementation MKMKeyStore
 
 - (instancetype)init {
-    self = [self initWithAlgorithm:ACAlgorithmECC];
+    self = [self initWithAlgorithm:ACAlgorithmRSA];
     return self;
 }
 

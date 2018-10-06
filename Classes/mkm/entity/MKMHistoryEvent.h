@@ -38,7 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithOperate:(const NSString *)op
                            time:(const NSDate *)time;
 
-- (void)setExtraValue:(id)value forKey:(NSString *)key;
+- (void)setExtraInfo:(id)info forKey:(NSString *)key;
+- (nullable id)extraInfoForKey:(NSString *)key;
 
 @end
 

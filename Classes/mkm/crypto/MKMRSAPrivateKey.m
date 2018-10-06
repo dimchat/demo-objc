@@ -61,8 +61,8 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
 @implementation MKMRSAPrivateKey
 
 - (instancetype)initWithDictionary:(NSDictionary *)info {
-    NSString *algor = [info objectForKey:@"algorithm"];
-    NSAssert([algor isEqualToString:ACAlgorithmRSA], @"algorithm error");
+    NSString *algorithm = [info objectForKey:@"algorithm"];
+    NSAssert([algorithm isEqualToString:ACAlgorithmRSA], @"algorithm error");
     // RSA key data
     NSString *data = [info objectForKey:@"data"];
     if (!data) {
@@ -81,8 +81,8 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
         NSAssert(range.location != NSNotFound, @"PUBLIC KEY data not found");
         if (range.location != NSNotFound) {
             NSString *PK = rsa_key_data(data, @"PUBLIC");
-            NSDictionary *pDict = @{@"algorithm":_algorithm, @"data":PK};
-            _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm
+            NSDictionary *pDict = @{@"algorithm":algorithm, @"data":PK};
+            _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
                                                          keyInfo:pDict];
         }
     }

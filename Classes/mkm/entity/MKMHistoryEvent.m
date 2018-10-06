@@ -87,9 +87,9 @@ static NSDate *date(NSTimeInterval time) {
     return self;
 }
 
-- (void)setExtraValue:(id)value forKey:(NSString *)key {
+- (void)setExtraInfo:(id)info forKey:(NSString *)key {
     NSAssert(key, @"key cannot be empty");
-    NSAssert(value, @"value cannot be empty");
+    NSAssert(info, @"value cannot be empty");
     
     if ([key isEqualToString:@"operate"]) {
         return;
@@ -97,7 +97,13 @@ static NSDate *date(NSTimeInterval time) {
         return;
     }
     
-    [_storeDictionary setObject:value forKey:key];
+    [_storeDictionary setObject:info forKey:key];
+}
+
+- (nullable id)extraInfoForKey:(NSString *)key {
+    NSAssert(key, @"key cannot be empty");
+    
+    return [_storeDictionary objectForKey:key];
 }
 
 @end

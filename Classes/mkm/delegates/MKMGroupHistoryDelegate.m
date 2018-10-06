@@ -132,9 +132,9 @@
     const NSString *op = operation.operate;
     if ([op isEqualToString:@"hire"]) {
         // hire admin
-        MKMID *admin = [operation objectForKey:@"admin"];
+        MKMID *admin = [operation extraInfoForKey:@"admin"];
         if (!admin) {
-            admin = [operation objectForKey:@"administrator"];
+            admin = [operation extraInfoForKey:@"administrator"];
         }
         if (admin) {
             admin = [MKMID IDWithID:admin];
@@ -142,9 +142,9 @@
         }
     } else if ([op isEqualToString:@"fire"]) {
         // fire admin
-        MKMID *admin = [operation objectForKey:@"admin"];
+        MKMID *admin = [operation extraInfoForKey:@"admin"];
         if (!admin) {
-            admin = [operation objectForKey:@"administrator"];
+            admin = [operation extraInfoForKey:@"administrator"];
         }
         if (admin) {
             admin = [MKMID IDWithID:admin];
