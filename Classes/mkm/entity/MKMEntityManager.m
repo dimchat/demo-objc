@@ -7,12 +7,17 @@
 //
 
 #import "MKMID.h"
+#import "MKMAddress.h"
 #import "MKMMeta.h"
 #import "MKMHistory.h"
 #import "MKMEntity.h"
 #import "MKMEntity+History.h"
+#import "MKMAccount.h"
+#import "MKMGroup.h"
 
 #import "MKMEntityDelegate.h"
+#import "MKMAccountHistoryDelegate.h"
+#import "MKMGroupHistoryDelegate.h"
 
 #import "MKMEntityManager.h"
 
@@ -95,7 +100,18 @@ static MKMEntityManager *_sharedManager = nil;
     MKMMeta *meta = [self metaWithID:ID];
     NSAssert(meta, @"meta not found: %@", ID);
     
-    MKMEntity *entity = [[MKMEntity alloc] initWithID:ID meta:meta];
+    MKMEntity *entity;
+    MKMEntityHistoryDelegate *delegate;
+    if (ID.address.network == MKMNetwork_Main) {
+        delegate = [[MKMAccountHistoryDelegate alloc] init];
+        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
+        entity.historyDelegate = delegate;
+    } else if (ID.address.network == MKMNetwork_Group) {
+        delegate = [[MKMGroupHistoryDelegate alloc] init];
+        entity = [[MKMGroup alloc] initWithID:ID meta:meta];
+        entity.historyDelegate = delegate;
+    }
+    
     NSUInteger count = [entity runHistory:history];
     if (count > 0) {
         const MKMHistory *his = [entity history];
@@ -113,7 +129,18 @@ static MKMEntityManager *_sharedManager = nil;
     MKMMeta *meta = [self metaWithID:ID];
     NSAssert(meta, @"meta not found: %@", ID);
     
-    MKMEntity *entity = [[MKMEntity alloc] initWithID:ID meta:meta];
+    MKMEntity *entity;
+    MKMEntityHistoryDelegate *delegate;
+    if (ID.address.network == MKMNetwork_Main) {
+        delegate = [[MKMAccountHistoryDelegate alloc] init];
+        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
+        entity.historyDelegate = delegate;
+    } else if (ID.address.network == MKMNetwork_Group) {
+        delegate = [[MKMGroupHistoryDelegate alloc] init];
+        entity = [[MKMGroup alloc] initWithID:ID meta:meta];
+        entity.historyDelegate = delegate;
+    }
+    
     BOOL correct = [entity runHistoryRecord:record];
     if (correct) {
         const MKMHistory *his = [entity history];
@@ -136,7 +163,18 @@ static MKMEntityManager *_sharedManager = nil;
         [_metaMap setObject:meta forKey:ID];
     }
     
-    MKMEntity *entity = [[MKMEntity alloc] initWithID:ID meta:meta];
+    MKMEntity *entity;
+    MKMEntityHistoryDelegate *delegate;
+    if (ID.address.network == MKMNetwork_Main) {
+        delegate = [[MKMAccountHistoryDelegate alloc] init];
+        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
+        entity.historyDelegate = delegate;
+    } else if (ID.address.network == MKMNetwork_Group) {
+        delegate = [[MKMGroupHistoryDelegate alloc] init];
+        entity = [[MKMGroup alloc] initWithID:ID meta:meta];
+        entity.historyDelegate = delegate;
+    }
+    
     NSUInteger count = [entity runHistory:history];
     if (count > 0) {
         const MKMHistory *his = [entity history];

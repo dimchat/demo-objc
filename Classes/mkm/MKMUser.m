@@ -21,6 +21,8 @@
 #import "MKMEntity+History.h"
 #import "MKMEntityManager.h"
 
+#import "MKMAccountHistoryDelegate.h"
+
 #import "MKMUser.h"
 
 @implementation MKMUser
@@ -119,7 +121,10 @@
     NSLog(@"register history: %@", history);
     
     // 4. create
+    MKMAccountHistoryDelegate *delegate;
+    delegate = [[MKMAccountHistoryDelegate alloc] init];
     MKMUser *user = [[self alloc] initWithID:ID meta:meta];
+    user.historyDelegate = delegate;
     NSInteger count = [user runHistory:history];
     NSAssert([history count] == count, @"history error");
     
