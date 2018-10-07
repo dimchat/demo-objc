@@ -13,6 +13,13 @@
 
 #import "MKMGroupHistoryDelegate.h"
 
+@interface MKMGroup (Hacking)
+
+- (void)addAdmin:(const MKMID *)ID;
+- (void)removeAdmin:(const MKMID *)ID;
+
+@end
+
 @implementation MKMGroupHistoryDelegate
 
 - (BOOL)recorder:(const MKMID *)ID

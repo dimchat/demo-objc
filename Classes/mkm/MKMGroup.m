@@ -10,6 +10,13 @@
 
 #import "MKMGroup.h"
 
+@interface MKMSocialEntity (Hacking)
+
+- (void)addMember:(const MKMID *)ID;
+- (void)removeMember:(const MKMID *)ID;
+
+@end
+
 @implementation MKMGroup
 
 - (instancetype)initWithID:(const MKMID *)ID
@@ -52,7 +59,11 @@
 }
 
 - (BOOL)isAdmin:(const MKMID *)ID {
-    return [_administrators containsObject:ID];
+    if ([_administrators containsObject:ID]) {
+        NSAssert([self isMember:ID], @"should be a member too");
+        return YES;
+    }
+    return NO;
 }
 
 @end

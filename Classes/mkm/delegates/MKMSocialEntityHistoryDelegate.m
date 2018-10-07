@@ -28,6 +28,9 @@
 @property (strong, nonatomic) const MKMID *founder;
 @property (strong, nonatomic) const MKMID *owner;
 
+- (void)addMember:(const MKMID *)ID;
+- (void)removeMember:(const MKMID *)ID;
+
 @end
 
 @implementation MKMSocialEntityHistoryDelegate
