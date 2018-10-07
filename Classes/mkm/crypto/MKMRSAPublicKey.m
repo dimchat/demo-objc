@@ -72,6 +72,14 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
     return self;
 }
 
+- (void)setPublicContent:(NSString *)publicContent {
+    if (![_publicContent isEqualToString:publicContent]) {
+        [_storeDictionary setObject:publicContent forKey:@"data"];
+        [_storeDictionary removeObjectForKey:@"content"];
+        _publicContent = [publicContent copy];
+    }
+}
+
 - (NSData *)encrypt:(const NSData *)plaintext {
     NSData *ciphertext = nil;
     

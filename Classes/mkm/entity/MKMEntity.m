@@ -25,7 +25,6 @@
 @implementation MKMEntity
 
 - (instancetype)init {
-    // TODO: prepare test account (hulk@xxx) which cannot suiside
     const MKMID *ID = nil;
     const MKMMeta *meta = nil;
     self = [self initWithID:ID meta:meta];

@@ -44,7 +44,7 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     NSNumber *version = [dict objectForKey:@"version"];
-    id publicKey = [dict objectForKey:@"publicKey"];
+    id publicKey = [dict objectForKey:@"key"];
     NSString *fingerprint = [dict objectForKey:@"fingerprint"];
     const NSString *seed = [dict objectForKey:@"seed"];
     
@@ -91,7 +91,7 @@
         NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:4];
         [mDict setObject:version forKey:@"version"];
         [mDict setObject:name forKey:@"seed"];
-        [mDict setObject:PK forKey:@"publicKey"];
+        [mDict setObject:PK forKey:@"key"];
         [mDict setObject:fingerprint forKey:@"fingerprint"];
         
         self = [super initWithDictionary:mDict];

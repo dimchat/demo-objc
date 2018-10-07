@@ -62,8 +62,10 @@
     }
     
     // OK, add new history records now
+    MKMHistoryRecord *record;
     for (id item in history) {
-        if ([self runHistoryRecord:item]) {
+        record = [MKMHistoryRecord recordWithRecord:item];
+        if ([self runHistoryRecord:record]) {
             ++pos;
         } else {
             // record error

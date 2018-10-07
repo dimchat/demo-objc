@@ -66,6 +66,12 @@
         }
     } else if ([op isEqualToString:@"suicide"] ||
                [op isEqualToString:@"destroy"]) {
+        // Immortal Accounts
+        if ([ID isEqualToString:MKM_IMMORTAL_HULK_ID] ||
+            [ID isEqualToString:MKM_MONKEY_KING_ID]) {
+            // cannot suicide!
+            return NO;
+        }
         // status: Registerd -> Dead
         if (account.status == MKMAccountStatusRegistered) {
             return YES;

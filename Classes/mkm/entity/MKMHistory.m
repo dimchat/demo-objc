@@ -258,4 +258,17 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 @implementation MKMHistory
 
++ (instancetype)historyWithHistory:(id)history {
+    if ([history isKindOfClass:[MKMHistory class]]) {
+        return history;
+    } else if ([history isKindOfClass:[NSArray class]]) {
+        return [[self alloc] initWithArray:history];
+    } else if ([history isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:history];
+    } else {
+        NSAssert(!history, @"unexpected history: %@", history);
+        return nil;
+    }
+}
+
 @end

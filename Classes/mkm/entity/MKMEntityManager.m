@@ -55,8 +55,57 @@ static MKMEntityManager *_sharedManager = nil;
     if (self = [super init]) {
         _metaMap = [[NSMutableDictionary alloc] init];
         _historyMap = [[NSMutableDictionary alloc] init];
+        
+        // Immortals
+        [self loadAccountFile:@"mkm_hulk"];
+        [self loadAccountFile:@"mkm_moki"];
     }
     return self;
+}
+
+- (BOOL)loadAccountFile:(NSString *)filename {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSString *path;
+    NSDictionary *dict;
+    MKMID *ID;
+    MKMMeta *meta;
+    MKMHistory *history;
+    
+    path = [bundle pathForResource:filename ofType:@"plist"];
+    if (![fm fileExistsAtPath:path]) {
+        NSAssert(false, @"cannot load: %@", path);
+        return NO;
+    }
+    
+    // ID
+    dict = [NSDictionary dictionaryWithContentsOfFile:path];
+    ID = [dict objectForKey:@"ID"];
+    if (!ID) {
+        NSAssert(false, @"ID not foun: %@", path);
+        return NO;
+    }
+    ID = [MKMID IDWithID:ID];
+    
+    // load meta
+    meta = [dict objectForKey:@"meta"];
+    if (!meta) {
+        NSAssert(false, @"meta not foun: %@", path);
+        return NO;
+    }
+    meta = [MKMMeta metaWithMeta:meta];
+    [self setMeta:meta forID:ID];
+    
+    // load history
+    history = [dict objectForKey:@"history"];
+    if (!history) {
+        NSAssert(false, @"history not foun: %@", path);
+        return NO;
+    }
+    history = [MKMHistory historyWithHistory:history];
+    [self setHistory:history forID:ID];
+    
+    return YES;
 }
 
 - (MKMMeta *)metaWithID:(const MKMID *)ID {

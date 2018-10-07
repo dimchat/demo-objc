@@ -90,6 +90,14 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
     return self;
 }
 
+- (void)setPrivateContent:(NSString *)privateContent {
+    if (![_privateContent isEqualToString:privateContent]) {
+        [_storeDictionary setObject:privateContent forKey:@"data"];
+        [_storeDictionary removeObjectForKey:@"content"];
+        _privateContent = [privateContent copy];
+    }
+}
+
 - (const MKMPublicKey *)publicKey {
     return _publicKey;
 }

@@ -13,6 +13,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MKM_IMMORTAL_HULK_ID @"hulk@4EvGU5ufCzn2rqQ5e2c17aabvLWNY9aEJN"
+#define MKM_MONKEY_KING_ID   @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"
+
 @class MKMPublicKey;
 @class MKMPrivateKey;
 
