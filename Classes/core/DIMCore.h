@@ -25,6 +25,9 @@
 #import "DIMSecureMessage.h"
 #import "DIMCertifiedMessage.h"
 
+//-
+#import "DIMTransceiver.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 #define DIM_CORE_VERSION 0x00010100

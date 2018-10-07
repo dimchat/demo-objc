@@ -24,6 +24,13 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 
 @protocol DIMMessageContentDelegate <NSObject>
 
+/**
+ Upload the file data and return the CDN URL
+
+ @param data - file data
+ @param name - filename
+ @return URL to the online resource
+ */
 - (NSString *)URLStringForFileData:(const NSData *)data
                           filename:(const NSString *)name;
 
@@ -31,16 +38,20 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 
 @interface DIMMessageContent : DIMDictionary
 
+// message type: text, image, ...
+@property (readonly, nonatomic) DIMMessageType type;
+
 // random number to identify message content
 @property (readonly, nonatomic) NSUInteger serialNumber;
 
+// delegate to upload file data
 @property (weak, nonatomic) id<DIMMessageContentDelegate> delegate;
 
 + (instancetype)contentWithContent:(id)content;
 
 /**
  *  Text message: {
- *      type: 00,
+ *      type: 0x01,
  *      serial: 123,
  *
  *      text: "..."
@@ -50,7 +61,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 
 /**
  *  File message: {
- *      type: 00,
+ *      type: 0x10,
  *      serial: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -60,9 +71,10 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
  */
 - (instancetype)initWithFileData:(const NSData *)data
                         filename:(nullable const NSString *)name;
+
 /**
  *  Image message: {
- *      type: 00,
+ *      type: 0x11,
  *      serial: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -73,9 +85,10 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
  */
 - (instancetype)initWithImageData:(const NSData *)data
                          filename:(nullable const NSString *)name;
+
 /**
  *  Audio message: {
- *      type: 00,
+ *      type: 0x12,
  *      serial: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -84,9 +97,10 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
  *  }
  */
 - (instancetype)initWithAudioData:(const NSData *)data;
+
 /**
  *  Video message: {
- *      type: 00,
+ *      type: 0x13,
  *      serial: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -97,9 +111,10 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
  */
 - (instancetype)initWithVideoData:(const NSData *)data
                          filename:(nullable const NSString *)name;
+
 /**
  *  Web Page message: {
- *      type: 00,
+ *      type: 0x20,
  *      serial: 123,
  *
  *      url: "https://...", // Page URL
@@ -119,16 +134,17 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 
 // GroupID for group message
 @property (readonly, strong, nonatomic) const MKMID *group;
+
 // SerialNumber for referenced reply in group chatting
 @property (readonly, nonatomic) NSUInteger quoteNumber;
 
 /**
  *  Quote text message: {
- *      type: 00,
+ *      type: 0x03,
  *      serial: 123,
  *
  *      text: "...",
- *      quote: 123
+ *      quote: 123   // referenced serial number of previous message
  *  }
  */
 - (instancetype)initWithText:(const NSString *)text quote:(NSUInteger)sn;

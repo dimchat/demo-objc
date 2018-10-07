@@ -8,17 +8,12 @@
 
 #import "DIMMessageContent.h"
 
-@interface DIMMessageContent () {
-    
-    DIMMessageType _type;
-}
+@interface DIMMessageContent ()
 
-// random number to identify message content
+@property (nonatomic) DIMMessageType type;
 @property (nonatomic) NSUInteger serialNumber;
 
-// GroupID for group message
 @property (strong, nonatomic) const MKMID *group;
-// SerialNumber for referenced reply in group chatting
 @property (nonatomic) NSUInteger quoteNumber;
 
 @end
@@ -40,9 +35,8 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        // TODO: randomize a serial number
-        _serialNumber = 0;
-        [_storeDictionary setObject:@(_serialNumber) forKey:@"sn"];
+        // randomize a serial number
+        self.serialNumber = arc4random();
     }
     return self;
 }
@@ -59,7 +53,8 @@
         // group ID
         MKMID *ID = [dict objectForKey:@"group"];
         if (ID) {
-            self.group = [MKMID IDWithID:ID];
+            ID = [MKMID IDWithID:ID];
+            _group = [ID copy];
         }
         // quote
         NSNumber *quote = [dict objectForKey:@"quote"];
@@ -71,8 +66,7 @@
 - (instancetype)initWithText:(const NSString *)text {
     if (self = [self init]) {
         // type
-        _type = DIMMessageType_Text;
-        [_storeDictionary setObject:@(_type) forKey:@"type"];
+        self.type = DIMMessageType_Text;
         
         // text
         [_storeDictionary setObject:text forKey:@"text"];
@@ -84,8 +78,7 @@
                         filename:(nullable const NSString *)name {
     if (self = [self init]) {
         // type
-        _type = DIMMessageType_File;
-        [_storeDictionary setObject:@(_type) forKey:@"type"];
+        self.type = DIMMessageType_File;
         
         // url or data
         NSString *url = [_delegate URLStringForFileData:data
@@ -96,6 +89,7 @@
             NSString *str = [data base64Encode];
             [_storeDictionary setObject:str forKey:@"data"];
         }
+        
         // filename
         if (name) {
             [_storeDictionary setObject:name forKey:@"filename"];
@@ -108,10 +102,9 @@
                          filename:(nullable const NSString *)name {
     if (self = [self initWithFileData:data filename:name]) {
         // type
-        _type = DIMMessageType_Image;
-        [_storeDictionary setObject:@(_type) forKey:@"type"];
+        self.type = DIMMessageType_Image;
         
-        // snapshot
+        // TODO: snapshot
     }
     return self;
 }
@@ -119,10 +112,9 @@
 - (instancetype)initWithAudioData:(const NSData *)data {
     if (self = [self initWithFileData:data filename:nil]) {
         // type
-        _type = DIMMessageType_Audio;
-        [_storeDictionary setObject:@(_type) forKey:@"type"];
+        self.type = DIMMessageType_Audio;
         
-        // Automatic Speech Recognition
+        // TODO: Automatic Speech Recognition
     }
     return self;
 }
@@ -131,10 +123,9 @@
                          filename:(nullable const NSString *)name {
     if (self = [self initWithFileData:data filename:nil]) {
         // type
-        _type = DIMMessageType_Video;
-        [_storeDictionary setObject:@(_type) forKey:@"type"];
+        self.type = DIMMessageType_Video;
         
-        // snapshot
+        // TODO: snapshot
     }
     return self;
 }
@@ -145,8 +136,7 @@
                              icon:(nullable const NSData *)icon {
     if (self = [self init]) {
         // type
-        _type = DIMMessageType_Page;
-        [_storeDictionary setObject:@(_type) forKey:@"type"];
+        self.type = DIMMessageType_Page;
         
         // url
         if (url) {
@@ -169,6 +159,16 @@
     return self;
 }
 
+- (void)setType:(DIMMessageType)type {
+    [_storeDictionary setObject:@(type) forKey:@"type"];
+    _type = type;
+}
+
+- (void)setSerialNumber:(NSUInteger)serialNumber {
+    [_storeDictionary setObject:@(serialNumber) forKey:@"sn"];
+    _serialNumber = serialNumber;
+}
+
 @end
 
 #pragma mark - Group message content
@@ -178,7 +178,7 @@
 - (instancetype)initWithText:(const NSString *)text
                        quote:(NSUInteger)sn {
     if (self = [self initWithText:text]) {
-        _quoteNumber = sn;
+        self.quoteNumber = sn;
     }
     return self;
 }
@@ -192,6 +192,11 @@
         }
         _group = [group copy];
     }
+}
+
+- (void)setQuoteNumber:(NSUInteger)quoteNumber {
+    [_storeDictionary setObject:@(quoteNumber) forKey:@"quote"];
+    _quoteNumber = quoteNumber;
 }
 
 @end
