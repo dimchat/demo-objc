@@ -6,19 +6,40 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
-#import "RSA.h"
-
 #import "NSObject+JsON.h"
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
 #import "MKMRSAPublicKey.h"
 
-static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
+SecKeyRef SecKeyRefFromNSData(const NSData *data, NSUInteger size, BOOL isPublic) {
+    // Set the private key query dictionary.
+    CFStringRef keyClass;
+    keyClass = isPublic ? kSecAttrKeyClassPublic : kSecAttrKeyClassPrivate;
+    NSDictionary * dict;
+    dict = @{(id)kSecAttrKeyType      : (id)kSecAttrKeyTypeRSA,
+             (id)kSecAttrKeyClass     : (__bridge id)keyClass,
+             (id)kSecAttrKeySizeInBits: @(size)};
+    CFErrorRef error = NULL;
+    SecKeyRef keyRef = SecKeyCreateWithData((CFDataRef)data,
+                                            (CFDictionaryRef)dict,
+                                            &error);
+    assert(error == NULL);
+    return keyRef;
+}
+
+NSData *NSDataFromSecKeyRef(SecKeyRef keyRef) {
+    CFErrorRef error = NULL;
+    CFDataRef dataRef = SecKeyCopyExternalRepresentation(keyRef, &error);
+    assert(error == NULL);
+    return (__bridge NSData *)(dataRef);
+}
+
+NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
     NSString *sTag, *eTag;
     NSRange spos, epos;
     NSString *key = [content copy];
-    tag = [tag uppercaseString];
+    NSString *tag = isPublic ? @"PUBLIC" : @"PRIVATE";
     
     sTag = [NSString stringWithFormat:@"-----BEGIN RSA %@ KEY-----", tag];
     eTag = [NSString stringWithFormat:@"-----END RSA %@ KEY-----", tag];
@@ -47,7 +68,11 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
     return key;
 }
 
-@interface MKMRSAPublicKey ()
+@interface MKMRSAPublicKey () {
+    
+    NSUInteger _keySize;
+    SecKeyRef _publicKeyRef;
+}
 
 @property (strong, nonatomic) NSString *publicContent;
 
@@ -58,15 +83,27 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
 - (instancetype)initWithDictionary:(NSDictionary *)info {
     NSString *algor = [info objectForKey:@"algorithm"];
     NSAssert([algor isEqualToString:ACAlgorithmRSA], @"algorithm error");
+    // RSA key size
+    NSNumber *keySize = [info objectForKey:@"size"];
+    if (!keySize) {
+        keySize = [info objectForKey:@"keySize"];
+    }
+    // RSA key data
+    NSString *data = [info objectForKey:@"data"];
+    if (!data) {
+        data = [info objectForKey:@"content"];
+    }
     
     if (self = [super initWithDictionary:info]) {
-        // RSA algorithm arguments
-        
-        NSString *data = [info objectForKey:@"data"];
-        if (!data) {
-            data = [info objectForKey:@"content"];
+        // key size
+        if (keySize) {
+            _keySize = [keySize unsignedIntegerValue];
+        } else {
+            _keySize = 1024;
         }
-        self.publicContent = rsa_key_data(data, @"PUBLIC");
+        
+        // public key data
+        self.publicContent = RSAKeyDataFromNSString(data, YES);
     }
     
     return self;
@@ -74,6 +111,9 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
 
 - (void)setPublicContent:(NSString *)publicContent {
     if (![_publicContent isEqualToString:publicContent]) {
+        _publicKeyRef = SecKeyRefFromNSData([publicContent base64Decode],
+                                            _keySize, YES);
+        
         [_storeDictionary setObject:publicContent forKey:@"data"];
         [_storeDictionary removeObjectForKey:@"content"];
         _publicContent = [publicContent copy];
@@ -81,24 +121,55 @@ static NSString *rsa_key_data(const NSString *content, const NSString *tag) {
 }
 
 - (NSData *)encrypt:(const NSData *)plaintext {
+    NSAssert([plaintext length] > 0, @"plaintext cannot be empty");
+    NSAssert([plaintext length] <= (_keySize/8 - 11), @"plaintext too long");
+    NSAssert(_publicKeyRef != NULL, @"public key cannot be empty");
     NSData *ciphertext = nil;
     
-    // RSA encrypt
-    ciphertext = [RSA encryptData:[plaintext copy]
-                        publicKey:_publicContent];
+    // buffer
+    size_t bufferSize = SecKeyGetBlockSize(_publicKeyRef);
+    uint8_t *buffer = malloc(bufferSize * sizeof(uint8_t));
+    memset(buffer, 0x0, bufferSize * sizeof(uint8_t));
+    
+    // encrypt using the public key.
+    OSStatus status = SecKeyEncrypt(_publicKeyRef,
+                                    kSecPaddingPKCS1,
+                                    [plaintext bytes],
+                                    [plaintext length],
+                                    buffer,
+                                    &bufferSize
+                                    );
+    NSAssert(status == noErr, @"Error, OSStatus: %d.", status);
+    
+    // build up ciphertext
+    ciphertext = [[NSData alloc] initWithBytesNoCopy:buffer
+                                              length:bufferSize
+                                        freeWhenDone:YES];
     
     return ciphertext;
 }
 
 - (BOOL)verify:(const NSData *)plaintext
      signature:(const NSData *)ciphertext {
+    NSAssert([plaintext length] > 0, @"plaintext cannot be empty");
+    NSAssert([plaintext length] <= (_keySize/8 - 11), @"plaintext too long");
+    NSAssert([ciphertext length] > 0, @"signature cannot be empty");
+    NSAssert([ciphertext length] <= (_keySize/8), @"signature too long");
+    NSAssert(_publicKeyRef != NULL, @"public key cannot be empty");
     BOOL match = NO;
     
     // RSA verify
-    NSData *temp = [RSA decryptData:[ciphertext copy]
-                          publicKey:_publicContent];
-    match = [plaintext isEqualToData:temp];
+    OSStatus sanityCheck = noErr;
+    sanityCheck = SecKeyRawVerify(_publicKeyRef,
+                                  kSecPaddingPKCS1,
+                                  [plaintext bytes],
+                                  [plaintext length],
+                                  [ciphertext bytes],
+                                  [ciphertext length]
+                                  );
     
+    match = (sanityCheck == noErr);
+
     return match;
 }
 
