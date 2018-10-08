@@ -37,6 +37,12 @@
     return self;
 }
 
+- (instancetype)initWithAlgorithm:(const NSString *)algorithm {
+    NSDictionary *dict = @{@"algorithm":algorithm};
+    self = [self initWithAlgorithm:algorithm keyInfo:dict];
+    return self;
+}
+
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
     NSDictionary *dict = [info copy];

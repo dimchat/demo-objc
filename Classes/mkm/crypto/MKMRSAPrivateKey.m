@@ -51,50 +51,61 @@
             _keySize = 1024;
         }
         
+        NSString *privateContent = nil;
+        NSString *publicContent = nil;
+        NSData *privateKeyData = nil;
+        NSData *publicKeyData = nil;
+        SecKeyRef privateKeyRef = NULL;
+        SecKeyRef publicKeyRef = NULL;
         if (data) {
-            // public key data
-            NSRange range = [data rangeOfString:@"PUBLIC KEY"];
-            NSAssert(range.location != NSNotFound, @"PUBLIC KEY data not found");
-            if (range.location != NSNotFound) {
-                NSString *PK = RSAKeyDataFromNSString(data, YES);
-                NSDictionary *pDict = @{@"algorithm":algorithm, @"data":PK};
-                _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
-                                                             keyInfo:pDict];
-            }
-            
             // private key data
             self.privateContent = RSAKeyDataFromNSString(data, NO);
-        } else {
-            // Generate key pairs
-            NSDictionary * parameters;
-            parameters = @{(id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
-                           (id)kSecAttrKeySizeInBits: @(_keySize),
-                           (id)kSecPrivateKeyAttrs: @{(id)kSecAttrIsPermanent:@YES},
-                           (id)kSecPublicKeyAttrs: @{(id)kSecAttrIsPermanent:@YES}
-                           };
-
-            SecKeyRef privateKeyRef, publicKeyRef;
-            OSStatus status = SecKeyGeneratePair((CFDictionaryRef)parameters,
-                                                 &publicKeyRef, &privateKeyRef);
-            NSAssert(status == noErr && publicKeyRef != NULL && privateKeyRef != NULL,
-                     @"failed to generate keys");
             
             // public key data
-            NSData *publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
-            if (publicKeyData) {
-                NSDictionary *pDict = @{@"algorithm":algorithm,
-                                        @"data":[publicKeyData base64Encode]};
-                _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
-                                                             keyInfo:pDict];
+            NSRange range = [data rangeOfString:@"PUBLIC KEY"];
+            if (range.location != NSNotFound) {
+                // get public key from data string
+                publicContent = RSAKeyDataFromNSString(data, YES);
+            } else {
+                // get public key from private key
+                publicKeyRef = SecKeyCopyPublicKey(_privateKeyRef);
+                publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
+                publicContent = [publicKeyData base64Encode];
             }
+        } else {
+            // Generate key pairs
+            NSDictionary *params;
+            params = @{(id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
+                       (id)kSecAttrKeySizeInBits: @(_keySize),
+                       (id)kSecPrivateKeyAttrs: @{(id)kSecAttrIsPermanent:@YES},
+                       (id)kSecPublicKeyAttrs: @{(id)kSecAttrIsPermanent:@YES}
+                       };
+            OSStatus status;
+            status = SecKeyGeneratePair((CFDictionaryRef)params,
+                                        &publicKeyRef, &privateKeyRef);
+            NSAssert(status==noErr && publicKeyRef!=NULL && privateKeyRef!=NULL,
+                     @"failed to generate keys");
+            _privateKeyRef = privateKeyRef;
             
             // private key data
-            NSData *privateKeyData = NSDataFromSecKeyRef(privateKeyRef);
-            if (privateKeyData) {
-                _privateContent = [privateKeyData base64Encode];
-                [_storeDictionary setObject:_privateContent forKey:@"data"];
+            privateKeyData = NSDataFromSecKeyRef(privateKeyRef);
+            privateContent = [privateKeyData base64Encode];
+            if (privateContent) {
+                [_storeDictionary setObject:privateContent forKey:@"data"];
+                _privateContent = [privateContent copy];
             }
-            _privateKeyRef = privateKeyRef;
+            
+            // public key data
+            publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
+            publicContent = [publicKeyData base64Encode];
+        }
+        
+        // create public key
+        if (publicContent) {
+            NSDictionary *pDict = @{@"algorithm":algorithm,
+                                    @"data":publicContent};
+            _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
+                                                         keyInfo:pDict];
         }
     }
     

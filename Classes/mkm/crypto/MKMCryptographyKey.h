@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithJSONString:(const NSString *)json;
 
+- (instancetype)initWithAlgorithm:(const NSString *)algorithm;
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info;
 

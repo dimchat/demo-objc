@@ -20,6 +20,7 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic);
  *
  *      keyInfo format: {
  *          algorithm: "RSA",
+ *          size: 1024,       // size in bits
  *          data: "..."
  *      }
  */

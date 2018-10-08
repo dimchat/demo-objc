@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      keyInfo format: {
  *          algorithm: "RSA",
+ *          size: 1024,       // size in bits
  *          data: "..."
  *      }
  */
