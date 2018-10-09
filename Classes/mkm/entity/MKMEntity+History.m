@@ -14,6 +14,8 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
+#import "MKMEntityHistoryDelegate.h"
+
 #import "MKMEntity+History.h"
 
 @interface MKMEntity (Hacking)

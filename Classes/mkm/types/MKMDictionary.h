@@ -12,7 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMDictionary : NSDictionary {
     
-    NSMutableDictionary *_storeDictionary; // inner dictionary
+    // inner dictionary
+    NSMutableDictionary<const NSString *, id> *_storeDictionary;
 }
 
 - (instancetype)initWithJSONString:(const NSString *)jsonString;

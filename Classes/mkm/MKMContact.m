@@ -17,18 +17,10 @@
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
     if (self = [super initWithID:ID meta:meta]) {
-        _memo = [[MKMMemo alloc] init];
+        _memo = [[MKMContactMemo alloc] init];
     }
     
     return self;
-}
-
-- (void)setMemo:(NSString *)value forKey:(const NSString *)key {
-    [_memo setObject:value forKey:key];
-}
-
-- (NSString *)memoForKey:(const NSString *)key {
-    return [_memo objectForKey:key];
 }
 
 @end

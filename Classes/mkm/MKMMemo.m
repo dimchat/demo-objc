@@ -11,3 +11,7 @@
 @implementation MKMMemo
 
 @end
+
+@implementation MKMContactMemo
+
+@end

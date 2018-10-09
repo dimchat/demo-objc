@@ -21,8 +21,6 @@
 
 @interface MKMSocialEntity ()
 
-@property (strong, nonatomic) const NSString *name;
-
 @property (strong, nonatomic) const MKMID *founder;
 @property (strong, nonatomic) const MKMID *owner;
 

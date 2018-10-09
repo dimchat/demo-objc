@@ -10,6 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MKMMale   @"male"
+#define MKMFemale @"female"
+
+typedef NS_ENUM(SInt32, MKMGender) {
+    MKMGender_Unknown = 0,
+    MKMGender_Male = 1,
+    MKMGender_Female = 2,
+};
+
 @interface MKMProfile : MKMDictionary
 
 /**
@@ -29,6 +38,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
+
+@end
+
+#pragma mark - Account profile
+
+@interface MKMAccountProfile : MKMProfile
+
+@property (strong, nonatomic) NSString *name;
+@property (nonatomic) MKMGender gender;
+@property (strong, nonatomic) NSString *avatar; // URL
+
+@property (strong, nonatomic) NSString *biography; // 0~280 bytes
+
+// -title
+// -birthday
+// -resumes
+// -phones
+// -emails
+// -ims
 
 @end
 

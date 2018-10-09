@@ -10,21 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMMemo;
+@class MKMContactMemo;
 
 @interface MKMContact : MKMAccount {
     
-    const MKMMemo *_memo; // same keys to the profile
+    MKMContactMemo *_memo; // same keys to the profile
 }
 
-@property (readonly, strong, nonatomic) const MKMMemo *memo;
+@property (readonly, strong, nonatomic) const MKMContactMemo *memo;
 
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
 NS_DESIGNATED_INITIALIZER;
-
-- (void)setMemo:(NSString *)value forKey:(const NSString *)key;
-- (NSString *)memoForKey:(const NSString *)key;
 
 @end
 

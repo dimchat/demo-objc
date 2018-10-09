@@ -14,10 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMSocialEntity : MKMEntity {
     
-    const NSMutableArray<const MKMID *> *_members;
+    // parse the history to update profiles
+    const MKMID *_founder;
+    const MKMID *_owner;
+    const NSString *_name;
+    
+    // parse the history to update members
+    NSMutableArray<const MKMID *> *_members;
 }
-
-@property (readonly, strong, nonatomic) const NSString *name;
 
 @property (readonly, strong, nonatomic) const MKMID *founder;
 @property (readonly, strong, nonatomic) const MKMID *owner;
@@ -45,6 +49,12 @@ NS_DESIGNATED_INITIALIZER;
 // -expel(member, admin)
 // -join(user)
 // -quit(member)
+
+@end
+
+@interface MKMSocialEntity (Profile)
+
+@property (readonly, strong, nonatomic) const NSString *name;
 
 @end
 

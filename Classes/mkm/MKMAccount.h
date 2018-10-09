@@ -6,10 +6,8 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 #import "MKMEntity.h"
-#import "MKMEntityHistoryDelegate.h"
+#import "MKMProfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,17 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMPublicKey;
 @class MKMPrivateKey;
 
-@class MKMProfile;
-
-#define MKMMale   @"male"
-#define MKMFemale @"female"
-
-typedef NS_ENUM(SInt32, MKMGender) {
-    MKMGender_Unknown = 0,
-    MKMGender_Male = 1,
-    MKMGender_Femail = 2,
-};
-
 typedef NS_ENUM(SInt32, MKMAccountStatus) {
     MKMAccountStatusInitialized = 0,
     MKMAccountStatusRegistered = 1,
@@ -38,7 +25,8 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 
 @interface MKMAccount : MKMEntity {
     
-    const MKMProfile *_profile;
+    // profiles
+    MKMAccountProfile *_profile;
     
     // parse the history to update status
     MKMAccountStatus _status;
@@ -47,19 +35,18 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
 @property (readonly, nonatomic) MKMAccountStatus status;
 
-@property (readonly, strong, nonatomic) const MKMProfile *profile;
-
-// special fields in profile
-@property (readonly, strong, nonatomic) const NSString *name;
-@property (readonly, nonatomic) MKMGender gender;
-@property (readonly, strong, nonatomic) const NSString *avatar; // URL
-
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
 NS_DESIGNATED_INITIALIZER;
 
-- (void)setProfile:(NSString *)string forKey:(const NSString *)key;
-- (NSString *)profileForKey:(const NSString *)key;
+@end
+
+@interface MKMAccount (Profile)
+
+// special fields in profile
+@property (readonly, strong, nonatomic) NSString *name;
+@property (readonly, nonatomic) MKMGender gender;
+@property (readonly, strong, nonatomic) NSString *avatar; // URL
 
 @end
 

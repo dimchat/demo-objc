@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMUser : MKMAccount {
     
-    const NSMutableDictionary<const MKMID *, MKMContact *> *_contacts;
+    NSMutableDictionary<const MKMID *, MKMContact *> *_contacts;
 }
 
 @property (readonly, strong, nonatomic) const NSDictionary *contacts;
