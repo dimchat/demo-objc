@@ -38,7 +38,7 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
 @property (readonly, nonatomic) MKMNetworkID network; // Network ID
 @property (readonly, nonatomic) UInt32 code; // check code
 
-@property (readonly, nonatomic) BOOL isValid;
+@property (readonly, nonatomic, getter=isValid) BOOL valid;
 
 + (instancetype)addressWithAddress:(id)addr;
 

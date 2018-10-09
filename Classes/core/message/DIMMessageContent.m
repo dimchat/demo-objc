@@ -169,19 +169,7 @@
     _serialNumber = serialNumber;
 }
 
-@end
-
-#pragma mark - Group message content
-
-@implementation DIMMessageContent (GroupMessage)
-
-- (instancetype)initWithText:(const NSString *)text
-                       quote:(NSUInteger)sn {
-    if (self = [self initWithText:text]) {
-        self.quoteNumber = sn;
-    }
-    return self;
-}
+#pragma mark Group message content
 
 - (void)setGroup:(const MKMID *)group {
     if (![_group isEqual:group]) {
@@ -197,6 +185,20 @@
 - (void)setQuoteNumber:(NSUInteger)quoteNumber {
     [_storeDictionary setObject:@(quoteNumber) forKey:@"quote"];
     _quoteNumber = quoteNumber;
+}
+
+@end
+
+#pragma mark - Group message content
+
+@implementation DIMMessageContent (GroupMessage)
+
+- (instancetype)initWithText:(const NSString *)text
+                       quote:(NSUInteger)sn {
+    if (self = [self initWithText:text]) {
+        self.quoteNumber = sn;
+    }
+    return self;
 }
 
 @end

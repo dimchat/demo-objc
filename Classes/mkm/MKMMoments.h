@@ -12,14 +12,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMMoments : MKMSocialEntity {
     
-    const NSMutableArray *_exclusions;
-    const NSMutableArray *_ignores;
+    const NSMutableArray<const MKMID *> *_exclusions;
+    const NSMutableArray<const MKMID *> *_ignores;
 }
 
 // Don't Share My Moments
 @property (readonly, strong, nonatomic) const NSArray *exclusions;
 // Hide User's Moments
 @property (readonly, strong, nonatomic) const NSArray *ignores;
+
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+NS_DESIGNATED_INITIALIZER;
 
 // -exclude(member)
 // -ignore(member)

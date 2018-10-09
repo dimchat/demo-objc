@@ -45,10 +45,21 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 }
 
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
-
 @property (readonly, nonatomic) MKMAccountStatus status;
 
 @property (readonly, strong, nonatomic) const MKMProfile *profile;
+
+// special fields in profile
+@property (readonly, strong, nonatomic) const NSString *name;
+@property (readonly, nonatomic) MKMGender gender;
+@property (readonly, strong, nonatomic) const NSString *avatar; // URL
+
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+NS_DESIGNATED_INITIALIZER;
+
+- (void)setProfile:(NSString *)string forKey:(const NSString *)key;
+- (NSString *)profileForKey:(const NSString *)key;
 
 @end
 

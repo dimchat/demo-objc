@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) const NSString *name;
 @property (readonly, strong, nonatomic) const MKMAddress *address;
 
-@property (readonly, nonatomic) BOOL isValid;
+@property (readonly, nonatomic, getter=isValid) BOOL valid;
 
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
 

@@ -30,6 +30,7 @@
 
 @implementation MKMSocialEntity
 
+/* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
     if (self = [super initWithID:ID meta:meta]) {

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMSocialEntity : MKMEntity {
     
-    const NSMutableArray *_members;
+    const NSMutableArray<const MKMID *> *_members;
 }
 
 @property (readonly, strong, nonatomic) const NSString *name;
@@ -23,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) const MKMID *owner;
 
 @property (readonly, strong, nonatomic) const NSArray *members;
+
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+NS_DESIGNATED_INITIALIZER;
 
 - (BOOL)isFounder:(const MKMID *)ID;
 - (BOOL)isOwner:(const MKMID *)ID;

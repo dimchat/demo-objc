@@ -75,7 +75,7 @@ static UInt32 user_number(const NSData *cc) {
 @property (nonatomic) MKMNetworkID network;
 @property (nonatomic) UInt32 code;
 
-@property (nonatomic) BOOL isValid;
+@property (nonatomic, getter=isValid) BOOL valid;
 
 @end
 
@@ -94,7 +94,7 @@ static UInt32 user_number(const NSData *cc) {
 
 - (instancetype)initWithString:(NSString *)aString {
     if (self = [super initWithString:aString]) {
-        _isValid = [self analyse];
+        _valid = [self analyse];
     }
     return self;
 }
@@ -114,7 +114,7 @@ static UInt32 user_number(const NSData *cc) {
     
     if (self = [self initWithString:addr]) {
         NSAssert(_network == type, @"error");
-        NSAssert(_isValid, @"error");
+        NSAssert(_valid, @"error");
     }
     return self;
 }

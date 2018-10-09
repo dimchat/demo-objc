@@ -98,8 +98,7 @@
     [_storeDictionary removeObjectForKey:aKey];
 }
 
-- (void)setObject:(id)anObject
-           forKey:(const NSString *)aKey {
+- (void)setObject:(id)anObject forKey:(const NSString *)aKey {
     [_storeDictionary setObject:anObject forKey:aKey];
 }
 

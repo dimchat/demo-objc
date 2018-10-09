@@ -12,6 +12,8 @@
 
 #import "MKMHistory.h"
 
+#import "MKMEntityManager.h"
+
 #import "MKMEntity.h"
 
 @interface MKMEntity ()
@@ -25,6 +27,7 @@
 @implementation MKMEntity
 
 - (instancetype)init {
+    NSAssert(false, @"DON'T call me");
     const MKMID *ID = nil;
     const MKMMeta *meta = nil;
     self = [self initWithID:ID meta:meta];
@@ -40,6 +43,12 @@
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
+    if (!meta) {
+        // get meta info
+        MKMEntityManager *em = [MKMEntityManager sharedManager];
+        meta = [em metaWithID:ID];
+    }
+    
     if (self = [super init]) {
         BOOL correct;
         // ID

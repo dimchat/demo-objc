@@ -15,12 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMUser : MKMAccount {
     
-    const NSMutableDictionary *_contacts;
+    const NSMutableDictionary<const MKMID *, MKMContact *> *_contacts;
 }
-
-@property (strong, nonatomic) const NSString *name;
-@property (nonatomic) const MKMGender gender;
-@property (strong, nonatomic) const NSString *avatar; // URL
 
 @property (readonly, strong, nonatomic) const NSDictionary *contacts;
 
@@ -28,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
                       meta:(const MKMMeta *)meta
 NS_DESIGNATED_INITIALIZER;
 
-- (BOOL)addContact:(const MKMContact *)contact;
+- (BOOL)addContact:(MKMContact *)contact;
 - (MKMContact *)getContactByID:(const MKMID *)ID;
 
 @end

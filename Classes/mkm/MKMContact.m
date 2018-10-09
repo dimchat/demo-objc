@@ -13,6 +13,7 @@
 
 @implementation MKMContact
 
+/* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
     if (self = [super initWithID:ID meta:meta]) {
@@ -22,30 +23,12 @@
     return self;
 }
 
-- (const NSString *)name {
-    NSArray *names = [_profile objectForKey:@"names"];
-    return names.firstObject;
+- (void)setMemo:(NSString *)value forKey:(const NSString *)key {
+    [_memo setObject:value forKey:key];
 }
 
-- (const MKMGender)gender {
-    id gender = [_profile objectForKey:@"gender"];
-    if ([gender isKindOfClass:[NSString class]]) {
-        if ([gender isEqualToString:@"male"]) {
-            return MKMGender_Male;
-        } else if ([gender isEqualToString:@"female"]) {
-            return MKMGender_Femail;
-        } else {
-            return MKMGender_Unknown;
-        }
-    } else if ([gender isKindOfClass:[NSNumber class]]) {
-        return [gender intValue];
-    }
-    return MKMGender_Unknown;
-}
-
-- (const NSString *)avatar {
-    NSArray *photos = [_profile objectForKey:@"photos"];
-    return photos.firstObject;
+- (NSString *)memoForKey:(const NSString *)key {
+    return [_memo objectForKey:key];
 }
 
 @end

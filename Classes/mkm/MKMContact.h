@@ -17,11 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
     const MKMMemo *_memo; // same keys to the profile
 }
 
-@property (readonly, strong, nonatomic) const NSString *name;
-@property (readonly, nonatomic) const MKMGender gender;
-@property (readonly, strong, nonatomic) const NSString *avatar; // URL
-
 @property (readonly, strong, nonatomic) const MKMMemo *memo;
+
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+NS_DESIGNATED_INITIALIZER;
+
+- (void)setMemo:(NSString *)value forKey:(const NSString *)key;
+- (NSString *)memoForKey:(const NSString *)key;
 
 @end
 

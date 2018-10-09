@@ -30,17 +30,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<MKMEntityHistoryDelegate> historyDelegate;
 
 /**
- Initialize a contact without checking
+ Initialize an entity
 
- @param ID - User/Group ID
+ @param ID - Contact/Group ID
  @return Entity object
  */
 - (instancetype)initWithID:(const MKMID *)ID;
 
 /**
- Initialize an entity
+ Initialize an entity with given meta info
 
- @param ID - User/Group ID
+ @param ID - User/Contact/Group ID
  @param meta - meta info includes PK, CT, ...
  @return Entity object
  */

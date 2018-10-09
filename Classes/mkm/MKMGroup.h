@@ -12,10 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMGroup : MKMSocialEntity {
     
-    const NSMutableArray *_administrators;
+    const NSMutableArray<const MKMID *> *_administrators;
 }
 
 @property (readonly, strong, nonatomic) const NSArray *administrators;
+
+- (instancetype)initWithID:(const MKMID *)ID
+                      meta:(const MKMMeta *)meta
+NS_DESIGNATED_INITIALIZER;
 
 /**
  *  DON'T call these methods to update group directly,
