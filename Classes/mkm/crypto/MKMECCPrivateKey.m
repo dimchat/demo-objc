@@ -29,8 +29,6 @@
     MKMPublicKey *PK = nil;
     
     // TODO: ECC encrypt
-    PK = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm keyInfo:_storeDictionary];
-    // FIXME: above is just for test, please implement it
     
     return PK;
 }
@@ -39,8 +37,6 @@
     NSData *plaintext = nil;
     
     // TODO: ECC encrypt
-    plaintext = [[ciphertext UTF8String] base58Decode];
-    // FIXME: above is just for test, please implement it
     
     return plaintext;
 }
@@ -49,8 +45,6 @@
     NSData *ciphertext = nil;
     
     // TODO: ECC encrypt
-    ciphertext = [[plaintext base58Encode] data];
-    // FIXME: above is just for test, please implement it
     
     return ciphertext;
 }

@@ -14,6 +14,11 @@
 
 @implementation MKMPrivateKey
 
+- (instancetype)init {
+    self = [self initWithAlgorithm:ACAlgorithmRSA];
+    return self;
+}
+
 - (instancetype)initWithJSONString:(const NSString *)json
                          publicKey:(const MKMPublicKey *)PK {
     if (self = [self initWithJSONString:json]) {
@@ -43,6 +48,15 @@
     }
     
     return self;
+}
+
+- (BOOL)isEqual:(const MKMPrivateKey *)aKey {
+    // 1. if the two key has the same content, return YES
+    if ([super isEqual:aKey]) {
+        return YES;
+    }
+    // 2. try to verify by public key
+    return [aKey.publicKey isMatch:self];
 }
 
 - (const MKMPublicKey *)publicKey {

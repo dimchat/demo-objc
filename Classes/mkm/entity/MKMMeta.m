@@ -10,7 +10,8 @@
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
-#import "MKMKeyStore.h"
+#import "MKMPublicKey.h"
+#import "MKMPrivateKey.h"
 
 #import "MKMID.h"
 #import "MKMAddress.h"

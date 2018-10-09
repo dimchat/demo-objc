@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info;
 
+- (BOOL)isEqual:(const MKMPrivateKey *)aKey;
+
 /**
  Get public key from private key
  

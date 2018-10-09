@@ -22,12 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMUser : MKMUser <DIMUser> {
-    
-    const MKMKeyStore *_keyStore;
-}
-
-+ (instancetype)registerWithName:(const NSString *)seed keyStore:(const MKMKeyStore *)store;
+@interface DIMUser : MKMUser <DIMUser>
 
 @end
 

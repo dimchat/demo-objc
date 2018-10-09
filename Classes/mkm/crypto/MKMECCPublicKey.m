@@ -27,8 +27,6 @@
     NSData *ciphertext = nil;
     
     // TODO: ECC encrypt
-    ciphertext = [[plaintext base58Encode] data];
-    // FIXME: above is just for test, please implement it
     
     return ciphertext;
 }
@@ -38,9 +36,6 @@
     BOOL match = NO;
     
     // TODO: ECC verify
-    NSData *temp = [[ciphertext UTF8String] base58Decode];
-    match = [plaintext isEqualToData:temp];
-    // FIXME: above is just for test, please implement it
     
     return match;
 }

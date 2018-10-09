@@ -24,17 +24,17 @@ typedef NS_ENUM(SInt32, MKMGender) {
 /**
  Profile fields that anyone can read
  */
-@property (strong, nonatomic) NSMutableArray *publicFields;
+@property (strong, nonatomic) NSMutableArray<const NSString *> *publicFields;
 
 /**
  Profile fields only the MKM network can read
  */
-@property (strong, nonatomic) NSMutableArray *protectedFields;
+@property (strong, nonatomic) NSMutableArray<const NSString *> *protectedFields;
 
 /**
  Extra fields only the user itself can read
  */
-@property (strong, nonatomic) NSMutableArray *privateFields;
+@property (strong, nonatomic) NSMutableArray<const NSString *> *privateFields;
 
 - (instancetype)init;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;

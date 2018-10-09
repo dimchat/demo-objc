@@ -37,17 +37,17 @@
 
 @implementation MKMEntityManager
 
-static MKMEntityManager *_sharedManager = nil;
+static MKMEntityManager *s_sharedManager = nil;
 
 + (instancetype)sharedManager {
-    if (!_sharedManager) {
-        _sharedManager = [[self alloc] init];
+    if (!s_sharedManager) {
+        s_sharedManager = [[self alloc] init];
     }
-    return _sharedManager;
+    return s_sharedManager;
 }
 
 + (instancetype)alloc {
-    NSAssert(!_sharedManager, @"Attempted to allocate a second instance of a singleton.");
+    NSAssert(!s_sharedManager, @"Attempted to allocate a second instance of a singleton.");
     return [super alloc];
 }
 
@@ -57,13 +57,13 @@ static MKMEntityManager *_sharedManager = nil;
         _historyMap = [[NSMutableDictionary alloc] init];
         
         // Immortals
-        [self loadAccountFile:@"mkm_hulk"];
-        [self loadAccountFile:@"mkm_moki"];
+        [self loadEntityInfoFromFile:@"mkm_hulk"];
+        [self loadEntityInfoFromFile:@"mkm_moki"];
     }
     return self;
 }
 
-- (BOOL)loadAccountFile:(NSString *)filename {
+- (BOOL)loadEntityInfoFromFile:(NSString *)filename {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path;
@@ -82,7 +82,7 @@ static MKMEntityManager *_sharedManager = nil;
     dict = [NSDictionary dictionaryWithContentsOfFile:path];
     ID = [dict objectForKey:@"ID"];
     if (!ID) {
-        NSAssert(false, @"ID not foun: %@", path);
+        NSAssert(false, @"ID not found: %@", path);
         return NO;
     }
     ID = [MKMID IDWithID:ID];
@@ -90,7 +90,7 @@ static MKMEntityManager *_sharedManager = nil;
     // load meta
     meta = [dict objectForKey:@"meta"];
     if (!meta) {
-        NSAssert(false, @"meta not foun: %@", path);
+        NSAssert(false, @"meta not found: %@", path);
         return NO;
     }
     meta = [MKMMeta metaWithMeta:meta];
@@ -99,7 +99,7 @@ static MKMEntityManager *_sharedManager = nil;
     // load history
     history = [dict objectForKey:@"history"];
     if (!history) {
-        NSAssert(false, @"history not foun: %@", path);
+        NSAssert(false, @"history not found: %@", path);
         return NO;
     }
     history = [MKMHistory historyWithHistory:history];

@@ -17,6 +17,12 @@
 
 #import "MKMAccount.h"
 
+@interface MKMAccount ()
+
+@property (nonatomic) MKMAccountStatus status;
+
+@end
+
 @implementation MKMAccount
 
 - (instancetype)init {

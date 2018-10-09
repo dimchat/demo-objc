@@ -20,7 +20,7 @@
 
 @property (strong, nonatomic) const MKMID *ID;
 @property (strong, nonatomic) const MKMMeta *meta;
-@property (strong, nonatomic) const MKMHistory *history;
+@property (strong, nonatomic) MKMHistory *history;
 
 @end
 

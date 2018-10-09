@@ -8,6 +8,7 @@
 
 #import "MKMPublicKey.h"
 #import "MKMPrivateKey.h"
+#import "MKMKeyStore.h"
 
 #import "MKMID.h"
 #import "MKMAddress.h"
@@ -24,6 +25,12 @@
 #import "MKMAccountHistoryDelegate.h"
 
 #import "MKMUser.h"
+
+@interface MKMUser ()
+
+@property (strong, nonatomic) const MKMPrivateKey *privateKey;
+
+@end
 
 @implementation MKMUser
 
@@ -53,6 +60,25 @@
 
 - (MKMContact *)getContactByID:(const MKMID *)ID {
     return [_contacts objectForKey:ID];
+}
+
+- (const MKMPrivateKey *)privateKey {
+    if (!_privateKey) {
+        MKMKeyStore *store = [MKMKeyStore sharedStore];
+        const MKMPrivateKey *SK = [store privateKeyForUser:self];
+        if ([self checkPrivateKey:SK]) {
+            //_privateKey = [SK copy];
+        }
+    }
+    return _privateKey;
+}
+
+- (BOOL)checkPrivateKey:(const MKMPrivateKey *)SK {
+    BOOL correct = [self.publicKey isMatch:SK];
+    if (correct) {
+        self.privateKey = SK;
+    }
+    return correct;
 }
 
 @end
@@ -113,8 +139,10 @@
 
 - (MKMHistoryRecord *)suicideWithMessage:(const NSString *)lastWords
                               privateKey:(const MKMPrivateKey *)SK {
+    NSAssert([_ID.publicKey isMatch:SK], @"not your SK");
+    
     // 1. generate history record
-    MKMHistoryRecord *his;
+    MKMHistoryRecord *record;
     MKMHistoryEvent *evt;
     MKMHistoryOperation *op;
     op = [[MKMHistoryOperation alloc] initWithOperate:@"suicide"];
@@ -122,15 +150,16 @@
     NSArray *events = [NSArray arrayWithObject:evt];
     NSData *hash = nil;
     NSData *CT = nil;
-    his = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
-    [his signWithPreviousMerkle:hash privateKey:SK];
+    record = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
+    [record signWithPreviousMerkle:hash privateKey:SK];
+    NSLog(@"suicide record: %@", record);
     
     // 2. send the history record out
     MKMEntityManager *em = [MKMEntityManager sharedManager];
-    BOOL OK = [em addHistoryRecord:his forID:_ID];
+    BOOL OK = [em addHistoryRecord:record forID:_ID];
     NSAssert(OK, @"error");
     
-    return his;
+    return record;
 }
 
 @end

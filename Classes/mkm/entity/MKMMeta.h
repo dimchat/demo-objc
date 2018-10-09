@@ -6,8 +6,6 @@
 //  Copyright © 2018年 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 #import "MKMDictionary.h"
 
 NS_ASSUME_NONNULL_BEGIN

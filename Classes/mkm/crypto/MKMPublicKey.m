@@ -14,6 +14,12 @@
 
 @implementation MKMPublicKey
 
+- (instancetype)init {
+    NSAssert(false, @"DON'T call me");
+    self = [self initWithAlgorithm:ACAlgorithmRSA];
+    return self;
+}
+
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
     NSDictionary *dict = [info copy];
@@ -39,7 +45,15 @@
 }
 
 - (BOOL)isMatch:(const MKMPrivateKey *)SK {
-    return [SK.publicKey isEqual:self];
+    // 1. if the SK has the same public key, return YES
+    if ([SK.publicKey isEqual:self]) {
+        return YES;
+    }
+    // 2. try to verify the SK's signature
+    NSString *promise = @"Moky loves May Lee forever!";
+    NSData *data = [promise dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *signature = [SK sign:data];
+    return [self verify:data signature:signature];
 }
 
 - (NSData *)encrypt:(const NSData *)plaintext {

@@ -8,40 +8,62 @@
 
 #import <Foundation/Foundation.h>
 
-#import "MKMSymmetricKey.h"
-#import "MKMPublicKey.h"
-#import "MKMPrivateKey.h"
-
 NS_ASSUME_NONNULL_BEGIN
+
+@class MKMSymmetricKey;
+@class MKMPublicKey;
+@class MKMPrivateKey;
+
+@class MKMEntity;
+@class MKMUser;
+@class MKMContact;
 
 @interface MKMKeyStore : NSObject
 
-@property (readonly, strong, nonatomic) const NSString *algorithm;
-
-@property (readonly, strong, nonatomic) const MKMPrivateKey *privateKey;
-@property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
-
++ (instancetype)sharedStore;
 
 /**
- Generate key pairs
+ Get PK for contact to encrypt or verify message
 
- @param name - Asymmetric cryptography algorithm
- @return KeyStore object
+ @param contact - contact with ID
+ @return PK
  */
-- (instancetype)initWithAlgorithm:(const NSString *)name;
+- (const MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact;
+
+- (void)setPublicKey:(const MKMPublicKey *)PK
+          forContact:(const MKMContact *)contact;
 
 /**
- Initialize with key pairs
+ Get SK for user to decrypt or sign message
 
- @param PK - public key
- @param SK - private key
- @return KeyStore object
+ @param user - user with ID
+ @return SK
  */
-- (instancetype)initWithPublicKey:(const MKMPublicKey *)PK
-                       privateKey:(const MKMPrivateKey *)SK
-NS_DESIGNATED_INITIALIZER;
+- (const MKMPrivateKey *)privateKeyForUser:(const MKMUser *)user;
 
-- (NSData *)privateKeyStoredWithPassword:(const MKMSymmetricKey *)scKey;
+- (void)setPrivateKey:(const MKMPrivateKey *)SK
+              forUser:(const MKMUser *)user;
+
+/**
+ Get PW for contact or group to encrypt or decrypt message
+
+ @param entity - entity with ID
+ @return PW
+ */
+- (const MKMSymmetricKey *)passphraseForEntity:(const MKMEntity *)entity;
+
+- (void)setPassphrase:(const MKMSymmetricKey *)PW
+            forEntity:(const MKMEntity *)entity;
+
+/**
+ Get encrypted SK for user to store elsewhere
+
+ @param user - user with ID
+ @param scKey - password to encrypt the SK
+ @return KS
+ */
+- (const NSData *)privateKeyStoredForUser:(const MKMUser *)user
+                               passphrase:(const MKMSymmetricKey *)scKey;
 
 @end
 

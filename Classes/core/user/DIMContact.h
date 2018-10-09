@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMContact : MKMContact <DIMContact>
 
-@property (strong, nonatomic) MKMSymmetricKey *passphrase;
+@property (readonly, strong, nonatomic) const MKMSymmetricKey *passphrase;
 
 @end
 

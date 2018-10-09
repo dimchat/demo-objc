@@ -14,6 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTransceiver : NSObject
 
++ (instancetype)sharedInstance;
+
+- (DIMUser *)userFromID:(const MKMID *)ID;
+- (DIMContact *)contactFromID:(const MKMID *)ID;
+- (DIMGroup *)groupFromID:(const MKMID *)ID;
+
 #pragma mark - prepare message for sending out
 
 /**

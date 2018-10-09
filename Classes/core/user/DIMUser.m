@@ -14,37 +14,11 @@
 
 #import "DIMUser.h"
 
-@interface DIMUser ()
-
-@property (strong, nonatomic) const MKMKeyStore *keyStore;
-
-@end
-
 @implementation DIMUser
-
-+ (instancetype)registerWithName:(const NSString *)seed
-                       publicKey:(const MKMPublicKey *)PK
-                      privateKey:(const MKMPrivateKey *)SK {
-    DIMUser *user = [super registerWithName:seed
-                                  publicKey:PK privateKey:SK];
-    user.keyStore = [[MKMKeyStore alloc] initWithPublicKey:PK
-                                                privateKey:SK];
-    return user;
-}
-
-+ (instancetype)registerWithName:(const NSString *)seed
-                        keyStore:(const MKMKeyStore *)store {
-    DIMUser *user = [super registerWithName:seed
-                                  publicKey:store.publicKey
-                                 privateKey:store.privateKey];
-    user.keyStore = store;
-    return user;
-}
 
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     const DIMEnvelope *env = msg.envelope;
-    const MKMID *to = env.receiver;
-    NSAssert([to isEqual:_ID], @"recipient error");
+    NSAssert([env.receiver isEqual:_ID], @"recipient error");
     
     // 1. use the user's private key to decrypt the symmetric key
     const NSData *PW = msg.secretKey;
@@ -68,8 +42,7 @@
 
 - (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)msg {
     const DIMEnvelope *env = msg.envelope;
-    const MKMID *from = env.sender;
-    NSAssert([from isEqual:_ID], @"sender error");
+    NSAssert([env.sender isEqual:_ID], @"sender error");
     
     const NSData *content = msg.content;
     NSAssert(content, @"content cannot be empty");
@@ -78,22 +51,38 @@
     const NSData *CT = [self sign:content];
     
     // 2. create certified message
-    const NSData *key = msg.secretKey;
-    return [[DIMCertifiedMessage alloc] initWithContent:content
-                                               envelope:env
-                                              secretKey:key
-                                              signature:CT];
+    DIMCertifiedMessage *cMsg = nil;
+    if (env.receiver.address.network == MKMNetwork_Main) {
+        // Personal Message
+        const NSData *key = msg.secretKey;
+        NSAssert(key, @"secret key not found");
+        cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
+                                                   envelope:env
+                                                  secretKey:key
+                                                  signature:CT];
+    } else if (env.receiver.address.network == MKMNetwork_Group) {
+        // Group Message
+        const NSDictionary *keys = msg.secretKeys;
+        NSAssert(keys, @"secret keys not found");
+        cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
+                                                   envelope:env
+                                                 secretKeys:keys
+                                                  signature:CT];
+    }
+    return cMsg;
 }
 
 #pragma mark - Decrypt/Sign functions for passphrase/signature
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
-    const MKMPrivateKey *SK = [_keyStore privateKey];
+    MKMKeyStore *store = [MKMKeyStore sharedStore];
+    const MKMPrivateKey *SK = [store privateKeyForUser:self];
     return [SK decrypt:ciphertext];
 }
 
 - (NSData *)sign:(const NSData *)plaintext {
-    const MKMPrivateKey *SK = [_keyStore privateKey];
+    MKMKeyStore *store = [MKMKeyStore sharedStore];
+    const MKMPrivateKey *SK = [store privateKeyForUser:self];
     return [SK sign:plaintext];
 }
 
