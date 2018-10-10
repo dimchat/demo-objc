@@ -114,15 +114,8 @@ static MKMEntityManager *s_sharedManager = nil;
         NSAssert(false, @"ID and meta not match");
         return NO;
     }
-    
-    MKMMeta *oMeta = [self metaWithID:ID];
-    if (oMeta) {
-        // already exists
-        return NO;
-    }
     // set meta
     [_metaTable setObject:meta forKey:ID];
-    
     return YES;
 }
 
@@ -168,11 +161,6 @@ static MKMEntityManager *s_sharedManager = nil;
         return NO;
     }
     
-    MKMMeta *oMeta = [self metaWithID:ID];
-    if (oMeta) {
-        // already exists
-        return NO;
-    }
     // set meta
     [_metaTable setObject:meta forKey:ID];
     

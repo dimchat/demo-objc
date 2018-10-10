@@ -19,6 +19,7 @@
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
+#import "MKMEntityDelegate.h"
 #import "MKMEntity+History.h"
 #import "MKMEntityManager.h"
 
@@ -124,47 +125,59 @@
     NSAssert([seed length] > 2, @"seed error");
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
-    // 1. generate meta
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMKeyStore *ks = [MKMKeyStore sharedStore];
+    
+    // 1. create user
+    // 1.1. generate meta
     MKMMeta *meta;
     meta = [[MKMMeta alloc] initWithSeed:seed publicKey:PK privateKey:SK];
     NSLog(@"register meta: %@", meta);
-    
+    // 1.2. generate address with meta info
     MKMAddress *address;
     address = [[MKMAddress alloc] initWithFingerprint:meta.fingerprint
                                               network:MKMNetwork_Main
                                               version:MKMAddressDefaultVersion];
-    
-    // 2. generate ID
+    // 1.3. generate ID
     MKMID *ID = [[MKMID alloc] initWithName:seed address:address];
     NSLog(@"register ID: %@", ID);
+    // 1.4. create user with ID & meta
+    MKMUser *user = [[self alloc] initWithID:ID meta:meta];
+    // 1.5. store the meta & private key
+    [em setMeta:meta forID:ID];
+    [ks setPrivateKey:[SK copy] forUser:user];
     
-    // 3. generate history
+    // 2. generate history
     MKMHistory *history;
     MKMHistoryRecord *his;
     MKMHistoryEvent *evt;
     MKMHistoryOperation *op;
+    // 2.1. create event.operation
     op = [[MKMHistoryOperation alloc] initWithOperate:@"register"];
     evt = [[MKMHistoryEvent alloc] initWithOperation:op];
     NSArray *events = [NSArray arrayWithObject:evt];
     NSData *hash = nil;
     NSData *CT = nil;
+    // 2.2. create history.record
     his = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
     [his signWithPreviousMerkle:hash privateKey:SK];
     NSArray *records = [NSArray arrayWithObject:his];
     history = [[MKMHistory alloc] initWithArray:records];
     NSLog(@"register history: %@", history);
     
-    // 4. create
+    // 3. update status by running history record
     MKMAccountHistoryDelegate *delegate;
     delegate = [[MKMAccountHistoryDelegate alloc] init];
-    MKMUser *user = [[self alloc] initWithID:ID meta:meta];
     user.historyDelegate = delegate;
     NSInteger count = [user runHistory:history];
     NSAssert([history count] == count, @"history error");
     
-    // 5. send the ID+meta+history out
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    // 4. store the meta & history in entity mamager
     BOOL OK = [em setMeta:meta history:history forID:ID];
+    if (OK) {
+        // upload the meta & history into the network
+        [em.delegate postMeta:meta history:history forID:ID];
+    }
     NSAssert(OK, @"error");
     
     return user;
@@ -190,6 +203,10 @@
     // 2. send the history record out
     MKMEntityManager *em = [MKMEntityManager sharedManager];
     BOOL OK = [em addHistoryRecord:record forID:_ID];
+    if (OK) {
+        // upload the new history record into the network
+        [em.delegate postHistoryRecord:record forID:_ID];
+    }
     NSAssert(OK, @"error");
     
     return record;
