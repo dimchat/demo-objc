@@ -64,16 +64,20 @@
 
 @implementation MKMAccount (Profile)
 
-- (NSString *)name {
-    return _profile.name;
+- (const NSString *)name {
+    NSString *str = self.profile.name;
+    if (!str) {
+        str = _ID.name;
+    }
+    return str;
 }
 
 - (MKMGender)gender {
-    return _profile.gender;
+    return self.profile.gender;
 }
 
-- (NSString *)avatar {
-    return _profile.avatar;
+- (const NSString *)avatar {
+    return self.profile.avatar;
 }
 
 @end

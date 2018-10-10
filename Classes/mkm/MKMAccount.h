@@ -46,9 +46,9 @@ NS_DESIGNATED_INITIALIZER;
 @interface MKMAccount (Profile)
 
 // special fields in profile
-@property (readonly, strong, nonatomic) NSString *name;
+@property (readonly, strong, nonatomic) const NSString *name;
 @property (readonly, nonatomic) MKMGender gender;
-@property (readonly, strong, nonatomic) NSString *avatar; // URL
+@property (readonly, strong, nonatomic) const NSString *avatar; // URL
 
 @end
 
