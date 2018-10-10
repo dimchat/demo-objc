@@ -12,11 +12,11 @@
 #import "MKMHistory.h"
 #import "MKMEntity.h"
 #import "MKMEntity+History.h"
-#import "MKMAccount.h"
+#import "MKMPerson.h"
 #import "MKMGroup.h"
 
 #import "MKMEntityDelegate.h"
-#import "MKMAccountHistoryDelegate.h"
+#import "MKMPersonHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
 
 #import "MKMEntityManager.h"
@@ -152,8 +152,8 @@ static MKMEntityManager *s_sharedManager = nil;
     MKMEntity *entity;
     MKMEntityHistoryDelegate *delegate;
     if (ID.address.network == MKMNetwork_Main) {
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
+        delegate = [[MKMPersonHistoryDelegate alloc] init];
+        entity = [[MKMPerson alloc] initWithID:ID meta:meta];
         entity.historyDelegate = delegate;
     } else if (ID.address.network == MKMNetwork_Group) {
         delegate = [[MKMGroupHistoryDelegate alloc] init];
@@ -181,8 +181,8 @@ static MKMEntityManager *s_sharedManager = nil;
     MKMEntity *entity;
     MKMEntityHistoryDelegate *delegate;
     if (ID.address.network == MKMNetwork_Main) {
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
+        delegate = [[MKMPersonHistoryDelegate alloc] init];
+        entity = [[MKMPerson alloc] initWithID:ID meta:meta];
         entity.historyDelegate = delegate;
     } else if (ID.address.network == MKMNetwork_Group) {
         delegate = [[MKMGroupHistoryDelegate alloc] init];
@@ -215,8 +215,8 @@ static MKMEntityManager *s_sharedManager = nil;
     MKMEntity *entity;
     MKMEntityHistoryDelegate *delegate;
     if (ID.address.network == MKMNetwork_Main) {
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
+        delegate = [[MKMPersonHistoryDelegate alloc] init];
+        entity = [[MKMPerson alloc] initWithID:ID meta:meta];
         entity.historyDelegate = delegate;
     } else if (ID.address.network == MKMNetwork_Group) {
         delegate = [[MKMGroupHistoryDelegate alloc] init];

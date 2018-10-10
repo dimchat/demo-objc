@@ -46,16 +46,16 @@ typedef NS_ENUM(SInt32, MKMGender) {
 /**
  Verify signature of this profile with public key of ID
 
- @param ID - Account ID
+ @param ID - Person ID
  @return YES/NO
  */
 - (BOOL)match:(const MKMID *)ID;
 
 @end
 
-#pragma mark - Account profile
+#pragma mark - Person profile
 
-@interface MKMAccountProfile : MKMProfile
+@interface MKMPersonProfile : MKMProfile
 
 @property (strong, nonatomic) NSString *name;
 @property (nonatomic) MKMGender gender;

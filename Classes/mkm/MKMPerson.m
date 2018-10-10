@@ -1,5 +1,5 @@
 //
-//  MKMAccount.m
+//  MKMPerson.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/23.
@@ -16,17 +16,17 @@
 #import "MKMProfile.h"
 #import "MKMFacebook.h"
 
-#import "MKMAccount.h"
+#import "MKMPerson.h"
 
-@interface MKMAccount ()
+@interface MKMPerson ()
 
-@property (nonatomic) MKMAccountStatus status;
+@property (nonatomic) MKMPersonStatus status;
 
-@property (strong, nonatomic) const MKMAccountProfile *profile;
+@property (strong, nonatomic) const MKMPersonProfile *profile;
 
 @end
 
-@implementation MKMAccount
+@implementation MKMPerson
 
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
@@ -42,7 +42,7 @@
         NSAssert(!meta, @"unexpected meta: %@", meta);
     }
     if (self = [super initWithID:ID meta:meta]) {
-        _profile = [[MKMAccountProfile alloc] init];
+        _profile = [[MKMPersonProfile alloc] init];
     }
     return self;
 }
@@ -51,29 +51,33 @@
     return _ID.publicKey;
 }
 
-- (const MKMAccountProfile *)profile {
+- (const MKMPersonProfile *)profile {
     if (!_profile || _profile.allKeys.count == 0) {
         MKMFacebook *facebook = [MKMFacebook sharedInstance];
         id prof = [facebook profileWithID:_ID];
-        _profile = [MKMAccountProfile profileWithProfile:prof];
+        _profile = [MKMPersonProfile profileWithProfile:prof];
     }
     return _profile;
 }
 
 @end
 
-@implementation MKMAccount (Profile)
+@implementation MKMPerson (Profile)
 
-- (NSString *)name {
-    return _profile.name;
+- (const NSString *)name {
+    const NSString *str = self.profile.name;
+    if (!str) {
+        str = _ID.name;
+    }
+    return str;
 }
 
 - (MKMGender)gender {
-    return _profile.gender;
+    return self.profile.gender;
 }
 
-- (NSString *)avatar {
-    return _profile.avatar;
+- (const NSString *)avatar {
+    return self.profile.avatar;
 }
 
 @end

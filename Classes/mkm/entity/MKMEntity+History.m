@@ -9,7 +9,7 @@
 #import "MKMPublicKey.h"
 
 #import "MKMID.h"
-#import "MKMAccount.h"
+#import "MKMPerson.h"
 
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
@@ -83,7 +83,7 @@
     const MKMID *recorder = record.recorder;
     recorder = [MKMID IDWithID:recorder];
     if (!recorder) {
-        NSAssert([self isKindOfClass:[MKMAccount class]], @"error");
+        NSAssert([self isKindOfClass:[MKMPerson class]], @"error");
         recorder = _ID;
     }
     

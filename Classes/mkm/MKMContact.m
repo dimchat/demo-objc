@@ -14,7 +14,7 @@
 #import "MKMHistory.h"
 
 #import "MKMEntity+History.h"
-#import "MKMAccountHistoryDelegate.h"
+#import "MKMPersonHistoryDelegate.h"
 #import "MKMEntityManager.h"
 
 #import "MKMContact.h"
@@ -28,8 +28,8 @@
     const MKMHistory *history = [em historyWithID:ID];
     MKMContact *contact = [[self alloc] initWithID:ID meta:meta];
     if (contact) {
-        MKMAccountHistoryDelegate *delegate;
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
+        MKMPersonHistoryDelegate *delegate;
+        delegate = [[MKMPersonHistoryDelegate alloc] init];
         contact.historyDelegate = delegate;
         NSUInteger count = [contact runHistory:history];
         NSAssert(count == history.count, @"history error");

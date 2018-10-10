@@ -1,5 +1,5 @@
 //
-//  MKMAccountHistoryDelegate.h
+//  MKMPersonHistoryDelegate.h
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/6.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMAccountHistoryDelegate : MKMEntityHistoryDelegate
+@interface MKMPersonHistoryDelegate : MKMEntityHistoryDelegate
 
 @end
 

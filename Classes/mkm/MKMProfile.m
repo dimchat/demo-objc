@@ -88,12 +88,12 @@
 
 @end
 
-#pragma mark - Account profile
+#pragma mark - Person profile
 
-@implementation MKMAccountProfile
+@implementation MKMPersonProfile
 
 + (instancetype)profileWithProfile:(id)profile {
-    if ([profile isKindOfClass:[MKMAccountProfile class]]) {
+    if ([profile isKindOfClass:[MKMPersonProfile class]]) {
         return profile;
     } else if ([profile isKindOfClass:[NSDictionary class]]) {
         return [[self alloc] initWithDictionary:profile];
