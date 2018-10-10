@@ -29,8 +29,8 @@
 
 @interface MKMEntityManager () {
     
-    NSMutableDictionary *_metaMap;
-    NSMutableDictionary *_historyMap;
+    NSMutableDictionary<const MKMID *, const MKMMeta *> *_metaTable;
+    NSMutableDictionary<const MKMID *, const MKMHistory *> *_historyTable;
 }
 
 @end
@@ -53,8 +53,8 @@ static MKMEntityManager *s_sharedManager = nil;
 
 - (instancetype)init {
     if (self = [super init]) {
-        _metaMap = [[NSMutableDictionary alloc] init];
-        _historyMap = [[NSMutableDictionary alloc] init];
+        _metaTable = [[NSMutableDictionary alloc] init];
+        _historyTable = [[NSMutableDictionary alloc] init];
         
         // Immortals
         [self loadEntityInfoFromFile:@"mkm_hulk"];
@@ -108,13 +108,13 @@ static MKMEntityManager *s_sharedManager = nil;
     return YES;
 }
 
-- (MKMMeta *)metaWithID:(const MKMID *)ID {
+- (const MKMMeta *)metaWithID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
-    MKMMeta *meta = [_metaMap objectForKey:ID];
+    const MKMMeta *meta = [_metaTable objectForKey:ID];
     if (!meta && _delegate) {
         meta = [_delegate queryMetaWithID:ID];
         if (meta) {
-            [_metaMap setObject:meta forKey:ID];
+            [_metaTable setObject:meta forKey:ID];
         }
     }
     return meta;
@@ -125,19 +125,19 @@ static MKMEntityManager *s_sharedManager = nil;
     NSAssert(ID, @"ID cannot be empty");
     BOOL correct = [ID checkMeta:meta];
     if (correct) {
-        [_metaMap setObject:meta forKey:ID];
+        [_metaTable setObject:meta forKey:ID];
         [_delegate postMeta:meta forID:ID];
     }
     return correct;
 }
 
-- (MKMHistory *)historyWithID:(const MKMID *)ID {
+- (const MKMHistory *)historyWithID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
-    MKMHistory *history = [_historyMap objectForKey:ID];
+    const MKMHistory *history = [_historyTable objectForKey:ID];
     if (!history && _delegate) {
         history = [_delegate queryHistoryWithID:ID];
         if (history) {
-            [_historyMap setObject:history forKey:ID];
+            [_historyTable setObject:history forKey:ID];
         }
     }
     return history;
@@ -146,7 +146,7 @@ static MKMEntityManager *s_sharedManager = nil;
 - (NSUInteger)setHistory:(const MKMHistory *)history forID:(const MKMID *)ID {
     NSAssert(history, @"history cannot be empty");
     NSAssert(ID, @"ID cannot be empty");
-    MKMMeta *meta = [self metaWithID:ID];
+    const MKMMeta *meta = [self metaWithID:ID];
     NSAssert(meta, @"meta not found: %@", ID);
     
     MKMEntity *entity;
@@ -165,7 +165,7 @@ static MKMEntityManager *s_sharedManager = nil;
     if (count > 0) {
         const MKMHistory *his = [entity history];
         NSAssert(his, @"error");
-        [_historyMap setObject:his forKey:ID];
+        [_historyTable setObject:his forKey:ID];
         
         [_delegate postHistory:history forID:ID];
     }
@@ -175,7 +175,7 @@ static MKMEntityManager *s_sharedManager = nil;
 - (BOOL)addHistoryRecord:(const MKMHistoryRecord *)record forID:(const MKMID *)ID {
     NSAssert(record, @"record cannot be empty");
     NSAssert(ID, @"ID cannot be empty");
-    MKMMeta *meta = [self metaWithID:ID];
+    const MKMMeta *meta = [self metaWithID:ID];
     NSAssert(meta, @"meta not found: %@", ID);
     
     MKMEntity *entity;
@@ -194,7 +194,7 @@ static MKMEntityManager *s_sharedManager = nil;
     if (correct) {
         const MKMHistory *his = [entity history];
         NSAssert(his, @"error");
-        [_historyMap setObject:his forKey:ID];
+        [_historyTable setObject:his forKey:ID];
         
         [_delegate postHistoryRecord:record forID:ID];
     }
@@ -209,7 +209,7 @@ static MKMEntityManager *s_sharedManager = nil;
     NSAssert(ID, @"ID cannot be empty");
     BOOL correct = [ID checkMeta:meta];
     if (correct) {
-        [_metaMap setObject:meta forKey:ID];
+        [_metaTable setObject:meta forKey:ID];
     }
     
     MKMEntity *entity;
@@ -228,7 +228,7 @@ static MKMEntityManager *s_sharedManager = nil;
     if (count > 0) {
         const MKMHistory *his = [entity history];
         NSAssert(his, @"error");
-        [_historyMap setObject:his forKey:ID];
+        [_historyTable setObject:his forKey:ID];
     }
     
     if (correct && count > 0) {

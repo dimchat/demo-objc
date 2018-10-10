@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const NSArray *administrators;
 
++ (instancetype)groupWithID:(const MKMID *)ID;
+
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
 NS_DESIGNATED_INITIALIZER;

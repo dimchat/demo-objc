@@ -14,12 +14,15 @@
 #import "MKMMeta.h"
 
 #import "MKMProfile.h"
+#import "MKMFacebook.h"
 
 #import "MKMAccount.h"
 
 @interface MKMAccount ()
 
 @property (nonatomic) MKMAccountStatus status;
+
+@property (strong, nonatomic) const MKMAccountProfile *profile;
 
 @end
 
@@ -46,6 +49,15 @@
 
 - (const MKMPublicKey *)publicKey {
     return _ID.publicKey;
+}
+
+- (const MKMAccountProfile *)profile {
+    if (!_profile || _profile.allKeys.count == 0) {
+        MKMFacebook *facebook = [MKMFacebook sharedInstance];
+        id prof = [facebook profileWithID:_ID];
+        _profile = [MKMAccountProfile profileWithProfile:prof];
+    }
+    return _profile;
 }
 
 @end

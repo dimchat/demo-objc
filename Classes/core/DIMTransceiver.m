@@ -17,83 +17,7 @@
 
 #import "DIMTransceiver.h"
 
-@interface DIMTransceiver () {
-    
-    MKMEntityManager *_entityMamager;
-    
-    MKMAccountHistoryDelegate *_accountDelegate;
-    MKMGroupHistoryDelegate *_groupDelegate;
-}
-
-@end
-
 @implementation DIMTransceiver
-
-static DIMTransceiver *s_sharedInstance = nil;
-
-+ (instancetype)sharedInstance {
-    if (!s_sharedInstance) {
-        s_sharedInstance = [[self alloc] init];
-    }
-    return s_sharedInstance;
-}
-
-+ (instancetype)alloc {
-    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
-    return [super alloc];
-}
-
-- (instancetype)init {
-    if (self = [super init]) {
-        _entityMamager = [MKMEntityManager sharedManager];
-        
-        _accountDelegate = [[MKMAccountHistoryDelegate alloc] init];
-        _groupDelegate = [[MKMGroupHistoryDelegate alloc] init];
-    }
-    return self;
-}
-
-- (DIMUser *)userFromID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"address.network error");
-    const MKMMeta *meta = [_entityMamager metaWithID:ID];
-    const MKMHistory *history = [_entityMamager historyWithID:ID];
-    DIMUser *user = [[DIMUser alloc] initWithID:ID meta:meta];
-    user.historyDelegate = _accountDelegate;
-    [user runHistory:history];
-    if (user.status != MKMAccountStatusRegistered) {
-        NSAssert(false, @"contact.status error");
-        return nil;
-    }
-    return user;
-}
-
-- (DIMContact *)contactFromID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"address.network error");
-    const MKMMeta *meta = [_entityMamager metaWithID:ID];
-    const MKMHistory *history = [_entityMamager historyWithID:ID];
-    DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
-    contact.historyDelegate = _accountDelegate;
-    [contact runHistory:history];
-    if (contact.status != MKMAccountStatusRegistered) {
-        NSAssert(false, @"contact.status error");
-        return nil;
-    }
-    return contact;
-}
-
-- (DIMGroup *)groupFromID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Group, @"address.network error");
-    const MKMMeta *meta = [_entityMamager metaWithID:ID];
-    const MKMHistory *history = [_entityMamager historyWithID:ID];
-    DIMGroup *group = [[DIMGroup alloc] initWithID:ID meta:meta];
-    group.historyDelegate = _groupDelegate;
-    [group runHistory:history];
-    if (group.members.count == 0) {
-        NSAssert(false, @"group.members error");
-        return nil;
-    }
-    return group;
-}
 
 #pragma mark - prepare message for sending out
 
@@ -122,11 +46,11 @@ static DIMTransceiver *s_sharedInstance = nil;
     const MKMID *receiver = env.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
         // receiver is a contact
-        DIMContact *contact = [self contactFromID:receiver];
+        DIMContact *contact = [DIMContact contactWithID:receiver];
         sMsg = [contact encryptMessage:iMsg];
     } else if (receiver.address.network == MKMNetwork_Group) {
         // receiver is a group
-        DIMGroup *group = [self groupFromID:receiver];
+        DIMGroup *group = [DIMGroup groupWithID:receiver];
         sMsg = [group encryptMessage:iMsg];
     } else {
         NSAssert(false, @"receiver error");
@@ -137,7 +61,7 @@ static DIMTransceiver *s_sharedInstance = nil;
     DIMCertifiedMessage *cMsg = nil;
     const MKMID *sender = env.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMUser *user = [self userFromID:sender];
+        DIMUser *user = [DIMUser userWithID:sender];
         // sign by sender
         cMsg = [user signMessage:sMsg];;
     } else {
@@ -164,7 +88,7 @@ static DIMTransceiver *s_sharedInstance = nil;
     DIMSecureMessage *sMsg = nil;
     const MKMID *sender = env.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMContact *contact = [self contactFromID:sender];
+        DIMContact *contact = [DIMContact contactWithID:sender];
         sMsg = [contact verifyMessage:message];
     } else {
         NSAssert(false, @"sender error");
@@ -175,7 +99,7 @@ static DIMTransceiver *s_sharedInstance = nil;
     DIMInstantMessage *iMsg = nil;
     const MKMID *receiver = env.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
-        DIMUser *user = [self userFromID:receiver];
+        DIMUser *user = [DIMUser userWithID:receiver];
         iMsg = [user decryptMessage:sMsg];
     } else {
         NSAssert(false, @"receiver error");

@@ -80,7 +80,7 @@
 - (const MKMPublicKey *)publicKey {
     if (!_publicKey) {
         MKMEntityManager *em = [MKMEntityManager sharedManager];
-        MKMMeta *meta = [em metaWithID:self];
+        const MKMMeta *meta = [em metaWithID:self];
         if ([self checkMeta:meta]) {
             //_publicKey = [meta key];
         }

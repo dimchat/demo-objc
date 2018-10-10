@@ -34,6 +34,22 @@
 
 @implementation MKMUser
 
++ (instancetype)userWithID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"addr error");
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    const MKMMeta *meta = [em metaWithID:ID];
+    const MKMHistory *history = [em historyWithID:ID];
+    MKMUser *user = [[self alloc] initWithID:ID meta:meta];
+    if (user) {
+        MKMAccountHistoryDelegate *delegate;
+        delegate = [[MKMAccountHistoryDelegate alloc] init];
+        user.historyDelegate = delegate;
+        NSUInteger count = [user runHistory:history];
+        NSAssert(count == history.count, @"history error");
+    }
+    return user;
+}
+
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {

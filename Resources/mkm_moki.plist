@@ -74,5 +74,13 @@ UvG0G1Q6sWRX4BB18xAdAkAYaOZJDV+HY+ORaPgQJORr/M2y/wQ81oItqfCUG9P7
 -----END RSA PRIVATE KEY-----</string>
 		</dict>
 	</dict>
+	<key>profile</key>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>齐天大圣</string>
+			<string>Monkey King</string>
+		</array>
+	</dict>
 </dict>
 </plist>

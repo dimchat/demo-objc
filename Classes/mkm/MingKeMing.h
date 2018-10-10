@@ -36,6 +36,7 @@
 #import "MKMSocialEntityHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
 #import "MKMAccountHistoryDelegate.h"
+#import "MKMProfileDelegate.h"
 
 // Entity
 #import "MKMID.h"
@@ -47,17 +48,20 @@
 #import "MKMEntity+History.h"
 #import "MKMEntityManager.h"
 
-// User
-#import "MKMProfile.h"
-#import "MKMMemo.h"
+// group
+#import "MKMSocialEntity.h"
+#import "MKMGroup.h"
+#import "MKMMoments.h"
+
+// user
 #import "MKMAccount.h"
 #import "MKMUser.h"
 #import "MKMContact.h"
 
-// Group
-#import "MKMSocialEntity.h"
-#import "MKMGroup.h"
-#import "MKMMoments.h"
+// profile
+#import "MKMProfile.h"
+#import "MKMMemo.h"
+#import "MKMFacebook.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

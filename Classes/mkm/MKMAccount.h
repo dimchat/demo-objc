@@ -35,6 +35,8 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
 @property (readonly, nonatomic) MKMAccountStatus status;
 
+@property (readonly, strong, nonatomic) const MKMAccountProfile *profile;
+
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
 NS_DESIGNATED_INITIALIZER;

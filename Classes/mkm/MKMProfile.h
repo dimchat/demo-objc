@@ -19,6 +19,8 @@ typedef NS_ENUM(SInt32, MKMGender) {
     MKMGender_Female = 2,
 };
 
+@class MKMID;
+
 @interface MKMProfile : MKMDictionary
 
 /**
@@ -36,8 +38,18 @@ typedef NS_ENUM(SInt32, MKMGender) {
  */
 @property (strong, nonatomic) NSMutableArray<const NSString *> *privateFields;
 
++ (instancetype)profileWithProfile:(id)profile;
+
 - (instancetype)init;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
+
+/**
+ Verify signature of this profile with public key of ID
+
+ @param ID - Account ID
+ @return YES/NO
+ */
+- (BOOL)match:(const MKMID *)ID;
 
 @end
 
@@ -50,6 +62,8 @@ typedef NS_ENUM(SInt32, MKMGender) {
 @property (strong, nonatomic) NSString *avatar; // URL
 
 @property (strong, nonatomic) NSString *biography; // 0~280 bytes
+
++ (instancetype)profileWithProfile:(id)profile;
 
 // -title
 // -birthday

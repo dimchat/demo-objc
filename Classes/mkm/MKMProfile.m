@@ -6,9 +6,26 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "MKMPublicKey.h"
+
+#import "MKMID.h"
+
 #import "MKMProfile.h"
 
 @implementation MKMProfile
+
++ (instancetype)profileWithProfile:(id)profile {
+    if ([profile isKindOfClass:[MKMProfile class]]) {
+        return profile;
+    } else if ([profile isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:profile];
+    } else if ([profile isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:profile];
+    } else {
+        NSAssert(!profile, @"unexpected profile: %@", profile);
+        return nil;
+    }
+}
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -26,6 +43,16 @@
         _privateFields = [[NSMutableArray alloc] init];
     }
     return self;
+}
+
+- (BOOL)match:(const MKMID *)ID; {
+    const MKMPublicKey *PK = ID.publicKey;
+    // TODO: check the signature of profile
+    NSData *data = nil;
+    NSData *signature = nil;
+    return YES;
+    
+    return [PK verify:data signature:signature];
 }
 
 - (void)setArrayValue:(NSString *)value forKey:(const NSString *)arrName {
@@ -64,6 +91,19 @@
 #pragma mark - Account profile
 
 @implementation MKMAccountProfile
+
++ (instancetype)profileWithProfile:(id)profile {
+    if ([profile isKindOfClass:[MKMAccountProfile class]]) {
+        return profile;
+    } else if ([profile isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:profile];
+    } else if ([profile isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:profile];
+    } else {
+        NSAssert(!profile, @"unexpected profile: %@", profile);
+        return nil;
+    }
+}
 
 - (void)setObject:(id)anObject forKey:(const NSString *)aKey {
     if ([aKey isEqualToString:@"name"]) {

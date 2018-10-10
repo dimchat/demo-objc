@@ -24,11 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedManager;
 
 // meta
-- (MKMMeta *)metaWithID:(const MKMID *)ID;
+- (const MKMMeta *)metaWithID:(const MKMID *)ID;
 - (BOOL)setMeta:(const MKMMeta *)meta forID:(const MKMID *)ID;
 
 // history
-- (MKMHistory *)historyWithID:(const MKMID *)ID;
+- (const MKMHistory *)historyWithID:(const MKMID *)ID;
 - (NSUInteger)setHistory:(const MKMHistory *)history forID:(const MKMID *)ID;
 - (BOOL)addHistoryRecord:(const MKMHistoryRecord *)record forID:(const MKMID *)ID;
 

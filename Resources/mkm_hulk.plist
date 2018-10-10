@@ -74,5 +74,13 @@ Duor6RvudK3j1QhzBGiv/3YpHnHMXP+tFkUA2a7e/6fo
 -----END RSA PRIVATE KEY-----</string>
 		</dict>
 	</dict>
+	<key>profile</key>
+	<dict>
+		<key>names</key>
+		<array>
+			<string>无敌浩克</string>
+			<string>Immortal Hulk</string>
+		</array>
+	</dict>
 </dict>
 </plist>
