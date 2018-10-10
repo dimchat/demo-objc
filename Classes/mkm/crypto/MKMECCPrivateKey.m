@@ -25,7 +25,7 @@
     return self;
 }
 
-- (const MKMPublicKey *)publicKey {
+- (MKMPublicKey *)publicKey {
     MKMPublicKey *PK = nil;
     
     // TODO: ECC encrypt

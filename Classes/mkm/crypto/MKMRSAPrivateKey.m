@@ -123,7 +123,7 @@
     }
 }
 
-- (const MKMPublicKey *)publicKey {
+- (MKMPublicKey *)publicKey {
     return _publicKey;
 }
 

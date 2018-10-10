@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMHistoryOperation : MKMDictionary
 
-@property (readonly, strong, nonatomic) const NSString *operate;
-@property (readonly, strong, nonatomic) const NSDate *time;
+@property (readonly, strong, nonatomic) NSString *operate;
+@property (readonly, strong, nonatomic) NSDate *time;
 
 + (instancetype)operationWithOperation:(id)op;
 
@@ -52,10 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMHistoryEvent : MKMDictionary
 
-@property (readonly, strong, nonatomic) const MKMHistoryOperation *operation;
+@property (readonly, strong, nonatomic) MKMHistoryOperation *operation;
 
-@property (readonly, strong, nonatomic) const MKMID *commander;
-@property (readonly, strong, nonatomic) const NSData *signature;
+@property (readonly, strong, nonatomic) MKMID *commander;
+@property (readonly, strong, nonatomic) NSData *signature;
 
 + (instancetype)eventWithEvent:(id)event;
 

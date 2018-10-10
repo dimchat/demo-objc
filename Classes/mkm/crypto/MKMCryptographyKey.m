@@ -10,6 +10,12 @@
 
 #import "MKMCryptographyKey.h"
 
+@interface MKMCryptographyKey ()
+
+@property (strong, nonatomic) const NSString *algorithm;
+
+@end
+
 @implementation MKMCryptographyKey
 
 + (instancetype)keyWithKey:(id)key {
@@ -48,13 +54,14 @@
     NSDictionary *dict = [info copy];
     NSString *algor = [dict objectForKey:@"algorithm"];
     if (algorithm) {
-        NSAssert([algorithm isEqualToString:algor], @"key data error");
+        NSAssert([algorithm isEqualToString:algor],
+                 @"key data error: %@", info);
     } else {
         algorithm = algor;
     }
     
     if (self = [self initWithDictionary:dict]) {
-        _algorithm = [algorithm copy];
+        self.algorithm = algorithm;
     }
     return self;
 }

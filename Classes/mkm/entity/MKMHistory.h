@@ -28,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMHistoryRecord : MKMDictionary
 
-@property (readonly, strong, nonatomic) const NSArray *events;
-@property (readonly, strong, nonatomic) const NSData *merkleRoot;
-@property (readonly, strong, nonatomic) const NSData *signature;
-@property (readonly, strong, nonatomic) const MKMID *recorder;
+@property (readonly, strong, nonatomic) NSArray *events;
+@property (readonly, strong, nonatomic) NSData *merkleRoot;
+@property (readonly, strong, nonatomic) NSData *signature;
+@property (readonly, strong, nonatomic) MKMID *recorder;
 
 + (instancetype)recordWithRecord:(id)record;
 

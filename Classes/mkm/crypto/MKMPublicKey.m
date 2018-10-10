@@ -22,15 +22,14 @@
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
-    NSAssert([algorithm isEqualToString:[dict objectForKey:@"algorithm"]], @"error");
+    NSAssert([algorithm isEqualToString:[info objectForKey:@"algorithm"]], @"error");
     
     if ([self isMemberOfClass:[MKMPublicKey class]]) {
         // create instance with algorithm
         if ([algorithm isEqualToString:ACAlgorithmECC]) {
-            self = [[MKMECCPublicKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+            self = [[MKMECCPublicKey alloc] initWithAlgorithm:algorithm keyInfo:info];
         } else if ([algorithm isEqualToString:ACAlgorithmRSA]) {
-            self = [[MKMRSAPublicKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+            self = [[MKMRSAPublicKey alloc] initWithAlgorithm:algorithm keyInfo:info];
         } else {
             self = nil;
             NSAssert(self, @"algorithm not support: %@", algorithm);

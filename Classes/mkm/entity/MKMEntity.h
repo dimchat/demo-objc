@@ -19,11 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMEntity : NSObject {
     
-    const MKMID *_ID;
+    MKMID *_ID;
     MKMHistory *_history;
 }
 
-@property (readonly, strong, nonatomic) const MKMID *ID;
+@property (readonly, strong, nonatomic) MKMID *ID;
 
 @property (readonly, nonatomic) NSUInteger number;
 

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
     MKMContactMemo *_memo; // same keys to the profile
 }
 
-@property (readonly, strong, nonatomic) const MKMContactMemo *memo;
+@property (readonly, strong, nonatomic) MKMContactMemo *memo;
 
 + (instancetype)contactWithID:(const MKMID *)ID;
 

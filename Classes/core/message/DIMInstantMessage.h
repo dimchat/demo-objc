@@ -27,8 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMInstantMessage : DIMDictionary
 
-@property (readonly, strong, nonatomic) const DIMEnvelope *envelope;
-@property (readonly, strong, nonatomic) const DIMMessageContent *content;
+@property (readonly, strong, nonatomic) DIMEnvelope *envelope;
+@property (readonly, strong, nonatomic) DIMMessageContent *content;
 
 - (instancetype)initWithContent:(const DIMMessageContent *)content
                          sender:(const MKMID *)from

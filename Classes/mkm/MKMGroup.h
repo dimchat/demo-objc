@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray<const MKMID *> *_administrators;
 }
 
-@property (readonly, strong, nonatomic) const NSArray *administrators;
+@property (readonly, strong, nonatomic) NSArray *administrators;
 
 + (instancetype)groupWithID:(const MKMID *)ID;
 

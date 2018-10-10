@@ -47,14 +47,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      Username / Group-X
  */
-@property (readonly, strong, nonatomic) const NSString *seed;
+@property (readonly, strong, nonatomic) NSString *seed;
 
 /**
  *  Public key
  *
  *      RSA / ECC
  */
-@property (readonly, strong, nonatomic) const MKMPublicKey *key;
+@property (readonly, strong, nonatomic) MKMPublicKey *key;
 
 /**
  *  Fingerprint to verify ID and public key
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      Build: fingerprint = sign(seed, privateKey)
  *      Check: verify(seed, fingerprint, publicKey)
  */
-@property (readonly, strong, nonatomic) const NSData *fingerprint;
+@property (readonly, strong, nonatomic) NSData *fingerprint;
 
 + (instancetype)metaWithMeta:(id)meta;
 

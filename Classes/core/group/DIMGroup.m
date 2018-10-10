@@ -18,24 +18,24 @@
 
 @implementation DIMGroup
 
-- (const MKMSymmetricKey *)passphrase {
+- (MKMSymmetricKey *)passphrase {
     MKMKeyStore *store = [MKMKeyStore sharedStore];
     return [store passphraseForEntity:self];
 }
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
-    const DIMEnvelope *env = msg.envelope;
-    const MKMID *to = env.receiver;
+    DIMEnvelope *env = msg.envelope;
+    MKMID *to = env.receiver;
     NSAssert([to isEqual:_ID], @"recipient error");
     
-    const DIMMessageContent *content = msg.content;
+    DIMMessageContent *content = msg.content;
     NSAssert(content, @"content cannot be empty");
     
     // 1. JsON
     NSData *json = [content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    const MKMSymmetricKey *scKey = self.passphrase;
+    MKMSymmetricKey *scKey = self.passphrase;
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
@@ -53,8 +53,8 @@
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithCapacity:[_members count]];
     
-    const MKMID *ID;
-    const MKMPublicKey *PK;
+    MKMID *ID;
+    MKMPublicKey *PK;
     NSData *key;
     
     for (id member in _members) {

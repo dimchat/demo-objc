@@ -24,18 +24,18 @@
 }
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
-    const DIMEnvelope *env = msg.envelope;
-    const MKMID *to = env.receiver;
+    DIMEnvelope *env = msg.envelope;
+    MKMID *to = env.receiver;
     NSAssert([to isEqual:_ID], @"recipient error");
     
-    const DIMMessageContent *content = msg.content;
+    DIMMessageContent *content = msg.content;
     NSAssert(content, @"content cannot be empty");
     
     // 1. JsON
     NSData *json = [content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    const MKMSymmetricKey *scKey = self.passphrase;
+    MKMSymmetricKey *scKey = self.passphrase;
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
@@ -50,13 +50,13 @@
 }
 
 - (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg {
-    const DIMEnvelope *env = msg.envelope;
-    const MKMID *from = env.sender;
+    DIMEnvelope *env = msg.envelope;
+    MKMID *from = env.sender;
     NSAssert([from isEqual:_ID], @"sender error");
     
-    const NSData *content = msg.content;
+    NSData *content = msg.content;
     NSAssert(content, @"content cannot be empty");
-    const NSData *CT = msg.signature;
+    NSData *CT = msg.signature;
     NSAssert(CT, @"signature cannot be empty");
     
     // 1. use the contact's public key to verify the signature
@@ -65,7 +65,7 @@
         return nil;
     }
     
-    const NSData *PW = msg.secretKey;
+    NSData *PW = msg.secretKey;
     NSAssert(PW, @"secret key cannot be empty");
     
     // 2. create secure message
@@ -77,13 +77,13 @@
 #pragma mark - Encrypt/Verify functions for passphrase/signature
 
 - (NSData *)encrypt:(const NSData *)plaintext {
-    const MKMPublicKey *PK = self.publicKey;
+    MKMPublicKey *PK = self.publicKey;
     return [PK encrypt:plaintext];
 }
 
 - (BOOL)verify:(const NSData *)plaintext
      signature:(const NSData *)ciphertext {
-    const MKMPublicKey *PK = self.publicKey;
+    MKMPublicKey *PK = self.publicKey;
     return [PK verify:plaintext signature:ciphertext];
 }
 

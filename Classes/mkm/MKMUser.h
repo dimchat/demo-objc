@@ -21,12 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMUser : MKMAccount {
     
-    NSMutableDictionary<const MKMID *, MKMContact *> *_contacts;
+    NSMutableArray<const MKMID *> *_contacts;
 }
 
-@property (readonly, strong, nonatomic) const NSDictionary *contacts;
+@property (readonly, strong, nonatomic) NSArray *contacts;
 
-@property (readonly, strong, nonatomic) const MKMPrivateKey *privateKey;
+@property (readonly, strong, nonatomic) MKMPrivateKey *privateKey;
 
 + (instancetype)userWithID:(const MKMID *)ID;
 
@@ -35,7 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 NS_DESIGNATED_INITIALIZER;
 
 - (BOOL)addContact:(MKMContact *)contact;
+- (BOOL)containsContact:(const MKMContact *)contact;
 - (MKMContact *)getContactByID:(const MKMID *)ID;
+- (void)removeContact:(const MKMContact *)contact;
 
 - (BOOL)checkPrivateKey:(const MKMPrivateKey *)SK;
 

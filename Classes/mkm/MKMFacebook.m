@@ -14,7 +14,7 @@
 
 @interface MKMFacebook () {
     
-    NSMutableDictionary<const MKMID *, const MKMProfile *> *_profileTable;
+    NSMutableDictionary<const MKMID *, MKMProfile *> *_profileTable;
 }
 
 @end
@@ -81,9 +81,9 @@ static MKMFacebook *s_sharedInstance = nil;
     return profile;
 }
 
-- (const MKMProfile *)profileWithID:(const MKMID *)ID {
+- (MKMProfile *)profileWithID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
-    const MKMProfile *profile = [_profileTable objectForKey:ID];
+    MKMProfile *profile = [_profileTable objectForKey:ID];
     if (!profile && _delegate) {
         profile = [_delegate queryProfileWithID:ID];
         if (profile) {
@@ -93,7 +93,7 @@ static MKMFacebook *s_sharedInstance = nil;
     return profile;
 }
 
-- (BOOL)setProfile:(const MKMProfile *)profile
+- (BOOL)setProfile:(MKMProfile *)profile
              forID:(const MKMID *)ID {
     NSAssert(profile, @"profile cannot be empty");
     NSAssert(ID, @"ID cannot be empty");

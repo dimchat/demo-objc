@@ -20,7 +20,7 @@
 
 @interface MKMEntity (Hacking)
 
-@property (strong, nonatomic) const MKMMeta *meta;
+@property (strong, nonatomic) MKMMeta *meta;
 
 @end
 
@@ -80,7 +80,7 @@
 
 - (BOOL)runHistoryRecord:(const MKMHistoryRecord *)record {
     // recorder
-    const MKMID *recorder = record.recorder;
+    MKMID *recorder = record.recorder;
     recorder = [MKMID IDWithID:recorder];
     if (!recorder) {
         NSAssert([self isKindOfClass:[MKMAccount class]], @"error");
@@ -97,7 +97,7 @@
     
     // 2. check signature for this record
     MKMHistoryRecord *prev = _history.lastObject;
-    const MKMPublicKey *PK = recorder.publicKey;
+    MKMPublicKey *PK = recorder.publicKey;
     prev = [MKMHistoryRecord recordWithRecord:prev];
     PK = [MKMPublicKey keyWithKey:PK];
     if (![record verifyWithPreviousMerkle:prev.merkleRoot
@@ -108,10 +108,10 @@
     
     // 3. check permission for each commander in all events
     MKMHistoryEvent *event;
-    const MKMID *commander;
+    MKMID *commander;
     MKMHistoryOperation *operation;
     id op;
-    const NSData *CT;
+    NSData *CT;
     NSData *data;
     for (id item in record.events) {
         // event.commander

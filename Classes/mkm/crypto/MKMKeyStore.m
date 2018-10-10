@@ -21,10 +21,10 @@
 
 @interface MKMKeyStore () {
     
-    NSMutableDictionary<const MKMID *, const MKMSymmetricKey *> *_passphraseTable;
+    NSMutableDictionary<const MKMID *, MKMSymmetricKey *> *_passphraseTable;
     
-    NSMutableDictionary<const MKMID *, const MKMPrivateKey *> *_privateKeyTable;
-    NSMutableDictionary<const MKMID *, const MKMPublicKey *> *_publicKeyTable;
+    NSMutableDictionary<const MKMID *, MKMPrivateKey *> *_privateKeyTable;
+    NSMutableDictionary<const MKMID *, MKMPublicKey *> *_publicKeyTable;
 }
 
 @end
@@ -89,8 +89,8 @@ static MKMKeyStore *s_sharedStore = nil;
         return NO;
     }
     
-    const MKMPrivateKey *SK;
-    const MKMPublicKey *PK;
+    MKMPrivateKey *SK;
+    MKMPublicKey *PK;
     NSString *algor;
     
     // public key
@@ -120,31 +120,31 @@ static MKMKeyStore *s_sharedStore = nil;
 
 #pragma mark -
 
-- (const MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact {
-    const MKMID *ID = contact.ID;
+- (MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact {
+    MKMID *ID = contact.ID;
     return [_publicKeyTable objectForKey:ID];
 }
 
-- (void)setPublicKey:(const MKMPublicKey *)PK
+- (void)setPublicKey:(MKMPublicKey *)PK
           forContact:(const MKMContact *)contact {
-    const MKMID *ID = contact.ID;
+    MKMID *ID = contact.ID;
     [_publicKeyTable setObject:PK forKey:ID];
 }
 
-- (const MKMPrivateKey *)privateKeyForUser:(const MKMUser *)user {
-    const MKMID *ID = user.ID;
+- (MKMPrivateKey *)privateKeyForUser:(const MKMUser *)user {
+    MKMID *ID = user.ID;
     return [_privateKeyTable objectForKey:ID];
 }
 
-- (void)setPrivateKey:(const MKMPrivateKey *)SK
+- (void)setPrivateKey:(MKMPrivateKey *)SK
               forUser:(const MKMUser *)user {
-    const MKMID *ID = user.ID;
+    MKMID *ID = user.ID;
     [_privateKeyTable setObject:SK forKey:ID];
 }
 
-- (const MKMSymmetricKey *)passphraseForEntity:(const MKMEntity *)entity {
-    const MKMID *ID = entity.ID;
-    const MKMSymmetricKey *scKey = [_passphraseTable objectForKey:ID];
+- (MKMSymmetricKey *)passphraseForEntity:(const MKMEntity *)entity {
+    MKMID *ID = entity.ID;
+    MKMSymmetricKey *scKey = [_passphraseTable objectForKey:ID];
     if (!scKey) {
         NSNumber *num = @(arc4random());
         NSDictionary *dict = @{@"algorithm": @"AES",
@@ -154,16 +154,16 @@ static MKMKeyStore *s_sharedStore = nil;
     return scKey;
 }
 
-- (void)setPassphrase:(const MKMSymmetricKey *)PW
+- (void)setPassphrase:(MKMSymmetricKey *)PW
             forEntity:(const MKMEntity *)entity {
-    const MKMID *ID = entity.ID;
+    MKMID *ID = entity.ID;
     [_passphraseTable setObject:PW forKey:ID];
 }
 
-- (const NSData *)privateKeyStoredForUser:(const MKMUser *)user
-                               passphrase:(const MKMSymmetricKey *)scKey {
-    const MKMPrivateKey *SK = [self privateKeyForUser:user];
-    const NSData *data = [SK jsonData];
+- (NSData *)privateKeyStoredForUser:(const MKMUser *)user
+                         passphrase:(const MKMSymmetricKey *)scKey {
+    MKMPrivateKey *SK = [self privateKeyForUser:user];
+    NSData *data = [SK jsonData];
     return [scKey encrypt:data];
 }
 

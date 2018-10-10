@@ -33,8 +33,8 @@ static NSDate *number_time(const NSNumber *number) {
 
 @interface DIMInstantMessage ()
 
-@property (strong, nonatomic) const DIMEnvelope *envelope;
-@property (strong, nonatomic) const DIMMessageContent *content;
+@property (strong, nonatomic) DIMEnvelope *envelope;
+@property (strong, nonatomic) DIMMessageContent *content;
 
 @end
 
@@ -69,8 +69,8 @@ static NSDate *number_time(const NSNumber *number) {
     [mDict setObject:content forKey:@"content"];
     
     if (self = [super initWithDictionary:mDict]) {
-        self.envelope = env;
-        self.content = content;
+        _envelope = [env copy];
+        _content = [content copy];
     }
     
     return self;

@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMEnvelope : DIMDictionary
 
-@property (readonly, strong, nonatomic) const MKMID *sender;
-@property (readonly, strong, nonatomic) const MKMID *receiver;
+@property (readonly, strong, nonatomic) MKMID *sender;
+@property (readonly, strong, nonatomic) MKMID *receiver;
 
-@property (readonly, strong, nonatomic) const NSDate *time;
+@property (readonly, strong, nonatomic) NSDate *time;
 
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to;

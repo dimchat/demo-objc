@@ -55,10 +55,10 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 @interface MKMHistoryRecord ()
 
-@property (strong, nonatomic) const NSMutableArray *events;
-@property (strong, nonatomic) const NSData *merkleRoot;
-@property (strong, nonatomic) const NSData *signature;
-@property (strong, nonatomic) const MKMID *recorder;
+@property (strong, nonatomic) NSMutableArray *events;
+@property (strong, nonatomic) NSData *merkleRoot;
+@property (strong, nonatomic) NSData *signature;
+@property (strong, nonatomic) MKMID *recorder;
 
 @end
 
@@ -148,15 +148,15 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
     if (self = [super initWithDictionary:mDict]) {
         _events = mArray;
-        self.merkleRoot = hash;
-        self.signature = CT;
-        self.recorder = ID;
+        _merkleRoot = [hash copy];
+        _signature = [CT copy];
+        _recorder = [ID copy];
     }
     
     return self;
 }
 
-- (const NSData *)merkleRoot {
+- (NSData *)merkleRoot {
     if (!_merkleRoot) {
         // calculate merkle root for events
         NSArray *events = copy_events(_events);
@@ -186,7 +186,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     }
     
     // hash = prev + merkle
-    const NSData *merkle = self.merkleRoot;
+    NSData *merkle = self.merkleRoot;
     merkle = link_merkle(merkle, prev);
     
     // sign(hash, SK)
@@ -205,7 +205,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     }
     
     // hash = prev + merkle
-    const NSData *merkle = self.merkleRoot;
+    NSData *merkle = self.merkleRoot;
     merkle = link_merkle(merkle, prev);
     // verify(hash, signature, PK)
     return [PK verify:merkle signature:self.signature];

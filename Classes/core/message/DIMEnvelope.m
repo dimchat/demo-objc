@@ -30,10 +30,10 @@ static NSDate *number_time(const NSNumber *number) {
 
 @interface DIMEnvelope ()
 
-@property (strong, nonatomic) const MKMID *sender;
-@property (strong, nonatomic) const MKMID *receiver;
+@property (strong, nonatomic) MKMID *sender;
+@property (strong, nonatomic) MKMID *receiver;
 
-@property (strong, nonatomic) const NSDate *time;
+@property (strong, nonatomic) NSDate *time;
 
 @end
 
@@ -76,7 +76,7 @@ static NSDate *number_time(const NSNumber *number) {
     if (self = [super initWithDictionary:mDict]) {
         self.sender = [MKMID IDWithID:from];
         self.receiver = [MKMID IDWithID:to];
-        self.time = time;
+        _time = [time copy];
     }
     return self;
 }

@@ -16,7 +16,7 @@
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) const MKMEntity *entity; // Contact or Group
+@property (strong, nonatomic) MKMEntity *entity; // Contact or Group
 
 @end
 
@@ -31,7 +31,7 @@
 
 - (instancetype)initWithEntity:(const MKMEntity *)entity {
     if (self = [super init]) {
-        self.entity = entity;
+        _entity = [entity copy];
         
         _messages = [[NSMutableArray alloc] init];
     }
@@ -42,21 +42,21 @@
     return _entity.ID.address.network;
 }
 
-- (const MKMID *)ID {
+- (MKMID *)ID {
     return _entity.ID;
 }
 
-- (const NSString *)title {
+- (NSString *)title {
     if (self.type == DIMConversationPersonal) {
         NSAssert([_entity isKindOfClass:[DIMContact class]], @"error");
-        const DIMContact *contact = (const DIMContact *)_entity;
-        const NSString *name = contact.name;
+        DIMContact *contact = (DIMContact *)_entity;
+        NSString *name = contact.name;
         // "xxx"
         return name;
     } else if (self.type == DIMConversationGroup) {
         NSAssert([_entity isKindOfClass:[DIMGroup class]], @"error");
-        const DIMGroup *group = (const DIMGroup *)_entity;
-        const NSString *name = group.name;
+        DIMGroup *group = (DIMGroup *)_entity;
+        NSString *name = group.name;
         NSUInteger count = group.members.count;
         // "yyy (123)"
         return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
@@ -66,8 +66,8 @@
 
 - (NSInteger)insertInstantMessage:(const DIMInstantMessage *)iMsg {
     NSUInteger pos = 0;
-    NSDate *time = [iMsg.envelope.time copy];
-    const DIMInstantMessage *item;
+    NSDate *time = iMsg.envelope.time;
+    DIMInstantMessage *item;
     for (item in _messages) {
         if ([item.envelope.time compare:time] == NSOrderedDescending) {
             // item.envelope.time > iMsg.envelope.time

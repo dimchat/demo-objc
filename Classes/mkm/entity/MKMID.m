@@ -17,10 +17,10 @@
 
 @interface MKMID ()
 
-@property (strong, nonatomic) const NSString *name;
-@property (strong, nonatomic) const MKMAddress *address;
+@property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) MKMAddress *address;
 
-@property (strong, nonatomic) const MKMPublicKey *publicKey;
+@property (strong, nonatomic) MKMPublicKey *publicKey;
 
 @end
 
@@ -63,8 +63,8 @@
     NSString *string = [NSString stringWithFormat:@"%@@%@", seed, addr];
     
     if (self = [super initWithString:string]) {
-        self.name = seed;
-        self.address = addr;
+        _name = [seed copy];
+        _address = [addr copy];
     }
     return self;
 }
@@ -77,10 +77,10 @@
     return _address.isValid && _name.length > 0;
 }
 
-- (const MKMPublicKey *)publicKey {
+- (MKMPublicKey *)publicKey {
     if (!_publicKey) {
         MKMEntityManager *em = [MKMEntityManager sharedManager];
-        const MKMMeta *meta = [em metaWithID:self];
+        MKMMeta *meta = [em metaWithID:self];
         if ([self checkMeta:meta]) {
             //_publicKey = [meta key];
         }

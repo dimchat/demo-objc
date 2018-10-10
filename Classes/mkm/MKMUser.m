@@ -28,7 +28,7 @@
 
 @interface MKMUser ()
 
-@property (strong, nonatomic) const MKMPrivateKey *privateKey;
+@property (strong, nonatomic) MKMPrivateKey *privateKey;
 
 @end
 
@@ -37,8 +37,8 @@
 + (instancetype)userWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"addr error");
     MKMEntityManager *em = [MKMEntityManager sharedManager];
-    const MKMMeta *meta = [em metaWithID:ID];
-    const MKMHistory *history = [em historyWithID:ID];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
     MKMUser *user = [[self alloc] initWithID:ID meta:meta];
     if (user) {
         MKMAccountHistoryDelegate *delegate;
@@ -54,7 +54,7 @@
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
     if (self = [super initWithID:ID meta:meta]) {
-        _contacts = [[NSMutableDictionary alloc] init];
+        _contacts = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -69,19 +69,36 @@
         // status error
         return NO;
     }
+    if ([_contacts containsObject:contact.ID]) {
+        // already exists
+        return NO;
+    }
     
-    [_contacts setObject:contact forKey:contact.ID];
+    [_contacts addObject:contact.ID];
     return YES;
 }
 
-- (MKMContact *)getContactByID:(const MKMID *)ID {
-    return [_contacts objectForKey:ID];
+- (BOOL)containsContact:(const MKMContact *)contact {
+    return [_contacts containsObject:contact.ID];
 }
 
-- (const MKMPrivateKey *)privateKey {
+- (MKMContact *)getContactByID:(const MKMID *)ID {
+    if (![_contacts containsObject:ID]) {
+        // not exists
+        return nil;
+    }
+    return [MKMContact contactWithID:ID];
+}
+
+- (void)removeContact:(const MKMContact *)contact {
+    NSAssert([self containsContact:contact], @"contact not found: %@", contact);
+    [_contacts removeObject:contact.ID];
+}
+
+- (MKMPrivateKey *)privateKey {
     if (!_privateKey) {
         MKMKeyStore *store = [MKMKeyStore sharedStore];
-        const MKMPrivateKey *SK = [store privateKeyForUser:self];
+        MKMPrivateKey *SK = [store privateKeyForUser:self];
         if ([self checkPrivateKey:SK]) {
             //_privateKey = [SK copy];
         }
@@ -92,7 +109,7 @@
 - (BOOL)checkPrivateKey:(const MKMPrivateKey *)SK {
     BOOL correct = [self.publicKey isMatch:SK];
     if (correct) {
-        self.privateKey = SK;
+        _privateKey = [SK copy];
     }
     return correct;
 }

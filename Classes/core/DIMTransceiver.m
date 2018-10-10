@@ -19,31 +19,42 @@
 
 @implementation DIMTransceiver
 
-#pragma mark - prepare message for sending out
-
-- (DIMCertifiedMessage *)certifiedMessageWithContent:(const DIMMessageContent *)content
-                                              sender:(const MKMID *)sender
-                                            receiver:(const MKMID *)receiver {
+- (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
+                                        sender:(const MKMID *)sender
+                                      receiver:(const MKMID *)receiver {
+    // 1. make envelope
     DIMEnvelope *env;
     env = [[DIMEnvelope alloc] initWithSender:sender receiver:receiver];
-    return [self certifiedMessageWithContent:content envelope:env];
-}
-
-- (DIMCertifiedMessage *)certifiedMessageWithContent:(const DIMMessageContent *)content
-                                            envelope:(const DIMEnvelope *)env {
+    // 2. make instant message
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:content envelope:env];
-    return [self certifiedMessageWithInstantMessage:iMsg];
+    // 3. encrypt to secure message
+    DIMSecureMessage *sMsg;
+    sMsg = [self encryptMessage:iMsg];
+    // 4. sign to certified message
+    DIMCertifiedMessage *cMsg;
+    cMsg = [self signMessage:sMsg];
+    // OK
+    return cMsg;
 }
 
-- (DIMCertifiedMessage *)certifiedMessageWithInstantMessage:(const DIMInstantMessage *)message {
-    // envelope
-    const DIMInstantMessage *iMsg = message;
-    const DIMEnvelope *env = iMsg.envelope;
-    
-    // 1. encrypt to secure message by receiver
+- (DIMInstantMessage *)verifyAndDecryptMessage:(const DIMCertifiedMessage *)cMsg {
+    // 1. verify to secure message
+    DIMSecureMessage *sMsg;
+    sMsg = [self verifyMessage:cMsg];
+    // 2. decrypt to instant message
+    DIMInstantMessage *iMsg;
+    iMsg = [self decryptMessage:sMsg];
+    // OK
+    return iMsg;
+}
+
+#pragma mark -
+
+- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)iMsg {
     DIMSecureMessage *sMsg = nil;
-    const MKMID *receiver = env.receiver;
+    // encrypt to secure message by receiver
+    MKMID *receiver = iMsg.envelope.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
         // receiver is a contact
         DIMContact *contact = [DIMContact contactWithID:receiver];
@@ -52,61 +63,45 @@
         // receiver is a group
         DIMGroup *group = [DIMGroup groupWithID:receiver];
         sMsg = [group encryptMessage:iMsg];
-    } else {
-        NSAssert(false, @"receiver error");
-        return nil;
     }
-    
-    // 2. sign to certified message by sender
-    DIMCertifiedMessage *cMsg = nil;
-    const MKMID *sender = env.sender;
-    if (sender.address.network == MKMNetwork_Main) {
-        DIMUser *user = [DIMUser userWithID:sender];
-        // sign by sender
-        cMsg = [user signMessage:sMsg];;
-    } else {
-        NSAssert(false, @"sender error");
-        return nil;
-    }
-    
-    return cMsg;
+    NSAssert(sMsg, @"encrypt failed");
+    return sMsg;
 }
 
-- (DIMMessageContent *)contentFromCertifiedMessage:(const DIMCertifiedMessage *)message {
-    const DIMInstantMessage *iMsg;
-    iMsg = [self instantMessageFromCertifiedMessage:message];
-    DIMMessageContent *content = [iMsg.content copy];
-    return content;
-}
-
-- (DIMInstantMessage *)instantMessageFromCertifiedMessage:(const DIMCertifiedMessage *)message {
-    // envelope
-    const DIMCertifiedMessage *cMsg = message;
-    const DIMEnvelope *env = cMsg.envelope;
-    
-    // 1. verify to secure message by sender
-    DIMSecureMessage *sMsg = nil;
-    const MKMID *sender = env.sender;
-    if (sender.address.network == MKMNetwork_Main) {
-        DIMContact *contact = [DIMContact contactWithID:sender];
-        sMsg = [contact verifyMessage:message];
-    } else {
-        NSAssert(false, @"sender error");
-        return nil;
-    }
-    
-    // 2. decrypt to instant message by receiver
+- (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)sMsg {
     DIMInstantMessage *iMsg = nil;
-    const MKMID *receiver = env.receiver;
+    // decrypt to instant message by receiver
+    MKMID *receiver = sMsg.envelope.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
         DIMUser *user = [DIMUser userWithID:receiver];
         iMsg = [user decryptMessage:sMsg];
-    } else {
-        NSAssert(false, @"receiver error");
-        return nil;
     }
-    
+    NSAssert(iMsg, @"decrypt failed");
     return iMsg;
+}
+
+- (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)sMsg {
+    DIMCertifiedMessage *cMsg = nil;
+    // sign to certified message by sender
+    MKMID *sender = sMsg.envelope.sender;
+    if (sender.address.network == MKMNetwork_Main) {
+        DIMUser *user = [DIMUser userWithID:sender];
+        cMsg = [user signMessage:sMsg];;
+    }
+    NSAssert(cMsg, @"sign failed");
+    return cMsg;
+}
+
+- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)cMsg {
+    DIMSecureMessage *sMsg = nil;
+    // verify to secure message by sender
+    MKMID *sender = cMsg.envelope.sender;
+    if (sender.address.network == MKMNetwork_Main) {
+        DIMContact *contact = [DIMContact contactWithID:sender];
+        sMsg = [contact verifyMessage:cMsg];
+    }
+    NSAssert(sMsg, @"verify failed");
+    return sMsg;
 }
 
 @end

@@ -14,13 +14,10 @@
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
-    NSAssert([algorithm isEqualToString:[dict objectForKey:@"algorithm"]], @"algorithm error: %@, %@", algorithm, info);
-    
     if ([self isMemberOfClass:[MKMSymmetricKey class]]) {
         // create instance with algorithm
         if ([algorithm isEqualToString:SCAlgorithmAES]) {
-            self = [[MKMAESKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+            self = [[MKMAESKey alloc] initWithAlgorithm:algorithm keyInfo:info];
         } else {
             self = nil;
             NSAssert(self, @"algorithm not support: %@", algorithm);

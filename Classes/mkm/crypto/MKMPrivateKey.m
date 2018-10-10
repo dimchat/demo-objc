@@ -29,14 +29,13 @@
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
-    NSAssert([algorithm isEqualToString:[dict objectForKey:@"algorithm"]], @"error");
+    NSAssert([algorithm isEqualToString:[info objectForKey:@"algorithm"]], @"error");
     
     if ([self isMemberOfClass:[MKMPrivateKey class]]) {
         if ([algorithm isEqualToString:ACAlgorithmECC]) {
-            self = [[MKMECCPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+            self = [[MKMECCPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:info];
         } else if ([algorithm isEqualToString:ACAlgorithmRSA]) {
-            self = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:dict];
+            self = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:info];
         } else {
             self = nil;
             NSAssert(self, @"algorithm not support: %@", algorithm);
@@ -59,7 +58,7 @@
     return [aKey.publicKey isMatch:self];
 }
 
-- (const MKMPublicKey *)publicKey {
+- (MKMPublicKey *)publicKey {
     // implements in subclass
     return nil;
 }

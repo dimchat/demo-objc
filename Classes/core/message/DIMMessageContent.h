@@ -133,7 +133,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 @interface DIMMessageContent (GroupMessage)
 
 // GroupID for group message
-@property (strong, nonatomic) const MKMID *group;
+@property (strong, nonatomic) MKMID *group;
 
 // SerialNumber for referenced reply in group chatting
 @property (readonly, nonatomic) NSUInteger quoteNumber;

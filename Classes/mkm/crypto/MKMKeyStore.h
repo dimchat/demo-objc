@@ -28,9 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param contact - contact with ID
  @return PK
  */
-- (const MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact;
+- (MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact;
 
-- (void)setPublicKey:(const MKMPublicKey *)PK
+- (void)setPublicKey:(MKMPublicKey *)PK
           forContact:(const MKMContact *)contact;
 
 /**
@@ -39,9 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param user - user with ID
  @return SK
  */
-- (const MKMPrivateKey *)privateKeyForUser:(const MKMUser *)user;
+- (MKMPrivateKey *)privateKeyForUser:(const MKMUser *)user;
 
-- (void)setPrivateKey:(const MKMPrivateKey *)SK
+- (void)setPrivateKey:(MKMPrivateKey *)SK
               forUser:(const MKMUser *)user;
 
 /**
@@ -50,9 +50,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param entity - entity with ID
  @return PW
  */
-- (const MKMSymmetricKey *)passphraseForEntity:(const MKMEntity *)entity;
+- (MKMSymmetricKey *)passphraseForEntity:(const MKMEntity *)entity;
 
-- (void)setPassphrase:(const MKMSymmetricKey *)PW
+- (void)setPassphrase:(MKMSymmetricKey *)PW
             forEntity:(const MKMEntity *)entity;
 
 /**
@@ -62,8 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param scKey - password to encrypt the SK
  @return KS
  */
-- (const NSData *)privateKeyStoredForUser:(const MKMUser *)user
-                               passphrase:(const MKMSymmetricKey *)scKey;
+- (NSData *)privateKeyStoredForUser:(const MKMUser *)user
+                         passphrase:(const MKMSymmetricKey *)scKey;
 
 @end
 

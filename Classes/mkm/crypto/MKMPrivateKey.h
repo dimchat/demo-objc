@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @return public key
  */
-- (const MKMPublicKey *)publicKey;
+- (MKMPublicKey *)publicKey;
 
 @end
 

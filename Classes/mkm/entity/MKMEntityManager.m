@@ -23,14 +23,14 @@
 
 @interface MKMEntity (Hacking)
 
-@property (strong, nonatomic) const MKMHistory *history;
+@property (strong, nonatomic) MKMHistory *history;
 
 @end
 
 @interface MKMEntityManager () {
     
-    NSMutableDictionary<const MKMID *, const MKMMeta *> *_metaTable;
-    NSMutableDictionary<const MKMID *, const MKMHistory *> *_historyTable;
+    NSMutableDictionary<const MKMID *, MKMMeta *> *_metaTable;
+    NSMutableDictionary<const MKMID *, MKMHistory *> *_historyTable;
 }
 
 @end
@@ -77,40 +77,29 @@ static MKMEntityManager *s_sharedManager = nil;
         NSAssert(false, @"cannot load: %@", path);
         return NO;
     }
+    dict = [NSDictionary dictionaryWithContentsOfFile:path];
     
     // ID
-    dict = [NSDictionary dictionaryWithContentsOfFile:path];
     ID = [dict objectForKey:@"ID"];
-    if (!ID) {
-        NSAssert(false, @"ID not found: %@", path);
-        return NO;
-    }
     ID = [MKMID IDWithID:ID];
+    NSAssert(ID, @"ID not found: %@", path);
     
-    // load meta
+    // meta
     meta = [dict objectForKey:@"meta"];
-    if (!meta) {
-        NSAssert(false, @"meta not found: %@", path);
-        return NO;
-    }
     meta = [MKMMeta metaWithMeta:meta];
-    [self setMeta:meta forID:ID];
+    NSAssert(meta, @"meta not found: %@", path);
     
-    // load history
+    // history
     history = [dict objectForKey:@"history"];
-    if (!history) {
-        NSAssert(false, @"history not found: %@", path);
-        return NO;
-    }
     history = [MKMHistory historyWithHistory:history];
-    [self setHistory:history forID:ID];
+    NSAssert(history, @"history not found: %@", path);
     
-    return YES;
+    return [self setMeta:meta history:history forID:ID];
 }
 
-- (const MKMMeta *)metaWithID:(const MKMID *)ID {
+- (MKMMeta *)metaWithID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
-    const MKMMeta *meta = [_metaTable objectForKey:ID];
+    MKMMeta *meta = [_metaTable objectForKey:ID];
     if (!meta && _delegate) {
         meta = [_delegate queryMetaWithID:ID];
         if (meta) {
@@ -120,20 +109,26 @@ static MKMEntityManager *s_sharedManager = nil;
     return meta;
 }
 
-- (BOOL)setMeta:(const MKMMeta *)meta forID:(const MKMID *)ID {
-    NSAssert(meta, @"meta cannot be empty");
-    NSAssert(ID, @"ID cannot be empty");
-    BOOL correct = [ID checkMeta:meta];
-    if (correct) {
-        [_metaTable setObject:meta forKey:ID];
-        [_delegate postMeta:meta forID:ID];
+- (BOOL)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID {
+    if (![ID checkMeta:meta]) {
+        NSAssert(false, @"ID and meta not match");
+        return NO;
     }
-    return correct;
+    
+    MKMMeta *oMeta = [self metaWithID:ID];
+    if (oMeta) {
+        // already exists
+        return NO;
+    }
+    // set meta
+    [_metaTable setObject:meta forKey:ID];
+    
+    return YES;
 }
 
-- (const MKMHistory *)historyWithID:(const MKMID *)ID {
+- (MKMHistory *)historyWithID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
-    const MKMHistory *history = [_historyTable objectForKey:ID];
+    MKMHistory *history = [_historyTable objectForKey:ID];
     if (!history && _delegate) {
         history = [_delegate queryHistoryWithID:ID];
         if (history) {
@@ -143,99 +138,53 @@ static MKMEntityManager *s_sharedManager = nil;
     return history;
 }
 
-- (NSUInteger)setHistory:(const MKMHistory *)history forID:(const MKMID *)ID {
-    NSAssert(history, @"history cannot be empty");
-    NSAssert(ID, @"ID cannot be empty");
-    const MKMMeta *meta = [self metaWithID:ID];
-    NSAssert(meta, @"meta not found: %@", ID);
-    
-    MKMEntity *entity;
-    MKMEntityHistoryDelegate *delegate;
-    if (ID.address.network == MKMNetwork_Main) {
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
-        entity.historyDelegate = delegate;
-    } else if (ID.address.network == MKMNetwork_Group) {
-        delegate = [[MKMGroupHistoryDelegate alloc] init];
-        entity = [[MKMGroup alloc] initWithID:ID meta:meta];
-        entity.historyDelegate = delegate;
-    }
-    
-    NSUInteger count = [entity runHistory:history];
-    if (count > 0) {
-        const MKMHistory *his = [entity history];
-        NSAssert(his, @"error");
-        [_historyTable setObject:his forKey:ID];
-        
-        [_delegate postHistory:history forID:ID];
-    }
-    return count;
-}
-
-- (BOOL)addHistoryRecord:(const MKMHistoryRecord *)record forID:(const MKMID *)ID {
+- (BOOL)addHistoryRecord:(MKMHistoryRecord *)record
+                   forID:(const MKMID *)ID {
     NSAssert(record, @"record cannot be empty");
     NSAssert(ID, @"ID cannot be empty");
-    const MKMMeta *meta = [self metaWithID:ID];
-    NSAssert(meta, @"meta not found: %@", ID);
     
     MKMEntity *entity;
-    MKMEntityHistoryDelegate *delegate;
     if (ID.address.network == MKMNetwork_Main) {
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
-        entity.historyDelegate = delegate;
+        entity = [MKMAccount accountWithID:ID];
     } else if (ID.address.network == MKMNetwork_Group) {
-        delegate = [[MKMGroupHistoryDelegate alloc] init];
-        entity = [[MKMGroup alloc] initWithID:ID meta:meta];
-        entity.historyDelegate = delegate;
+        entity = [MKMGroup groupWithID:ID];
     }
     
     BOOL correct = [entity runHistoryRecord:record];
     if (correct) {
-        const MKMHistory *his = [entity history];
-        NSAssert(his, @"error");
+        MKMHistory *his = [entity history];
+        NSAssert(his, @"unexpected history record: %@", record);
+        // set history
         [_historyTable setObject:his forKey:ID];
-        
-        [_delegate postHistoryRecord:record forID:ID];
     }
     return correct;
 }
 
-- (BOOL)setMeta:(const MKMMeta *)meta
-        history:(const MKMHistory *)history
+- (BOOL)setMeta:(MKMMeta *)meta
+        history:(MKMHistory *)his
           forID:(const MKMID *)ID {
-    NSAssert(meta, @"meta cannot be empty");
-    NSAssert(history, @"history cannot be empty");
-    NSAssert(ID, @"ID cannot be empty");
-    BOOL correct = [ID checkMeta:meta];
-    if (correct) {
-        [_metaTable setObject:meta forKey:ID];
+    if (![ID checkMeta:meta]) {
+        NSAssert(false, @"ID and meta not match");
+        return NO;
     }
     
-    MKMEntity *entity;
-    MKMEntityHistoryDelegate *delegate;
-    if (ID.address.network == MKMNetwork_Main) {
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        entity = [[MKMAccount alloc] initWithID:ID meta:meta];
-        entity.historyDelegate = delegate;
-    } else if (ID.address.network == MKMNetwork_Group) {
-        delegate = [[MKMGroupHistoryDelegate alloc] init];
-        entity = [[MKMGroup alloc] initWithID:ID meta:meta];
-        entity.historyDelegate = delegate;
+    MKMMeta *oMeta = [self metaWithID:ID];
+    if (oMeta) {
+        // already exists
+        return NO;
     }
+    // set meta
+    [_metaTable setObject:meta forKey:ID];
     
-    NSUInteger count = [entity runHistory:history];
-    if (count > 0) {
-        const MKMHistory *his = [entity history];
-        NSAssert(his, @"error");
-        [_historyTable setObject:his forKey:ID];
+    MKMHistory *oHis = [self historyWithID:ID];
+    if (oHis.count >= his.count) {
+        // the longer history must be the newest
+        return NO;
     }
+    // set history
+    [_historyTable setObject:his forKey:ID];
     
-    if (correct && count > 0) {
-        [_delegate postMeta:meta history:history forID:ID];
-        return YES;
-    }
-    return NO;
+    return YES;
 }
 
 @end

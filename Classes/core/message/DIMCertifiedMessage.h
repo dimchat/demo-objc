@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMCertifiedMessage : DIMSecureMessage
 
-@property (readonly, strong, nonatomic) const NSData *signature;
+@property (readonly, strong, nonatomic) NSData *signature;
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env

@@ -46,7 +46,7 @@
 }
 
 - (BOOL)match:(const MKMID *)ID; {
-    const MKMPublicKey *PK = ID.publicKey;
+    MKMPublicKey *PK = ID.publicKey;
     // TODO: check the signature of profile
     NSData *data = nil;
     NSData *signature = nil;

@@ -12,52 +12,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTransceiver : NSObject
 
-#pragma mark - prepare message for sending out
-
 /**
- Transform an instant message to certified
-
- @param message - InstantMessage object
- @return CertifiedMessage object
- */
-- (DIMCertifiedMessage *)certifiedMessageWithInstantMessage:(const DIMInstantMessage *)message;
-
-/**
- Pack message content with envelope, transform to certified message
-
- @param content - message content
- @param env - envelope
- @return CertifiedMessage object
- */
-- (DIMCertifiedMessage *)certifiedMessageWithContent:(const DIMMessageContent *)content envelope:(const DIMEnvelope *)env;
-
-/**
- Pack message content with sender and receiver, transform it
+ Pack message content with sender and receiver to deliver it
 
  @param content - message content
  @param sender - sender ID
  @param receiver - receiver ID
  @return CertifiedMessage Object
  */
-- (DIMCertifiedMessage *)certifiedMessageWithContent:(const DIMMessageContent *)content sender:(const MKMID *)sender receiver:(const MKMID *)receiver;
-
-#pragma mark - extract message after received
+- (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
+                                        sender:(const MKMID *)sender
+                                      receiver:(const MKMID *)receiver;
 
 /**
  Extract instant message from a certified message
 
- @param message - certified message
+ @param cMsg - certified message
  @return InstantMessage object
  */
-- (DIMInstantMessage *)instantMessageFromCertifiedMessage:(const DIMCertifiedMessage *)message;
+- (DIMInstantMessage *)verifyAndDecryptMessage:(const DIMCertifiedMessage *)cMsg;
 
-/**
- Extract message content from a certified message
+#pragma mark -
 
- @param message - certified message
- @return MessageContent object
- */
-- (DIMMessageContent *)contentFromCertifiedMessage:(const DIMCertifiedMessage *)message;
+- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)iMsg;
+- (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)sMsg;
+
+- (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)sMsg;
+- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)cMsg;
 
 @end
 

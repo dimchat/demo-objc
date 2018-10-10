@@ -30,8 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMSecureMessage : DIMDictionary
 
-@property (readonly, strong, nonatomic) const DIMEnvelope *envelope;
-@property (readonly, strong, nonatomic) const NSData *content;
+@property (readonly, strong, nonatomic) DIMEnvelope *envelope;
+@property (readonly, strong, nonatomic) NSData *content;
 
 /**
  * Password to decode the content, which encrypted by contact.PK
@@ -39,8 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
  *   secureMessage.content = symmetricKey.encrypt(instantMessage.content);
  *   secretKey = contact.privateKey.encrypt(symmetricKey);
  */
-@property (readonly, strong, nonatomic) const NSData *secretKey;
-@property (readonly, strong, nonatomic) const NSDictionary *secretKeys;
+@property (readonly, strong, nonatomic) NSData *secretKey;
+@property (readonly, strong, nonatomic) NSDictionary *secretKeys;
 
 /**
  Secure Message for Personal

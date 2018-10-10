@@ -15,7 +15,7 @@
 @property (nonatomic) DIMMessageType type;
 @property (nonatomic) NSUInteger serialNumber;
 
-@property (strong, nonatomic) const MKMID *group;
+@property (strong, nonatomic) MKMID *group;
 @property (nonatomic) NSUInteger quoteNumber;
 
 @end
@@ -173,7 +173,7 @@
 
 #pragma mark Group message content
 
-- (void)setGroup:(const MKMID *)group {
+- (void)setGroup:(MKMID *)group {
     if (![_group isEqual:group]) {
         if (group) {
             [_storeDictionary setObject:group forKey:@"group"];
@@ -185,7 +185,11 @@
 }
 
 - (void)setQuoteNumber:(NSUInteger)quoteNumber {
-    [_storeDictionary setObject:@(quoteNumber) forKey:@"quote"];
+    if (quoteNumber == 0) {
+        [_storeDictionary removeObjectForKey:@"quote"];
+    } else {
+        [_storeDictionary setObject:@(quoteNumber) forKey:@"quote"];
+    }
     _quoteNumber = quoteNumber;
 }
 

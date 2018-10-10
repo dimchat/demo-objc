@@ -24,8 +24,8 @@
 + (instancetype)contactWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"addr error");
     MKMEntityManager *em = [MKMEntityManager sharedManager];
-    const MKMMeta *meta = [em metaWithID:ID];
-    const MKMHistory *history = [em historyWithID:ID];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
     MKMContact *contact = [[self alloc] initWithID:ID meta:meta];
     if (contact) {
         MKMAccountHistoryDelegate *delegate;

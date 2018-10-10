@@ -13,7 +13,7 @@
 
 @interface DIMCertifiedMessage ()
 
-@property (strong, nonatomic) const NSData *signature;
+@property (strong, nonatomic) NSData *signature;
 
 @end
 
@@ -48,15 +48,11 @@
                       secretKey:(const NSData *)key
                       signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
-    self = [super initWithContent:content
-                        envelope:env
-                       secretKey:key];
-    if (self) {
+    if (self = [super initWithContent:content envelope:env secretKey:key]) {
         // signature
         if (CT) {
-            [_storeDictionary setObject:[CT base64Encode]
-                                 forKey:@"signature"];
-            self.signature = CT;
+            [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];
+            _signature = [CT copy];
         }
     }
     return self;
@@ -67,15 +63,11 @@
                      secretKeys:(const NSDictionary *)keys
                       signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
-    self = [super initWithContent:content
-                         envelope:env
-                       secretKeys:keys];
-    if (self) {
+    if (self = [super initWithContent:content envelope:env secretKeys:keys]) {
         // signature
         if (CT) {
-            [_storeDictionary setObject:[CT base64Encode]
-                                 forKey:@"signature"];
-            self.signature = CT;
+            [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];
+            _signature = [CT copy];
         }
     }
     return self;

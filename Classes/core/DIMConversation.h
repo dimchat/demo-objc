@@ -24,8 +24,8 @@ typedef MKMNetworkID DIMConversationType;
 
 @property (readonly, nonatomic) DIMConversationType type;
 
-@property (readonly, strong, nonatomic) const MKMID *ID;
-@property (readonly, strong, nonatomic) const NSString *title;
+@property (readonly, strong, nonatomic) MKMID *ID;
+@property (readonly, strong, nonatomic) NSString *title;
 
 - (instancetype)initWithEntity:(const MKMEntity *)entity
 NS_DESIGNATED_INITIALIZER;

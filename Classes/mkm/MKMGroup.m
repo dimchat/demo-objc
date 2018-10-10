@@ -29,8 +29,8 @@
 + (instancetype)groupWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Group, @"addr error");
     MKMEntityManager *em = [MKMEntityManager sharedManager];
-    const MKMMeta *meta = [em metaWithID:ID];
-    const MKMHistory *history = [em historyWithID:ID];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
     MKMGroup *group = [[self alloc] initWithID:ID meta:meta];
     if (group) {
         MKMGroupHistoryDelegate *delegate;

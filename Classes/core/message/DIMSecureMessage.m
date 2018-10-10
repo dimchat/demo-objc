@@ -36,11 +36,11 @@ static NSDate *number_time(const NSNumber *number) {
 
 @interface DIMSecureMessage ()
 
-@property (strong, nonatomic) const DIMEnvelope *envelope;
-@property (strong, nonatomic) const NSData *content;
+@property (strong, nonatomic) DIMEnvelope *envelope;
+@property (strong, nonatomic) NSData *content;
 
-@property (strong, nonatomic) const NSData *secretKey;
-@property (strong, nonatomic) const NSDictionary *secretKeys;
+@property (strong, nonatomic) NSData *secretKey;
+@property (strong, nonatomic) NSDictionary *secretKeys;
 
 @end
 
@@ -73,9 +73,9 @@ static NSDate *number_time(const NSNumber *number) {
     [mDict setObject:[key base64Encode] forKey:@"key"];
     
     if (self = [super initWithDictionary:mDict]) {
-        self.envelope = env;
-        self.content = content;
-        self.secretKey = key;
+        _envelope = [env copy];
+        _content = [content copy];
+        _secretKey = [key copy];
     }
     return self;
 }
@@ -96,9 +96,9 @@ static NSDate *number_time(const NSNumber *number) {
     [mDict setObject:keys forKey:@"keys"];
     
     if (self = [super initWithDictionary:mDict]) {
-        self.envelope = env;
-        self.content = content;
-        self.secretKeys = keys;
+        _envelope = [env copy];
+        _content = [content copy];
+        _secretKeys = [keys copy];
     }
     return self;
 }

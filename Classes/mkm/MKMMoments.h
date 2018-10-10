@@ -17,9 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Don't Share My Moments
-@property (readonly, strong, nonatomic) const NSArray *exclusions;
+@property (readonly, strong, nonatomic) NSArray *exclusions;
 // Hide User's Moments
-@property (readonly, strong, nonatomic) const NSArray *ignores;
+@property (readonly, strong, nonatomic) NSArray *ignores;
 
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta

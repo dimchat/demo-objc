@@ -18,8 +18,8 @@
 
 @interface MKMEntity ()
 
-@property (strong, nonatomic) const MKMID *ID;
-@property (strong, nonatomic) const MKMMeta *meta;
+@property (strong, nonatomic) MKMID *ID;
+@property (strong, nonatomic) MKMMeta *meta;
 @property (strong, nonatomic) MKMHistory *history;
 
 @end
@@ -28,14 +28,14 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    const MKMID *ID = nil;
-    const MKMMeta *meta = nil;
+    MKMID *ID = nil;
+    MKMMeta *meta = nil;
     self = [self initWithID:ID meta:meta];
     return self;
 }
 
 - (instancetype)initWithID:(const MKMID *)ID {
-    const MKMMeta *meta = nil;
+    MKMMeta *meta = nil;
     self = [self initWithID:ID meta:meta];
     return self;
 }
@@ -55,14 +55,14 @@
         correct = ID.isValid;
         NSAssert(correct, @"ID error");
         if (correct) {
-            self.ID = ID;
+            _ID = [ID copy];
         }
         
         // meta
         correct = [ID checkMeta:meta];
         NSAssert(correct, @"meta error");
         if (correct) {
-            self.meta = meta;
+            _meta = [meta copy];
         }
         
         // history

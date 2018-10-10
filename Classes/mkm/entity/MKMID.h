@@ -21,12 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMID : MKMString
 
-@property (readonly, strong, nonatomic) const NSString *name;
-@property (readonly, strong, nonatomic) const MKMAddress *address;
+@property (readonly, strong, nonatomic) NSString *name;
+@property (readonly, strong, nonatomic) MKMAddress *address;
 
 @property (readonly, nonatomic, getter=isValid) BOOL valid;
 
-@property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
+@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
 
 + (instancetype)IDWithID:(id)ID;
 

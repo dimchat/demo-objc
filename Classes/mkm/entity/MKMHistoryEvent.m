@@ -32,8 +32,8 @@ static NSDate *date(NSTimeInterval time) {
 
 @interface MKMHistoryOperation ()
 
-@property (strong, nonatomic) const NSString *operate;
-@property (strong, nonatomic) const NSDate *time;
+@property (strong, nonatomic) NSString *operate;
+@property (strong, nonatomic) NSDate *time;
 
 @end
 
@@ -80,8 +80,8 @@ static NSDate *date(NSTimeInterval time) {
     [mDict setObject:number forKey:@"time"];
     
     if (self = [super initWithDictionary:mDict]) {
-        self.operate = op;
-        self.time = time;
+        _operate = [op copy];
+        _time = [time copy];
     }
     
     return self;
@@ -112,10 +112,10 @@ static NSDate *date(NSTimeInterval time) {
 
 @interface MKMHistoryEvent ()
 
-@property (strong, nonatomic) const MKMHistoryOperation *operation;
+@property (strong, nonatomic) MKMHistoryOperation *operation;
 
-@property (strong, nonatomic) const MKMID *commander;
-@property (strong, nonatomic) const NSData *signature;
+@property (strong, nonatomic) MKMID *commander;
+@property (strong, nonatomic) NSData *signature;
 
 @end
 
@@ -152,7 +152,7 @@ static NSDate *date(NSTimeInterval time) {
             MKMID *ID = [MKMID IDWithID:commander];
             NSData *CT = [signature base64Decode];
             
-            const MKMPublicKey *PK = [ID publicKey];
+            MKMPublicKey *PK = [ID publicKey];
             BOOL OK = [PK verify:operation signature:CT];
             NSAssert(!PK || OK, @"signature error");
             
@@ -168,7 +168,7 @@ static NSDate *date(NSTimeInterval time) {
     NSDictionary *dict;
     dict = [NSDictionary dictionaryWithObject:op forKey:@"operation"];
     if (self = [super initWithDictionary:dict]) {
-        self.operation = op;
+        _operation = [op copy];
     }
     return self;
 }
@@ -181,7 +181,7 @@ static NSDate *date(NSTimeInterval time) {
     [mDict setObject:ID forKey:@"commander"];
     [mDict setObject:[CT base64Encode] forKey:@"signature"];
     
-    const MKMPublicKey *PK = [ID publicKey];
+    MKMPublicKey *PK = [ID publicKey];
     NSData *data = [operation data];
     BOOL OK = [PK verify:data signature:CT];
     NSAssert(!PK || OK, @"signature error");
@@ -190,9 +190,9 @@ static NSDate *date(NSTimeInterval time) {
     op = [MKMHistoryOperation operationWithOperation:operation];
     
     if (self = [super initWithDictionary:mDict]) {
-        self.operation = op;
-        self.commander = ID;
-        self.signature = CT;
+        _operation = [op copy];
+        _commander = [ID copy];
+        _signature = [CT copy];
     }
     
     return self;

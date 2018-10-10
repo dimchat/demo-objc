@@ -15,14 +15,7 @@
 
 @interface MKMEntity (Hacking)
 
-@property (strong, nonatomic) const MKMMeta *meta;
-
-@end
-
-@interface MKMSocialEntity ()
-
-@property (strong, nonatomic) const MKMID *founder;
-@property (strong, nonatomic) const MKMID *owner;
+@property (strong, nonatomic) MKMMeta *meta;
 
 @end
 

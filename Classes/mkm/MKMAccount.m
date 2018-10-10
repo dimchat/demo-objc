@@ -12,6 +12,11 @@
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMMeta.h"
+#import "MKMEntityManager.h"
+
+#import "MKMHistory.h"
+#import "MKMEntity+History.h"
+#import "MKMAccountHistoryDelegate.h"
 
 #import "MKMProfile.h"
 #import "MKMFacebook.h"
@@ -22,11 +27,27 @@
 
 @property (nonatomic) MKMAccountStatus status;
 
-@property (strong, nonatomic) const MKMAccountProfile *profile;
+@property (strong, nonatomic) MKMAccountProfile *profile;
 
 @end
 
 @implementation MKMAccount
+
++ (instancetype)accountWithID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"addr error");
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
+    MKMAccount *account = [[self alloc] initWithID:ID meta:meta];
+    if (account) {
+        MKMAccountHistoryDelegate *delegate;
+        delegate = [[MKMAccountHistoryDelegate alloc] init];
+        account.historyDelegate = delegate;
+        NSUInteger count = [account runHistory:history];
+        NSAssert(count == history.count, @"history error");
+    }
+    return account;
+}
 
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
@@ -47,11 +68,11 @@
     return self;
 }
 
-- (const MKMPublicKey *)publicKey {
+- (MKMPublicKey *)publicKey {
     return _ID.publicKey;
 }
 
-- (const MKMAccountProfile *)profile {
+- (MKMAccountProfile *)profile {
     if (!_profile || _profile.allKeys.count == 0) {
         MKMFacebook *facebook = [MKMFacebook sharedInstance];
         id prof = [facebook profileWithID:_ID];
@@ -64,7 +85,7 @@
 
 @implementation MKMAccount (Profile)
 
-- (const NSString *)name {
+- (NSString *)name {
     NSString *str = self.profile.name;
     if (!str) {
         str = _ID.name;
@@ -76,7 +97,7 @@
     return self.profile.gender;
 }
 
-- (const NSString *)avatar {
+- (NSString *)avatar {
     return self.profile.avatar;
 }
 

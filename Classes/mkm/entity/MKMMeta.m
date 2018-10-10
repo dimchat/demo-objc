@@ -22,9 +22,9 @@
 
 @property (nonatomic) NSUInteger version;
 
-@property (strong, nonatomic) const NSString *seed;
-@property (strong, nonatomic) const MKMPublicKey *key;
-@property (strong, nonatomic) const NSData *fingerprint;
+@property (strong, nonatomic) NSString *seed;
+@property (strong, nonatomic) MKMPublicKey *key;
+@property (strong, nonatomic) NSData *fingerprint;
 
 @end
 
@@ -47,16 +47,16 @@
     NSNumber *version = [dict objectForKey:@"version"];
     id publicKey = [dict objectForKey:@"key"];
     NSString *fingerprint = [dict objectForKey:@"fingerprint"];
-    const NSString *seed = [dict objectForKey:@"seed"];
+    NSString *seed = [dict objectForKey:@"seed"];
     
-    const MKMPublicKey *PK = nil;
+    MKMPublicKey *PK = nil;
     if ([publicKey isKindOfClass:[NSString class]]) {
         PK = [[MKMPublicKey alloc] initWithJSONString:publicKey];
     } else if ([publicKey isKindOfClass:[NSDictionary class]]) {
         NSString *algor = [publicKey objectForKey:@"algorithm"];
         PK = [[MKMPublicKey alloc] initWithAlgorithm:algor keyInfo:publicKey];
     }
-    const NSData *CT = [fingerprint base64Decode];
+    NSData *CT = [fingerprint base64Decode];
     NSUInteger ver = version.unsignedIntegerValue;
     NSAssert(ver == MKMAddressDefaultVersion, @"unknown version: %lu", ver);
     
@@ -97,10 +97,10 @@
         
         self = [super initWithDictionary:mDict];
         if (self) {
-            self.version = ver;
-            self.seed = name;
-            self.key = PK;
-            self.fingerprint = CT;
+            _version = ver;
+            _seed = [name copy];
+            _key = [PK copy];
+            _fingerprint = [CT copy];
         }
     } else {
         self = [self init];
@@ -128,8 +128,7 @@
 }
 
 - (BOOL)match:(const MKMID *)ID {
-    NSString *name = [_seed copy];
-    return [ID.name isEqualToString:name] && [self matchAddress:ID.address];
+    return [_seed isEqualToString:ID.name] && [self matchAddress:ID.address];
 }
 
 - (BOOL)matchAddress:(const MKMAddress *)address {
