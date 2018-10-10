@@ -3,13 +3,11 @@
 //  DIM
 //
 //  Created by Albert Moky on 2018/10/1.
-//  Copyright © 2018年 DIM Group. All rights reserved.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
-// Types
-#import "DIMDictionary.h"
+//// Types
+//#import "DIMDictionary.h"
 
 // User
 #import "DIMUser.h"
