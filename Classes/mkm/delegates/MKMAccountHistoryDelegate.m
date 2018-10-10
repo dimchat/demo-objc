@@ -1,5 +1,5 @@
 //
-//  MKMPersonHistoryDelegate.m
+//  MKMAccountHistoryDelegate.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/6.
@@ -8,20 +8,20 @@
 
 #import "MKMID.h"
 #import "MKMEntity.h"
-#import "MKMPerson.h"
+#import "MKMAccount.h"
 
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
-#import "MKMPersonHistoryDelegate.h"
+#import "MKMAccountHistoryDelegate.h"
 
-@interface MKMPerson (Hacking)
+@interface MKMAccount (Hacking)
 
-@property (nonatomic) MKMPersonStatus status;
+@property (nonatomic) MKMAccountStatus status;
 
 @end
 
-@implementation MKMPersonHistoryDelegate
+@implementation MKMAccountHistoryDelegate
 
 - (BOOL)recorder:(const MKMID *)ID
   canWriteRecord:(const MKMHistoryRecord *)record
@@ -52,35 +52,35 @@
         return NO;
     }
     
-    NSAssert([entity isKindOfClass:[MKMPerson class]], @"error");
-    const MKMPerson *person = (const MKMPerson *)entity;
+    NSAssert([entity isKindOfClass:[MKMAccount class]], @"error");
+    const MKMAccount *account = (const MKMAccount *)entity;
     
     const NSString *op = operation.operate;
     if ([op isEqualToString:@"register"] ||
         [op isEqualToString:@"create"]) {
         // status: Init -> Registered
-        if (person.status == MKMPersonStatusInitialized) {
+        if (account.status == MKMAccountStatusInitialized) {
             return YES;
         } else {
             return NO;
         }
     } else if ([op isEqualToString:@"suicide"] ||
                [op isEqualToString:@"destroy"]) {
-        // Immortals
+        // Immortal Accounts
         if ([ID isEqualToString:MKM_IMMORTAL_HULK_ID] ||
             [ID isEqualToString:MKM_MONKEY_KING_ID]) {
             // cannot suicide!
             return NO;
         }
         // status: Registerd -> Dead
-        if (person.status == MKMPersonStatusRegistered) {
+        if (account.status == MKMAccountStatusRegistered) {
             return YES;
         } else {
             return NO;
         }
     }
     
-    // Person history only support TWO operations above
+    // Account history only support TWO operations above
     return NO;
 }
 
@@ -90,21 +90,21 @@
     // call super execute
     [super commander:ID execute:operation inEntity:entity];
     
-    NSAssert([entity isKindOfClass:[MKMPerson class]], @"error");
-    const MKMPerson *person = (const MKMPerson *)entity;
+    NSAssert([entity isKindOfClass:[MKMAccount class]], @"error");
+    const MKMAccount *account = (const MKMAccount *)entity;
     
     const NSString *op = operation.operate;
     if ([op isEqualToString:@"register"] ||
         [op isEqualToString:@"create"]) {
         // status: Init -> Registered
-        if (person.status == MKMPersonStatusInitialized) {
-            person.status = MKMPersonStatusRegistered;
+        if (account.status == MKMAccountStatusInitialized) {
+            account.status = MKMAccountStatusRegistered;
         }
     } else if ([op isEqualToString:@"suicide"] ||
                [op isEqualToString:@"destroy"]) {
         // status: Registerd -> Dead
-        if (person.status == MKMPersonStatusRegistered) {
-            person.status = MKMPersonStatusDead;
+        if (account.status == MKMAccountStatusRegistered) {
+            account.status = MKMAccountStatusDead;
         }
     }
 }

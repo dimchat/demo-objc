@@ -22,7 +22,7 @@
 #import "MKMEntity+History.h"
 #import "MKMEntityManager.h"
 
-#import "MKMPersonHistoryDelegate.h"
+#import "MKMAccountHistoryDelegate.h"
 
 #import "MKMUser.h"
 
@@ -41,8 +41,8 @@
     const MKMHistory *history = [em historyWithID:ID];
     MKMUser *user = [[self alloc] initWithID:ID meta:meta];
     if (user) {
-        MKMPersonHistoryDelegate *delegate;
-        delegate = [[MKMPersonHistoryDelegate alloc] init];
+        MKMAccountHistoryDelegate *delegate;
+        delegate = [[MKMAccountHistoryDelegate alloc] init];
         user.historyDelegate = delegate;
         NSUInteger count = [user runHistory:history];
         NSAssert(count == history.count, @"history error");
@@ -65,7 +65,7 @@
         // ID error
         return NO;
     }
-    if (contact.status != MKMPersonStatusRegistered) {
+    if (contact.status != MKMAccountStatusRegistered) {
         // status error
         return NO;
     }
@@ -138,8 +138,8 @@
     NSLog(@"register history: %@", history);
     
     // 4. create
-    MKMPersonHistoryDelegate *delegate;
-    delegate = [[MKMPersonHistoryDelegate alloc] init];
+    MKMAccountHistoryDelegate *delegate;
+    delegate = [[MKMAccountHistoryDelegate alloc] init];
     MKMUser *user = [[self alloc] initWithID:ID meta:meta];
     user.historyDelegate = delegate;
     NSInteger count = [user runHistory:history];

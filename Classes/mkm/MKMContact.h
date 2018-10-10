@@ -6,13 +6,13 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMPerson.h"
+#import "MKMAccount.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class MKMContactMemo;
 
-@interface MKMContact : MKMPerson {
+@interface MKMContact : MKMAccount {
     
     MKMContactMemo *_memo; // same keys to the profile
 }

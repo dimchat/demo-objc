@@ -6,7 +6,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMPerson.h"
+#import "MKMAccount.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMHistoryRecord;
 
-@interface MKMUser : MKMPerson {
+@interface MKMUser : MKMAccount {
     
     NSMutableDictionary<const MKMID *, MKMContact *> *_contacts;
 }
@@ -44,19 +44,19 @@ NS_DESIGNATED_INITIALIZER;
 @interface MKMUser (History)
 
 /**
- Create a new user
+ Create a new account
  
  @param seed - username
  @param PK - public key
  @param SK - private key
- @return User object
+ @return Account object
  */
 + (instancetype)registerWithName:(const NSString *)seed
                        publicKey:(const MKMPublicKey *)PK
                       privateKey:(const MKMPrivateKey *)SK;
 
 /**
- Delete the user, FOREVER!
+ Delete the account, FOREVER!
  
  @param lastWords - a message to the world
  @param SK - private key

@@ -1,5 +1,5 @@
 //
-//  MKMPerson.h
+//  MKMAccount.h
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/23.
@@ -17,25 +17,25 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMPublicKey;
 @class MKMPrivateKey;
 
-typedef NS_ENUM(SInt32, MKMPersonStatus) {
-    MKMPersonStatusInitialized = 0,
-    MKMPersonStatusRegistered = 1,
-    MKMPersonStatusDead = -1,
+typedef NS_ENUM(SInt32, MKMAccountStatus) {
+    MKMAccountStatusInitialized = 0,
+    MKMAccountStatusRegistered = 1,
+    MKMAccountStatusDead = -1,
 };
 
-@interface MKMPerson : MKMEntity {
+@interface MKMAccount : MKMEntity {
     
     // profiles
-    MKMPersonProfile *_profile;
+    MKMAccountProfile *_profile;
     
     // parse the history to update status
-    MKMPersonStatus _status;
+    MKMAccountStatus _status;
 }
 
 @property (readonly, strong, nonatomic) const MKMPublicKey *publicKey;
-@property (readonly, nonatomic) MKMPersonStatus status;
+@property (readonly, nonatomic) MKMAccountStatus status;
 
-@property (readonly, strong, nonatomic) const MKMPersonProfile *profile;
+@property (readonly, strong, nonatomic) const MKMAccountProfile *profile;
 
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
@@ -43,12 +43,12 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface MKMPerson (Profile)
+@interface MKMAccount (Profile)
 
 // special fields in profile
-@property (readonly, strong, nonatomic) const NSString *name;
+@property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, nonatomic) MKMGender gender;
-@property (readonly, strong, nonatomic) const NSString *avatar; // URL
+@property (readonly, strong, nonatomic) NSString *avatar; // URL
 
 @end
 

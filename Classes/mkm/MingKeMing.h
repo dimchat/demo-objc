@@ -35,7 +35,7 @@
 #import "MKMEntityHistoryDelegate.h"
 #import "MKMSocialEntityHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
-#import "MKMPersonHistoryDelegate.h"
+#import "MKMAccountHistoryDelegate.h"
 #import "MKMProfileDelegate.h"
 
 // Entity
@@ -54,7 +54,7 @@
 #import "MKMMoments.h"
 
 // user
-#import "MKMPerson.h"
+#import "MKMAccount.h"
 #import "MKMUser.h"
 #import "MKMContact.h"
 

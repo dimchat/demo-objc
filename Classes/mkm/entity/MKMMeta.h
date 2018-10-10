@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMAddress;
 
 /**
- *  User/Group Meta data
+ *  Account/Group Meta data
  *
  *      data format: {
  *          version: 1,          // algorithm version
