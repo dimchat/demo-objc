@@ -72,6 +72,15 @@
     return self;
 }
 
+- (id)copy {
+    MKMEntity *entity = [[[self class] alloc] initWithID:_ID meta:_meta];
+    if (entity) {
+        entity.history = _history;
+        entity.historyDelegate = _historyDelegate;
+    }
+    return entity;
+}
+
 - (NSUInteger)number {
     return _ID.address.code;
 }

@@ -19,6 +19,12 @@
 
 #import "MKMContact.h"
 
+@interface MKMContact ()
+
+@property (strong, nonatomic) MKMContactMemo *memo;
+
+@end
+
 @implementation MKMContact
 
 + (instancetype)contactWithID:(const MKMID *)ID {
@@ -45,6 +51,14 @@
     }
     
     return self;
+}
+
+- (id)copy {
+    MKMContact *contact = [super copy];
+    if (contact) {
+        contact.memo = _memo;
+    }
+    return contact;
 }
 
 @end

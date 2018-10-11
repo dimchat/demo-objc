@@ -68,6 +68,15 @@
     return self;
 }
 
+- (id)copy {
+    MKMAccount *account = [super copy];
+    if (account) {
+        account.profile = _profile;
+        account.status = _status;
+    }
+    return account;
+}
+
 - (MKMPublicKey *)publicKey {
     return _ID.publicKey;
 }

@@ -19,6 +19,16 @@
 
 @end
 
+@interface MKMSocialEntity ()
+
+@property (strong, nonatomic) MKMID *founder;
+@property (strong, nonatomic) MKMID *owner;
+@property (strong, nonatomic) NSString *name;
+
+@property (strong, nonatomic) NSArray<const MKMID *> *members;
+
+@end
+
 @implementation MKMSocialEntity
 
 /* designated initializer */
@@ -29,6 +39,17 @@
     }
     
     return self;
+}
+
+- (id)copy {
+    MKMSocialEntity *social = [super copy];
+    if (social) {
+        social.founder = _founder;
+        social.owner = _owner;
+        social.name = _name;
+        social.members = _members;
+    }
+    return social;
 }
 
 - (BOOL)isFounder:(const MKMID *)ID {

@@ -29,6 +29,7 @@
 
 @interface MKMUser ()
 
+@property (strong, nonatomic) NSArray<const MKMID *> *contacts;
 @property (strong, nonatomic) MKMPrivateKey *privateKey;
 
 @end
@@ -59,6 +60,15 @@
     }
     
     return self;
+}
+
+- (id)copy {
+    MKMUser *user = [super copy];
+    if (user) {
+        user.contacts = _contacts;
+        user.privateKey = _privateKey;
+    }
+    return user;
 }
 
 - (BOOL)addContact:(MKMContact *)contact {

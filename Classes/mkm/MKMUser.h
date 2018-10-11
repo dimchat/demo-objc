@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray<const MKMID *> *_contacts;
 }
 
-@property (readonly, strong, nonatomic) NSArray *contacts;
+@property (readonly, strong, nonatomic) NSArray<const MKMID *> *contacts;
 
 @property (readonly, strong, nonatomic) MKMPrivateKey *privateKey;
 

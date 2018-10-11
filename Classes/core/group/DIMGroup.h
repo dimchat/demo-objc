@@ -21,8 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroup : MKMGroup <DIMGroup>
 
-@property (strong, nonatomic) MKMSymmetricKey *passphrase;
-
 @end
 
 NS_ASSUME_NONNULL_END

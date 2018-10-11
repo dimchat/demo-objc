@@ -18,7 +18,7 @@
 
 @implementation DIMContact
 
-- (const MKMSymmetricKey *)passphrase {
+- (MKMSymmetricKey *)passphrase {
     MKMKeyStore *store = [MKMKeyStore sharedStore];
     return [store passphraseForEntity:self];
 }

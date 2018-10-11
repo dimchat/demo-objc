@@ -8,6 +8,13 @@
 
 #import "MKMMoments.h"
 
+@interface MKMMoments ()
+
+@property (strong, nonatomic) NSArray<const MKMID *> *exclusions;
+@property (strong, nonatomic) NSArray<const MKMID *> *ignores;
+
+@end
+
 @implementation MKMMoments
 
 /* designated initializer */
@@ -19,6 +26,15 @@
     }
     
     return self;
+}
+
+- (id)copy {
+    MKMMoments *moments = [super copy];
+    if (moments) {
+        moments.exclusions = _exclusions;
+        moments.ignores = _ignores;
+    }
+    return moments;
 }
 
 @end

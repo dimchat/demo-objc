@@ -24,6 +24,12 @@
 
 @end
 
+@interface MKMGroup ()
+
+@property (strong, nonatomic) NSArray<const MKMID *> *administrators;
+
+@end
+
 @implementation MKMGroup
 
 + (instancetype)groupWithID:(const MKMID *)ID {
@@ -52,6 +58,14 @@
     }
     
     return self;
+}
+
+- (id)copy {
+    MKMGroup *group = [super copy];
+    if (group) {
+        group.administrators = _administrators;
+    }
+    return group;
 }
 
 - (void)removeMember:(const MKMID *)ID {
