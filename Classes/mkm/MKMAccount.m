@@ -30,8 +30,8 @@
 
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMMeta *meta = [eman metaWithID:ID];
     self = [self initWithID:ID meta:meta];
     return self;
 }
@@ -57,9 +57,8 @@
 
 - (MKMPublicKey *)publicKey {
     if (!_publicKey) {
-        MKMEntityManager *em = [MKMEntityManager sharedManager];
-        MKMMeta *meta = [em metaWithID:_ID];
-        _publicKey = [MKMPublicKey keyWithKey:meta.key];
+        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+        _publicKey = [eman metaWithID:_ID].key;
     }
     return _publicKey;
 }

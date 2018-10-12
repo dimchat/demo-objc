@@ -22,17 +22,17 @@
 
 @implementation DIMKeyStore
 
-static DIMKeyStore *s_sharedStore = nil;
+static DIMKeyStore *s_sharedInstance = nil;
 
-+ (instancetype)sharedStore {
-    if (!s_sharedStore) {
-        s_sharedStore = [[self alloc] init];
++ (instancetype)sharedInstance {
+    if (!s_sharedInstance) {
+        s_sharedInstance = [[self alloc] init];
     }
-    return s_sharedStore;
+    return s_sharedInstance;
 }
 
 + (instancetype)alloc {
-    NSAssert(!s_sharedStore, @"Attempted to allocate a second instance of a singleton.");
+    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
     return [super alloc];
 }
 
@@ -116,8 +116,8 @@ static DIMKeyStore *s_sharedStore = nil;
     MKMPublicKey *PK = [_publicKeyTable objectForKey:ID];
     if (!PK) {
         // get from entity manager
-        MKMEntityManager *em = [MKMEntityManager sharedManager];
-        PK = [em metaWithID:ID].key;
+        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+        PK = [eman metaWithID:ID].key;
         if (PK) {
             [_publicKeyTable setObject:PK forKey:ID];
         }

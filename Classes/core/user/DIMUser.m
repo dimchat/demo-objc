@@ -23,9 +23,9 @@
 + (instancetype)userWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
     MKMConsensus *cons = [MKMConsensus sharedInstance];
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
-    MKMHistory *history = [em historyWithID:ID];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMMeta *meta = [eman metaWithID:ID];
+    MKMHistory *history = [eman historyWithID:ID];
     DIMUser *user = [[DIMUser alloc] initWithID:ID meta:meta];
     if (user) {
         user.historyDelegate = cons;
@@ -94,13 +94,13 @@
 #pragma mark - Decrypt/Sign functions for passphrase/signature
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
-    DIMKeyStore *store = [DIMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
     MKMPrivateKey *SK = [store privateKeyForUser:self];
     return [SK decrypt:ciphertext];
 }
 
 - (NSData *)sign:(const NSData *)plaintext {
-    DIMKeyStore *store = [DIMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
     MKMPrivateKey *SK = [store privateKeyForUser:self];
     return [SK sign:plaintext];
 }

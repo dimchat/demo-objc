@@ -157,9 +157,8 @@ static NSDate *date(NSTimeInterval time) {
         ID = [MKMID IDWithID:commander];
         CT = [signature base64Decode];
         
-        MKMEntityManager *em = [MKMEntityManager sharedManager];
-        MKMMeta *meta = [em metaWithID:ID];
-        MKMPublicKey *PK = meta.key;
+        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+        MKMPublicKey *PK = [eman metaWithID:ID].key;
         
         correct = [PK verify:operation signature:CT];
         NSAssert(correct, @"signature error");
@@ -199,9 +198,8 @@ static NSDate *date(NSTimeInterval time) {
                            @"signature": [CT base64Encode]
                            };
     
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
-    MKMPublicKey *PK = meta.key;
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMPublicKey *PK = [eman metaWithID:ID].key;
     NSData *data = [operation data];
     BOOL OK = [PK verify:data signature:CT];
     NSAssert(!PK || OK, @"signature error");

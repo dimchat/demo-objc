@@ -50,8 +50,7 @@ static DIMBarrack *s_sharedInstance = nil;
         _groupTable = [[NSMutableDictionary alloc] init];
         _momentsTable = [[NSMutableDictionary alloc] init];
         
-        [MKMEntityManager sharedManager].delegate = self;
-        
+        [MKMEntityManager sharedInstance].delegate = self;
         [MKMFacebook sharedInstance].delegate = self;
     }
     return self;

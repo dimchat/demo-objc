@@ -23,17 +23,17 @@
 
 @implementation MKMEntityManager
 
-static MKMEntityManager *s_sharedManager = nil;
+static MKMEntityManager *s_sharedInstance = nil;
 
-+ (instancetype)sharedManager {
-    if (!s_sharedManager) {
-        s_sharedManager = [[self alloc] init];
++ (instancetype)sharedInstance {
+    if (!s_sharedInstance) {
+        s_sharedInstance = [[self alloc] init];
     }
-    return s_sharedManager;
+    return s_sharedInstance;
 }
 
 + (instancetype)alloc {
-    NSAssert(!s_sharedManager, @"Attempted to allocate a second instance of a singleton.");
+    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
     return [super alloc];
 }
 

@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) id<MKMEntityDelegate> delegate;
 
-+ (instancetype)sharedManager;
++ (instancetype)sharedInstance;
 
 // meta
 - (MKMMeta *)metaWithID:(const MKMID *)ID;

@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMKeyStore : NSObject
 
-+ (instancetype)sharedStore;
++ (instancetype)sharedInstance;
 
 /**
  Get PK for contact to encrypt or verify message

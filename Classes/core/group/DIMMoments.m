@@ -17,8 +17,8 @@
 @implementation DIMMoments
 
 + (instancetype)momentsWithID:(const MKMID *)ID {
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMMeta *meta = [eman metaWithID:ID];
     NSAssert(meta, @"no meta found for ID: %@", ID);
     
     switch (ID.address.network) {

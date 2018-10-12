@@ -23,9 +23,9 @@
 + (instancetype)groupWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Group, @"address error");
     MKMConsensus *cons = [MKMConsensus sharedInstance];
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
-    MKMHistory *history = [em historyWithID:ID];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMMeta *meta = [eman metaWithID:ID];
+    MKMHistory *history = [eman historyWithID:ID];
     DIMGroup *group = [[DIMGroup alloc] initWithID:ID meta:meta];
     if (group) {
         group.historyDelegate = cons;
@@ -36,7 +36,7 @@
 }
 
 - (MKMSymmetricKey *)passphrase {
-    DIMKeyStore *store = [DIMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
     return [store passphraseForEntity:self];
 }
 
@@ -70,7 +70,7 @@
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithCapacity:[_members count]];
     
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
     MKMID *ID;
     MKMPublicKey *PK;
     NSData *key;
@@ -82,7 +82,7 @@
             ID = [MKMID IDWithID:member];
         }
         
-        PK = [em metaWithID:ID].key;
+        PK = [eman metaWithID:ID].key;
         if (ID && PK) {
             key = [PK encrypt:PW];
             NSAssert(key, @"error");

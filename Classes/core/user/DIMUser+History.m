@@ -18,8 +18,8 @@
     NSAssert([seed length] > 2, @"seed error");
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    DIMKeyStore *ks = [DIMKeyStore sharedStore];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
     
     // 1. create user
     // 1.1. generate meta
@@ -35,7 +35,7 @@
     // 1.4. create user with ID & meta
     DIMUser *user = [[self alloc] initWithID:ID meta:meta];
     // 1.5. store the meta in entity manager
-    [em setMeta:meta forID:ID];
+    [eman setMeta:meta forID:ID];
     
     // 2. generate history
     MKMHistory *history;
@@ -61,13 +61,13 @@
     
     if ([history count] == count) {
         // 3.1. store the history in entity manager
-        [em setHistory:history forID:ID];
+        [eman setHistory:history forID:ID];
         
         // 3.2. upload the meta & history onto the network
-        [em.delegate postMeta:meta history:history forID:ID];
+        [eman.delegate postMeta:meta history:history forID:ID];
         
         // 3.3. store the private key in key store
-        [ks setPrivateKey:[SK copy] forUser:user];
+        [store setPrivateKey:[SK copy] forUser:user];
         
         return user;
     }
@@ -80,7 +80,7 @@
                               privateKey:(const MKMPrivateKey *)SK {
     NSAssert([self matchPrivateKey:SK], @"not your SK");
     
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
     
     // 1. generate history record
     MKMHistoryRecord *record;
@@ -88,6 +88,7 @@
     MKMHistoryOperation *op;
     op = [[MKMHistoryOperation alloc] initWithOperate:@"suicide"];
     evt = [[MKMHistoryEvent alloc] initWithOperation:op];
+    
     NSArray *events = [NSArray arrayWithObject:evt];
     NSData *hash = nil;
     NSData *CT = nil;
@@ -99,10 +100,10 @@
     BOOL OK = [self runHistoryRecord:record];
     if (OK) {
         // 2.1. store the history in entity manager
-        [em setHistory:_history forID:_ID];
+        [eman setHistory:_history forID:_ID];
         
         // 2.2. upload the new history record onto the network
-        [em.delegate postHistoryRecord:record forID:_ID];
+        [eman.delegate postHistoryRecord:record forID:_ID];
         
         return record;
     }
