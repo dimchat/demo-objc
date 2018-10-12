@@ -18,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol MKMEntityDelegate <NSObject>
 
 // meta
-- (MKMMeta *)queryMetaWithID:(const MKMID *)ID;
+- (nullable MKMMeta *)queryMetaWithID:(const MKMID *)ID;
 
 - (void)postMeta:(const MKMMeta *)meta
            forID:(const MKMID *)ID;
 
 // history
-- (MKMHistory *)queryHistoryWithID:(const MKMID *)ID;
+- (nullable MKMHistory *)queryHistoryWithID:(const MKMID *)ID;
 
 - (void)postHistory:(const MKMHistory *)history
               forID:(const MKMID *)ID;

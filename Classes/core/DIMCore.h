@@ -16,6 +16,7 @@
 
 // Group
 #import "DIMGroup.h"
+#import "DIMMoments.h"
 
 // Message
 #import "DIMEnvelope.h"
