@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroup : MKMGroup <DIMGroup>
 
++ (instancetype)groupWithID:(const MKMID *)ID;
+
 @end
 
 NS_ASSUME_NONNULL_END

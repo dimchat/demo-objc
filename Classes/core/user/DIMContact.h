@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMContact : MKMContact <DIMContact>
 
++ (instancetype)contactWithID:(const MKMID *)ID;
+
 @end
 
 NS_ASSUME_NONNULL_END

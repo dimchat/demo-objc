@@ -18,6 +18,8 @@
 #import "MKMMeta.h"
 #import "MKMHistoryEvent.h"
 
+#import "MKMEntityManager.h"
+
 #import "MKMHistory.h"
 
 static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
@@ -42,10 +44,10 @@ static NSMutableArray *copy_events(const NSArray *events) {
     
     NSString *string;
     for (id item in events) {
-        if (![item isKindOfClass:[NSString class]]) {
-            string = [item jsonString];
-        } else {
+        if ([item isKindOfClass:[NSString class]]) {
             string = item;
+        } else {
+            string = [item jsonString];
         }
         [mArray addObject:string];
     }
@@ -91,21 +93,17 @@ static NSMutableArray *copy_events(const NSArray *events) {
     NSString *signature = [dict objectForKey:@"signature"];
     NSString *recorder = [dict objectForKey:@"recorder"];
     
-    if (merkle && signature) {
-        NSMutableDictionary *mDict;
-        mDict = [[NSMutableDictionary alloc] initWithDictionary:dict];
+    if (merkle || signature) {
+        NSMutableDictionary *mDict = [dict mutableCopy];
         events = copy_events(events);
         NSAssert([events count] > 0, @"history record error");
         [mDict setObject:events forKey:@"events"];
-        
-        self = [super initWithDictionary:mDict];
+        dict = mDict;
     } else {
         events = [events mutableCopy];
-        
-        self = [super initWithDictionary:dict];
     }
     
-    if (self) {
+    if (self = [super initWithDictionary:dict]) {
         _events = events;
         self.merkleRoot = [merkle base64Decode];
         self.signature = [signature base64Decode];
@@ -180,9 +178,15 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 - (NSData *)signWithPreviousMerkle:(const NSData *)prev
                           privateKey:(const MKMPrivateKey *)SK {
-    if (_recorder && ![_recorder.publicKey isMatch:SK]) {
-        NSAssert(false, @"keys not match");
-        return nil;
+    if (_recorder) {
+        // make sure the recorder's PK is match with this SK
+        MKMEntityManager *em = [MKMEntityManager sharedManager];
+        MKMMeta *meta = [em metaWithID:_recorder];
+        MKMPublicKey *PK = meta.key;
+        if (![PK isMatch:SK]) {
+            NSAssert(false, @"keys not match");
+            return nil;
+        }
     }
     
     // hash = prev + merkle
@@ -199,9 +203,15 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 - (BOOL)verifyWithPreviousMerkle:(const NSData *)prev
                        publicKey:(const MKMPublicKey *)PK {
-    if (_recorder && ![_recorder.publicKey isEqual:PK]) {
-        NSAssert(false, @"keys not match");
-        return nil;
+    if (_recorder) {
+        // make sure the recorder's PK is match with this PK
+        MKMEntityManager *em = [MKMEntityManager sharedManager];
+        MKMMeta *meta = [em metaWithID:_recorder];
+        MKMPublicKey *PK2 = meta.key;
+        if (![PK isEqual:PK2]) {
+            NSAssert(false, @"keys not equal");
+            return nil;
+        }
     }
     
     // hash = prev + merkle

@@ -142,15 +142,14 @@ static UInt32 user_number(const NSData *cc) {
         NSData *prefix = [addr subdataWithRange:NSMakeRange(0, len-4)];
         NSData *suffix = [addr subdataWithRange:NSMakeRange(len-4, 4)];
         NSData *cc = btc_checkcode(prefix);
-        if (![cc isEqualToData:suffix]) {
+        if ([cc isEqualToData:suffix]) {
+            _network = network;
+            _code = user_number(cc);
+            return YES;
+        } else {
             // check code error
             return NO;
         }
-        
-        _network = network;
-        _code = user_number(cc);
-        
-        return YES;
     }
     
     return NO;

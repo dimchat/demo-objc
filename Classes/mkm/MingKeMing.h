@@ -23,7 +23,6 @@
 #import "MKMAsymmetricKey.h"
 #import "MKMPublicKey.h"
 #import "MKMPrivateKey.h"
-#import "MKMKeyStore.h"
 //#import "MKMAESKey.h"
 //#import "MKMRSAPublicKey.h"
 //#import "MKMRSAPrivateKey.h"
@@ -62,6 +61,9 @@
 #import "MKMProfile.h"
 #import "MKMMemo.h"
 #import "MKMFacebook.h"
+
+// others
+#import "MKMConsensus.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

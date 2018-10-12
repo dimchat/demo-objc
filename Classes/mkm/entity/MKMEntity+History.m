@@ -9,12 +9,14 @@
 #import "MKMPublicKey.h"
 
 #import "MKMID.h"
+#import "MKMMeta.h"
 #import "MKMAccount.h"
 
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
 #import "MKMEntityHistoryDelegate.h"
+#import "MKMEntityManager.h"
 
 #import "MKMEntity+History.h"
 
@@ -79,6 +81,8 @@
 }
 
 - (BOOL)runHistoryRecord:(const MKMHistoryRecord *)record {
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    
     // recorder
     MKMID *recorder = record.recorder;
     recorder = [MKMID IDWithID:recorder];
@@ -88,16 +92,16 @@
     }
     
     // 1. check permision for this redcorder
-    if (![self.historyDelegate recorder:recorder
-                         canWriteRecord:record
-                               inEntity:self]) {
+    if (![_historyDelegate recorder:recorder
+                     canWriteRecord:record
+                           inEntity:self]) {
         NSAssert(false, @"recorder permission denied");
         return NO;
     }
     
     // 2. check signature for this record
     MKMHistoryRecord *prev = _history.lastObject;
-    MKMPublicKey *PK = recorder.publicKey;
+    MKMPublicKey *PK = [em metaWithID:recorder].key;
     prev = [MKMHistoryRecord recordWithRecord:prev];
     PK = [MKMPublicKey keyWithKey:PK];
     if (![record verifyWithPreviousMerkle:prev.merkleRoot
@@ -129,9 +133,9 @@
         operation = [MKMHistoryOperation operationWithOperation:op];
         
         // 3.1. check permission for this commander
-        if (![self.historyDelegate commander:commander
-                                  canExecute:operation
-                                    inEntity:self]) {
+        if (![_historyDelegate commander:commander
+                              canExecute:operation
+                                inEntity:self]) {
             NSAssert(false, @"commander permission denied");
             return NO;
         }
@@ -142,7 +146,7 @@
         data = [op data];
         
         // 3.2. check signature for this event
-        PK = commander.publicKey;
+        PK = [em metaWithID:commander].key;
         if (![PK verify:data signature:CT]) {
             NSAssert(false, @"signature error");
             return NO;
@@ -165,9 +169,9 @@
         operation = [MKMHistoryOperation operationWithOperation:op];
         
         // execute
-        [self.historyDelegate commander:commander
-                                execute:operation
-                               inEntity:self];
+        [_historyDelegate commander:commander
+                            execute:operation
+                           inEntity:self];
     }
     
     // 5. add this record into local history

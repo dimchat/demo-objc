@@ -6,17 +6,11 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "NSString+Crypto.h"
 #import "MKMPublicKey.h"
 
 #import "MKMID.h"
-#import "MKMAddress.h"
 #import "MKMMeta.h"
 #import "MKMEntityManager.h"
-
-#import "MKMHistory.h"
-#import "MKMEntity+History.h"
-#import "MKMAccountHistoryDelegate.h"
 
 #import "MKMProfile.h"
 #import "MKMFacebook.h"
@@ -25,45 +19,29 @@
 
 @interface MKMAccount ()
 
+@property (strong, nonatomic) MKMAccountProfile *profile;
 @property (nonatomic) MKMAccountStatus status;
 
-@property (strong, nonatomic) MKMAccountProfile *profile;
+@property (strong, nonatomic) MKMPublicKey *publicKey;
 
 @end
 
 @implementation MKMAccount
 
-+ (instancetype)accountWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"addr error");
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
-    MKMHistory *history = [em historyWithID:ID];
-    MKMAccount *account = [[self alloc] initWithID:ID meta:meta];
-    if (account) {
-        MKMAccountHistoryDelegate *delegate;
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        account.historyDelegate = delegate;
-        NSUInteger count = [account runHistory:history];
-        NSAssert(count == history.count, @"history error");
-    }
-    return account;
-}
-
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
-    self = [self initWithID:ID];
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMMeta *meta = [em metaWithID:ID];
+    self = [self initWithID:ID meta:meta];
     return self;
 }
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
-    if (!ID) {
-        ID = [MKMID IDWithID:MKM_MONKEY_KING_ID];
-        NSAssert(!meta, @"unexpected meta: %@", meta);
-    }
     if (self = [super initWithID:ID meta:meta]) {
         _profile = [[MKMAccountProfile alloc] init];
+        _status = MKMAccountStatusInitialized;
     }
     return self;
 }
@@ -78,13 +56,18 @@
 }
 
 - (MKMPublicKey *)publicKey {
-    return _ID.publicKey;
+    if (!_publicKey) {
+        MKMEntityManager *em = [MKMEntityManager sharedManager];
+        MKMMeta *meta = [em metaWithID:_ID];
+        _publicKey = [MKMPublicKey keyWithKey:meta.key];
+    }
+    return _publicKey;
 }
 
 - (MKMAccountProfile *)profile {
     if (!_profile || _profile.allKeys.count == 0) {
         MKMFacebook *facebook = [MKMFacebook sharedInstance];
-        id prof = [facebook profileWithID:_ID];
+        MKMProfile *prof = [facebook profileWithID:_ID];
         _profile = [MKMAccountProfile profileWithProfile:prof];
     }
     return _profile;

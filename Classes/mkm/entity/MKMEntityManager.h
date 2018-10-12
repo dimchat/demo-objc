@@ -25,16 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 // meta
 - (MKMMeta *)metaWithID:(const MKMID *)ID;
-- (BOOL)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID;
+- (void)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID;
 
 // history
 - (MKMHistory *)historyWithID:(const MKMID *)ID;
-- (BOOL)addHistoryRecord:(MKMHistoryRecord *)record
-                   forID:(const MKMID *)ID;
-
-- (BOOL)setMeta:(MKMMeta *)meta
-        history:(MKMHistory *)his
-          forID:(const MKMID *)ID;
+- (void)setHistory:(MKMHistory *)history forID:(const MKMID *)ID;
 
 @end
 

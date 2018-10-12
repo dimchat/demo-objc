@@ -6,6 +6,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "MKMAccount.h"
 #import "MKMSocialEntity.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,9 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
 // Hide User's Moments
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *ignores;
 
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
+/**
+ Get account ID who owns this moments
+ */
+@property (readonly, nonatomic) MKMID *account;
 
 // -exclude(member)
 // -ignore(member)
@@ -31,6 +33,17 @@ NS_DESIGNATED_INITIALIZER;
 // -post(content)
 // -like(moment)
 // -reply(moment, comment)
+
+@end
+
+#pragma mark - Connection between Account & Moments
+
+@interface MKMAccount (Moments)
+
+/**
+ Get moments ID owns by this account
+ */
+@property (readonly, nonatomic) MKMID *moments;
 
 @end
 

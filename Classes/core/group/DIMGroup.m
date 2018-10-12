@@ -14,12 +14,29 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
+#import "DIMKeyStore.h"
+
 #import "DIMGroup.h"
 
 @implementation DIMGroup
 
++ (instancetype)groupWithID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Group, @"address error");
+    MKMConsensus *cons = [MKMConsensus sharedInstance];
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
+    DIMGroup *group = [[DIMGroup alloc] initWithID:ID meta:meta];
+    if (group) {
+        group.historyDelegate = cons;
+        NSUInteger count = [group runHistory:history];
+        NSAssert(count == history.count, @"history error");
+    }
+    return group;
+}
+
 - (MKMSymmetricKey *)passphrase {
-    MKMKeyStore *store = [MKMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedStore];
     return [store passphraseForEntity:self];
 }
 
@@ -53,6 +70,7 @@
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithCapacity:[_members count]];
     
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
     MKMID *ID;
     MKMPublicKey *PK;
     NSData *key;
@@ -64,7 +82,7 @@
             ID = [MKMID IDWithID:member];
         }
         
-        PK = [ID publicKey];
+        PK = [em metaWithID:ID].key;
         if (ID && PK) {
             key = [PK encrypt:PW];
             NSAssert(key, @"error");

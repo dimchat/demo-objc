@@ -10,14 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMPublicKey;
 @class MKMPrivateKey;
 
 @class MKMID;
-@class MKMMeta;
-@class MKMContact;
-
-@class MKMHistoryRecord;
 
 @interface MKMUser : MKMAccount {
     
@@ -26,45 +21,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *contacts;
 
-@property (readonly, strong, nonatomic) MKMPrivateKey *privateKey;
+@property (strong, nonatomic) MKMPrivateKey *privateKey;
 
-+ (instancetype)userWithID:(const MKMID *)ID;
+// contacts
+- (BOOL)addContact:(MKMID *)ID;
+- (BOOL)containsContact:(const MKMID *)ID;
+- (void)removeContact:(const MKMID *)ID;
 
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
-
-- (BOOL)addContact:(MKMContact *)contact;
-- (BOOL)containsContact:(const MKMContact *)contact;
-- (MKMContact *)getContactByID:(const MKMID *)ID;
-- (void)removeContact:(const MKMContact *)contact;
-
-- (BOOL)checkPrivateKey:(const MKMPrivateKey *)SK;
-
-@end
-
-@interface MKMUser (History)
-
-/**
- Create a new account
- 
- @param seed - username
- @param PK - public key
- @param SK - private key
- @return Account object
- */
-+ (instancetype)registerWithName:(const NSString *)seed
-                       publicKey:(const MKMPublicKey *)PK
-                      privateKey:(const MKMPrivateKey *)SK;
-
-/**
- Delete the account, FOREVER!
- 
- @param lastWords - a message to the world
- @param SK - private key
- */
-- (MKMHistoryRecord *)suicideWithMessage:(const NSString *)lastWords
-                              privateKey:(const MKMPrivateKey *)SK;
+- (BOOL)matchPrivateKey:(const MKMPrivateKey *)SK;
 
 @end
 

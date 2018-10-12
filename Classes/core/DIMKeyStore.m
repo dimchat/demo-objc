@@ -1,25 +1,16 @@
 //
-//  MKMKeyStore.m
-//  MingKeMing
+//  DIMKeyStore.m
+//  iChat
 //
-//  Created by Albert Moky on 2018/9/25.
+//  Created by Albert Moky on 2018/10/12.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
 #import "NSObject+JsON.h"
 
-#import "MKMSymmetricKey.h"
-#import "MKMPublicKey.h"
-#import "MKMPrivateKey.h"
+#import "DIMKeyStore.h"
 
-#import "MKMID.h"
-#import "MKMEntity.h"
-#import "MKMUser.h"
-#import "MKMContact.h"
-
-#import "MKMKeyStore.h"
-
-@interface MKMKeyStore () {
+@interface DIMKeyStore () {
     
     NSMutableDictionary<const MKMID *, MKMSymmetricKey *> *_passphraseTable;
     
@@ -29,9 +20,9 @@
 
 @end
 
-@implementation MKMKeyStore
+@implementation DIMKeyStore
 
-static MKMKeyStore *s_sharedStore = nil;
+static DIMKeyStore *s_sharedStore = nil;
 
 + (instancetype)sharedStore {
     if (!s_sharedStore) {
@@ -122,13 +113,16 @@ static MKMKeyStore *s_sharedStore = nil;
 
 - (MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact {
     MKMID *ID = contact.ID;
-    return [_publicKeyTable objectForKey:ID];
-}
-
-- (void)setPublicKey:(MKMPublicKey *)PK
-          forContact:(const MKMContact *)contact {
-    MKMID *ID = contact.ID;
-    [_publicKeyTable setObject:PK forKey:ID];
+    MKMPublicKey *PK = [_publicKeyTable objectForKey:ID];
+    if (!PK) {
+        // get from entity manager
+        MKMEntityManager *em = [MKMEntityManager sharedManager];
+        PK = [em metaWithID:ID].key;
+        if (PK) {
+            [_publicKeyTable setObject:PK forKey:ID];
+        }
+    }
+    return PK;
 }
 
 - (MKMPrivateKey *)privateKeyForUser:(const MKMUser *)user {
@@ -138,6 +132,7 @@ static MKMKeyStore *s_sharedStore = nil;
 
 - (void)setPrivateKey:(MKMPrivateKey *)SK
               forUser:(const MKMUser *)user {
+    NSAssert(user.status == MKMAccountStatusRegistered, @"status error");
     MKMID *ID = user.ID;
     [_privateKeyTable setObject:SK forKey:ID];
 }
@@ -146,10 +141,14 @@ static MKMKeyStore *s_sharedStore = nil;
     MKMID *ID = entity.ID;
     MKMSymmetricKey *scKey = [_passphraseTable objectForKey:ID];
     if (!scKey) {
+        // generate a new one
         NSNumber *num = @(arc4random());
         NSDictionary *dict = @{@"algorithm": @"AES",
-                               @"passphrase":[num stringValue]};
-        scKey = [[MKMSymmetricKey alloc] initWithAlgorithm:@"AES" keyInfo:dict];
+                               @"passphrase":[num stringValue]
+                               };
+        scKey = [[MKMSymmetricKey alloc] initWithAlgorithm:@"AES"
+                                                   keyInfo:dict];
+        [_passphraseTable setObject:scKey forKey:ID];
     }
     return scKey;
 }

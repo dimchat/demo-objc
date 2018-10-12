@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     MKMID *_ID;
     MKMHistory *_history;
+    __weak id<MKMEntityHistoryDelegate> _historyDelegate;
 }
 
 @property (readonly, strong, nonatomic) MKMID *ID;
@@ -30,15 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<MKMEntityHistoryDelegate> historyDelegate;
 
 /**
- Initialize an entity
-
- @param ID - Contact/Group ID
- @return Entity object
- */
-- (instancetype)initWithID:(const MKMID *)ID;
-
-/**
- Initialize an entity with given meta info
+ Initialize an entity with ID and given meta info
 
  @param ID - User/Contact/Group ID
  @param meta - meta info includes PK, CT, ...

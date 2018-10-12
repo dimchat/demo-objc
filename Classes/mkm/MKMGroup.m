@@ -12,8 +12,9 @@
 #import "MKMHistory.h"
 
 #import "MKMEntity+History.h"
-#import "MKMGroupHistoryDelegate.h"
 #import "MKMEntityManager.h"
+
+#import "MKMConsensus.h"
 
 #import "MKMGroup.h"
 
@@ -31,24 +32,6 @@
 @end
 
 @implementation MKMGroup
-
-+ (instancetype)groupWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Group, @"addr error");
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
-    MKMHistory *history = [em historyWithID:ID];
-    MKMGroup *group = [[self alloc] initWithID:ID meta:meta];
-    if (group) {
-        MKMGroupHistoryDelegate *delegate;
-        delegate = [[MKMGroupHistoryDelegate alloc] init];
-        group.historyDelegate = delegate;
-        NSUInteger count = [group runHistory:history];
-        NSAssert(count == history.count, @"history error");
-        NSAssert(group.owner, @"owner cannot be empty");
-        NSAssert(group.members.count > 0, @"members error");
-    }
-    return group;
-}
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
@@ -82,6 +65,7 @@
 
 - (void)addAdmin:(const MKMID *)ID {
     if ([self isAdmin:ID]) {
+        // don't add the same admin twice
         return;
     }
     if (![self isMember:ID]) {
@@ -92,9 +76,7 @@
 }
 
 - (void)removeAdmin:(const MKMID *)ID {
-    if (![self isAdmin:ID]) {
-        return;
-    }
+    NSAssert([self isAdmin:ID], @"no such admin found");
     [_administrators removeObject:ID];
 }
 

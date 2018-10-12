@@ -8,13 +8,14 @@
 
 #import "MKMDictionary.h"
 
+#import "MKMAddress.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPublicKey;
 @class MKMPrivateKey;
 
 @class MKMID;
-@class MKMAddress;
 
 /**
  *  Account/Group Meta data
@@ -88,8 +89,13 @@ NS_ASSUME_NONNULL_BEGIN
                    publicKey:(const MKMPublicKey *)PK
                   privateKey:(const MKMPrivateKey *)SK;
 
-- (BOOL)match:(const MKMID *)ID;
+#pragma mark - ID & address
+
+- (BOOL)matchID:(const MKMID *)ID;
 - (BOOL)matchAddress:(const MKMAddress *)address;
+
+- (MKMID *)buildIDWithNetworkID:(MKMNetworkID)type;
+- (MKMAddress *)buildAddressWithNetworkID:(MKMNetworkID)type;
 
 @end
 

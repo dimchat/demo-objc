@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKM_MONKEY_KING_ID   @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"
 
 @class MKMPublicKey;
-@class MKMPrivateKey;
 
 typedef NS_ENUM(SInt32, MKMAccountStatus) {
     MKMAccountStatusInitialized = 0,
@@ -32,16 +31,10 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
     MKMAccountStatus _status;
 }
 
-@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
+@property (readonly, strong, nonatomic) MKMAccountProfile *profile;
 @property (readonly, nonatomic) MKMAccountStatus status;
 
-@property (readonly, strong, nonatomic) MKMAccountProfile *profile;
-
-+ (instancetype)accountWithID:(const MKMID *)ID;
-
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
+@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
 
 @end
 

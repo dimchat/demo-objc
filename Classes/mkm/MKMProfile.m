@@ -6,8 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMPublicKey.h"
-
 #import "MKMID.h"
 
 #import "MKMProfile.h"
@@ -45,14 +43,12 @@
     return self;
 }
 
-- (BOOL)match:(const MKMID *)ID; {
-    MKMPublicKey *PK = ID.publicKey;
+- (BOOL)matchID:(const MKMID *)ID; {
     // TODO: check the signature of profile
-    NSData *data = nil;
-    NSData *signature = nil;
-    return YES;
-    
-    return [PK verify:data signature:signature];
+//    NSData *data = nil;
+//    NSData *signature = nil;
+//    MKMPublicKey *PK = nil;
+    return YES;//[PK verify:data signature:signature];
 }
 
 - (void)setArrayValue:(NSString *)value forKey:(const NSString *)arrName {

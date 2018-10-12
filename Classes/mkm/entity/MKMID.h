@@ -26,20 +26,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, nonatomic, getter=isValid) BOOL valid;
 
-@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
-
 + (instancetype)IDWithID:(id)ID;
 
+/**
+ Initialize an ID from string
+
+ @param aString - string form "name@address"
+ @return ID object
+ */
 - (instancetype)initWithString:(NSString *)aString;
+
 - (instancetype)initWithName:(const NSString *)seed
                      address:(const MKMAddress *)addr;
-
-/**
- *  Check ID with meta info, get PK while match
- *
- *      username == meta.username && address == meta.address
- */
-- (BOOL)checkMeta:(const MKMMeta *)meta;
 
 @end
 

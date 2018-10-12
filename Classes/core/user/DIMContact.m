@@ -14,12 +14,29 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
+#import "DIMKeyStore.h"
+
 #import "DIMContact.h"
 
 @implementation DIMContact
 
++ (instancetype)contactWithID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
+    MKMConsensus *cons = [MKMConsensus sharedInstance];
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
+    DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
+    if (contact) {
+        contact.historyDelegate = cons;
+        NSUInteger count = [contact runHistory:history];
+        NSAssert(count == history.count, @"history error");
+    }
+    return contact;
+}
+
 - (MKMSymmetricKey *)passphrase {
-    MKMKeyStore *store = [MKMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedStore];
     return [store passphraseForEntity:self];
 }
 

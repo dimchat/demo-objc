@@ -7,15 +7,7 @@
 //
 
 #import "MKMID.h"
-#import "MKMAddress.h"
-#import "MKMProfile.h"
 #import "MKMMemo.h"
-
-#import "MKMHistory.h"
-
-#import "MKMEntity+History.h"
-#import "MKMAccountHistoryDelegate.h"
-#import "MKMEntityManager.h"
 
 #import "MKMContact.h"
 
@@ -26,22 +18,6 @@
 @end
 
 @implementation MKMContact
-
-+ (instancetype)contactWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"addr error");
-    MKMEntityManager *em = [MKMEntityManager sharedManager];
-    MKMMeta *meta = [em metaWithID:ID];
-    MKMHistory *history = [em historyWithID:ID];
-    MKMContact *contact = [[self alloc] initWithID:ID meta:meta];
-    if (contact) {
-        MKMAccountHistoryDelegate *delegate;
-        delegate = [[MKMAccountHistoryDelegate alloc] init];
-        contact.historyDelegate = delegate;
-        NSUInteger count = [contact runHistory:history];
-        NSAssert(count == history.count, @"history error");
-    }
-    return contact;
-}
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID

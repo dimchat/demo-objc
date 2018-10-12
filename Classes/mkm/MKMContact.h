@@ -19,12 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) MKMContactMemo *memo;
 
-+ (instancetype)contactWithID:(const MKMID *)ID;
-
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
-
 @end
 
 NS_ASSUME_NONNULL_END

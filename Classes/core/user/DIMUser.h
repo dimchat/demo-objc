@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMUser : MKMUser <DIMUser>
 
++ (instancetype)userWithID:(const MKMID *)ID;
+
 @end
 
 NS_ASSUME_NONNULL_END

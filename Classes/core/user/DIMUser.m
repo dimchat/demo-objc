@@ -14,9 +14,26 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
+#import "DIMKeyStore.h"
+
 #import "DIMUser.h"
 
 @implementation DIMUser
+
++ (instancetype)userWithID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
+    MKMConsensus *cons = [MKMConsensus sharedInstance];
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMMeta *meta = [em metaWithID:ID];
+    MKMHistory *history = [em historyWithID:ID];
+    DIMUser *user = [[DIMUser alloc] initWithID:ID meta:meta];
+    if (user) {
+        user.historyDelegate = cons;
+        NSUInteger count = [user runHistory:history];
+        NSAssert(count == history.count, @"history error");
+    }
+    return user;
+}
 
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     DIMEnvelope *env = msg.envelope;
@@ -77,13 +94,13 @@
 #pragma mark - Decrypt/Sign functions for passphrase/signature
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
-    MKMKeyStore *store = [MKMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedStore];
     MKMPrivateKey *SK = [store privateKeyForUser:self];
     return [SK decrypt:ciphertext];
 }
 
 - (NSData *)sign:(const NSData *)plaintext {
-    MKMKeyStore *store = [MKMKeyStore sharedStore];
+    DIMKeyStore *store = [DIMKeyStore sharedStore];
     MKMPrivateKey *SK = [store privateKeyForUser:self];
     return [SK sign:plaintext];
 }

@@ -29,10 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *members;
 
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
-
 - (BOOL)isFounder:(const MKMID *)ID;
 - (BOOL)isOwner:(const MKMID *)ID;
 /**

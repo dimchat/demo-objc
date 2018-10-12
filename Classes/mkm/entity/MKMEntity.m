@@ -9,10 +9,9 @@
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMMeta.h"
-
 #import "MKMHistory.h"
 
-#import "MKMEntityManager.h"
+#import "MKMConsensus.h"
 
 #import "MKMEntity.h"
 
@@ -34,39 +33,25 @@
     return self;
 }
 
-- (instancetype)initWithID:(const MKMID *)ID {
-    MKMMeta *meta = nil;
-    self = [self initWithID:ID meta:meta];
-    return self;
-}
-
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
-    if (!meta) {
-        // get meta info
-        MKMEntityManager *em = [MKMEntityManager sharedManager];
-        meta = [em metaWithID:ID];
-    }
-    
+    NSAssert([ID isValid], @"Invalid ID");
     if (self = [super init]) {
-        BOOL correct;
         // ID
-        correct = ID.isValid;
-        NSAssert(correct, @"ID error");
-        if (correct) {
+        if (ID.isValid) {
             _ID = [ID copy];
         }
         
         // meta
-        correct = [ID checkMeta:meta];
-        NSAssert(correct, @"meta error");
-        if (correct) {
+        if ([meta matchID:ID]) {
             _meta = [meta copy];
         }
         
         // history
         _history = [[MKMHistory alloc] init];
+        // delegate
+        _historyDelegate = [MKMConsensus sharedInstance];
     }
     
     return self;

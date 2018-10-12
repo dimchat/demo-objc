@@ -17,12 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *administrators;
 
-+ (instancetype)groupWithID:(const MKMID *)ID;
-
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
-
 /**
  *  DON'T call these methods to update group directly,
  *  use runHistory:/runHistoryRecord: to change administrators

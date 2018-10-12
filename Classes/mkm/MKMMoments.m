@@ -6,7 +6,15 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "MKMMeta.h"
+
 #import "MKMMoments.h"
+
+@interface MKMEntity (Hacking)
+
+@property (strong, nonatomic) MKMMeta *meta;
+
+@end
 
 @interface MKMMoments ()
 
@@ -35,6 +43,20 @@
         moments.ignores = _ignores;
     }
     return moments;
+}
+
+- (MKMID *)account {
+    return [self.meta buildIDWithNetworkID:MKMNetwork_Main];
+}
+
+@end
+
+#pragma mark - Connection between Account & Moments
+
+@implementation MKMAccount (Moments)
+
+- (MKMID *)moments {
+    return [self.meta buildIDWithNetworkID:MKMNetwork_Moments];
 }
 
 @end

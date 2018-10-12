@@ -82,7 +82,7 @@ static MKMFacebook *s_sharedInstance = nil;
 }
 
 - (MKMProfile *)profileWithID:(const MKMID *)ID {
-    NSAssert(ID, @"ID cannot be empty");
+    NSAssert([ID isValid], @"Invalid ID");
     MKMProfile *profile = [_profileTable objectForKey:ID];
     if (!profile && _delegate) {
         profile = [_delegate queryProfileWithID:ID];
@@ -96,9 +96,9 @@ static MKMFacebook *s_sharedInstance = nil;
 - (BOOL)setProfile:(MKMProfile *)profile
              forID:(const MKMID *)ID {
     NSAssert(profile, @"profile cannot be empty");
-    NSAssert(ID, @"ID cannot be empty");
+    NSAssert([ID isValid], @"Invalid ID");
     
-    if ([profile match:ID]) {
+    if ([profile matchID:ID]) {
         [_profileTable setObject:profile forKey:ID];
         return YES;
     } else {

@@ -1,41 +1,30 @@
 //
-//  MKMKeyStore.h
-//  MingKeMing
+//  DIMKeyStore.h
+//  iChat
 //
-//  Created by Albert Moky on 2018/9/25.
+//  Created by Albert Moky on 2018/10/12.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "MingKeMing.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMSymmetricKey;
-@class MKMPublicKey;
-@class MKMPrivateKey;
-
-@class MKMEntity;
-@class MKMUser;
-@class MKMContact;
-
-@interface MKMKeyStore : NSObject
+@interface DIMKeyStore : NSObject
 
 + (instancetype)sharedStore;
 
 /**
  Get PK for contact to encrypt or verify message
-
+ 
  @param contact - contact with ID
  @return PK
  */
 - (MKMPublicKey *)publicKeyForContact:(const MKMContact *)contact;
 
-- (void)setPublicKey:(MKMPublicKey *)PK
-          forContact:(const MKMContact *)contact;
-
 /**
  Get SK for user to decrypt or sign message
-
+ 
  @param user - user with ID
  @return SK
  */
@@ -46,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Get PW for contact or group to encrypt or decrypt message
-
+ 
  @param entity - entity with ID
  @return PW
  */
@@ -57,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Get encrypted SK for user to store elsewhere
-
+ 
  @param user - user with ID
  @param scKey - password to encrypt the SK
  @return KS

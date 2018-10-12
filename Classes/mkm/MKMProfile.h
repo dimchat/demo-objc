@@ -49,7 +49,7 @@ typedef NS_ENUM(SInt32, MKMGender) {
  @param ID - Account ID
  @return YES/NO
  */
-- (BOOL)match:(const MKMID *)ID;
+- (BOOL)matchID:(const MKMID *)ID;
 
 @end
 

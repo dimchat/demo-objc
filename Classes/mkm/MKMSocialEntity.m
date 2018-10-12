@@ -10,6 +10,7 @@
 
 #import "MKMID.h"
 #import "MKMMeta.h"
+#import "MKMEntityManager.h"
 
 #import "MKMSocialEntity.h"
 
@@ -47,6 +48,7 @@
         social.founder = _founder;
         social.owner = _owner;
         social.name = _name;
+        
         social.members = _members;
     }
     return social;
@@ -56,29 +58,36 @@
     if (_founder) {
         return [_founder isEqual:ID];
     }
-    return [ID.publicKey isEqual:self.meta.key];
+    // founder not set yet, check by meta
+    MKMEntityManager *em = [MKMEntityManager sharedManager];
+    MKMMeta *meta = [em metaWithID:ID];
+    // the key in social entity's meta
+    // must be the same (public) key of founder
+    return [meta.key isEqual:self.meta.key];
 }
 
 - (BOOL)isOwner:(const MKMID *)ID {
-    NSAssert(_owner, @"error");
+    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(_owner, @"owner not set yet");
     return [_owner isEqual:ID];
 }
 
 - (void)addMember:(const MKMID *)ID {
+    NSAssert(ID.isValid, @"Invalid ID");
     if ([self isMember:ID]) {
+        // don't add same member twice
         return;
     }
     [_members addObject:ID];
 }
 
 - (void)removeMember:(const MKMID *)ID {
-    if (![self isMember:ID]) {
-        return;
-    }
+    NSAssert([self isMember:ID], @"no such member found");
     [_members removeObject:ID];
 }
 
 - (BOOL)isMember:(const MKMID *)ID {
+    NSAssert(ID.isValid, @"Invalid ID");
     return [_members containsObject:ID];
 }
 
