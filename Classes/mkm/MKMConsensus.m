@@ -29,6 +29,7 @@ static MKMConsensus *s_sharedInstance = nil;
 + (instancetype)sharedInstance {
     if (!s_sharedInstance) {
         s_sharedInstance = [[self alloc] init];
+    }
     return s_sharedInstance;
 }
 
