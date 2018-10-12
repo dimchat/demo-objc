@@ -6,6 +6,17 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+// mkm
+//#import "MingKeMing.h"
+
+// core
+//#import "DIMCore.h"
+
+// network
+#import "DIMCertificateAuthority.h"
+#import "DIMStation.h"
+#import "DIMServiceProvider.h"
+
 #import "DIMBarrack.h"
 
 NS_ASSUME_NONNULL_BEGIN
