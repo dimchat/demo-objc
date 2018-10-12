@@ -42,7 +42,7 @@
 }
 
 - (void)setPrivateKey:(MKMPrivateKey *)privateKey {
-    if (![self matchPrivateKey:privateKey]) {
+    if (privateKey && ![self matchPrivateKey:privateKey]) {
         NSAssert(false, @"private key not match");
         return ;
     }
