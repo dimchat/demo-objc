@@ -39,12 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMCryptographyKey (PersistentStore)
 
-+ (instancetype)loadKeyWithCode:(NSUInteger)code
-                      algorithm:(const NSString *)algorithm;
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier;
 
-+ (instancetype)loadKeyWithCode:(NSUInteger)code;
-
-- (BOOL)saveKeyWithCode:(NSUInteger)code;
+- (BOOL)saveKeyWithIdentifier:(const NSString *)identifier;
 
 @end
 

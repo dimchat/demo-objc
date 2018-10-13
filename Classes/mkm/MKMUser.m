@@ -42,13 +42,29 @@
 }
 
 - (void)setPrivateKey:(MKMPrivateKey *)privateKey {
-    if (privateKey && ![self matchPrivateKey:privateKey]) {
-        NSAssert(false, @"private key not match");
-        return ;
+    if (privateKey) {
+        // check the key first
+        if ([self matchPrivateKey:privateKey]) {
+            if (![_privateKey isEqual:privateKey]) {
+                _privateKey = [privateKey copy];
+                // persistent store to keychain
+                [privateKey saveKeyWithIdentifier:_ID.address];
+            }
+        } else {
+            NSAssert(false, @"private key not match");
+        }
+    } else {
+        _privateKey = nil;
     }
-    if (![_privateKey isEqual:privateKey]) {
-        _privateKey = [privateKey copy];
+}
+
+- (MKMPrivateKey *)privateKey {
+    if (!_privateKey) {
+        // try to load private key from the keychain
+        MKMPrivateKey *SK = [MKMPrivateKey loadKeyWithIdentifier:_ID.address];
+        _privateKey = [SK copy];
     }
+    return _privateKey;
 }
 
 - (BOOL)addContact:(MKMID *)ID {

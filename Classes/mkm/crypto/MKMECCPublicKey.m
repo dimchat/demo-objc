@@ -10,6 +10,8 @@
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
+#import "MKMECCPrivateKey.h"
+
 #import "MKMECCPublicKey.h"
 
 @implementation MKMECCPublicKey
@@ -38,6 +40,22 @@
     // TODO: ECC verify
     
     return match;
+}
+
+@end
+
+@implementation MKMECCPublicKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMECCPublicKey *PK = nil;
+    
+    // TODO: load ECC public key from persistent store
+    
+    // finally, try by private key
+    MKMECCPrivateKey *SK = [MKMECCPrivateKey loadKeyWithIdentifier:identifier];
+    PK = (MKMECCPublicKey *)SK.publicKey;
+    
+    return PK;
 }
 
 @end

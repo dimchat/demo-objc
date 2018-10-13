@@ -74,3 +74,26 @@
 }
 
 @end
+
+@implementation MKMPrivateKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMPrivateKey *SK = nil;
+    
+    // try ECC private key
+    SK = [MKMECCPrivateKey loadKeyWithIdentifier:identifier];
+    if (SK) {
+        return SK;
+    }
+    
+    // try RSA private key
+    SK = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];
+    if (SK) {
+        return SK;
+    }
+    
+    // key not found
+    return SK;
+}
+
+@end

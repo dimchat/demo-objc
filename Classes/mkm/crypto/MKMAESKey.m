@@ -79,3 +79,16 @@
 }
 
 @end
+
+@implementation MKMAESKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMAESKey *PW = nil;
+    
+    // TODO: load AES key from persistent store
+    
+    // key not found
+    return PW;
+}
+
+@end

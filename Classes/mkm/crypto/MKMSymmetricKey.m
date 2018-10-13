@@ -54,3 +54,20 @@
 }
 
 @end
+
+@implementation MKMSymmetricKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMSymmetricKey *PW = nil;
+    
+    // try AES
+    PW = [MKMAESKey loadKeyWithIdentifier:identifier];
+    if (PW) {
+        return PW;
+    }
+    
+    // key not found
+    return PW;
+}
+
+@end

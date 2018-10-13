@@ -50,3 +50,16 @@
 }
 
 @end
+
+@implementation MKMECCPrivateKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMECCPrivateKey *SK = nil;
+    
+    // TODO: load ECC private key from persistent store
+    
+    // key not found
+    return SK;
+}
+
+@end

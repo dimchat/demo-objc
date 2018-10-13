@@ -10,6 +10,8 @@
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
+#import "MKMRSAPrivateKey.h"
+
 #import "MKMRSAPublicKey.h"
 
 SecKeyRef SecKeyRefFromNSData(const NSData *data, NSUInteger size, BOOL isPublic) {
@@ -171,6 +173,22 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
     match = (sanityCheck == noErr);
 
     return match;
+}
+
+@end
+
+@implementation MKMRSAPublicKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMRSAPublicKey *PK = nil;
+    
+    // TODO: load RSA public key from persistent store
+    
+    // finally, try by private key
+    MKMRSAPrivateKey *SK = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];
+    PK = (MKMRSAPublicKey *)SK.publicKey;
+    
+    return PK;
 }
 
 @end

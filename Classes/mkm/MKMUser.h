@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MKMUser : MKMAccount {
     
     NSMutableArray<const MKMID *> *_contacts;
+    
+    MKMPrivateKey *_privateKey;
 }
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *contacts;

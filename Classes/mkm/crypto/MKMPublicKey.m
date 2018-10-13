@@ -67,3 +67,26 @@
 }
 
 @end
+
+@implementation MKMPublicKey (PersistentStore)
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
+    MKMPublicKey *PK = nil;
+    
+    // try ECC public key
+    PK = [MKMECCPublicKey loadKeyWithIdentifier:identifier];
+    if (PK) {
+        return PK;
+    }
+    
+    // try RSA public key
+    PK = [MKMRSAPublicKey loadKeyWithIdentifier:identifier];
+    if (PK) {
+        return PK;
+    }
+    
+    // key not found
+    return PK;
+}
+
+@end

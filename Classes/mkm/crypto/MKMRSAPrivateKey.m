@@ -189,15 +189,17 @@
 
 @implementation MKMRSAPrivateKey (PersistentStore)
 
-+ (instancetype)loadKeyWithCode:(NSUInteger)code {
+static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
+
++ (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
     MKMRSAPrivateKey *SK = nil;
     
-    NSString *label = @"net.dim.rsa.private";
-    NSString *tag = [NSString stringWithFormat:@"%010lu", code];
+    NSString *label = [identifier copy];
+    NSData *tag = [s_application_tag data];
     
     NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
-                            (id)kSecAttrApplicationLabel: [label data],
-                            (id)kSecAttrApplicationTag: [tag data],
+                            (id)kSecAttrApplicationLabel: label,
+                            (id)kSecAttrApplicationTag: tag,
                             (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
                             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
                             (id)kSecAttrSynchronizable: (id)kCFBooleanTrue,
@@ -236,18 +238,18 @@
     return SK;
 }
 
-- (BOOL)saveKeyWithCode:(NSUInteger)code {
+- (BOOL)saveKeyWithIdentifier:(const NSString *)identifier {
     if (!_privateKeyRef) {
         NSAssert(false, @"_privateKeyRef cannot be empty");
         return NO;
     }
     
-    NSString *label = @"net.dim.rsa.private";
-    NSString *tag = [NSString stringWithFormat:@"%010lu", code];
+    NSString *label = [identifier copy];
+    NSData *tag = [s_application_tag data];
     
     NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
-                            (id)kSecAttrApplicationLabel: [label data],
-                            (id)kSecAttrApplicationTag: [tag data],
+                            (id)kSecAttrApplicationLabel: label,
+                            (id)kSecAttrApplicationTag: tag,
                             (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
                             (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
                             (id)kSecAttrSynchronizable: (id)kCFBooleanTrue,
