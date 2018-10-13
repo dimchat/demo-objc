@@ -186,3 +186,102 @@
 }
 
 @end
+
+@implementation MKMRSAPrivateKey (PersistentStore)
+
++ (instancetype)loadKeyWithCode:(NSUInteger)code {
+    MKMRSAPrivateKey *SK = nil;
+    
+    NSString *label = @"net.dim.user.sk";
+    NSString *tag = [NSString stringWithFormat:@"%010lu", code];
+    
+    NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
+                            (id)kSecAttrApplicationLabel: [label data],
+                            (id)kSecAttrApplicationTag: [tag data],
+                            (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
+                            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+                            (id)kSecAttrSynchronizable: (id)kCFBooleanTrue,
+                            
+                            (id)kSecMatchLimit: (id)kSecMatchLimitOne,
+                            (id)kSecReturnRef: (id)kCFBooleanTrue
+                            };
+    CFTypeRef result = NULL;
+    OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
+    if (status == errSecSuccess) { // noErr
+        // private key
+        SecKeyRef privateKeyRef = (SecKeyRef)result;
+        NSData *skData = NSDataFromSecKeyRef(privateKeyRef);
+        // public key
+        SecKeyRef publicKeyRef = SecKeyCopyPublicKey(privateKeyRef);
+        NSData *pkData = NSDataFromSecKeyRef(publicKeyRef);
+        // key size
+        NSUInteger size = SecKeyGetBlockSize(publicKeyRef);
+        
+        NSString *algorithm = @"RSA";
+        NSString *pkFmt = @"-----BEGIN PUBLIC KEY----- %@ -----END PUBLIC KEY-----";
+        NSString *skFmt = @"-----BEGIN RSA PRIVATE KEY----- %@ -----END RSA PRIVATE KEY-----";
+        NSString *pkc = [NSString stringWithFormat:pkFmt, [pkData base64Encode]];
+        NSString *skc = [NSString stringWithFormat:skFmt, [skData base64Encode]];
+        NSString *content = [pkc stringByAppendingString:skc];
+        NSDictionary *info = @{@"algorithm": algorithm,
+                               @"size" : @(size),
+                               @"data" : content};
+        SK = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:info];
+    }
+    if (result) {
+        CFRelease(result);
+    }
+    
+    return SK;
+}
+
+- (BOOL)saveKeyWithCode:(NSUInteger)code {
+    if (!_privateKeyRef) {
+        NSAssert(false, @"_privateKeyRef cannot be empty");
+        return NO;
+    }
+    
+    NSString *label = @"net.dim.user.sk";
+    NSString *tag = [NSString stringWithFormat:@"%010lu", code];
+    
+    NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
+                            (id)kSecAttrApplicationLabel: [label data],
+                            (id)kSecAttrApplicationTag: [tag data],
+                            (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
+                            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+                            (id)kSecAttrSynchronizable: (id)kCFBooleanTrue,
+                            
+                            (id)kSecMatchLimit: (id)kSecMatchLimitOne,
+                            (id)kSecReturnRef: (id)kCFBooleanTrue
+                            };
+    CFTypeRef result = NULL;
+    OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
+    if (status == errSecSuccess) { // noErr
+        // already exists, update it
+        NSDictionary *update = @{(id)kSecValueRef: (__bridge id)_privateKeyRef};
+        status = SecItemUpdate((CFDictionaryRef)query, (CFDictionaryRef)update);
+    } else {
+        // not exists, insert a new one
+        if (result) {
+            CFRelease(result);
+        }
+        
+        NSMutableDictionary *attributes = [query mutableCopy];
+        [attributes removeObjectForKey:(id)kSecMatchLimit];
+        [attributes removeObjectForKey:(id)kSecReturnRef];
+        [attributes setObject:(__bridge id)_privateKeyRef forKey:(id)kSecValueRef];
+        status = SecItemAdd((CFDictionaryRef)attributes, &result);
+    }
+    
+    if (result) {
+        CFRelease(result);
+    }
+    if (status == errSecSuccess) {
+        return YES;
+    } else {
+        NSAssert(false, @"failed to update key");
+        return NO;
+    }
+}
+
+@end

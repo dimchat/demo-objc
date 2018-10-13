@@ -71,3 +71,19 @@
 }
 
 @end
+
+@implementation MKMCryptographyKey (PersistentStore)
+
+- (BOOL)saveKeyWithCode:(NSUInteger)code {
+    NSAssert(false, @"DON'T call me");
+    // let the subclass to do the job
+    return NO;
+}
+
++ (instancetype)loadKeyWithCode:(NSUInteger)code {
+    NSAssert(false, @"DON'T call me");
+    // let the subclass to do the job
+    return nil;
+}
+
+@end
