@@ -22,6 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMPrivateKey : MKMAsymmetricKey <MKMPrivateKey>
 
+/**
+ Get public key from private key
+ */
+@property (readonly, strong, atomic) MKMPublicKey *publicKey;
+
 - (instancetype)initWithJSONString:(const NSString *)json
                          publicKey:(const MKMPublicKey *)PK;
 
@@ -29,13 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
                           keyInfo:(const NSDictionary *)info;
 
 - (BOOL)isEqual:(const MKMPrivateKey *)aKey;
-
-/**
- Get public key from private key
- 
- @return public key
- */
-- (MKMPublicKey *)publicKey;
 
 @end
 

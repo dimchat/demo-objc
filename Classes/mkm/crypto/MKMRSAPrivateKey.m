@@ -52,10 +52,9 @@
         }
         
         NSString *privateContent = nil;
-        NSString *publicContent = nil;
         NSData *privateKeyData = nil;
-        NSData *publicKeyData = nil;
         SecKeyRef privateKeyRef = NULL;
+        NSString *publicContent = nil;
         SecKeyRef publicKeyRef = NULL;
         if (data) {
             // private key data
@@ -66,11 +65,11 @@
             if (range.location != NSNotFound) {
                 // get public key from data string
                 publicContent = RSAKeyDataFromNSString(data, YES);
-            } else {
-                // get public key from private key
-                publicKeyRef = SecKeyCopyPublicKey(_privateKeyRef);
-                publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
-                publicContent = [publicKeyData base64Encode];
+                NSDictionary *pDict = @{@"algorithm":algorithm,
+                                        @"size":@(_keySize),
+                                        @"data":publicContent};
+                _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
+                                                             keyInfo:pDict];
             }
         } else {
             // Generate key pairs
@@ -91,21 +90,10 @@
             privateKeyData = NSDataFromSecKeyRef(privateKeyRef);
             privateContent = [privateKeyData base64Encode];
             if (privateContent) {
+                [_storeDictionary setObject:@(_keySize) forKey:@"size"];
                 [_storeDictionary setObject:privateContent forKey:@"data"];
-                _privateContent = [privateContent copy];
+                _privateContent = privateContent;
             }
-            
-            // public key data
-            publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
-            publicContent = [publicKeyData base64Encode];
-        }
-        
-        // create public key
-        if (publicContent) {
-            NSDictionary *pDict = @{@"algorithm":algorithm,
-                                    @"data":publicContent};
-            _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
-                                                         keyInfo:pDict];
         }
     }
     
@@ -124,6 +112,18 @@
 }
 
 - (MKMPublicKey *)publicKey {
+    if (!_publicKey && _privateKeyRef) {
+        // get public key data from private key
+        SecKeyRef publicKeyRef = SecKeyCopyPublicKey(_privateKeyRef);
+        NSData *publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
+        NSString *publicContent = [publicKeyData base64Encode];
+        // create public key
+        NSDictionary *pDict = @{@"algorithm": _algorithm,
+                                @"size": @(_keySize),
+                                @"data": publicContent};
+        _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm
+                                                     keyInfo:pDict];
+    }
     return _publicKey;
 }
 
@@ -192,7 +192,7 @@
 + (instancetype)loadKeyWithCode:(NSUInteger)code {
     MKMRSAPrivateKey *SK = nil;
     
-    NSString *label = @"net.dim.user.sk";
+    NSString *label = @"net.dim.rsa.private";
     NSString *tag = [NSString stringWithFormat:@"%010lu", code];
     
     NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
@@ -215,7 +215,7 @@
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(privateKeyRef);
         NSData *pkData = NSDataFromSecKeyRef(publicKeyRef);
         // key size
-        NSUInteger size = SecKeyGetBlockSize(publicKeyRef);
+        NSUInteger keySize = 8 * SecKeyGetBlockSize(publicKeyRef);
         
         NSString *algorithm = @"RSA";
         NSString *pkFmt = @"-----BEGIN PUBLIC KEY----- %@ -----END PUBLIC KEY-----";
@@ -224,12 +224,13 @@
         NSString *skc = [NSString stringWithFormat:skFmt, [skData base64Encode]];
         NSString *content = [pkc stringByAppendingString:skc];
         NSDictionary *info = @{@"algorithm": algorithm,
-                               @"size" : @(size),
+                               @"size" : @(keySize),
                                @"data" : content};
         SK = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:info];
     }
     if (result) {
         CFRelease(result);
+        result = NULL;
     }
     
     return SK;
@@ -241,7 +242,7 @@
         return NO;
     }
     
-    NSString *label = @"net.dim.user.sk";
+    NSString *label = @"net.dim.rsa.private";
     NSString *tag = [NSString stringWithFormat:@"%010lu", code];
     
     NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
@@ -257,24 +258,28 @@
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
     if (status == errSecSuccess) { // noErr
-        // already exists, update it
-        NSDictionary *update = @{(id)kSecValueRef: (__bridge id)_privateKeyRef};
-        status = SecItemUpdate((CFDictionaryRef)query, (CFDictionaryRef)update);
-    } else {
-        // not exists, insert a new one
-        if (result) {
-            CFRelease(result);
-        }
+        // already exists, delete it firest
+        NSMutableDictionary *mQuery = [query mutableCopy];
+        [mQuery removeObjectForKey:(id)kSecMatchLimit];
+        [mQuery removeObjectForKey:(id)kSecReturnRef];
         
-        NSMutableDictionary *attributes = [query mutableCopy];
-        [attributes removeObjectForKey:(id)kSecMatchLimit];
-        [attributes removeObjectForKey:(id)kSecReturnRef];
-        [attributes setObject:(__bridge id)_privateKeyRef forKey:(id)kSecValueRef];
-        status = SecItemAdd((CFDictionaryRef)attributes, &result);
+        status = SecItemDelete((CFDictionaryRef)mQuery);
     }
-    
     if (result) {
         CFRelease(result);
+        result = NULL;
+    }
+    
+    // add key item
+    NSMutableDictionary *attributes = [query mutableCopy];
+    [attributes removeObjectForKey:(id)kSecMatchLimit];
+    [attributes removeObjectForKey:(id)kSecReturnRef];
+    [attributes setObject:(__bridge id)_privateKeyRef forKey:(id)kSecValueRef];
+    
+    status = SecItemAdd((CFDictionaryRef)attributes, &result);
+    if (result) {
+        CFRelease(result);
+        result = NULL;
     }
     if (status == errSecSuccess) {
         return YES;
