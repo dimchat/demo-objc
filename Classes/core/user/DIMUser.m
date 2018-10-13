@@ -14,8 +14,6 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
-#import "DIMKeyStore.h"
-
 #import "DIMUser.h"
 
 @implementation DIMUser
@@ -94,14 +92,12 @@
 #pragma mark - Decrypt/Sign functions for passphrase/signature
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
-    DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    MKMPrivateKey *SK = [store privateKeyForUser:self];
+    MKMPrivateKey *SK = [self privateKey];
     return [SK decrypt:ciphertext];
 }
 
 - (NSData *)sign:(const NSData *)plaintext {
-    DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    MKMPrivateKey *SK = [store privateKeyForUser:self];
+    MKMPrivateKey *SK = [self privateKey];
     return [SK sign:plaintext];
 }
 

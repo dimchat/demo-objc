@@ -29,6 +29,8 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
     
     // parse the history to update status
     MKMAccountStatus _status;
+    
+    MKMPublicKey *_publicKey;
 }
 
 @property (readonly, strong, nonatomic) MKMAccountProfile *profile;

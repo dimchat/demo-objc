@@ -6,8 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMKeyStore.h"
-
 #import "DIMUser+History.h"
 
 @implementation DIMUser (History)
@@ -19,7 +17,6 @@
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    DIMKeyStore *store = [DIMKeyStore sharedInstance];
     
     // 1. create user
     // 1.1. generate meta
@@ -34,6 +31,7 @@
     NSLog(@"register ID: %@", ID);
     // 1.4. create user with ID & meta
     DIMUser *user = [[self alloc] initWithID:ID meta:meta];
+    user.privateKey = [SK copy];
     // 1.5. store the meta in entity manager
     [eman setMeta:meta forID:ID];
     
@@ -65,9 +63,6 @@
         
         // 3.2. upload the meta & history onto the network
         [eman.delegate postMeta:meta history:history forID:ID];
-        
-        // 3.3. store the private key in key store
-        [store setPrivateKey:[SK copy] forUser:user];
         
         return user;
     }

@@ -17,6 +17,12 @@
 
 #import "MKMAccount.h"
 
+@interface MKMEntity (Hacking)
+
+@property (strong, nonatomic) MKMMeta *meta;
+
+@end
+
 @interface MKMAccount ()
 
 @property (strong, nonatomic) MKMAccountProfile *profile;
@@ -30,8 +36,7 @@
 
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMMeta *meta = [eman metaWithID:ID];
+    MKMMeta *meta = [[MKMEntityManager sharedInstance] metaWithID:ID];
     self = [self initWithID:ID meta:meta];
     return self;
 }
@@ -42,6 +47,7 @@
     if (self = [super initWithID:ID meta:meta]) {
         _profile = [[MKMAccountProfile alloc] init];
         _status = MKMAccountStatusInitialized;
+        _publicKey = meta.key;
     }
     return self;
 }
@@ -51,16 +57,9 @@
     if (account) {
         account.profile = _profile;
         account.status = _status;
+        account.publicKey = _publicKey;
     }
     return account;
-}
-
-- (MKMPublicKey *)publicKey {
-    if (!_publicKey) {
-        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        _publicKey = [eman metaWithID:_ID].key;
-    }
-    return _publicKey;
 }
 
 - (MKMAccountProfile *)profile {

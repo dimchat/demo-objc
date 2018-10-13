@@ -20,14 +20,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMCryptographyKey : MKMDictionary {
     
-    const NSString *_algorithm;
+    NSString *_algorithm;
 }
 
-@property (readonly, strong, nonatomic) const NSString *algorithm;
+@property (readonly, strong, nonatomic) NSString *algorithm;
 
 + (instancetype)keyWithKey:(id)key;
 
 - (instancetype)initWithJSONString:(const NSString *)json;
+
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm;
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm

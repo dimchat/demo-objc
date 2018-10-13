@@ -18,7 +18,7 @@
 
 @interface MKMCryptographyKey ()
 
-@property (strong, nonatomic) const NSString *algorithm;
+@property (strong, nonatomic) NSString *algorithm;
 
 @end
 
@@ -49,6 +49,14 @@
     return self;
 }
 
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    if (self = [super initWithDictionary:dict]) {
+        NSString *algorithm = [dict objectForKey:@"algorithm"];
+        _algorithm = [algorithm copy];
+    }
+    return self;
+}
+
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm {
     NSDictionary *dict = @{@"algorithm":algorithm};
     self = [self initWithAlgorithm:algorithm keyInfo:dict];
@@ -62,13 +70,9 @@
     if (algorithm) {
         NSAssert([algorithm isEqualToString:algor],
                  @"key data error: %@", info);
-    } else {
-        algorithm = algor;
     }
     
-    if (self = [self initWithDictionary:dict]) {
-        self.algorithm = algorithm;
-    }
+    self = [self initWithDictionary:dict];
     return self;
 }
 
