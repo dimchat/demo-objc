@@ -37,7 +37,7 @@
 
 - (MKMSymmetricKey *)passphrase {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    return [store passphraseForEntity:self];
+    return [store cipherKeyForGroup:self];
 }
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
