@@ -63,7 +63,7 @@
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithContent:CT
                                             envelope:env
-                                           secretKey:PW];
+                                        encryptedKey:PW];
 }
 
 - (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg {
@@ -82,13 +82,13 @@
         return nil;
     }
     
-    NSData *PW = msg.secretKey;
-    NSAssert(PW, @"secret key cannot be empty");
+    NSData *PW = msg.encryptedKey;
+    NSAssert(PW, @"encrypted key cannot be empty");
     
     // 2. create secure message
     return [[DIMSecureMessage alloc] initWithContent:content
                                             envelope:env
-                                           secretKey:PW];
+                                        encryptedKey:PW];
 }
 
 #pragma mark - Encrypt/Verify functions for passphrase/signature

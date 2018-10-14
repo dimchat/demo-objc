@@ -39,8 +39,8 @@ static NSDate *number_time(const NSNumber *number) {
 @property (strong, nonatomic) DIMEnvelope *envelope;
 @property (strong, nonatomic) NSData *content;
 
-@property (strong, nonatomic) NSData *secretKey;
-@property (strong, nonatomic) NSDictionary *secretKeys;
+@property (strong, nonatomic) NSData *encryptedKey;
+@property (strong, nonatomic) NSDictionary *encryptedKeys;
 
 @end
 
@@ -53,13 +53,13 @@ static NSDate *number_time(const NSNumber *number) {
     NSData *key = nil;
     self = [self initWithContent:content
                         envelope:env
-                       secretKey:key];
+                    encryptedKey:key];
     return self;
 }
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                      secretKey:(const NSData *)key {
+                   encryptedKey:(const NSData *)key {
     NSAssert(env, @"envelope cannot be empty");
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithDictionary:(id)env];
@@ -68,21 +68,21 @@ static NSDate *number_time(const NSNumber *number) {
     NSAssert(content, @"content cannot be empty");
     [mDict setObject:[content base64Encode] forKey:@"content"];
     
-    // secret key
+    // encrypted key
     NSAssert(key, @"key cannot be empty");
     [mDict setObject:[key base64Encode] forKey:@"key"];
     
     if (self = [super initWithDictionary:mDict]) {
         _envelope = [env copy];
         _content = [content copy];
-        _secretKey = [key copy];
+        _encryptedKey = [key copy];
     }
     return self;
 }
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                     secretKeys:(const NSDictionary *)keys {
+                  encryptedKeys:(const NSDictionary *)keys {
     NSAssert(env, @"envelope cannot be empty");
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithDictionary:(id)env];
@@ -91,14 +91,14 @@ static NSDate *number_time(const NSNumber *number) {
     NSAssert(content, @"content cannot be empty");
     [mDict setObject:[content base64Encode] forKey:@"content"];
     
-    // secret keys
-    NSAssert(keys, @"key cannot be empty");
+    // encrypted keys
+    NSAssert(keys, @"encrypted keys cannot be empty");
     [mDict setObject:keys forKey:@"keys"];
     
     if (self = [super initWithDictionary:mDict]) {
         _envelope = [env copy];
         _content = [content copy];
-        _secretKeys = [keys copy];
+        _encryptedKeys = [keys copy];
     }
     return self;
 }
@@ -132,13 +132,13 @@ static NSDate *number_time(const NSNumber *number) {
         NSAssert(content, @"content cannot be empty");
         self.content = [content base64Decode];
         
-        // secret key
-        NSString *secret = [dict objectForKey:@"key"];
-        self.secretKey = [secret base64Decode];
+        // encrypted key
+        NSString *key = [dict objectForKey:@"key"];
+        self.encryptedKey = [key base64Decode];
         
-        // secret keys
+        // encrypted keys
         NSDictionary *keys = [dict objectForKey:@"keys"];
-        self.secretKeys = keys;
+        self.encryptedKeys = keys;
     }
     
     return self;

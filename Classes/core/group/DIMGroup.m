@@ -63,7 +63,7 @@
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithContent:CT
                                             envelope:env
-                                          secretKeys:keys];
+                                       encryptedKeys:keys];
 }
 
 - (NSDictionary *)encryptPassphrase:(const NSData *)PW {

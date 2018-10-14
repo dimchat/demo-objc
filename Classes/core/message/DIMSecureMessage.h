@@ -37,10 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
  * Password to decode the content, which encrypted by contact.PK
  *
  *   secureMessage.content = symmetricKey.encrypt(instantMessage.content);
- *   secretKey = contact.privateKey.encrypt(symmetricKey);
+ *   encryptedKey = contact.privateKey.encrypt(symmetricKey);
  */
-@property (readonly, strong, nonatomic) NSData *secretKey;
-@property (readonly, strong, nonatomic) NSDictionary *secretKeys;
+@property (readonly, strong, nonatomic) NSData *encryptedKey;
+@property (readonly, strong, nonatomic) NSDictionary *encryptedKeys;
 
 /**
  Secure Message for Personal
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                      secretKey:(const NSData *)key
+                   encryptedKey:(const NSData *)key
 NS_DESIGNATED_INITIALIZER;
 
 /**
@@ -65,7 +65,7 @@ NS_DESIGNATED_INITIALIZER;
  */
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                     secretKeys:(const NSDictionary *)keys
+                  encryptedKeys:(const NSDictionary *)keys
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

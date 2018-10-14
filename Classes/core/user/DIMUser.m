@@ -38,8 +38,8 @@
     NSAssert([env.receiver isEqual:_ID], @"recipient error");
     
     // 1. use the user's private key to decrypt the symmetric key
-    NSData *PW = msg.secretKey;
-    NSAssert(PW, @"secret key cannot be empty");
+    NSData *PW = msg.encryptedKey;
+    NSAssert(PW, @"encrypted key cannot be empty");
     PW = [self decrypt:PW];
     
     // 2. use the symmetric key to decrypt the content
@@ -71,19 +71,19 @@
     DIMCertifiedMessage *cMsg = nil;
     if (env.receiver.address.network == MKMNetwork_Main) {
         // Personal Message
-        NSData *key = msg.secretKey;
-        NSAssert(key, @"secret key not found");
+        NSData *key = msg.encryptedKey;
+        NSAssert(key, @"encrypted key not found");
         cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
                                                    envelope:env
-                                                  secretKey:key
+                                               encryptedKey:key
                                                   signature:CT];
     } else if (env.receiver.address.network == MKMNetwork_Group) {
         // Group Message
-        NSDictionary *keys = msg.secretKeys;
-        NSAssert(keys, @"secret keys not found");
+        NSDictionary *keys = msg.encryptedKeys;
+        NSAssert(keys, @"encrypted keys not found");
         cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
                                                    envelope:env
-                                                 secretKeys:keys
+                                              encryptedKeys:keys
                                                   signature:CT];
     }
     return cMsg;

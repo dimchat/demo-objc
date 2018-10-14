@@ -21,34 +21,36 @@
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                      secretKey:(const NSData *)key {
+                   encryptedKey:(const NSData *)key {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
     self = [self initWithContent:content
                         envelope:env
-                       secretKey:key
+                    encryptedKey:key
                        signature:CT];
     return self;
 }
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                     secretKeys:(const NSDictionary *)keys {
+                  encryptedKeys:(const NSDictionary *)keys {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
     self = [self initWithContent:content
                         envelope:env
-                      secretKeys:keys
+                   encryptedKeys:keys
                        signature:CT];
     return self;
 }
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                      secretKey:(const NSData *)key
+                   encryptedKey:(const NSData *)key
                       signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
-    if (self = [super initWithContent:content envelope:env secretKey:key]) {
+    if (self = [super initWithContent:content
+                             envelope:env
+                         encryptedKey:key]) {
         // signature
         if (CT) {
             [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];
@@ -60,10 +62,12 @@
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                     secretKeys:(const NSDictionary *)keys
+                  encryptedKeys:(const NSDictionary *)keys
                       signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
-    if (self = [super initWithContent:content envelope:env secretKeys:keys]) {
+    if (self = [super initWithContent:content
+                             envelope:env
+                        encryptedKeys:keys]) {
         // signature
         if (CT) {
             [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];

@@ -32,13 +32,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                      secretKey:(const NSData *)key
+                   encryptedKey:(const NSData *)key
                       signature:(const NSData *)CT
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                     secretKeys:(const NSDictionary *)keys
+                  encryptedKeys:(const NSDictionary *)keys
                       signature:(const NSData *)CT
 NS_DESIGNATED_INITIALIZER;
 
