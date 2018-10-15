@@ -15,12 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      keyInfo format: {
  *          algorithm: "ECC",
- *          ...
+ *          curve: "secp256k1",
+ *          data: "..."         // base64
  *      }
  */
 @interface MKMECCPrivateKey : MKMPrivateKey
-
-- (instancetype)initWithDictionary:(NSDictionary *)info;
 
 @end
 

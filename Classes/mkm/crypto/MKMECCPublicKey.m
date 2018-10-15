@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "ecc.h"
+
 #import "NSObject+JsON.h"
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
@@ -14,13 +16,38 @@
 
 #import "MKMECCPublicKey.h"
 
+@interface MKMECCPublicKey () {
+    
+    NSString *_curve;
+    
+    NSData *_publicData;
+}
+
+@end
+
 @implementation MKMECCPublicKey
 
-- (instancetype)initWithDictionary:(NSDictionary *)info {
-    NSString *algor = [info objectForKey:@"algorithm"];
-    NSAssert([algor isEqualToString:ACAlgorithmECC], @"algorithm error");
-    if (self = [super initWithDictionary:info]) {
-        // TODO: ECC algorithm arguments
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
+    if (self = [super initWithDictionary:keyInfo]) {
+        NSAssert([_algorithm isEqualToString:ACAlgorithmECC], @"algorithm error");
+        //keyInfo = _storeDictionary;
+        
+        // ECC curve
+        NSString *curve = [keyInfo objectForKey:@"curve"];
+        if (curve) {
+            _curve = curve;
+        } else {
+            _curve = @"secp256r1";
+        }
+        NSAssert([_curve isEqualToString:@"secp256r1"], @"only secp256r1 now");
+        
+        // ECC key data
+        NSString *data = [keyInfo objectForKey:@"data"];
+        if (data) {
+            _publicData = [data base64Decode];
+            NSAssert(_publicData.length == (ECC_BYTES + 1), @"data error");
+        }
     }
     return self;
 }
@@ -37,7 +64,21 @@
      signature:(const NSData *)ciphertext {
     BOOL match = NO;
     
-    // TODO: ECC verify
+    if (_publicData.length == (ECC_BYTES + 1) &&
+        plaintext.length <= ECC_BYTES &&
+        ciphertext.length == (ECC_BYTES * 2)) {
+        uint8_t p_publicKey[ECC_BYTES + 1];
+        uint8_t p_hash[ECC_BYTES];
+        uint8_t p_signature[ECC_BYTES * 2];
+        
+        [_publicData getBytes:p_publicKey length:_publicData.length];
+        [plaintext getBytes:p_hash length:plaintext.length];
+        [ciphertext getBytes:p_signature length:ciphertext.length];
+        int res = ecdsa_verify(p_publicKey, p_hash, p_signature);
+        if (res == 1) {
+            match = YES;
+        }
+    }
     
     return match;
 }
