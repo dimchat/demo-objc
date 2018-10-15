@@ -60,7 +60,7 @@
     }
     // founder not set yet, check by meta
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMMeta *meta = [eman metaWithID:ID];
+    MKMMeta *meta = [eman metaForID:ID];
     // the key in social entity's meta
     // must be the same (public) key of founder
     return [meta.key isEqual:self.meta.key];

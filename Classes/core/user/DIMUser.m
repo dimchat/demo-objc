@@ -22,8 +22,8 @@
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
     MKMConsensus *cons = [MKMConsensus sharedInstance];
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMMeta *meta = [eman metaWithID:ID];
-    MKMHistory *history = [eman historyWithID:ID];
+    MKMMeta *meta = [eman metaForID:ID];
+    MKMHistory *history = [eman historyForID:ID];
     DIMUser *user = [[DIMUser alloc] initWithID:ID meta:meta];
     if (user) {
         user.historyDelegate = cons;

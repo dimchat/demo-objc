@@ -142,7 +142,8 @@
 - (instancetype)initWithNotBefore:(const NSDate *)from
                          notAfter:(const NSDate *)to {
     NSDictionary *dict = @{@"NotBefore":@([from timeIntervalSince1970]),
-                           @"NotAfter" :@([to timeIntervalSince1970])};
+                           @"NotAfter" :@([to timeIntervalSince1970]),
+                           };
     if (self = [super initWithDictionary:dict]) {
         _notBefore = [from copy];
         _notAfter = [to copy];

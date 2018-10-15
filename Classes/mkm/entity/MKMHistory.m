@@ -181,7 +181,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     if (_recorder) {
         // make sure the recorder's PK is match with this SK
         MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        MKMPublicKey *PK = [eman metaWithID:_recorder].key;
+        MKMPublicKey *PK = [eman metaForID:_recorder].key;
         if (![PK isMatch:SK]) {
             NSAssert(false, @"keys not match");
             return nil;
@@ -205,7 +205,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     if (_recorder) {
         // make sure the recorder's PK is match with this PK
         MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        MKMPublicKey *PK2 = [eman metaWithID:_recorder].key;
+        MKMPublicKey *PK2 = [eman metaForID:_recorder].key;
         if (![PK isEqual:PK2]) {
             NSAssert(false, @"keys not equal");
             return nil;

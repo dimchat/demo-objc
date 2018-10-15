@@ -36,7 +36,7 @@
 
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
-    MKMMeta *meta = [[MKMEntityManager sharedInstance] metaWithID:ID];
+    MKMMeta *meta = [[MKMEntityManager sharedInstance] metaForID:ID];
     self = [self initWithID:ID meta:meta];
     return self;
 }

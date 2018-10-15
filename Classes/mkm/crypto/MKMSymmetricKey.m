@@ -12,6 +12,11 @@
 
 @implementation MKMSymmetricKey
 
+- (instancetype)init {
+    self = [self initWithAlgorithm:SCAlgorithmAES];
+    return self;
+}
+
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm
                           keyInfo:(const NSDictionary *)info {
     if ([self isMemberOfClass:[MKMSymmetricKey class]]) {

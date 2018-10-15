@@ -14,14 +14,14 @@
 
 #import "MKMRSAPublicKey.h"
 
-SecKeyRef SecKeyRefFromNSData(const NSData *data, NSUInteger size, BOOL isPublic) {
+SecKeyRef SecKeyRefFromNSData(const NSData *data, BOOL isPublic) {
     // Set the private key query dictionary.
     CFStringRef keyClass;
     keyClass = isPublic ? kSecAttrKeyClassPublic : kSecAttrKeyClassPrivate;
     NSDictionary * dict;
-    dict = @{(id)kSecAttrKeyType      : (id)kSecAttrKeyTypeRSA,
-             (id)kSecAttrKeyClass     : (__bridge id)keyClass,
-             (id)kSecAttrKeySizeInBits: @(size)};
+    dict = @{(id)kSecAttrKeyType :(id)kSecAttrKeyTypeRSA,
+             (id)kSecAttrKeyClass:(__bridge id)keyClass,
+             };
     CFErrorRef error = NULL;
     SecKeyRef keyRef = SecKeyCreateWithData((CFDataRef)data,
                                             (CFDictionaryRef)dict,
@@ -85,11 +85,6 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
 - (instancetype)initWithDictionary:(NSDictionary *)info {
     NSString *algor = [info objectForKey:@"algorithm"];
     NSAssert([algor isEqualToString:ACAlgorithmRSA], @"algorithm error");
-    // RSA key size
-    NSNumber *keySize = [info objectForKey:@"size"];
-    if (!keySize) {
-        keySize = [info objectForKey:@"keySize"];
-    }
     // RSA key data
     NSString *data = [info objectForKey:@"data"];
     if (!data) {
@@ -97,13 +92,6 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
     }
     
     if (self = [super initWithDictionary:info]) {
-        // key size
-        if (keySize) {
-            _keySize = [keySize unsignedIntegerValue];
-        } else {
-            _keySize = 1024;
-        }
-        
         // public key data
         self.publicContent = RSAKeyDataFromNSString(data, YES);
     }
@@ -112,13 +100,26 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
 }
 
 - (void)setPublicContent:(NSString *)publicContent {
-    if (![_publicContent isEqualToString:publicContent]) {
-        _publicKeyRef = SecKeyRefFromNSData([publicContent base64Decode],
-                                            _keySize, YES);
+    if (publicContent) {
+        if (![_publicContent isEqualToString:publicContent]) {
+            // key ref & size
+            _publicKeyRef = SecKeyRefFromNSData([publicContent base64Decode], YES);
+            _keySize = SecKeyGetBlockSize(_publicKeyRef) * sizeof(uint8_t) * 8;
+            
+            // key data content
+            [_storeDictionary setObject:publicContent forKey:@"data"];
+            [_storeDictionary removeObjectForKey:@"content"];
+            _publicContent = [publicContent copy];
+        }
+    } else {
+        // clear key ref
+        if (_publicKeyRef) {
+            CFRelease(_publicKeyRef);
+            _publicKeyRef = NULL;
+        }
         
-        [_storeDictionary setObject:publicContent forKey:@"data"];
-        [_storeDictionary removeObjectForKey:@"content"];
-        _publicContent = [publicContent copy];
+        // clear key data content
+        _publicContent = nil;
     }
 }
 

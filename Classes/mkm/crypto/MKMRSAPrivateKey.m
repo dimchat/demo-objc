@@ -10,7 +10,6 @@
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
-#import "MKMPublicKey.h"
 #import "MKMRSAPublicKey.h"
 
 #import "MKMRSAPrivateKey.h"
@@ -20,7 +19,7 @@
     NSUInteger _keySize;
     SecKeyRef _privateKeyRef;
     
-    MKMPublicKey *_publicKey;
+    MKMRSAPublicKey *_publicKey;
 }
 
 @property (strong, nonatomic) NSString *privateContent;
@@ -32,11 +31,6 @@
 - (instancetype)initWithDictionary:(NSDictionary *)info {
     NSString *algorithm = [info objectForKey:@"algorithm"];
     NSAssert([algorithm isEqualToString:ACAlgorithmRSA], @"algorithm error");
-    // RSA key size
-    NSNumber *keySize = [info objectForKey:@"size"];
-    if (!keySize) {
-        keySize = [info objectForKey:@"keySize"];
-    }
     // RSA key data
     NSString *data = [info objectForKey:@"data"];
     if (!data) {
@@ -44,13 +38,6 @@
     }
     
     if (self = [super initWithDictionary:info]) {
-        // key size
-        if (keySize) {
-            _keySize = [keySize unsignedIntegerValue];
-        } else {
-            _keySize = 1024;
-        }
-        
         NSString *privateContent = nil;
         NSData *privateKeyData = nil;
         SecKeyRef privateKeyRef = NULL;
@@ -66,18 +53,29 @@
                 // get public key from data string
                 publicContent = RSAKeyDataFromNSString(data, YES);
                 NSDictionary *pDict = @{@"algorithm":algorithm,
-                                        @"size":@(_keySize),
-                                        @"data":publicContent};
-                _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:algorithm
-                                                             keyInfo:pDict];
+                                        @"data"     :publicContent,
+                                        };
+                _publicKey = [[MKMRSAPublicKey alloc] initWithAlgorithm:algorithm
+                                                                keyInfo:pDict];
             }
         } else {
+            // RSA key size
+            NSNumber *keySize = [info objectForKey:@"size"];
+            if (!keySize) {
+                keySize = [info objectForKey:@"keySize"];
+            }
+            if (keySize) {
+                _keySize = keySize.unsignedIntegerValue;
+            } else {
+                _keySize = 1024;
+            }
+            
             // Generate key pairs
             NSDictionary *params;
-            params = @{(id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
-                       (id)kSecAttrKeySizeInBits: @(_keySize),
-                       (id)kSecPrivateKeyAttrs: @{(id)kSecAttrIsPermanent:@YES},
-                       (id)kSecPublicKeyAttrs: @{(id)kSecAttrIsPermanent:@YES}
+            params = @{(id)kSecAttrKeyType      :(id)kSecAttrKeyTypeRSA,
+                       (id)kSecAttrKeySizeInBits:@(_keySize),
+                       (id)kSecPrivateKeyAttrs  :@{(id)kSecAttrIsPermanent:@YES},
+                       (id)kSecPublicKeyAttrs   :@{(id)kSecAttrIsPermanent:@YES},
                        };
             OSStatus status;
             status = SecKeyGeneratePair((CFDictionaryRef)params,
@@ -90,7 +88,6 @@
             privateKeyData = NSDataFromSecKeyRef(privateKeyRef);
             privateContent = [privateKeyData base64Encode];
             if (privateContent) {
-                [_storeDictionary setObject:@(_keySize) forKey:@"size"];
                 [_storeDictionary setObject:privateContent forKey:@"data"];
                 _privateContent = privateContent;
             }
@@ -101,13 +98,26 @@
 }
 
 - (void)setPrivateContent:(NSString *)privateContent {
-    if (![_privateContent isEqualToString:privateContent]) {
-        _privateKeyRef = SecKeyRefFromNSData([privateContent base64Decode],
-                                             _keySize, NO);
+    if (privateContent) {
+        if (![_privateContent isEqualToString:privateContent]) {
+            // key ref & size
+            _privateKeyRef = SecKeyRefFromNSData([privateContent base64Decode], NO);
+            _keySize = SecKeyGetBlockSize(_privateKeyRef) * sizeof(uint8_t) * 8;
+            
+            // key data content
+            [_storeDictionary setObject:privateContent forKey:@"data"];
+            [_storeDictionary removeObjectForKey:@"content"];
+            _privateContent = [privateContent copy];
+        }
+    } else {
+        // clear key ref
+        if (_privateKeyRef) {
+            CFRelease(_privateKeyRef);
+            _privateKeyRef = NULL;
+        }
         
-        [_storeDictionary setObject:privateContent forKey:@"data"];
-        [_storeDictionary removeObjectForKey:@"content"];
-        _privateContent = [privateContent copy];
+        // clear key data content
+        _privateContent = nil;
     }
 }
 
@@ -118,11 +128,11 @@
         NSData *publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
         NSString *publicContent = [publicKeyData base64Encode];
         // create public key
-        NSDictionary *pDict = @{@"algorithm": _algorithm,
-                                @"size": @(_keySize),
-                                @"data": publicContent};
-        _publicKey = [[MKMPublicKey alloc] initWithAlgorithm:_algorithm
-                                                     keyInfo:pDict];
+        NSDictionary *pDict = @{@"algorithm":_algorithm,
+                                @"data"     :publicContent,
+                                };
+        _publicKey = [[MKMRSAPublicKey alloc] initWithAlgorithm:_algorithm
+                                                        keyInfo:pDict];
     }
     return _publicKey;
 }
@@ -197,16 +207,17 @@ static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
     NSString *label = [identifier copy];
     NSData *tag = [s_application_tag data];
     
-    NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
-                            (id)kSecAttrApplicationLabel: label,
-                            (id)kSecAttrApplicationTag: tag,
-                            (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
-                            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-                            (id)kSecAttrSynchronizable: (id)kCFBooleanTrue,
-                            
-                            (id)kSecMatchLimit: (id)kSecMatchLimitOne,
-                            (id)kSecReturnRef: (id)kCFBooleanTrue
-                            };
+    NSDictionary *query;
+    query = @{(id)kSecClass               :(id)kSecClassKey,
+              (id)kSecAttrApplicationLabel:label,
+              (id)kSecAttrApplicationTag  :tag,
+              (id)kSecAttrKeyType         :(id)kSecAttrKeyTypeRSA,
+              (id)kSecAttrKeyClass        :(id)kSecAttrKeyClassPrivate,
+              (id)kSecAttrSynchronizable  :(id)kCFBooleanTrue,
+              
+              (id)kSecMatchLimit          :(id)kSecMatchLimitOne,
+              (id)kSecReturnRef           :(id)kCFBooleanTrue,
+              };
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
     if (status == errSecSuccess) { // noErr
@@ -216,8 +227,6 @@ static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
         // public key
         SecKeyRef publicKeyRef = SecKeyCopyPublicKey(privateKeyRef);
         NSData *pkData = NSDataFromSecKeyRef(publicKeyRef);
-        // key size
-        NSUInteger keySize = 8 * SecKeyGetBlockSize(publicKeyRef);
         
         NSString *algorithm = @"RSA";
         NSString *pkFmt = @"-----BEGIN PUBLIC KEY----- %@ -----END PUBLIC KEY-----";
@@ -225,9 +234,9 @@ static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
         NSString *pkc = [NSString stringWithFormat:pkFmt, [pkData base64Encode]];
         NSString *skc = [NSString stringWithFormat:skFmt, [skData base64Encode]];
         NSString *content = [pkc stringByAppendingString:skc];
-        NSDictionary *info = @{@"algorithm": algorithm,
-                               @"size" : @(keySize),
-                               @"data" : content};
+        NSDictionary *info = @{@"algorithm":algorithm,
+                               @"data"     :content,
+                               };
         SK = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:info];
     }
     if (result) {
@@ -247,16 +256,17 @@ static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
     NSString *label = [identifier copy];
     NSData *tag = [s_application_tag data];
     
-    NSDictionary *query = @{(id)kSecClass: (id)kSecClassKey,
-                            (id)kSecAttrApplicationLabel: label,
-                            (id)kSecAttrApplicationTag: tag,
-                            (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
-                            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-                            (id)kSecAttrSynchronizable: (id)kCFBooleanTrue,
-                            
-                            (id)kSecMatchLimit: (id)kSecMatchLimitOne,
-                            (id)kSecReturnRef: (id)kCFBooleanTrue
-                            };
+    NSDictionary *query;
+    query = @{(id)kSecClass               :(id)kSecClassKey,
+              (id)kSecAttrApplicationLabel:label,
+              (id)kSecAttrApplicationTag  :tag,
+              (id)kSecAttrKeyType         :(id)kSecAttrKeyTypeRSA,
+              (id)kSecAttrKeyClass        :(id)kSecAttrKeyClassPrivate,
+              (id)kSecAttrSynchronizable  :(id)kCFBooleanTrue,
+              
+              (id)kSecMatchLimit          :(id)kSecMatchLimitOne,
+              (id)kSecReturnRef           :(id)kCFBooleanTrue,
+              };
     CFTypeRef result = NULL;
     OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, &result);
     if (status == errSecSuccess) { // noErr

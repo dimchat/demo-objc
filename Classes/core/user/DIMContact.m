@@ -24,8 +24,8 @@
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
     MKMConsensus *cons = [MKMConsensus sharedInstance];
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMMeta *meta = [eman metaWithID:ID];
-    MKMHistory *history = [eman historyWithID:ID];
+    MKMMeta *meta = [eman metaForID:ID];
+    MKMHistory *history = [eman historyForID:ID];
     DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
     if (contact) {
         contact.historyDelegate = cons;
@@ -37,7 +37,13 @@
 
 - (MKMSymmetricKey *)passphrase {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    return [store cipherKeyForContact:self];
+    MKMSymmetricKey *PW = [store cipherKeyForContact:self];
+    if (!PW) {
+        // create a new one
+        PW = [[MKMSymmetricKey alloc] init];
+        [store setCipherKey:PW forContact:self];
+    }
+    return PW;
 }
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {

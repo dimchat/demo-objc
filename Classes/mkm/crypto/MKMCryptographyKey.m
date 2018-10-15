@@ -68,8 +68,7 @@
     NSDictionary *dict = [info copy];
     NSString *algor = [dict objectForKey:@"algorithm"];
     if (algorithm) {
-        NSAssert([algorithm isEqualToString:algor],
-                 @"key data error: %@", info);
+        NSAssert([algorithm isEqualToString:algor], @"key data error: %@", info);
     }
     
     self = [self initWithDictionary:dict];

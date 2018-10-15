@@ -24,11 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 // meta
-- (MKMMeta *)metaWithID:(const MKMID *)ID;
+- (MKMMeta *)metaForID:(const MKMID *)ID;
 - (void)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID;
 
 // history
-- (MKMHistory *)historyWithID:(const MKMID *)ID;
+- (MKMHistory *)historyForID:(const MKMID *)ID;
 - (void)setHistory:(MKMHistory *)history forID:(const MKMID *)ID;
 
 @end

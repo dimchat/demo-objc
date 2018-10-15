@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "MKMPrivateKey.h"
+
 #import "MKMID.h"
 #import "MKMMeta.h"
 #import "MKMHistory.h"
@@ -83,10 +85,15 @@ static MKMEntityManager *s_sharedInstance = nil;
     [self setMeta:meta forID:ID];
     [self setHistory:history forID:ID];
     
+    // private key
+    NSDictionary *skd = [dict objectForKey:@"privateKey"];
+    MKMPrivateKey *SK = [MKMPrivateKey keyWithKey:skd];
+    [SK saveKeyWithIdentifier:ID.address];
+    
     return ID.isValid && [meta matchID:ID] && history;
 }
 
-- (MKMMeta *)metaWithID:(const MKMID *)ID {
+- (MKMMeta *)metaForID:(const MKMID *)ID {
     NSAssert([ID isValid], @"Invalid ID");
     MKMMeta *meta = [_metaTable objectForKey:ID];
     if (!meta && _delegate) {
@@ -106,7 +113,7 @@ static MKMEntityManager *s_sharedInstance = nil;
     }
 }
 
-- (MKMHistory *)historyWithID:(const MKMID *)ID {
+- (MKMHistory *)historyForID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
     MKMHistory *history = [_historyTable objectForKey:ID];
     if (!history && _delegate) {

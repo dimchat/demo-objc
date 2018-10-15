@@ -158,7 +158,7 @@ static NSDate *date(NSTimeInterval time) {
         CT = [signature base64Decode];
         
         MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        MKMPublicKey *PK = [eman metaWithID:ID].key;
+        MKMPublicKey *PK = [eman metaForID:ID].key;
         
         correct = [PK verify:operation signature:CT];
         NSAssert(correct, @"signature error");
@@ -193,13 +193,8 @@ static NSDate *date(NSTimeInterval time) {
 - (instancetype)initWithOperation:(const NSString *)operation
                         commander:(const MKMID *)ID
                         signature:(const NSData *)CT {
-    NSDictionary *dict = @{@"operation": operation,
-                           @"commander": ID,
-                           @"signature": [CT base64Encode]
-                           };
-    
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMPublicKey *PK = [eman metaWithID:ID].key;
+    MKMPublicKey *PK = [eman metaForID:ID].key;
     NSData *data = [operation data];
     BOOL OK = [PK verify:data signature:CT];
     NSAssert(!PK || OK, @"signature error");
@@ -207,6 +202,10 @@ static NSDate *date(NSTimeInterval time) {
     MKMHistoryOperation *op;
     op = [MKMHistoryOperation operationWithOperation:operation];
     
+    NSDictionary *dict = @{@"operation":operation,
+                           @"commander":ID,
+                           @"signature":[CT base64Encode],
+                           };
     if (self = [super initWithDictionary:dict]) {
         _operation = [op copy];
         _commander = [ID copy];

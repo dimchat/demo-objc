@@ -101,7 +101,7 @@
     
     // 2. check signature for this record
     MKMHistoryRecord *prev = _history.lastObject;
-    MKMPublicKey *PK = [eman metaWithID:recorder].key;
+    MKMPublicKey *PK = [eman metaForID:recorder].key;
     prev = [MKMHistoryRecord recordWithRecord:prev];
     PK = [MKMPublicKey keyWithKey:PK];
     if (![record verifyWithPreviousMerkle:prev.merkleRoot
@@ -146,7 +146,7 @@
         data = [op data];
         
         // 3.2. check signature for this event
-        PK = [eman metaWithID:commander].key;
+        PK = [eman metaForID:commander].key;
         if (![PK verify:data signature:CT]) {
             NSAssert(false, @"signature error");
             return NO;

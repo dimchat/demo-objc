@@ -38,26 +38,12 @@ rMWCrjQJX2UitMaU+wIDAQAB
 			<string>uFbsCJuLHHtt1M0qPwHq/bgZzKoebguiHA8PHTrF9RceccnzZE/jmwTScD0VKVF2EAlXQ+eDyNpPK70QuF3tPwPdaJk8gsJOAxg/IO11y5naz7KrTGCjhplTTXAXmllpwBgOLWHXbsRjKhtprp2iGcivGhSeVKNnjkYkHlMid3o=</string>
 		</dict>
 	</array>
-	<key>keys</key>
+	<key>privateKey</key>
 	<dict>
-		<key>publicKey</key>
-		<dict>
-			<key>algorithm</key>
-			<string>RSA</string>
-			<key>data</key>
-			<string>-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBUyaQPTvXgTfYC7bSAIhC3efc
-QT7HEX9PzJXQs9XeuxY4iBBBnrUPkJhOvwHrnAErBnM6tm9I45htcTeVOsi/qRbs
-XpQ6u7JuBayxgVp2vU0xUWDKLTlE9VT3F/OgT1xGuXnMO5TJnt/HjlbASToGUxBa
-rMWCrjQJX2UitMaU+wIDAQAB
------END PUBLIC KEY-----</string>
-		</dict>
-		<key>privateKey</key>
-		<dict>
-			<key>algorithm</key>
-			<string>RSA</string>
-			<key>data</key>
-			<string>-----BEGIN RSA PRIVATE KEY-----
+		<key>algorithm</key>
+		<string>RSA</string>
+		<key>data</key>
+		<string>-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDBUyaQPTvXgTfYC7bSAIhC3efcQT7HEX9PzJXQs9XeuxY4iBBB
 nrUPkJhOvwHrnAErBnM6tm9I45htcTeVOsi/qRbsXpQ6u7JuBayxgVp2vU0xUWDK
 LTlE9VT3F/OgT1xGuXnMO5TJnt/HjlbASToGUxBarMWCrjQJX2UitMaU+wIDAQAB
@@ -72,7 +58,6 @@ yPbHdJArjA6+DuRchXKi7yJHNIVpb8uKKCFP6ZkY0PtQ5/BqTLFrgNZuvtqYzvw8
 A9/Ch8710r9rx3ix5EMCQQCIyMaD4wJldhO5j1hUyTC6LstppbFTgQrvYKnpq12/
 Duor6RvudK3j1QhzBGiv/3YpHnHMXP+tFkUA2a7e/6fo
 -----END RSA PRIVATE KEY-----</string>
-		</dict>
 	</dict>
 	<key>profile</key>
 	<dict>

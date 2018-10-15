@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-SecKeyRef SecKeyRefFromNSData(const NSData *data, NSUInteger size, BOOL isPublic);
+SecKeyRef SecKeyRefFromNSData(const NSData *data, BOOL isPublic);
 NSData *NSDataFromSecKeyRef(SecKeyRef keyRef);
 
 NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic);
@@ -20,8 +20,7 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic);
  *
  *      keyInfo format: {
  *          algorithm: "RSA",
- *          size: 1024,       // size in bits
- *          data: "..."
+ *          data: "..."       // base64
  *      }
  */
 @interface MKMRSAPublicKey : MKMPublicKey

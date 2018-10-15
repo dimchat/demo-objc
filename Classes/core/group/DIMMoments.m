@@ -18,7 +18,7 @@
 
 + (instancetype)momentsWithID:(const MKMID *)ID {
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMMeta *meta = [eman metaWithID:ID];
+    MKMMeta *meta = [eman metaForID:ID];
     NSAssert(meta, @"no meta found for ID: %@", ID);
     
     switch (ID.address.network) {

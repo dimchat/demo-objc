@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Password to decode the content, which encrypted by contact.PK
  *
  *   secureMessage.content = symmetricKey.encrypt(instantMessage.content);
- *   encryptedKey = contact.privateKey.encrypt(symmetricKey);
+ *   encryptedKey = receiver.publicKey.encrypt(symmetricKey);
  */
 @property (readonly, strong, nonatomic) NSData *encryptedKey;
 @property (readonly, strong, nonatomic) NSDictionary *encryptedKeys;
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param content - Data encrypted with a random symmetic key
  @param env - Message envelope
- @param key - Symmetic key encrypted with receiver's public key
+ @param key - Symmetic key encrypted with receiver's PK
  @return SecureMessage object
  */
 - (instancetype)initWithContent:(const NSData *)content
@@ -60,7 +60,7 @@ NS_DESIGNATED_INITIALIZER;
 
  @param content - Data encrypted with a random symmetic key
  @param env - Message envelope
- @param keys - Symmetic keys encrypted with group member's PKs
+ @param keys - Symmetic keys encrypted with group members' PKs
  @return SecureMessage object
  */
 - (instancetype)initWithContent:(const NSData *)content
