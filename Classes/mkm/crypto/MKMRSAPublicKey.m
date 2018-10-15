@@ -82,17 +82,17 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
 
 @implementation MKMRSAPublicKey
 
-- (instancetype)initWithDictionary:(NSDictionary *)info {
-    NSString *algor = [info objectForKey:@"algorithm"];
-    NSAssert([algor isEqualToString:ACAlgorithmRSA], @"algorithm error");
-    // RSA key data
-    NSString *data = [info objectForKey:@"data"];
-    if (!data) {
-        data = [info objectForKey:@"content"];
-    }
-    
-    if (self = [super initWithDictionary:info]) {
-        // public key data
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
+    if (self = [super initWithDictionary:keyInfo]) {
+        NSAssert([_algorithm isEqualToString:ACAlgorithmRSA], @"algorithm error");
+        //keyInfo = _storeDictionary;
+        
+        // RSA key data
+        NSString *data = [keyInfo objectForKey:@"data"];
+        if (!data) {
+            data = [keyInfo objectForKey:@"content"];
+        }
         self.publicContent = RSAKeyDataFromNSString(data, YES);
     }
     

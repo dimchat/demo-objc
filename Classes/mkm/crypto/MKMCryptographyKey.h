@@ -27,13 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)keyWithKey:(id)key;
 
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo
+NS_DESIGNATED_INITIALIZER;
+
 - (instancetype)initWithJSONString:(const NSString *)json;
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict;
-
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm;
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info;
 
 - (BOOL)isEqual:(const MKMCryptographyKey *)aKey;
 

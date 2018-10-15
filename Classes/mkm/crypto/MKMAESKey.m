@@ -24,15 +24,16 @@
 
 @implementation MKMAESKey
 
-- (instancetype)initWithDictionary:(NSDictionary *)info {
-    NSString *algor = [info objectForKey:@"algorithm"];
-    NSAssert([algor isEqualToString:SCAlgorithmAES], @"algorithm error");
-    
-    if (self = [super initWithDictionary:info]) {
-        // AES algorithm arguments
-        NSNumber *keySize = [info objectForKey:@"keySize"];
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
+    if (self = [super initWithDictionary:keyInfo]) {
+        NSAssert([_algorithm isEqualToString:SCAlgorithmAES], @"algorithm error");
+        keyInfo = _storeDictionary;
+        
+        // key size
+        NSNumber *keySize = [keyInfo objectForKey:@"keySize"];
         if (!keySize) {
-            keySize = [info objectForKey:@"size"];
+            keySize = [keyInfo objectForKey:@"size"];
         }
         if (keySize) {
             _keySize = [keySize unsignedIntegerValue];
@@ -40,13 +41,12 @@
             _keySize = kCCKeySizeAES256; // 32
         }
         
-        NSString *initVector = [info objectForKey:@"initVector"];
+        // initialize vector
+        NSString *initVector = [keyInfo objectForKey:@"initVector"];
         if (!initVector) {
-            initVector = [info objectForKey:@"iv"];
+            initVector = [keyInfo objectForKey:@"iv"];
         }
-        if (initVector) {
-            _initVector = [initVector copy];
-        }
+        _initVector = initVector;
     }
     
     return self;

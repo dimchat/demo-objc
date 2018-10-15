@@ -17,34 +17,28 @@
     return self;
 }
 
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info {
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if ([self isMemberOfClass:[MKMSymmetricKey class]]) {
-        // create instance with algorithm
+        // create instance by subclass with algorithm
+        NSString *algorithm = [keyInfo objectForKey:@"algorithm"];
         if ([algorithm isEqualToString:SCAlgorithmAES]) {
-            self = [[MKMAESKey alloc] initWithAlgorithm:algorithm keyInfo:info];
+            self = [[MKMAESKey alloc] initWithDictionary:keyInfo];
         } else {
             self = nil;
             NSAssert(self, @"algorithm not support: %@", algorithm);
         }
-    } else {
-        NSAssert([[self class] isSubclassOfClass:[MKMSymmetricKey class]], @"error");
-        // subclass
-        self = [super initWithAlgorithm:algorithm keyInfo:info];
+    } else if (self = [super initWithDictionary:keyInfo]) {
+        keyInfo = _storeDictionary;
+        
+        // passphrase
+        NSString *PW = [keyInfo objectForKey:@"passphrase"];
+        if (!PW) {
+            PW = [keyInfo objectForKey:@"password"];
+        }
+        _passphrase = PW;
     }
     
-    return self;
-}
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        NSString *PW = [dict objectForKey:@"passphrase"];
-        if (!PW) {
-            PW = [dict objectForKey:@"password"];
-        }
-        NSAssert(PW, @"key data error: %@", dict);
-        _passphrase = [PW copy];
-    }
     return self;
 }
 

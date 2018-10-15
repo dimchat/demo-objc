@@ -42,9 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) const NSString *passphrase;
 
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info;
-
 @end
 
 NS_ASSUME_NONNULL_END

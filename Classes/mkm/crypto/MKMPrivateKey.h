@@ -30,9 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithJSONString:(const NSString *)json
                          publicKey:(const MKMPublicKey *)PK;
 
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info;
-
 - (BOOL)isEqual:(const MKMPrivateKey *)aKey;
 
 @end

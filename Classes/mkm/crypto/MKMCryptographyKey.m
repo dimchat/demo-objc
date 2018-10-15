@@ -28,9 +28,7 @@
     if ([key isKindOfClass:[MKMCryptographyKey class]]) {
         return key;
     } else if ([key isKindOfClass:[NSDictionary class]]) {
-        NSString *algor = [key objectForKey:@"algorithm"];
-        NSAssert(algor, @"key data error");
-        return [[self alloc] initWithAlgorithm:algor keyInfo:key];
+        return [[self alloc] initWithDictionary:key];
     } else if ([key isKindOfClass:[NSString class]]) {
         return [[self alloc] initWithJSONString:key];
     } else {
@@ -39,39 +37,50 @@
     }
 }
 
-- (instancetype)initWithJSONString:(const NSString *)json {
-    NSData *data = [json data];
-    NSDictionary *dict = [data jsonDictionary];
-    NSString *algor = [dict objectForKey:@"algorithm"];
-    NSAssert(algor, @"key data error");
-    
-    self = [self initWithAlgorithm:algor keyInfo:dict];
+- (instancetype)init {
+    NSAssert(false, @"DON'T call me");
+    NSDictionary *dict = nil;
+    self = [self initWithDictionary:dict];
     return self;
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        NSString *algorithm = [dict objectForKey:@"algorithm"];
-        _algorithm = [algorithm copy];
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    NSAssert(false, @"DON'T call me");
+    NSDictionary *dict = nil;
+    self = [self initWithDictionary:dict];
+    return self;
+}
+
+- (instancetype)initWithObjects:(const id _Nonnull [_Nullable])objects
+                        forKeys:(const id <NSCopying> _Nonnull [_Nullable])keys
+                          count:(NSUInteger)cnt {
+    NSAssert(false, @"DON'T call me");
+    NSDictionary *dict = nil;
+    self = [self initWithDictionary:dict];
+    return self;
+}
+
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
+    if (self = [super initWithDictionary:keyInfo]) {
+        keyInfo = _storeDictionary;
+        
+        // algorithm
+        _algorithm = [keyInfo objectForKey:@"algorithm"];
+        NSAssert(_algorithm, @"key info error: %@", keyInfo);
     }
+    return self;
+}
+
+- (instancetype)initWithJSONString:(const NSString *)json {
+    NSDictionary *dict = [[json data] jsonDictionary];
+    self = [self initWithDictionary:dict];
     return self;
 }
 
 - (instancetype)initWithAlgorithm:(const NSString *)algorithm {
-    NSDictionary *dict = @{@"algorithm":algorithm};
-    self = [self initWithAlgorithm:algorithm keyInfo:dict];
-    return self;
-}
-
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info {
-    NSDictionary *dict = [info copy];
-    NSString *algor = [dict objectForKey:@"algorithm"];
-    if (algorithm) {
-        NSAssert([algorithm isEqualToString:algor], @"key data error: %@", info);
-    }
-    
-    self = [self initWithDictionary:dict];
+    NSDictionary *keyInfo = @{@"algorithm":algorithm};
+    self = [self initWithDictionary:keyInfo];
     return self;
 }
 

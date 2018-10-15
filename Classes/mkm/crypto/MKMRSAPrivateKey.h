@@ -21,8 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMRSAPrivateKey : MKMPrivateKey
 
-- (instancetype)initWithDictionary:(NSDictionary *)info;
-
 @end
 
 NS_ASSUME_NONNULL_END

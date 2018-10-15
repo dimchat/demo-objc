@@ -28,16 +28,18 @@
 
 @implementation MKMRSAPrivateKey
 
-- (instancetype)initWithDictionary:(NSDictionary *)info {
-    NSString *algorithm = [info objectForKey:@"algorithm"];
-    NSAssert([algorithm isEqualToString:ACAlgorithmRSA], @"algorithm error");
-    // RSA key data
-    NSString *data = [info objectForKey:@"data"];
-    if (!data) {
-        data = [info objectForKey:@"content"];
-    }
-    
-    if (self = [super initWithDictionary:info]) {
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
+    if (self = [super initWithDictionary:keyInfo]) {
+        NSAssert([_algorithm isEqualToString:ACAlgorithmRSA], @"algorithm error");
+        //keyInfo = _storeDictionary;
+        
+        // RSA key data
+        NSString *data = [keyInfo objectForKey:@"data"];
+        if (!data) {
+            data = [keyInfo objectForKey:@"content"];
+        }
+        
         NSString *privateContent = nil;
         NSData *privateKeyData = nil;
         SecKeyRef privateKeyRef = NULL;
@@ -52,17 +54,16 @@
             if (range.location != NSNotFound) {
                 // get public key from data string
                 publicContent = RSAKeyDataFromNSString(data, YES);
-                NSDictionary *pDict = @{@"algorithm":algorithm,
-                                        @"data"     :publicContent,
-                                        };
-                _publicKey = [[MKMRSAPublicKey alloc] initWithAlgorithm:algorithm
-                                                                keyInfo:pDict];
+                NSDictionary *dict = @{@"algorithm":_algorithm,
+                                       @"data"     :publicContent,
+                                       };
+                _publicKey = [[MKMRSAPublicKey alloc] initWithDictionary:dict];
             }
-        } else {
+        } else /* data == nil */ {
             // RSA key size
-            NSNumber *keySize = [info objectForKey:@"size"];
+            NSNumber *keySize = [keyInfo objectForKey:@"size"];
             if (!keySize) {
-                keySize = [info objectForKey:@"keySize"];
+                keySize = [keyInfo objectForKey:@"keySize"];
             }
             if (keySize) {
                 _keySize = keySize.unsignedIntegerValue;
@@ -128,11 +129,10 @@
         NSData *publicKeyData = NSDataFromSecKeyRef(publicKeyRef);
         NSString *publicContent = [publicKeyData base64Encode];
         // create public key
-        NSDictionary *pDict = @{@"algorithm":_algorithm,
-                                @"data"     :publicContent,
-                                };
-        _publicKey = [[MKMRSAPublicKey alloc] initWithAlgorithm:_algorithm
-                                                        keyInfo:pDict];
+        NSDictionary *keyInfo = @{@"algorithm":_algorithm,
+                                  @"data"     :publicContent,
+                                  };
+        _publicKey = [[MKMRSAPublicKey alloc] initWithDictionary:keyInfo];
     }
     return _publicKey;
 }
@@ -234,10 +234,10 @@ static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
         NSString *pkc = [NSString stringWithFormat:pkFmt, [pkData base64Encode]];
         NSString *skc = [NSString stringWithFormat:skFmt, [skData base64Encode]];
         NSString *content = [pkc stringByAppendingString:skc];
-        NSDictionary *info = @{@"algorithm":algorithm,
-                               @"data"     :content,
-                               };
-        SK = [[MKMRSAPrivateKey alloc] initWithAlgorithm:algorithm keyInfo:info];
+        NSDictionary *keyInfo = @{@"algorithm":algorithm,
+                                  @"data"     :content,
+                                  };
+        SK = [[MKMRSAPrivateKey alloc] initWithDictionary:keyInfo];
     }
     if (result) {
         CFRelease(result);

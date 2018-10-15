@@ -20,24 +20,21 @@
     return self;
 }
 
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info {
-    NSAssert([algorithm isEqualToString:[info objectForKey:@"algorithm"]], @"error");
-    
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if ([self isMemberOfClass:[MKMPublicKey class]]) {
-        // create instance with algorithm
+        // create instance by subclass with algorithm
+        NSString *algorithm = [keyInfo objectForKey:@"algorithm"];
         if ([algorithm isEqualToString:ACAlgorithmECC]) {
-            self = [[MKMECCPublicKey alloc] initWithAlgorithm:algorithm keyInfo:info];
+            self = [[MKMECCPublicKey alloc] initWithDictionary:keyInfo];
         } else if ([algorithm isEqualToString:ACAlgorithmRSA]) {
-            self = [[MKMRSAPublicKey alloc] initWithAlgorithm:algorithm keyInfo:info];
+            self = [[MKMRSAPublicKey alloc] initWithDictionary:keyInfo];
         } else {
             self = nil;
             NSAssert(self, @"algorithm not support: %@", algorithm);
         }
-    } else {
-        NSAssert([[self class] isSubclassOfClass:[MKMPublicKey class]], @"error");
-        // subclass
-        self = [super initWithAlgorithm:algorithm keyInfo:info];
+    } else if (self = [super initWithDictionary:keyInfo]) {
+        //
     }
     
     return self;

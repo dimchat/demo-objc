@@ -22,9 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMPublicKey : MKMAsymmetricKey <MKMPublicKey>
 
-- (instancetype)initWithAlgorithm:(const NSString *)algorithm
-                          keyInfo:(const NSDictionary *)info;
-
 - (BOOL)isMatch:(const MKMPrivateKey *)SK;
 
 @end
