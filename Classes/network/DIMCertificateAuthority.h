@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) NSString *organizationUnit; // OU: Department
 @property (strong, nonatomic) NSString *commonName;       // CN: domain/ip
 
++ (instancetype)subjectWithSubject:(id)subject;
+
 @end
 
 #pragma mark -
@@ -28,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSDate *notBefore;
 @property (readonly, strong, nonatomic) NSDate *notAfter;
+
++ (instancetype)validityWithValidity:(id)validity;
 
 - (instancetype)initWithNotBefore:(const NSDate *)from
                          notAfter:(const NSDate *)to;

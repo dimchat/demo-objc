@@ -14,6 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
+/**
+ Persistent save cipher keys from contacts/group.members if changed
+
+ @return YES when changed, or NO for nothing changed
+ */
+- (BOOL)flush;
+
 #pragma mark - Cipher key to encpryt message for contact
 
 /**
@@ -80,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param group - group
  @return passphrase
  */
-- (MKMSymmetricKey *)cipherKeyFromMember:(const MKMContact *)member
+- (MKMSymmetricKey *)cipherKeyFromMember:(const MKMEntity *)member
                                  inGroup:(const MKMGroup *)group;
 
 /**
@@ -91,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param group - group
  */
 - (void)setCipherKey:(MKMSymmetricKey *)key
-          fromMember:(const MKMContact *)member
+          fromMember:(const MKMEntity *)member
              inGroup:(const MKMGroup *)group;
 
 #pragma mark - Private key encrpyted by a password for user

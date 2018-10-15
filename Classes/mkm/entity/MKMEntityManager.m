@@ -43,15 +43,17 @@ static MKMEntityManager *s_sharedInstance = nil;
     if (self = [super init]) {
         _metaTable = [[NSMutableDictionary alloc] init];
         _historyTable = [[NSMutableDictionary alloc] init];
-        
+#if DEBUG
         // Immortals
-        [self loadEntityInfoFromFile:@"mkm_hulk"];
-        [self loadEntityInfoFromFile:@"mkm_moki"];
+        [self _loadEntityInfoFromFile:@"mkm_hulk"];
+        [self _loadEntityInfoFromFile:@"mkm_moki"];
+#endif
     }
     return self;
 }
 
-- (BOOL)loadEntityInfoFromFile:(NSString *)filename {
+// inner function
+- (BOOL)_loadEntityInfoFromFile:(NSString *)filename {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path;

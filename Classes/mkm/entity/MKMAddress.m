@@ -94,7 +94,7 @@ static UInt32 user_number(const NSData *cc) {
 
 - (instancetype)initWithString:(NSString *)aString {
     if (self = [super initWithString:aString]) {
-        _valid = [self analyse];
+        _valid = [self _analyse];
     }
     return self;
 }
@@ -123,7 +123,8 @@ static UInt32 user_number(const NSData *cc) {
     return [[MKMAddress alloc] initWithString:_storeString];
 }
 
-- (BOOL)analyse {
+// inner function
+- (BOOL)_analyse {
     NSData *addr = [_storeString base58Decode];
     NSUInteger len = [addr length];
     NSAssert(len == 25, @"only support BTC address now");

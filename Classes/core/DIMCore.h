@@ -28,6 +28,7 @@
 //-
 #import "DIMTransceiver.h"
 #import "DIMConversation.h"
+#import "DIMKeyStore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

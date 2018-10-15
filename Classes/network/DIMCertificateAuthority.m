@@ -14,29 +14,28 @@
 
 @implementation DIMCASubject
 
++ (instancetype)subjectWithSubject:(id)subject {
+    if ([subject isKindOfClass:[DIMCASubject class]]) {
+        return subject;
+    } else if ([subject isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:subject];
+    } else {
+        NSAssert(!subject, @"unexpected subject: %@", subject);
+        return nil;
+    }
+}
+
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
         dict = _storeDictionary;
         
-        // Country
-        NSString *C = [dict objectForKey:@"C"];
-        _country = C;
-        // State / Province
-        NSString *S = [dict objectForKey:@"ST"];
-        _state = S;
-        // Locality
-        NSString *L = [dict objectForKey:@"L"];
-        _locality = L;
+        _country  = [dict objectForKey:@"C"];
+        _state    = [dict objectForKey:@"ST"];
+        _locality = [dict objectForKey:@"L"];
         
-        // Organization
-        NSString *O = [dict objectForKey:@"O"];
-        _organization = O;
-        // Organization Unit
-        NSString *OU = [dict objectForKey:@"OU"];
-        _organizationUnit = OU;
-        // Common Name
-        NSString *CN = [dict objectForKey:@"CN"];
-        _commonName = CN;
+        _organization     = [dict objectForKey:@"O"];
+        _organizationUnit = [dict objectForKey:@"OU"];
+        _commonName       = [dict objectForKey:@"CN"];
     }
     return self;
 }
@@ -126,6 +125,17 @@
 
 @implementation DIMCAValidity
 
++ (instancetype)validityWithValidity:(id)validity {
+    if ([validity isKindOfClass:[DIMCAValidity class]]) {
+        return validity;
+    } else if ([validity isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:validity];
+    } else {
+        NSAssert(!validity, @"unexpected validity: %@", validity);
+        return nil;
+    }
+}
+
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
         NSNumber *NB = [dict objectForKey:@"NotBefore"];
@@ -163,27 +173,15 @@
         
         // Issuer
         id issuer = [dict objectForKey:@"Issuer"];
-        if ([issuer isKindOfClass:[DIMCASubject class]]) {
-            _issuer = issuer;
-        } else if ([issuer isKindOfClass:[NSDictionary class]]) {
-            _issuer = [[DIMCASubject alloc] initWithDictionary:issuer];
-        }
+        _issuer = [DIMCASubject subjectWithSubject:issuer];
         
         // Validity
         id validity = [dict objectForKey:@"Validity"];
-        if ([validity isKindOfClass:[DIMCAValidity class]]) {
-            _validity = validity;
-        } else if ([validity isKindOfClass:[NSDictionary class]]) {
-            _validity = [[DIMCAValidity alloc] initWithDictionary:validity];
-        }
+        _validity = [DIMCAValidity validityWithValidity:validity];
         
         // Subject
         id subject = [dict objectForKey:@"Subject"];
-        if ([subject isKindOfClass:[DIMCASubject class]]) {
-            _subject = subject;
-        } else if ([issuer isKindOfClass:[NSDictionary class]]) {
-            _subject = [[DIMCASubject alloc] initWithDictionary:subject];
-        }
+        _subject = [DIMCASubject subjectWithSubject:subject];
         
         // Public Key
         id publicKey = [dict objectForKey:@"PublicKey"];

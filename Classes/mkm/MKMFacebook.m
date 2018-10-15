@@ -38,15 +38,17 @@ static MKMFacebook *s_sharedInstance = nil;
 - (instancetype)init {
     if (self = [super init]) {
         _profileTable = [[NSMutableDictionary alloc] init];
-        
+#if DEBUG
         // Immortals
-        [self loadProfileFromFile:@"mkm_hulk"];
-        [self loadProfileFromFile:@"mkm_moki"];
+        [self _loadProfileFromFile:@"mkm_hulk"];
+        [self _loadProfileFromFile:@"mkm_moki"];
+#endif
     }
     return self;
 }
 
-- (BOOL)loadProfileFromFile:(NSString *)filename {
+// inner function
+- (BOOL)_loadProfileFromFile:(NSString *)filename {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path;
