@@ -120,7 +120,7 @@ static UInt32 user_number(const NSData *cc) {
 }
 
 - (id)copy {
-    return [[MKMAddress alloc] initWithString:_storeString];
+    return [[[self class] alloc] initWithString:_storeString];
 }
 
 // inner function

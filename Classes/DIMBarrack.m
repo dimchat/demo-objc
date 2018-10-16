@@ -17,11 +17,11 @@
 
 @interface DIMBarrack () {
     
-    NSMutableDictionary<const MKMID *, DIMUser *> *_userTable;
-    NSMutableDictionary<const MKMID *, DIMContact *> *_contactTable;
+    NSMutableDictionary<const MKMAddress *, DIMUser *> *_userTable;
+    NSMutableDictionary<const MKMAddress *, DIMContact *> *_contactTable;
     
-    NSMutableDictionary<const MKMID *, DIMGroup *> *_groupTable;
-    NSMutableDictionary<const MKMID *, DIMMoments *> *_momentsTable;
+    NSMutableDictionary<const MKMAddress *, DIMGroup *> *_groupTable;
+    NSMutableDictionary<const MKMAddress *, DIMMoments *> *_momentsTable;
 }
 
 @end
@@ -59,7 +59,7 @@ static DIMBarrack *s_sharedInstance = nil;
 #pragma mark User
 
 - (DIMUser *)userForID:(const MKMID *)ID {
-    DIMUser *user = [_userTable objectForKey:ID];
+    DIMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
         // create new user with ID
         user = [DIMUser userWithID:ID];
@@ -69,29 +69,31 @@ static DIMBarrack *s_sharedInstance = nil;
 }
 
 - (void)setUser:(DIMUser *)user {
-    [_userTable setObject:user forKey:user.ID];
+    [_userTable setObject:user forKey:user.ID.address];
+    
     // check moments for ID, maybe created by other contact
-    DIMMoments *moments = [_momentsTable objectForKey:user.ID];
+    DIMMoments *moments = [_momentsTable objectForKey:user.ID.address];
     if (!moments) {
         // create moments for this user
         moments = [DIMMoments momentsWithID:user.ID];
-        [_momentsTable setObject:moments forKey:user.ID];
-        [_momentsTable setObject:moments forKey:moments.ID];
+        [_momentsTable setObject:moments forKey:user.ID.address];
+        [_momentsTable setObject:moments forKey:moments.ID.address];
     }
 }
 
 - (void)removeUser:(const DIMUser *)user {
-    [_userTable removeObjectForKey:user.ID];
+    [_userTable removeObjectForKey:user.ID.address];
+    
     // remove moments of this user
     MKMID *ID = user.moments;
-    [_momentsTable removeObjectForKey:ID];
-    [_momentsTable removeObjectForKey:user.ID];
+    [_momentsTable removeObjectForKey:ID.address];
+    [_momentsTable removeObjectForKey:user.ID.address];
 }
 
 #pragma mark Contact
 
 - (DIMContact *)contactForID:(const MKMID *)ID {
-    DIMContact *contact = [_contactTable objectForKey:ID];
+    DIMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
         // create new contact with ID
         contact = [DIMContact contactWithID:ID];
@@ -101,29 +103,31 @@ static DIMBarrack *s_sharedInstance = nil;
 }
 
 - (void)setContact:(DIMContact *)contact {
-    [_contactTable setObject:contact forKey:contact.ID];
+    [_contactTable setObject:contact forKey:contact.ID.address];
+    
     // check moments for ID, maybe created by other user
-    DIMMoments *moments = [_momentsTable objectForKey:contact.ID];
+    DIMMoments *moments = [_momentsTable objectForKey:contact.ID.address];
     if (!moments) {
         // create moments for this contact
         moments = [DIMMoments momentsWithID:contact.ID];
-        [_momentsTable setObject:moments forKey:contact.ID];
-        [_momentsTable setObject:moments forKey:moments.ID];
+        [_momentsTable setObject:moments forKey:contact.ID.address];
+        [_momentsTable setObject:moments forKey:moments.ID.address];
     }
 }
 
 - (void)removeContact:(const DIMContact *)contact {
-    [_contactTable removeObjectForKey:contact.ID];
+    [_contactTable removeObjectForKey:contact.ID.address];
+    
     // remove moments of this contact
     MKMID *ID = contact.moments;
-    [_momentsTable removeObjectForKey:ID];
-    [_momentsTable removeObjectForKey:contact.ID];
+    [_momentsTable removeObjectForKey:ID.address];
+    [_momentsTable removeObjectForKey:contact.ID.address];
 }
 
 #pragma mark Group
 
 - (DIMGroup *)groupForID:(const MKMID *)ID {
-    DIMGroup *group = [_groupTable objectForKey:ID];
+    DIMGroup *group = [_groupTable objectForKey:ID.address];
     if (!group) {
         // create new group with ID
         group = [DIMGroup groupWithID:ID];
@@ -133,17 +137,18 @@ static DIMBarrack *s_sharedInstance = nil;
 }
 
 - (void)setGroup:(DIMGroup *)group {
-    [_groupTable setObject:group forKey:group.ID];
+    [_groupTable setObject:group forKey:group.ID.address];
 }
 
 - (void)removeGroup:(const DIMGroup *)group {
-    [_groupTable removeObjectForKey:group.ID];
+    [_groupTable removeObjectForKey:group.ID.address];
 }
 
 #pragma mark Moments
 
 - (DIMMoments *)momentsForID:(const MKMID *)ID {
-    DIMMoments *moments = [_momentsTable objectForKey:ID];
+    NSAssert(ID.address.network == MKMNetwork_Main, @"must be account");
+    DIMMoments *moments = [_momentsTable objectForKey:ID.address];
     NSAssert(moments, @"set user/contact first");
     return moments;
 }
@@ -185,37 +190,53 @@ static DIMBarrack *s_sharedInstance = nil;
 }
 
 - (nullable MKMHistory *)queryHistoryWithID:(const MKMID *)ID {
-    // try contact pool
-    DIMContact *contact = [_contactTable objectForKey:ID];
-    if (contact) {
-        return contact.history;
-    }
-    // try user pool
-    DIMUser *user = [_userTable objectForKey:ID];
-    if (user) {
-        return user.history;
-    }
+    MKMHistory *history = nil;
     
-    // TODO: query from network
+    do {
+        // try contact pool
+        DIMContact *contact = [_contactTable objectForKey:ID.address];
+        if (contact) {
+            history = contact.history;
+            break;
+        }
+        
+        // try user pool
+        DIMUser *user = [_userTable objectForKey:ID.address];
+        if (user) {
+            history = user.history;
+            break;
+        }
+    } while (false);
+
+    // TODO: query from network to update, don't do it too frequently
     NSLog(@"querying history of %@", ID);
-    return nil;
+    return history;
 }
 
 - (nullable MKMMeta *)queryMetaWithID:(const MKMID *)ID {
-    // try contact pool
-    DIMContact *contact = [_contactTable objectForKey:ID];
-    if (contact) {
-        return contact.meta;
-    }
-    // try user pool
-    DIMUser *user = [_userTable objectForKey:ID];
-    if (user) {
-        return user.meta;
-    }
+    MKMMeta *meta = nil;
     
-    // TODO: query from network
-    NSLog(@"querying meta of %@", ID);
-    return nil;
+    do {
+        // try contact pool
+        DIMContact *contact = [_contactTable objectForKey:ID.address];
+        if (contact) {
+            meta = contact.meta;
+            break;
+        }
+        
+        // try user pool
+        DIMUser *user = [_userTable objectForKey:ID.address];
+        if (user) {
+            meta = user.meta;
+            break;
+        }
+    } while (false);
+    
+    if (!meta) {
+        // TODO: query from network if not found
+        NSLog(@"querying meta of %@", ID);
+    }
+    return meta;
 }
 
 #pragma mark - MKMProfileDelegate
@@ -227,18 +248,25 @@ static DIMBarrack *s_sharedInstance = nil;
 }
 
 - (nullable MKMProfile *)queryProfileWithID:(const MKMID *)ID {
-    // try contact pool
-    DIMContact *contact = [_contactTable objectForKey:ID];
-    if (contact) {
-        return contact.profile;
-    }
-    // try user pool
-    DIMUser *user = [_userTable objectForKey:ID];
-    if (user) {
-        return user.profile;
-    }
+    MKMProfile *profile = nil;
     
-    // TODO: query from network
+    do {
+        // try contact pool
+        DIMContact *contact = [_contactTable objectForKey:ID.address];
+        if (contact) {
+            profile = contact.profile;
+            break;
+        }
+        
+        // try user pool
+        DIMUser *user = [_userTable objectForKey:ID.address];
+        if (user) {
+            profile = user.profile;
+            break;
+        }
+    } while (false);
+    
+    // TODO: query from network to update, don't do it too frequently
     NSLog(@"querying profile of %@", ID);
     return nil;
 }

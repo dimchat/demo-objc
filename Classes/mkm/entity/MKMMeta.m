@@ -121,10 +121,10 @@
 }
 
 - (id)copy {
-    return [[MKMMeta alloc] initWithSeed:_seed
-                               publicKey:_key
-                             fingerprint:_fingerprint
-                                 version:_version];
+    return [[[self class] alloc] initWithSeed:_seed
+                                    publicKey:_key
+                                  fingerprint:_fingerprint
+                                      version:_version];
 }
 
 #pragma mark - ID & address

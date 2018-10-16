@@ -7,6 +7,7 @@
 //
 
 #import "MKMID.h"
+#import "MKMAddress.h"
 #import "MKMProfile.h"
 #import "MKMProfileDelegate.h"
 
@@ -14,7 +15,7 @@
 
 @interface MKMFacebook () {
     
-    NSMutableDictionary<const MKMID *, MKMProfile *> *_profileTable;
+    NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
 }
 
 @end
@@ -85,11 +86,11 @@ static MKMFacebook *s_sharedInstance = nil;
 
 - (MKMProfile *)profileWithID:(const MKMID *)ID {
     NSAssert([ID isValid], @"Invalid ID");
-    MKMProfile *profile = [_profileTable objectForKey:ID];
+    MKMProfile *profile = [_profileTable objectForKey:ID.address];
     if (!profile && _delegate) {
         profile = [_delegate queryProfileWithID:ID];
         if (profile) {
-            [_profileTable setObject:profile forKey:ID];
+            [_profileTable setObject:profile forKey:ID.address];
         }
     }
     return profile;
@@ -101,7 +102,7 @@ static MKMFacebook *s_sharedInstance = nil;
     NSAssert([ID isValid], @"Invalid ID");
     
     if ([profile matchID:ID]) {
-        [_profileTable setObject:profile forKey:ID];
+        [_profileTable setObject:profile forKey:ID.address];
         return YES;
     } else {
         NSAssert(false, @"profile signature error");

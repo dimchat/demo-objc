@@ -10,7 +10,7 @@
 
 #import "DIMKeyStore.h"
 
-typedef NSMutableDictionary<const MKMID *, MKMSymmetricKey *> KeysTable;
+typedef NSMutableDictionary<const MKMAddress *, MKMSymmetricKey *> KeysTable;
 
 @interface DIMKeyStore () {
     
@@ -18,7 +18,7 @@ typedef NSMutableDictionary<const MKMID *, MKMSymmetricKey *> KeysTable;
     KeysTable *_keysFromContacts;
     
     KeysTable *_keysForGroups;
-    NSMutableDictionary<const MKMID *, KeysTable *> *_tablesFromGroups;
+    NSMutableDictionary<const MKMAddress *, KeysTable *> *_tablesFromGroups;
 }
 
 @property (nonatomic, getter=isDirty) BOOL dirty;
@@ -93,7 +93,7 @@ static DIMKeyStore *s_sharedInstance = nil;
             // key
             PW = [MKMSymmetricKey keyWithKey:obj];
             // update keys table
-            [self _setCipherKey:PW fromContactID:cID];
+            [self _setCipherKey:PW fromContactByAddress:cID.address];
         }
         changed = YES;
     }
@@ -122,7 +122,9 @@ static DIMKeyStore *s_sharedInstance = nil;
                 // key
                 PW = [MKMSymmetricKey keyWithKey:obj];
                 // update keys table
-                [self _setCipherKey:PW fromMemberID:mID inGroupID:gID];
+                [self _setCipherKey:PW
+                fromMemberByAddress:mID.address
+                   inGroupByAddress:gID.address];
             }
         }
         changed = YES;
@@ -156,73 +158,75 @@ static DIMKeyStore *s_sharedInstance = nil;
 #pragma mark - Cipher key to encpryt message for contact
 
 - (MKMSymmetricKey *)cipherKeyForContact:(const MKMContact *)contact {
-    return [_keysForContacts objectForKey:contact.ID];
+    return [_keysForContacts objectForKey:contact.ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
           forContact:(const MKMContact *)contact {
-    [_keysForContacts setObject:key forKey:contact.ID];
+    [_keysForContacts setObject:key forKey:contact.ID.address];
 }
 
 #pragma mark - Cipher key from contact to decrypt message
 
 - (MKMSymmetricKey *)cipherKeyFromContact:(const MKMContact *)contact {
-    return [_keysFromContacts objectForKey:contact.ID];
+    return [_keysFromContacts objectForKey:contact.ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
          fromContact:(const MKMContact *)contact {
-    [_keysFromContacts setObject:key forKey:contact.ID];
+    [_keysFromContacts setObject:key forKey:contact.ID.address];
     _dirty = YES;
 }
 
 // inner function
 - (void)_setCipherKey:(MKMSymmetricKey *)key
-        fromContactID:(const MKMID *)contactID {
-    [_keysFromContacts setObject:key forKey:contactID];
+ fromContactByAddress:(const MKMAddress *)address {
+    [_keysFromContacts setObject:key forKey:address];
 }
 
 #pragma mark - Cipher key to encrypt message for all group members
 
 - (MKMSymmetricKey *)cipherKeyForGroup:(const MKMGroup *)group {
-    return [_keysForGroups objectForKey:group.ID];
+    return [_keysForGroups objectForKey:group.ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
             forGroup:(const MKMGroup *)group {
-    [_keysForGroups setObject:key forKey:group.ID];
+    [_keysForGroups setObject:key forKey:group.ID.address];
 }
 
 #pragma mark - Cipher key from a member in the group to decrypt message
 
 - (MKMSymmetricKey *)cipherKeyFromMember:(const MKMEntity *)member
                                  inGroup:(const MKMGroup *)group {
-    KeysTable *table = [_tablesFromGroups objectForKey:group.ID];
-    return [table objectForKey:member.ID];
+    KeysTable *table = [_tablesFromGroups objectForKey:group.ID.address];
+    return [table objectForKey:member.ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
           fromMember:(const MKMEntity *)member
              inGroup:(const MKMGroup *)group {
-    KeysTable *keysFromMembers = [_tablesFromGroups objectForKey:group.ID];
+    KeysTable *keysFromMembers;
+    keysFromMembers = [_tablesFromGroups objectForKey:group.ID.address];
     if (!keysFromMembers) {
         keysFromMembers = [[KeysTable alloc] init];
-        [_tablesFromGroups setObject:keysFromMembers forKey:group.ID];
+        [_tablesFromGroups setObject:keysFromMembers
+                              forKey:group.ID.address];
     }
-    [keysFromMembers setObject:key forKey:member.ID];
+    [keysFromMembers setObject:key forKey:member.ID.address];
     _dirty = YES;
 }
 
 // inner function
 - (void)_setCipherKey:(MKMSymmetricKey *)key
-         fromMemberID:(const MKMID *)memberID
-            inGroupID:(const MKMID *)groupID {
-    KeysTable *table = [_tablesFromGroups objectForKey:groupID];
+  fromMemberByAddress:(const MKMAddress *)mAddr
+     inGroupByAddress:(const MKMAddress *)gAddr {
+    KeysTable *table = [_tablesFromGroups objectForKey:gAddr];
     if (!table) {
         table = [[KeysTable alloc] init];
-        [_tablesFromGroups setObject:table forKey:groupID];
+        [_tablesFromGroups setObject:table forKey:gAddr];
     }
-    [table setObject:key forKey:memberID];
+    [table setObject:key forKey:mAddr];
 }
 
 #pragma mark - Private key encrpyted by a password for user

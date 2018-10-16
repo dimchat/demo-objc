@@ -17,8 +17,8 @@
 
 @interface MKMEntityManager () {
     
-    NSMutableDictionary<const MKMID *, MKMMeta *> *_metaTable;
-    NSMutableDictionary<const MKMID *, MKMHistory *> *_historyTable;
+    NSMutableDictionary<const MKMAddress *, MKMMeta *> *_metaTable;
+    NSMutableDictionary<const MKMAddress *, MKMHistory *> *_historyTable;
 }
 
 @end
@@ -97,11 +97,11 @@ static MKMEntityManager *s_sharedInstance = nil;
 
 - (MKMMeta *)metaForID:(const MKMID *)ID {
     NSAssert([ID isValid], @"Invalid ID");
-    MKMMeta *meta = [_metaTable objectForKey:ID];
+    MKMMeta *meta = [_metaTable objectForKey:ID.address];
     if (!meta && _delegate) {
         meta = [_delegate queryMetaWithID:ID];
         if (meta) {
-            [_metaTable setObject:meta forKey:ID];
+            [_metaTable setObject:meta forKey:ID.address];
         }
     }
     return meta;
@@ -111,17 +111,17 @@ static MKMEntityManager *s_sharedInstance = nil;
     NSAssert([ID isValid], @"Invalid ID");
     if ([meta matchID:ID]) {
         // set meta
-        [_metaTable setObject:meta forKey:ID];
+        [_metaTable setObject:meta forKey:ID.address];
     }
 }
 
 - (MKMHistory *)historyForID:(const MKMID *)ID {
     NSAssert(ID, @"ID cannot be empty");
-    MKMHistory *history = [_historyTable objectForKey:ID];
+    MKMHistory *history = [_historyTable objectForKey:ID.address];
     if (!history && _delegate) {
         history = [_delegate queryHistoryWithID:ID];
         if (history) {
-            [_historyTable setObject:history forKey:ID];
+            [_historyTable setObject:history forKey:ID.address];
         }
     }
     return history;
@@ -130,7 +130,7 @@ static MKMEntityManager *s_sharedInstance = nil;
 - (void)setHistory:(MKMHistory *)history forID:(const MKMID *)ID {
     NSAssert([ID isValid], @"Invalid ID");
     if (history) {
-        [_historyTable setObject:history forKey:ID];
+        [_historyTable setObject:history forKey:ID.address];
     }
 }
 
