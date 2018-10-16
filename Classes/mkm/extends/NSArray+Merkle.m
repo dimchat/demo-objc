@@ -11,15 +11,13 @@
 
 #import "NSArray+Merkle.h"
 
-static NSData *merge_data(const NSData *data1, const NSData *data2) {
+static NSData *merge_data(NSData *data1, NSData *data2) {
     assert(data1);
     assert(data2);
-    NSData *left = [data1 copy];
-    NSData *right = [data2 copy];
-    NSUInteger len = [left length] + [right length];
+    NSUInteger len = [data1 length] + [data2 length];
     NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:len];
-    [mData appendData:left];
-    [mData appendData:right];
+    [mData appendData:data1];
+    [mData appendData:data2];
     return mData;
 }
 

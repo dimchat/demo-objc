@@ -171,7 +171,7 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
                                   [ciphertext length]
                                   );
     
-    match = (sanityCheck == noErr);
+    match = (sanityCheck == errSecSuccess);
 
     return match;
 }

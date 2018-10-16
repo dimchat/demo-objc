@@ -35,7 +35,7 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     NSMutableData *mData = [NSMutableData dataWithCapacity:len];
     [mData appendData:left];
     [mData appendData:right];
-    return mData;
+    return [mData sha256];
 }
 
 static NSMutableArray *copy_events(const NSArray *events) {

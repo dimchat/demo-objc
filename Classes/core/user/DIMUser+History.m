@@ -13,62 +13,71 @@
 + (instancetype)registerWithName:(const NSString *)seed
                        publicKey:(const MKMPublicKey *)PK
                       privateKey:(const MKMPrivateKey *)SK {
-    NSAssert([seed length] > 2, @"seed error");
+    NSAssert([seed length] > 0, @"seed error");
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
     
     // 1. create user
-    // 1.1. generate meta
+    DIMUser *user;
+    MKMID *ID;
+    MKMAddress *address;
     MKMMeta *meta;
+    // 1.1. generate meta
     meta = [[MKMMeta alloc] initWithSeed:seed publicKey:PK privateKey:SK];
     NSLog(@"register meta: %@", meta);
     // 1.2. generate address with meta info
-    MKMAddress *address;
     address = [meta buildAddressWithNetworkID:MKMNetwork_Main];
     // 1.3. generate ID
-    MKMID *ID = [[MKMID alloc] initWithName:seed address:address];
+    ID = [[MKMID alloc] initWithName:seed address:address];
     NSLog(@"register ID: %@", ID);
     // 1.4. create user with ID & meta
-    DIMUser *user = [[self alloc] initWithID:ID meta:meta];
+    user = [[self alloc] initWithID:ID meta:meta];
+    // 1.5. store private key for user in keychain
     user.privateKey = [SK copy];
-    // 1.5. store the meta in entity manager
+    // 1.6. store the meta for user in entity manager
     [eman setMeta:meta forID:ID];
     
     // 2. generate history
     MKMHistory *history;
-    MKMHistoryRecord *his;
+    NSArray *records;
+    MKMHistoryRecord *record;
+    NSData *CT = nil;
+    NSData *hash = nil;
+    NSArray *events;
     MKMHistoryEvent *evt;
     MKMHistoryOperation *op;
-    // 2.1. create event.operation
+    // 2.1. create history.record.event.operation with operate: "register"
     op = [[MKMHistoryOperation alloc] initWithOperate:@"register"];
+    // 2.2 create history.record.event with operation
     evt = [[MKMHistoryEvent alloc] initWithOperation:op];
-    NSArray *events = [NSArray arrayWithObject:evt];
-    NSData *hash = nil;
-    NSData *CT = nil;
-    // 2.2. create history.record
-    his = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
-    [his signWithPreviousMerkle:hash privateKey:SK];
-    NSArray *records = [NSArray arrayWithObject:his];
+    // 2.2. create history.record with events
+    events = [NSArray arrayWithObject:evt];
+    record = [[MKMHistoryRecord alloc] initWithEvents:events
+                                               merkle:hash
+                                            signature:CT];
+    // 2.3. sign this record with private key
+    [record signWithPreviousMerkle:hash privateKey:SK];
+    records = [NSArray arrayWithObject:record];
+    // 2.4. create history with record(s)
     history = [[MKMHistory alloc] initWithArray:records];
     NSLog(@"register history: %@", history);
     
-    // 3. update status by running history record
-    user.historyDelegate = [MKMConsensus sharedInstance];
+    // 3. running history with delegate to update status
+    user.historyDelegate = delegate;
     NSInteger count = [user runHistory:history];
+    NSAssert([history count] == count, @"register failed");
     
-    if ([history count] == count) {
-        // 3.1. store the history in entity manager
-        [eman setHistory:history forID:ID];
-        
-        // 3.2. upload the meta & history onto the network
-        [eman.delegate postMeta:meta history:history forID:ID];
-        
-        return user;
-    }
+    // 4. store meta + history and send out
+    // 4.1. store the history in entity manager
+    [eman setHistory:history forID:ID];
+    // 4.2. upload the meta & history onto the network
+    [eman.delegate postMeta:meta history:history forID:ID];
     
-    NSAssert(false, @"register failed");
-    return nil;
+    // Mission Accomplished!
+    NSLog(@"user account(%@) registered!", ID);
+    return user;
 }
 
 - (MKMHistoryRecord *)suicideWithMessage:(const NSString *)lastWords
@@ -79,32 +88,38 @@
     
     // 1. generate history record
     MKMHistoryRecord *record;
+    NSData *CT = nil;
+    NSData *hash = nil;
+    NSArray *events;
     MKMHistoryEvent *evt;
     MKMHistoryOperation *op;
+    // 1.1. create history.record.event.operation with operate: "suicide"
     op = [[MKMHistoryOperation alloc] initWithOperate:@"suicide"];
+    // 1.2. create history.record.event with operation
     evt = [[MKMHistoryEvent alloc] initWithOperation:op];
-    
-    NSArray *events = [NSArray arrayWithObject:evt];
-    NSData *hash = nil;
-    NSData *CT = nil;
-    record = [[MKMHistoryRecord alloc] initWithEvents:events merkle:hash signature:CT];
-    [record signWithPreviousMerkle:hash privateKey:SK];
+    // 1.3. create history.record with events
+    events = [NSArray arrayWithObject:evt];
+    record = [[MKMHistoryRecord alloc] initWithEvents:events
+                                               merkle:hash
+                                            signature:CT];
+    // 1.4. sign with previous merkle root
+    MKMHistoryRecord *prev = _history.lastObject;
+    [record signWithPreviousMerkle:prev.merkleRoot privateKey:SK];
     NSLog(@"suicide record: %@", record);
     
-    // 2. send the history record out
+    // 2. run history to update status
     BOOL OK = [self runHistoryRecord:record];
-    if (OK) {
-        // 2.1. store the history in entity manager
-        [eman setHistory:_history forID:_ID];
-        
-        // 2.2. upload the new history record onto the network
-        [eman.delegate postHistoryRecord:record forID:_ID];
-        
-        return record;
-    }
+    NSAssert(OK, @"suicide failed");
     
-    NSAssert(false, @"suicide failed");
-    return nil;
+    // 3. store and send the history record out
+    // 3.1. store the history in entity manager
+    [eman setHistory:_history forID:_ID];
+    // 3.2. upload the new history record onto the network
+    [eman.delegate postHistoryRecord:record forID:_ID];
+    
+    // Mission Accomplished!
+    NSLog(@"user account(%@) dead!", _ID);
+    return record;
 }
 
 @end
