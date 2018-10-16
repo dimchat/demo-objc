@@ -39,49 +39,8 @@ static MKMFacebook *s_sharedInstance = nil;
 - (instancetype)init {
     if (self = [super init]) {
         _profileTable = [[NSMutableDictionary alloc] init];
-#if DEBUG
-        // Immortals
-        [self _loadProfileFromFile:@"mkm_hulk"];
-        [self _loadProfileFromFile:@"mkm_moki"];
-#endif
     }
     return self;
-}
-
-// inner function
-- (BOOL)_loadProfileFromFile:(NSString *)filename {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSBundle *bundle = [NSBundle mainBundle];
-    NSString *path;
-    NSDictionary *dict;
-    MKMID *ID;
-    
-    path = [bundle pathForResource:filename ofType:@"plist"];
-    if (![fm fileExistsAtPath:path]) {
-        NSAssert(false, @"cannot load: %@", path);
-        return NO;
-    }
-    
-    // ID
-    dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    ID = [dict objectForKey:@"ID"];
-    if (!ID) {
-        NSAssert(false, @"ID not found: %@", path);
-        return NO;
-    }
-    ID = [MKMID IDWithID:ID];
-    
-    // load profile
-    MKMProfile *profile;
-    profile = [dict objectForKey:@"profile"];
-    if (!profile) {
-        NSAssert(false, @"profile not found: %@", path);
-        return NO;
-    }
-    profile = [MKMProfile profileWithProfile:profile];
-    [self setProfile:profile forID:ID];
-    
-    return profile;
 }
 
 - (MKMProfile *)profileWithID:(const MKMID *)ID {

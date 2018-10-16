@@ -8,6 +8,55 @@
 
 #import "DIMBarrack.h"
 
+static void load_immortal_file(NSString *filename) {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSBundle *bundle = [NSBundle mainBundle];
+    NSString *path = [bundle pathForResource:filename ofType:@"plist"];
+    if (![fm fileExistsAtPath:path]) {
+        NSLog(@"cannot load: %@", path);
+        return ;
+    }
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+    
+    // ID
+    MKMID *ID = [dict objectForKey:@"ID"];
+    ID = [MKMID IDWithID:ID];
+    assert(ID.isValid);
+    
+    // meta
+    MKMMeta *meta = [dict objectForKey:@"meta"];
+    meta = [MKMMeta metaWithMeta:meta];
+    assert([meta matchID:ID]);
+    
+    // history
+    MKMHistory *history = [dict objectForKey:@"history"];
+    history = [MKMHistory historyWithHistory:history];
+    assert(history.count > 0);
+    
+    // private key
+    MKMPrivateKey *SK = [dict objectForKey:@"privateKey"];
+    SK = [MKMPrivateKey keyWithKey:SK];
+    assert(SK.algorithm);
+    
+    // profile
+    MKMProfile *profile = [dict objectForKey:@"profile"];
+    profile = [MKMProfile profileWithProfile:profile];
+    assert(profile);
+    
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMFacebook *facebook = [MKMFacebook sharedInstance];
+    
+    // 1. store meta & history by entity manager
+    [eman setMeta:meta forID:ID];
+    [eman setHistory:history forID:ID];
+    
+    // 2. store private key by keychain
+    [SK saveKeyWithIdentifier:ID.address];
+    
+    // 3. store profile by profile manager (facebook)
+    [facebook setProfile:profile forID:ID];
+}
+
 @interface MKMEntity (Hacking)
 
 @property (strong, nonatomic) MKMMeta *meta;
@@ -49,6 +98,12 @@ static DIMBarrack *s_sharedInstance = nil;
         
         _groupTable = [[NSMutableDictionary alloc] init];
         _momentsTable = [[NSMutableDictionary alloc] init];
+        
+#if DEBUG
+        // Immortals
+        load_immortal_file(@"mkm_hulk");
+        load_immortal_file(@"mkm_moki");
+#endif
         
         [MKMEntityManager sharedInstance].delegate = self;
         [MKMFacebook sharedInstance].delegate = self;

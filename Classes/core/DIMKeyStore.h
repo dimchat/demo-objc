@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIM_KEYSTORE_CONTACTS_FILENAME @"keystore_contacts.plist"
+#define DIM_KEYSTORE_GROUPS_FILENAME   @"keystore_groups.plist"
+
 @interface DIMKeyStore : NSObject
 
 + (instancetype)sharedInstance;

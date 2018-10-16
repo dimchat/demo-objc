@@ -27,9 +27,6 @@ typedef NSMutableDictionary<const MKMAddress *, MKMSymmetricKey *> KeysTable;
 
 @implementation DIMKeyStore
 
-static NSString *s_keysContactsFilename = @"keystore_contacts.plist";
-static NSString *s_keysGroupsFilename = @"keystore_groups.plist";
-
 static DIMKeyStore *s_sharedInstance = nil;
 
 + (instancetype)sharedInstance {
@@ -81,7 +78,7 @@ static DIMKeyStore *s_sharedInstance = nil;
     BOOL changed = NO;
     
     // keys from contacts
-    path = [self _dataFilePath:s_keysContactsFilename];
+    path = [self _dataFilePath:DIM_KEYSTORE_CONTACTS_FILENAME];
     if ([fm fileExistsAtPath:path]) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -103,7 +100,7 @@ static DIMKeyStore *s_sharedInstance = nil;
     KeysTable *table;
     
     // keys from group.members
-    path = [self _dataFilePath:s_keysGroupsFilename];
+    path = [self _dataFilePath:DIM_KEYSTORE_GROUPS_FILENAME];
     if ([fm fileExistsAtPath:path]) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -141,11 +138,11 @@ static DIMKeyStore *s_sharedInstance = nil;
     NSString *path;
     
     // keys from contacts
-    path = [self _dataFilePath:s_keysContactsFilename];
+    path = [self _dataFilePath:DIM_KEYSTORE_CONTACTS_FILENAME];
     BOOL OK1 = [_keysFromContacts writeToFile:path atomically:YES];
     
     // keys from group.members
-    path = [self _dataFilePath:s_keysGroupsFilename];
+    path = [self _dataFilePath:DIM_KEYSTORE_GROUPS_FILENAME];
     BOOL OK2 = [_tablesFromGroups writeToFile:path atomically:YES];
     
     return OK1 && OK2;

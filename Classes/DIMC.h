@@ -19,6 +19,7 @@
 
 //-
 #import "DIMBarrack.h"
+#import "DIMClient.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

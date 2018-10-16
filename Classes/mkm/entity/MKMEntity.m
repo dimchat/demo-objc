@@ -66,6 +66,22 @@
     return entity;
 }
 
+- (BOOL)isEqual:(id)object {
+    MKMEntity *entity = (MKMEntity *)object;
+    
+    // check ID
+    if (![entity.ID isEqual:_ID]) {
+        return NO;
+    }
+    
+    // check meta
+    if (![entity.meta isEqual:_meta]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (NSUInteger)number {
     return _ID.address.code;
 }

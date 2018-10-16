@@ -43,56 +43,8 @@ static MKMEntityManager *s_sharedInstance = nil;
     if (self = [super init]) {
         _metaTable = [[NSMutableDictionary alloc] init];
         _historyTable = [[NSMutableDictionary alloc] init];
-#if DEBUG
-        // Immortals
-        [self _loadEntityInfoFromFile:@"mkm_hulk"];
-        [self _loadEntityInfoFromFile:@"mkm_moki"];
-#endif
     }
     return self;
-}
-
-// inner function
-- (BOOL)_loadEntityInfoFromFile:(NSString *)filename {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSBundle *bundle = [NSBundle mainBundle];
-    NSString *path;
-    NSDictionary *dict;
-    MKMID *ID;
-    MKMMeta *meta;
-    MKMHistory *history;
-    
-    path = [bundle pathForResource:filename ofType:@"plist"];
-    if (![fm fileExistsAtPath:path]) {
-        NSAssert(false, @"cannot load: %@", path);
-        return NO;
-    }
-    dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    
-    // ID
-    ID = [dict objectForKey:@"ID"];
-    ID = [MKMID IDWithID:ID];
-    NSAssert(ID.isValid, @"invalid ID: %@", path);
-    
-    // meta
-    meta = [dict objectForKey:@"meta"];
-    meta = [MKMMeta metaWithMeta:meta];
-    NSAssert([meta matchID:ID], @"meta not match: %@", path);
-    
-    // history
-    history = [dict objectForKey:@"history"];
-    history = [MKMHistory historyWithHistory:history];
-    NSAssert(history, @"history not found: %@", path);
-    
-    [self setMeta:meta forID:ID];
-    [self setHistory:history forID:ID];
-    
-    // private key
-    NSDictionary *skd = [dict objectForKey:@"privateKey"];
-    MKMPrivateKey *SK = [MKMPrivateKey keyWithKey:skd];
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    return ID.isValid && [meta matchID:ID] && history;
 }
 
 - (MKMMeta *)metaForID:(const MKMID *)ID {
