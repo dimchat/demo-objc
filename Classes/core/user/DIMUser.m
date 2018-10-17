@@ -20,6 +20,41 @@
 
 #import "DIMUser.h"
 
+static MKMSymmetricKey *passphrase(DIMUser *this, const DIMSecureMessage *msg) {
+    MKMSymmetricKey *scKey = nil;
+    NSData *PW = nil;
+    
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
+    DIMEnvelope *env = msg.envelope;
+    MKMID *sender = env.sender;
+    MKMID *receiver = env.receiver;
+    
+    if (MKMNetwork_Group == receiver.address.network) {
+        // get passphrase in group message
+        PW = [msg.encryptedKeys encryptedKeyForID:this.ID];
+        if (!PW) {
+            // get passphrase from group.member
+            DIMContact *contact = [DIMContact contactWithID:sender];
+            DIMGroup *group = [DIMGroup groupWithID:receiver];
+            scKey = [store cipherKeyFromMember:contact inGroup:group];
+        }
+    } else {
+        // get passphrase in personal message
+        PW = msg.encryptedKey;
+        if (!PW) {
+            // get passphrase from contact
+            DIMContact *contact = [DIMContact contactWithID:sender];
+            scKey = [store cipherKeyFromContact:contact];
+        }
+    }
+    
+    if (PW) {
+        PW = [this decrypt:PW];
+        scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
+    }
+    return scKey;
+}
+
 @implementation DIMUser
 
 + (instancetype)userWithID:(const MKMID *)ID {
@@ -37,45 +72,6 @@
     return user;
 }
 
-- (MKMSymmetricKey *)passphraseFromContact:(const MKMID *)ID
-                                   message:(const DIMSecureMessage *)msg {
-    MKMSymmetricKey *scKey = nil;
-    
-    NSData *PW = nil;
-    
-    DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    
-    BOOL isGroupMessage = NO;
-    if (msg.encryptedKeys) {
-        isGroupMessage = YES;
-    }
-    
-    if (isGroupMessage) {
-        // get passphrase in message
-        PW = [msg.encryptedKeys encryptedKeyForID:ID];
-        if (!PW) {
-            // FIXME: get passphrase from group.member
-            DIMContact *contact = [DIMContact contactWithID:ID];
-            DIMGroup *group = nil;
-            scKey = [store cipherKeyFromMember:contact inGroup:group];
-        }
-    } else {
-        // get passphrase in message
-        PW = msg.encryptedKey;
-        if (!PW) {
-            // get passphrase from contact
-            DIMContact *contact = [DIMContact contactWithID:ID];
-            scKey = [store cipherKeyFromContact:contact];
-        }
-    }
-    
-    if (PW) {
-        PW = [self decrypt:PW];
-        scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
-    }
-    return scKey;
-}
-
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     NSAssert([env.receiver isEqual:_ID], @"recipient error");
@@ -86,8 +82,7 @@
     PW = [self decrypt:PW];
     
     // 2. use the symmetric key to decrypt the content
-    MKMSymmetricKey *scKey;
-    scKey = [self passphraseFromContact:env.sender message:msg];
+    MKMSymmetricKey *scKey = passphrase(self, msg);
     NSData *CT = [scKey decrypt:msg.content];
     
     // 3. JsON

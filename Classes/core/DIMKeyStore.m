@@ -10,6 +10,47 @@
 
 #import "DIMKeyStore.h"
 
+static inline NSString *caches_directory(void) {
+    NSArray *paths;
+    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
+                                                NSUserDomainMask, YES);
+    return paths.firstObject;
+}
+
+/**
+ Get full filepath to Caches Directory
+
+ @param ID - current user ID
+ @param filename - "keystore_*.plist"
+ @return "Library/Caches/{address}/keystore_*.plist"
+ */
+static inline NSString *full_filepath(MKMID *ID, NSString *filename) {
+    // base directory: Library/Caches/{address}
+    NSString *dir = caches_directory();
+    MKMAddress *addr = ID.address;
+    if (addr) {
+        dir = [dir stringByAppendingPathComponent:addr];
+    }
+    
+    // check base directory exists
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:dir isDirectory:nil]) {
+        NSError *error = nil;
+        // make sure directory exists
+        [fm createDirectoryAtPath:dir withIntermediateDirectories:YES
+                       attributes:nil error:&error];
+        assert(!error);
+    }
+    
+    // build filepath
+    return [dir stringByAppendingPathComponent:filename];
+}
+
+static inline BOOL file_exists(NSString *path) {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    return [fm fileExistsAtPath:path];
+}
+
 typedef NSMutableDictionary<const MKMAddress *, MKMSymmetricKey *> KeysTable;
 
 @interface DIMKeyStore () {
@@ -41,6 +82,11 @@ static DIMKeyStore *s_sharedInstance = nil;
     return [super alloc];
 }
 
+- (void)dealloc {
+    [self flush];
+    //[super dealloc];
+}
+
 - (instancetype)init {
     if (self = [super init]) {
         _keysForContacts = [[KeysTable alloc] init];
@@ -56,17 +102,7 @@ static DIMKeyStore *s_sharedInstance = nil;
 }
 
 // inner function
-- (NSString *)_dataFilePath:(NSString *)filename {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
-                                                NSUserDomainMask, YES);
-    NSString *docs = paths.firstObject;
-    return [docs stringByAppendingPathComponent:filename];
-}
-
-// inner function
 - (BOOL)_loadKeyStoreFiles {
-    NSFileManager *fm = [NSFileManager defaultManager];
     NSString *path;
     
     NSDictionary *dict;
@@ -78,8 +114,8 @@ static DIMKeyStore *s_sharedInstance = nil;
     BOOL changed = NO;
     
     // keys from contacts
-    path = [self _dataFilePath:DIM_KEYSTORE_CONTACTS_FILENAME];
-    if ([fm fileExistsAtPath:path]) {
+    path = full_filepath(_currentUser, DIM_KEYSTORE_CONTACTS_FILENAME);
+    if (file_exists(path)) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
         for (cKey in dict) {
@@ -100,8 +136,8 @@ static DIMKeyStore *s_sharedInstance = nil;
     KeysTable *table;
     
     // keys from group.members
-    path = [self _dataFilePath:DIM_KEYSTORE_GROUPS_FILENAME];
-    if ([fm fileExistsAtPath:path]) {
+    path = full_filepath(_currentUser, DIM_KEYSTORE_GROUPS_FILENAME);
+    if (file_exists(path)) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
         for (gKey in dict) {
@@ -138,11 +174,11 @@ static DIMKeyStore *s_sharedInstance = nil;
     NSString *path;
     
     // keys from contacts
-    path = [self _dataFilePath:DIM_KEYSTORE_CONTACTS_FILENAME];
+    path = full_filepath(_currentUser, DIM_KEYSTORE_CONTACTS_FILENAME);
     BOOL OK1 = [_keysFromContacts writeToFile:path atomically:YES];
     
     // keys from group.members
-    path = [self _dataFilePath:DIM_KEYSTORE_GROUPS_FILENAME];
+    path = full_filepath(_currentUser, DIM_KEYSTORE_GROUPS_FILENAME);
     BOOL OK2 = [_tablesFromGroups writeToFile:path atomically:YES];
     
     return OK1 && OK2;
@@ -194,14 +230,14 @@ static DIMKeyStore *s_sharedInstance = nil;
 
 #pragma mark - Cipher key from a member in the group to decrypt message
 
-- (MKMSymmetricKey *)cipherKeyFromMember:(const MKMEntity *)member
+- (MKMSymmetricKey *)cipherKeyFromMember:(const MKMContact *)member
                                  inGroup:(const MKMGroup *)group {
     KeysTable *table = [_tablesFromGroups objectForKey:group.ID.address];
     return [table objectForKey:member.ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
-          fromMember:(const MKMEntity *)member
+          fromMember:(const MKMContact *)member
              inGroup:(const MKMGroup *)group {
     KeysTable *keysFromMembers;
     keysFromMembers = [_tablesFromGroups objectForKey:group.ID.address];

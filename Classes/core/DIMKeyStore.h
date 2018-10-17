@@ -8,12 +8,19 @@
 
 #import "MingKeMing.h"
 
+#import "DIMUser.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 #define DIM_KEYSTORE_CONTACTS_FILENAME @"keystore_contacts.plist"
 #define DIM_KEYSTORE_GROUPS_FILENAME   @"keystore_groups.plist"
 
 @interface DIMKeyStore : NSObject
+
+/**
+ Current User
+ */
+@property (strong, nonatomic) MKMID *currentUser;
 
 + (instancetype)sharedInstance;
 
@@ -90,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param group - group
  @return passphrase
  */
-- (MKMSymmetricKey *)cipherKeyFromMember:(const MKMEntity *)member
+- (MKMSymmetricKey *)cipherKeyFromMember:(const MKMContact *)member
                                  inGroup:(const MKMGroup *)group;
 
 /**
@@ -101,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param group - group
  */
 - (void)setCipherKey:(MKMSymmetricKey *)key
-          fromMember:(const MKMEntity *)member
+          fromMember:(const MKMContact *)member
              inGroup:(const MKMGroup *)group;
 
 #pragma mark - Private key encrpyted by a password for user

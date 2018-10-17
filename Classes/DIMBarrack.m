@@ -8,11 +8,50 @@
 
 #import "DIMBarrack.h"
 
-static void load_immortal_file(NSString *filename) {
+static inline NSString *documents_directory(void) {
+    NSArray *paths;
+    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                NSUserDomainMask, YES);
+    return paths.firstObject;
+}
+
+/**
+ Get full filepath to Documents Directory
+
+ @param ID - contact ID
+ @param filename - "*.plist"
+ @return "Documents/barrack/{address}/\*.plist"
+ */
+static inline NSString *full_filepath(const MKMID *ID, NSString *filename) {
+    // base directory: Documents/barrack/{address}
+    NSString *dir = documents_directory();
+    dir = [dir stringByAppendingPathComponent:@"barrack"];
+    MKMAddress *addr = ID.address;
+    dir = [dir stringByAppendingPathComponent:addr];
+    
+    // check base directory exists
     NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:dir isDirectory:nil]) {
+        NSError *error = nil;
+        // make sure directory exists
+        [fm createDirectoryAtPath:dir withIntermediateDirectories:YES
+                       attributes:nil error:&error];
+        assert(!error);
+    }
+    
+    // build filepath
+    return [dir stringByAppendingPathComponent:filename];
+}
+
+static inline BOOL file_exists(NSString *path) {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    return [fm fileExistsAtPath:path];
+}
+
+static void load_immortal_file(NSString *filename) {
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path = [bundle pathForResource:filename ofType:@"plist"];
-    if (![fm fileExistsAtPath:path]) {
+    if (!file_exists(path)) {
         NSLog(@"cannot load: %@", path);
         return ;
     }
@@ -220,18 +259,32 @@ static DIMBarrack *s_sharedInstance = nil;
 
 - (void)postHistory:(const MKMHistory *)history
               forID:(const MKMID *)ID {
+    // 1. save history in local documents
+    if (history) {
+        NSString *path = full_filepath(ID, @"history.plist");
+        [history writeToFile:path atomically:YES];
+    }
+    
     // TODO: post onto network
     NSLog(@"post history of %@: %@", ID, history);
 }
 
 - (void)postHistoryRecord:(const MKMHistoryRecord *)record
                     forID:(const MKMID *)ID {
+    // TODO: save history record in local documents
+    
     // TODO: post onto network
     NSLog(@"post history record of %@: %@", ID, record);
 }
 
 - (void)postMeta:(const MKMMeta *)meta
            forID:(const MKMID *)ID {
+    // 1. save meta in local documents
+    if ([meta matchID:ID]) {
+        NSString *path = full_filepath(ID, @"meta.plist");
+        [meta writeToFile:path atomically:YES];
+    }
+    
     // TODO: post onto network
     NSLog(@"post meta of %@: %@", ID, meta);
 }
@@ -239,6 +292,16 @@ static DIMBarrack *s_sharedInstance = nil;
 - (void)postMeta:(const MKMMeta *)meta
          history:(const MKMHistory *)history
            forID:(const MKMID *)ID {
+    // 1. save meta & history in local documents
+    if ([meta matchID:ID]) {
+        NSString *path = full_filepath(ID, @"meta.plist");
+        [meta writeToFile:path atomically:YES];
+    }
+    if (history) {
+        NSString *path = full_filepath(ID, @"history.plist");
+        [history writeToFile:path atomically:YES];
+    }
+    
     // TODO: post onto network
     NSLog(@"post meta of %@: %@", ID, meta);
     NSLog(@"and history of %@: %@", ID, history);
@@ -248,18 +311,30 @@ static DIMBarrack *s_sharedInstance = nil;
     MKMHistory *history = nil;
     
     do {
-        // try contact pool
+        // 1. try contact pool
         DIMContact *contact = [_contactTable objectForKey:ID.address];
         if (contact) {
             history = contact.history;
             break;
         }
         
-        // try user pool
+        // 2. try user pool
         DIMUser *user = [_userTable objectForKey:ID.address];
         if (user) {
             history = user.history;
             break;
+        }
+        
+        // 3. try local documents
+        NSString *path = full_filepath(ID, @"history.plist");
+        if (file_exists(path)) {
+            NSArray *array;
+            array = [NSArray arrayWithContentsOfFile:path];
+            MKMHistory *his = [[MKMHistory alloc] initWithArray:array];
+            if (his.count > 0) {
+                history = his;
+                break;
+            }
         }
     } while (false);
 
@@ -272,25 +347,40 @@ static DIMBarrack *s_sharedInstance = nil;
     MKMMeta *meta = nil;
     
     do {
-        // try contact pool
+        // 1. try contact pool
         DIMContact *contact = [_contactTable objectForKey:ID.address];
         if (contact) {
             meta = contact.meta;
             break;
         }
         
-        // try user pool
+        // 2. try user pool
         DIMUser *user = [_userTable objectForKey:ID.address];
         if (user) {
             meta = user.meta;
             break;
         }
+        
+        // 3. try local documents
+        NSString *path = full_filepath(ID, @"meta.plist");
+        if (file_exists(path)) {
+            NSDictionary *dict;
+            dict = [NSDictionary dictionaryWithContentsOfFile:path];
+            MKMMeta *met = [[MKMMeta alloc] initWithDictionary:dict];
+            if ([met matchID:ID]) {
+                meta = met;
+                break;
+            }
+        }
     } while (false);
     
-    if (!meta) {
-        // TODO: query from network if not found
-        NSLog(@"querying meta of %@", ID);
+    if (meta) {
+        // meta won't change, no need to update
+        return meta;
     }
+    
+    // TODO: query from network if not found
+    NSLog(@"querying meta of %@", ID);
     return meta;
 }
 
@@ -298,6 +388,12 @@ static DIMBarrack *s_sharedInstance = nil;
 
 - (void)postProfile:(const MKMProfile *)profile
               forID:(const MKMID *)ID {
+    // 1. save in local documents
+    if ([profile matchID:ID]) {
+        NSString *path = full_filepath(ID, @"profile.plist");
+        [profile writeToFile:path atomically:YES];
+    }
+    
     // TODO: post onto network
     NSLog(@"post profile of %@: %@", ID, profile);
 }
@@ -306,18 +402,30 @@ static DIMBarrack *s_sharedInstance = nil;
     MKMProfile *profile = nil;
     
     do {
-        // try contact pool
+        // 1. try contact pool
         DIMContact *contact = [_contactTable objectForKey:ID.address];
         if (contact) {
             profile = contact.profile;
             break;
         }
         
-        // try user pool
+        // 2. try user pool
         DIMUser *user = [_userTable objectForKey:ID.address];
         if (user) {
             profile = user.profile;
             break;
+        }
+        
+        // 3. try local documents
+        NSString *path = full_filepath(ID, @"profile.plist");
+        if (file_exists(path)) {
+            NSDictionary *dict;
+            dict = [NSDictionary dictionaryWithContentsOfFile:path];
+            MKMProfile *prof = [[MKMProfile alloc] initWithDictionary:dict];
+            if ([prof matchID:ID]) {
+                profile = prof;
+                break;
+            }
         }
     } while (false);
     

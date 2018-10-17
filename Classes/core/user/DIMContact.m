@@ -18,6 +18,17 @@
 
 #import "DIMContact.h"
 
+static MKMSymmetricKey *passphrase(DIMContact *this) {
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
+    MKMSymmetricKey *PW = [store cipherKeyForContact:this];
+    if (!PW) {
+        // create a new one
+        PW = [[MKMSymmetricKey alloc] init];
+        [store setCipherKey:PW forContact:this];
+    }
+    return PW;
+}
+
 @implementation DIMContact
 
 + (instancetype)contactWithID:(const MKMID *)ID {
@@ -35,17 +46,6 @@
     return contact;
 }
 
-- (MKMSymmetricKey *)passphrase {
-    DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    MKMSymmetricKey *PW = [store cipherKeyForContact:self];
-    if (!PW) {
-        // create a new one
-        PW = [[MKMSymmetricKey alloc] init];
-        [store setCipherKey:PW forContact:self];
-    }
-    return PW;
-}
-
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     MKMID *to = env.receiver;
@@ -58,7 +58,7 @@
     NSData *json = [content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    MKMSymmetricKey *scKey = self.passphrase;
+    MKMSymmetricKey *scKey = passphrase(self);
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
