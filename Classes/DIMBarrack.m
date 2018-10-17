@@ -103,6 +103,12 @@ static void load_immortal_file(NSString *filename) {
 
 @end
 
+@interface MKMAccount (Hacking)
+
+@property (strong, nonatomic) MKMAccountProfile *profile;
+
+@end
+
 @interface DIMBarrack () {
     
     NSMutableDictionary<const MKMAddress *, DIMUser *> *_userTable;
@@ -155,8 +161,13 @@ static DIMBarrack *s_sharedInstance = nil;
 - (DIMUser *)userForID:(const MKMID *)ID {
     DIMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
+        // get profile with ID
+        MKMFacebook *facebook = [MKMFacebook sharedInstance];
+        id prof = [facebook profileWithID:ID];
+        prof = [MKMAccountProfile profileWithProfile:prof];
         // create new user with ID
         user = [DIMUser userWithID:ID];
+        user.profile = prof;
         [self setUser:user];
     }
     return user;
@@ -189,8 +200,13 @@ static DIMBarrack *s_sharedInstance = nil;
 - (DIMContact *)contactForID:(const MKMID *)ID {
     DIMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
+        // get profile with ID
+        MKMFacebook *facebook = [MKMFacebook sharedInstance];
+        id prof = [facebook profileWithID:ID];
+        prof = [MKMAccountProfile profileWithProfile:prof];
         // create new contact with ID
         contact = [DIMContact contactWithID:ID];
+        contact.profile = prof;
         [self setContact:contact];
     }
     return contact;
