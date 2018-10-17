@@ -94,11 +94,11 @@
     MKMID *receiver = env.receiver;
     NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);
     
-    MKMSymmetricKey *PW = [store cipherKeyForGroup:self];
+    MKMSymmetricKey *PW = [store cipherKeyForGroup:_ID];
     if (!PW) {
         // create a new one
         PW = [[MKMSymmetricKey alloc] init];
-        [store setCipherKey:PW forGroup:self];
+        [store setCipherKey:PW forGroup:_ID];
     }
     return PW;
 }

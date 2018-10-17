@@ -123,17 +123,14 @@
         PW = msg.encryptedKey;
         if (!PW) {
             // get passphrase from contact
-            DIMContact *contact = [DIMContact contactWithID:sender];
-            scKey = [store cipherKeyFromContact:contact];
+            scKey = [store cipherKeyFromContact:sender];
         }
     } else if (MKMNetwork_Group == receiver.address.network) {
         // get passphrase in group message
         PW = [msg.encryptedKeys encryptedKeyForID:_ID];
         if (!PW) {
             // get passphrase from group.member
-            DIMContact *contact = [DIMContact contactWithID:sender];
-            DIMGroup *group = [DIMGroup groupWithID:receiver];
-            scKey = [store cipherKeyFromMember:contact inGroup:group];
+            scKey = [store cipherKeyFromMember:sender inGroup:receiver];
         }
     }
     
