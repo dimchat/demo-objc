@@ -12,9 +12,6 @@
 #import "MKMMeta.h"
 #import "MKMEntityManager.h"
 
-#import "MKMProfile.h"
-#import "MKMFacebook.h"
-
 #import "MKMAccount.h"
 
 @interface MKMEntity (Hacking)
@@ -60,15 +57,6 @@
         account.publicKey = _publicKey;
     }
     return account;
-}
-
-- (MKMAccountProfile *)profile {
-    if (!_profile || _profile.allKeys.count == 0) {
-        MKMFacebook *facebook = [MKMFacebook sharedInstance];
-        MKMProfile *prof = [facebook profileWithID:_ID];
-        _profile = [MKMAccountProfile profileWithProfile:prof];
-    }
-    return _profile;
 }
 
 @end
