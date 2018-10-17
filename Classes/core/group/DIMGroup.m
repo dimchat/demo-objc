@@ -18,17 +18,6 @@
 
 #import "DIMGroup.h"
 
-static MKMSymmetricKey *passphrase(DIMGroup *this) {
-    DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    MKMSymmetricKey *PW = [store cipherKeyForGroup:this];
-    if (!PW) {
-        // create a new one
-        PW = [[MKMSymmetricKey alloc] init];
-        [store setCipherKey:PW forGroup:this];
-    }
-    return PW;
-}
-
 @implementation DIMGroup
 
 + (instancetype)groupWithID:(const MKMID *)ID {
@@ -58,7 +47,7 @@ static MKMSymmetricKey *passphrase(DIMGroup *this) {
     NSData *json = [content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    MKMSymmetricKey *scKey = passphrase(self);
+    MKMSymmetricKey *scKey = [self cipherKeyForEncrypt:msg];
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
@@ -92,6 +81,26 @@ static MKMSymmetricKey *passphrase(DIMGroup *this) {
     }
     
     return map;
+}
+
+@end
+
+@implementation DIMGroup (Passphrase)
+
+- (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg {
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
+    DIMEnvelope *env = msg.envelope;
+    //MKMID *sender = env.sender;
+    MKMID *receiver = env.receiver;
+    NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);
+    
+    MKMSymmetricKey *PW = [store cipherKeyForGroup:self];
+    if (!PW) {
+        // create a new one
+        PW = [[MKMSymmetricKey alloc] init];
+        [store setCipherKey:PW forGroup:self];
+    }
+    return PW;
 }
 
 @end

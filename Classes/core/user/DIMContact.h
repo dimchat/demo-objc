@@ -28,4 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DIMContact (Passphrase)
+
+- (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg;
+
+@end
+
 NS_ASSUME_NONNULL_END

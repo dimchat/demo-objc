@@ -28,4 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DIMUser (Passphrase)
+
+- (MKMSymmetricKey *)cipherKeyForDecrpyt:(const DIMSecureMessage *)msg;
+
+@end
+
 NS_ASSUME_NONNULL_END
