@@ -64,7 +64,7 @@
     
     // 3. use the group members' PKs to encrypt the symmetric key
     NSData *PW = [scKey jsonData];
-    NSDictionary *keys = [self encryptPassphrase:PW];
+    DIMEncryptedKeyMap *keys = [self encryptPassphrase:PW];
     
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithContent:CT
@@ -72,31 +72,26 @@
                                        encryptedKeys:keys];
 }
 
-- (NSDictionary *)encryptPassphrase:(const NSData *)PW {
-    NSMutableDictionary *mDict;
-    mDict = [[NSMutableDictionary alloc] initWithCapacity:[_members count]];
+- (DIMEncryptedKeyMap *)encryptPassphrase:(const NSData *)PW {
+    DIMEncryptedKeyMap *map;
+    map = [[DIMEncryptedKeyMap alloc] initWithCapacity:[_members count]];
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMID *ID;
+    
     MKMPublicKey *PK;
     NSData *key;
-    
-    for (id member in _members) {
-        if ([member isKindOfClass:[MKMEntity class]]) {
-            ID = [member ID];
-        } else {
-            ID = [MKMID IDWithID:member];
-        }
-        
+    for (MKMID *ID in _members) {
         PK = [eman metaForID:ID].key;
-        if (ID && PK) {
+        NSAssert(PK, @"failed to get meta for ID: %@", ID);
+        
+        if (PK) {
             key = [PK encrypt:PW];
             NSAssert(key, @"error");
-            [mDict setObject:[key base64Encode] forKey:ID];
+            [map setEncryptedKey:key forID:ID];
         }
     }
     
-    return mDict;
+    return map;
 }
 
 @end

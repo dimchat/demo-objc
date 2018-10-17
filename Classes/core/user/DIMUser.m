@@ -14,6 +14,10 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
+#import "DIMContact.h"
+#import "DIMGroup.h"
+#import "DIMKeyStore.h"
+
 #import "DIMUser.h"
 
 @implementation DIMUser
@@ -33,6 +37,45 @@
     return user;
 }
 
+- (MKMSymmetricKey *)passphraseFromContact:(const MKMID *)ID
+                                   message:(const DIMSecureMessage *)msg {
+    MKMSymmetricKey *scKey = nil;
+    
+    NSData *PW = nil;
+    
+    DIMKeyStore *store = [DIMKeyStore sharedInstance];
+    
+    BOOL isGroupMessage = NO;
+    if (msg.encryptedKeys) {
+        isGroupMessage = YES;
+    }
+    
+    if (isGroupMessage) {
+        // get passphrase in message
+        PW = [msg.encryptedKeys encryptedKeyForID:ID];
+        if (!PW) {
+            // FIXME: get passphrase from group.member
+            DIMContact *contact = [DIMContact contactWithID:ID];
+            DIMGroup *group = nil;
+            scKey = [store cipherKeyFromMember:contact inGroup:group];
+        }
+    } else {
+        // get passphrase in message
+        PW = msg.encryptedKey;
+        if (!PW) {
+            // get passphrase from contact
+            DIMContact *contact = [DIMContact contactWithID:ID];
+            scKey = [store cipherKeyFromContact:contact];
+        }
+    }
+    
+    if (PW) {
+        PW = [self decrypt:PW];
+        scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
+    }
+    return scKey;
+}
+
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     NSAssert([env.receiver isEqual:_ID], @"recipient error");
@@ -44,7 +87,7 @@
     
     // 2. use the symmetric key to decrypt the content
     MKMSymmetricKey *scKey;
-    scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
+    scKey = [self passphraseFromContact:env.sender message:msg];
     NSData *CT = [scKey decrypt:msg.content];
     
     // 3. JsON
@@ -79,7 +122,7 @@
                                                   signature:CT];
     } else if (env.receiver.address.network == MKMNetwork_Group) {
         // Group Message
-        NSDictionary *keys = msg.encryptedKeys;
+        DIMEncryptedKeyMap *keys = msg.encryptedKeys;
         NSAssert(keys, @"encrypted keys not found");
         cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
                                                    envelope:env

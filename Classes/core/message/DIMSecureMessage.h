@@ -10,6 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface DIMEncryptedKeyMap : DIMDictionary
+
+- (NSData *)encryptedKeyForID:(const MKMID *)ID;
+
+- (void)setEncryptedKey:(NSData *)key forID:(const MKMID *)ID;
+
+@end
+
+#pragma mark -
+
 @class DIMEnvelope;
 @class DIMInstantMessage;
 
@@ -40,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   encryptedKey = receiver.publicKey.encrypt(symmetricKey);
  */
 @property (readonly, strong, nonatomic) NSData *encryptedKey;
-@property (readonly, strong, nonatomic) NSDictionary *encryptedKeys;
+@property (readonly, strong, nonatomic) DIMEncryptedKeyMap *encryptedKeys;
 
 /**
  Secure Message for Personal
@@ -65,7 +75,7 @@ NS_DESIGNATED_INITIALIZER;
  */
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const NSDictionary *)keys
+                  encryptedKeys:(const DIMEncryptedKeyMap *)keys
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

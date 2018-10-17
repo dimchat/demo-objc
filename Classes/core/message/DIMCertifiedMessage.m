@@ -33,7 +33,7 @@
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const NSDictionary *)keys {
+                  encryptedKeys:(const DIMEncryptedKeyMap *)keys {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
     self = [self initWithContent:content
@@ -62,7 +62,7 @@
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const NSDictionary *)keys
+                  encryptedKeys:(const DIMEncryptedKeyMap *)keys
                       signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
     if (self = [super initWithContent:content

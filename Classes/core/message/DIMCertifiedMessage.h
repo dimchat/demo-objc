@@ -38,7 +38,7 @@ NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const NSDictionary *)keys
+                  encryptedKeys:(const DIMEncryptedKeyMap *)keys
                       signature:(const NSData *)CT
 NS_DESIGNATED_INITIALIZER;
 

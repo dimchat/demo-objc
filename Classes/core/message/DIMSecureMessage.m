@@ -14,6 +14,22 @@
 
 #import "DIMSecureMessage.h"
 
+@implementation DIMEncryptedKeyMap
+
+- (NSData *)encryptedKeyForID:(const MKMID *)ID {
+    NSString *encode = [_storeDictionary objectForKey:ID.address];
+    return [encode base64Decode];
+}
+
+- (void)setEncryptedKey:(NSData *)key forID:(const MKMID *)ID {
+    NSString *encode = [key base64Encode];
+    [_storeDictionary setObject:encode forKey:ID.address];
+}
+
+@end
+
+#pragma mark -
+
 static NSDate *now() {
     return [[NSDate alloc] init];
 }
@@ -40,7 +56,7 @@ static NSDate *number_time(const NSNumber *number) {
 @property (strong, nonatomic) NSData *content;
 
 @property (strong, nonatomic) NSData *encryptedKey;
-@property (strong, nonatomic) NSDictionary *encryptedKeys;
+@property (strong, nonatomic) DIMEncryptedKeyMap *encryptedKeys;
 
 @end
 
@@ -76,13 +92,14 @@ static NSDate *number_time(const NSNumber *number) {
         _envelope = [env copy];
         _content = [content copy];
         _encryptedKey = [key copy];
+        _encryptedKeys = nil;
     }
     return self;
 }
 
 - (instancetype)initWithContent:(const NSData *)content
                        envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const NSDictionary *)keys {
+                  encryptedKeys:(const DIMEncryptedKeyMap *)keys {
     NSAssert(env, @"envelope cannot be empty");
     NSMutableDictionary *mDict;
     mDict = [[NSMutableDictionary alloc] initWithDictionary:(id)env];
@@ -98,6 +115,7 @@ static NSDate *number_time(const NSNumber *number) {
     if (self = [super initWithDictionary:mDict]) {
         _envelope = [env copy];
         _content = [content copy];
+        _encryptedKey = nil;
         _encryptedKeys = [keys copy];
     }
     return self;
@@ -107,25 +125,26 @@ static NSDate *number_time(const NSNumber *number) {
     if (self = [super initWithDictionary:dict]) {
         // sender
         id from = [dict objectForKey:@"sender"];
-        if (from) {
-            from = [MKMID IDWithID:from];
-        }
+        from = [MKMID IDWithID:from];
+        NSAssert(from, @"sender cannot be empty");
+        
         // receiver
         id to = [dict objectForKey:@"receiver"];
-        if (to) {
-            to = [MKMID IDWithID:to];
-        }
+        to = [MKMID IDWithID:to];
+        NSAssert(to, @"receiver cannot be empty");
+        
         // time
         id time = [dict objectForKey:@"time"];
         if (time) {
             time = number_time(time);
         }
         
+        // envelope (sender, receiver, time)
         DIMEnvelope *env;
         env = [[DIMEnvelope alloc] initWithSender:from
                                          receiver:to
                                              time:time];
-        self.envelope = env;
+        _envelope = env;
         
         // content
         NSString *content = [dict objectForKey:@"content"];
@@ -134,11 +153,23 @@ static NSDate *number_time(const NSNumber *number) {
         
         // encrypted key
         NSString *key = [dict objectForKey:@"key"];
-        self.encryptedKey = [key base64Decode];
+        if (key) {
+            self.encryptedKey = [key base64Decode];
+        } else {
+            _encryptedKey = nil;
+        }
         
         // encrypted keys
         NSDictionary *keys = [dict objectForKey:@"keys"];
-        self.encryptedKeys = keys;
+        if (keys) {
+            DIMEncryptedKeyMap *map;
+            map = [[DIMEncryptedKeyMap alloc] initWithDictionary:keys];
+            _encryptedKeys = map;
+        } else {
+            _encryptedKeys = nil;
+        }
+        
+        NSAssert(key || keys, @"key or keys cannot be empty both");
     }
     
     return self;
