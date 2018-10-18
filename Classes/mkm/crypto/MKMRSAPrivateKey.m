@@ -61,14 +61,15 @@
             }
         } else /* data == nil */ {
             // RSA key size
-            NSNumber *keySize = [keyInfo objectForKey:@"size"];
+            NSNumber *keySize = [keyInfo objectForKey:@"keySize"];
             if (!keySize) {
-                keySize = [keyInfo objectForKey:@"keySize"];
+                keySize = [keyInfo objectForKey:@"size"];
             }
             if (keySize) {
                 _keySize = keySize.unsignedIntegerValue;
             } else {
                 _keySize = 1024;
+                [_storeDictionary setObject:@(_keySize) forKey:@"keySize"];
             }
             
             // Generate key pairs
@@ -106,9 +107,10 @@
             _keySize = SecKeyGetBlockSize(_privateKeyRef) * sizeof(uint8_t) * 8;
             
             // key data content
+            _privateContent = [privateContent copy];
             [_storeDictionary setObject:privateContent forKey:@"data"];
             [_storeDictionary removeObjectForKey:@"content"];
-            _privateContent = [privateContent copy];
+            [_storeDictionary setObject:@(_keySize) forKey:@"keySize"];
         }
     } else {
         // clear key ref

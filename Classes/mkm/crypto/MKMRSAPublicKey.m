@@ -107,9 +107,10 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
             _keySize = SecKeyGetBlockSize(_publicKeyRef) * sizeof(uint8_t) * 8;
             
             // key data content
+            _publicContent = [publicContent copy];
             [_storeDictionary setObject:publicContent forKey:@"data"];
             [_storeDictionary removeObjectForKey:@"content"];
-            _publicContent = [publicContent copy];
+            [_storeDictionary setObject:@(_keySize) forKey:@"keySize"];
         }
     } else {
         // clear key ref

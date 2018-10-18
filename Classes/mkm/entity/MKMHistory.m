@@ -88,26 +88,28 @@ static NSMutableArray *copy_events(const NSArray *events) {
 }
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
-    id events = [dict objectForKey:@"events"];
-    NSString *merkle = [dict objectForKey:@"merkle"];
-    NSString *signature = [dict objectForKey:@"signature"];
-    NSString *recorder = [dict objectForKey:@"recorder"];
-    
-    if (merkle || signature) {
-        NSMutableDictionary *mDict = [dict mutableCopy];
-        events = copy_events(events);
-        NSAssert([events count] > 0, @"history record error");
-        [mDict setObject:events forKey:@"events"];
-        dict = mDict;
-    } else {
-        events = [events mutableCopy];
-    }
-    
     if (self = [super initWithDictionary:dict]) {
+        dict = _storeDictionary;
+        
+        id events = [dict objectForKey:@"events"];
+        NSString *merkle = [dict objectForKey:@"merkle"];
+        NSString *signature = [dict objectForKey:@"signature"];
+        NSString *recorder = [dict objectForKey:@"recorder"];
+        
+        if (merkle || signature) {
+            NSMutableDictionary *mDict = [dict mutableCopy];
+            events = copy_events(events);
+            NSAssert([events count] > 0, @"history record error");
+            [mDict setObject:events forKey:@"events"];
+            dict = mDict;
+        } else {
+            events = [[NSMutableArray alloc] initWithArray:events];
+        }
+        
         _events = events;
-        self.merkleRoot = [merkle base64Decode];
-        self.signature = [signature base64Decode];
-        self.recorder = [MKMID IDWithID:recorder];
+        _merkleRoot = [merkle base64Decode];
+        _signature = [signature base64Decode];
+        _recorder = [MKMID IDWithID:recorder];
     }
     return self;
 }

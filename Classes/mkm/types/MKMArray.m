@@ -22,7 +22,7 @@
 /* designated initializer */
 - (instancetype)initWithArray:(NSArray *)array {
     if (self = [super init]) {
-        _storeArray = [array mutableCopy];
+        _storeArray = [[NSMutableArray alloc] initWithArray:array];
     }
     return self;
 }

@@ -22,7 +22,7 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
-        _storeDictionary = [dict mutableCopy];
+        _storeDictionary = [[NSMutableDictionary alloc] initWithDictionary:dict];
     }
     return self;
 }

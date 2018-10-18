@@ -189,22 +189,26 @@ static DIMKeyStore *s_sharedInstance = nil;
 #pragma mark - Cipher key to encpryt message for contact
 
 - (MKMSymmetricKey *)cipherKeyForContact:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
     return [_keysForContacts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
           forContact:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
     [_keysForContacts setObject:key forKey:ID.address];
 }
 
 #pragma mark - Cipher key from contact to decrypt message
 
 - (MKMSymmetricKey *)cipherKeyFromContact:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
     return [_keysFromContacts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
          fromContact:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
     [_keysFromContacts setObject:key forKey:ID.address];
     _dirty = YES;
 }
@@ -212,11 +216,13 @@ static DIMKeyStore *s_sharedInstance = nil;
 #pragma mark - Cipher key to encrypt message for all group members
 
 - (MKMSymmetricKey *)cipherKeyForGroup:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Group, @"ID error");
     return [_keysForGroups objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
             forGroup:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Group, @"ID error");
     [_keysForGroups setObject:key forKey:ID.address];
 }
 
@@ -224,6 +230,8 @@ static DIMKeyStore *s_sharedInstance = nil;
 
 - (MKMSymmetricKey *)cipherKeyFromMember:(const MKMID *)ID
                                  inGroup:(const MKMID *)group {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(group.address.network == MKMNetwork_Group, @"group ID error");
     KeysTable *table = [_tablesFromGroups objectForKey:group.address];
     return [table objectForKey:ID.address];
 }
@@ -231,6 +239,8 @@ static DIMKeyStore *s_sharedInstance = nil;
 - (void)setCipherKey:(MKMSymmetricKey *)key
           fromMember:(const MKMID *)ID
              inGroup:(const MKMID *)group {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(group.address.network == MKMNetwork_Group, @"group ID error");
     KeysTable *table = [_tablesFromGroups objectForKey:group.address];
     if (!table) {
         table = [[KeysTable alloc] init];

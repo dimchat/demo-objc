@@ -70,7 +70,7 @@ static inline char hex_char(char ch) {
     std::vector<unsigned char> vch;
     DecodeBase58(cstr, vch);
     std::string str(vch.begin(), vch.end());
-    output = [NSData dataWithBytes:str.c_str() length:str.size()];
+    output = [[NSData alloc] initWithBytes:str.c_str() length:str.size()];
     
     return output;
 }

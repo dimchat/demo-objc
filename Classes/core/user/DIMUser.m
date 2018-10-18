@@ -48,10 +48,11 @@
     
     // 2. use the symmetric key to decrypt the content
     MKMSymmetricKey *scKey = [self cipherKeyForDecrpyt:msg];
-    NSData *CT = [scKey decrypt:msg.content];
+    NSData *data = [scKey decrypt:msg.content];
+    NSAssert(data, @"decrypt content failed");
     
     // 3. JsON
-    NSString *json = [CT UTF8String];
+    NSString *json = [data UTF8String];
     DIMMessageContent *content;
     content = [[DIMMessageContent alloc] initWithJSONString:json];
     

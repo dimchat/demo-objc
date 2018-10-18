@@ -19,7 +19,7 @@
 #import "MKMHistoryEvent.h"
 
 static NSDate * now(void) {
-    return [NSDate date];
+    return [[NSDate alloc] init];
 }
 
 static NSTimeInterval timestamp(const NSDate *time) {
@@ -27,7 +27,7 @@ static NSTimeInterval timestamp(const NSDate *time) {
 }
 
 static NSDate *date(NSTimeInterval time) {
-    return [NSDate dateWithTimeIntervalSince1970:time];
+    return [[NSDate alloc] initWithTimeIntervalSince1970:time];
 }
 
 #pragma mark - history.events.operation
@@ -55,13 +55,13 @@ static NSDate *date(NSTimeInterval time) {
 }
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
-    NSString *op = [dict objectForKey:@"operate"];
-    NSNumber *ti = [dict objectForKey:@"time"];
-    NSDate *time = date([ti unsignedIntegerValue]);
-    
     if (self = [super initWithDictionary:dict]) {
-        self.operate = op;
-        self.time = time;
+        dict = _storeDictionary;
+        
+        _operate = [dict objectForKey:@"operate"];
+        
+        NSNumber *time = [dict objectForKey:@"time"];
+        _time = date([time unsignedIntegerValue]);
     }
     
     return self;
@@ -75,13 +75,9 @@ static NSDate *date(NSTimeInterval time) {
 
 - (instancetype)initWithOperate:(const NSString *)op
                            time:(const NSDate *)time {
-    NSNumber *number = [NSNumber numberWithUnsignedInteger:timestamp(time)];
-    
-    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:2];
-    [mDict setObject:op forKey:@"operate"];
-    [mDict setObject:number forKey:@"time"];
-    
-    if (self = [super initWithDictionary:mDict]) {
+    NSDictionary *dict = @{@"operate":op,
+                           @"time"   :@(timestamp(time))};
+    if (self = [super initWithDictionary:dict]) {
         _operate = [op copy];
         _time = [time copy];
     }
@@ -137,38 +133,38 @@ static NSDate *date(NSTimeInterval time) {
 }
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
-    id operation = [dict objectForKey:@"operation"];
-    NSString *commander = [dict objectForKey:@"commander"];
-    NSString *signature = [dict objectForKey:@"signature"];
-    
-    MKMHistoryOperation *op = nil;
-    op = [MKMHistoryOperation operationWithOperation:operation];
-    MKMID *ID = nil;
-    NSData *CT = nil;
-    BOOL correct = YES;
-    
-    // if signature isn't empty, check it with commander
-    if (signature) {
-        NSAssert(commander, @"commander cannot be empty");
-        NSAssert([operation isKindOfClass:[NSString class]],
-                 @"event info error: %@", dict);
-        operation = [operation data];
-        
-        ID = [MKMID IDWithID:commander];
-        CT = [signature base64Decode];
-        
-        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        MKMPublicKey *PK = [eman metaForID:ID].key;
-        
-        correct = [PK verify:operation signature:CT];
-        NSAssert(correct, @"signature error");
-    }
-    
     if (self = [super initWithDictionary:dict]) {
+        dict = _storeDictionary;
+        
+        id operation = [dict objectForKey:@"operation"];
+        NSString *signature = [dict objectForKey:@"signature"];
+        NSString *commander = [dict objectForKey:@"commander"];
+        
+        MKMHistoryOperation *op = nil;
+        op = [MKMHistoryOperation operationWithOperation:operation];
+        NSData *CT = nil;
+        MKMID *ID = nil;
+        BOOL correct = YES;
+        
+        // if signature isn't empty, check it with commander
+        if (signature) {
+            NSAssert(commander, @"commander cannot be empty");
+            NSAssert([operation isKindOfClass:[NSString class]],
+                     @"event info error: %@", dict);
+            MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+            
+            operation = [operation data];
+            CT = [signature base64Decode];
+            ID = [MKMID IDWithID:commander];
+            MKMPublicKey *PK = [eman metaForID:ID].key;
+            correct = [PK verify:operation signature:CT];
+            NSAssert(correct, @"signature error");
+        }
+        
         if (correct) {
-            self.operation = op;
-            self.commander = ID;
-            self.signature = CT;
+            _operation = op;
+            _commander = ID;
+            _signature = CT;
         } else {
             _operation = nil;
             _commander = nil;
@@ -180,8 +176,7 @@ static NSDate *date(NSTimeInterval time) {
 }
 
 - (instancetype)initWithOperation:(const MKMHistoryOperation *)op {
-    NSDictionary *dict;
-    dict = [NSDictionary dictionaryWithObject:op forKey:@"operation"];
+    NSDictionary *dict = @{@"operation":op};
     if (self = [super initWithDictionary:dict]) {
         _operation = [op copy];
         _commander = nil;
@@ -193,21 +188,15 @@ static NSDate *date(NSTimeInterval time) {
 - (instancetype)initWithOperation:(const NSString *)operation
                         commander:(const MKMID *)ID
                         signature:(const NSData *)CT {
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMPublicKey *PK = [eman metaForID:ID].key;
-    NSData *data = [operation data];
-    BOOL OK = [PK verify:data signature:CT];
-    NSAssert(!PK || OK, @"signature error");
-    
-    MKMHistoryOperation *op;
-    op = [MKMHistoryOperation operationWithOperation:operation];
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(CT, @"signature cannot be empty");
     
     NSDictionary *dict = @{@"operation":operation,
                            @"commander":ID,
                            @"signature":[CT base64Encode],
                            };
     if (self = [super initWithDictionary:dict]) {
-        _operation = [op copy];
+        _operation = [[MKMHistoryOperation alloc] initWithJSONString:operation];
         _commander = [ID copy];
         _signature = [CT copy];
     }

@@ -16,6 +16,11 @@
 
 @implementation DIMEncryptedKeyMap
 
+- (void) setObject:(id)anObject forKey:(const NSString *)aKey {
+    NSAssert(false, @"DON'T call me");
+    //[super setObject:anObject forKey:aKey];
+}
+
 - (NSData *)encryptedKeyForID:(const MKMID *)ID {
     NSString *encode = [_storeDictionary objectForKey:ID.address];
     return [encode base64Decode];

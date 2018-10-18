@@ -35,6 +35,15 @@
         NSString *PW = [keyInfo objectForKey:@"passphrase"];
         if (!PW) {
             PW = [keyInfo objectForKey:@"password"];
+            if (!PW) {
+                // random password
+                uint32_t n1 = arc4random();
+                uint32_t n2 = arc4random();
+                uint32_t n3 = arc4random();
+                PW = [[NSString alloc] initWithFormat:@"%010u-%010u-%010u",
+                      n1, n2, n3];
+                [_storeDictionary setObject:PW forKey:@"passphrase"];
+            }
         }
         _passphrase = PW;
     }

@@ -39,6 +39,7 @@
             _keySize = [keySize unsignedIntegerValue];
         } else {
             _keySize = kCCKeySizeAES256; // 32
+            [_storeDictionary setObject:@(_keySize) forKey:@"keySize"];
         }
         
         // initialize vector

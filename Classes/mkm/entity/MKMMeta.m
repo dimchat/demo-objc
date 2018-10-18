@@ -44,24 +44,30 @@
 }
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
-    NSNumber *version = [dict objectForKey:@"version"];
-    id publicKey = [dict objectForKey:@"key"];
-    NSString *fingerprint = [dict objectForKey:@"fingerprint"];
-    NSString *seed = [dict objectForKey:@"seed"];
-    
-    NSUInteger ver = version.unsignedIntegerValue;
-    MKMPublicKey *PK = [MKMPublicKey keyWithKey:publicKey];
-    NSData *CT = [fingerprint base64Decode];
-    NSAssert(ver == MKMAddressDefaultVersion, @"unknown version");
-    BOOL correct = [PK verify:[seed data] signature:CT];
-    NSAssert(correct, @"fingerprint error");
-    
     if (self = [super initWithDictionary:dict]) {
+        dict = _storeDictionary;
+        
+        // get meta data
+        NSNumber *version = [dict objectForKey:@"version"];
+        NSString *seed = [dict objectForKey:@"seed"];
+        NSString *fingerprint = [dict objectForKey:@"fingerprint"];
+        id publicKey = [dict objectForKey:@"key"];
+        
+        MKMPublicKey *PK = [MKMPublicKey keyWithKey:publicKey];
+        NSData *CT = [fingerprint base64Decode];
+        NSData *data = [seed data];
+        NSUInteger ver = version.unsignedIntegerValue;
+        NSAssert(ver == MKMAddressDefaultVersion, @"unknown version");
+        
+        // check seed & fingerprint with (public) key
+        BOOL correct = [PK verify:data signature:CT];
+        NSAssert(correct, @"fingerprint error");
+        
         if (correct) {
-            self.version = ver;
-            self.seed = seed;
-            self.key = PK;
-            self.fingerprint = CT;
+            _version = ver;
+            _seed = seed;
+            _key = PK;
+            _fingerprint = CT;
         } else {
             _version = 0;
             _seed = nil;

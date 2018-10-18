@@ -39,6 +39,7 @@
             _curve = curve;
         } else {
             _curve = @"secp256r1";
+            [_storeDictionary setObject:_curve forKey:@"curve"];
         }
         NSAssert([_curve isEqualToString:@"secp256r1"], @"only secp256r1 now");
         

@@ -38,7 +38,8 @@
     const unsigned char * pbegin = (const unsigned char *)[self bytes];
     const unsigned char * pend = pbegin + [self length];
     std::string str = EncodeBase58(pbegin, pend);
-    output = [[NSString alloc] initWithCString:str.c_str() encoding:NSUTF8StringEncoding];
+    output = [[NSString alloc] initWithCString:str.c_str()
+                                      encoding:NSUTF8StringEncoding];
     
     return output;
 }
@@ -56,37 +57,37 @@
 - (NSData *)md5 {
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5([self bytes], (CC_LONG)[self length], digest);
-    return [NSData dataWithBytes:digest length:CC_MD5_DIGEST_LENGTH];
+    return [[NSData alloc] initWithBytes:digest length:CC_MD5_DIGEST_LENGTH];
 }
 
 - (NSData *)sha1 {
     unsigned char digest[CC_SHA1_DIGEST_LENGTH];
     CC_SHA1([self bytes], (CC_LONG)[self length], digest);
-    return [NSData dataWithBytes:digest length:CC_SHA1_DIGEST_LENGTH];
+    return [[NSData alloc] initWithBytes:digest length:CC_SHA1_DIGEST_LENGTH];
 }
 
 - (NSData *)sha224 {
     unsigned char digest[CC_SHA224_DIGEST_LENGTH];
     CC_SHA224([self bytes], (CC_LONG)[self length], digest);
-    return [NSData dataWithBytes:digest length:CC_SHA224_DIGEST_LENGTH];
+    return [[NSData alloc] initWithBytes:digest length:CC_SHA224_DIGEST_LENGTH];
 }
 
 - (NSData *)sha256 {
     unsigned char digest[CC_SHA256_DIGEST_LENGTH];
     CC_SHA256([self bytes], (CC_LONG)[self length], digest);
-    return [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+    return [[NSData alloc] initWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
 }
 
 - (NSData *)sha384 {
     unsigned char digest[CC_SHA384_DIGEST_LENGTH];
     CC_SHA384([self bytes], (CC_LONG)[self length], digest);
-    return [NSData dataWithBytes:digest length:CC_SHA384_DIGEST_LENGTH];
+    return [[NSData alloc] initWithBytes:digest length:CC_SHA384_DIGEST_LENGTH];
 }
 
 - (NSData *)sha512 {
     unsigned char digest[CC_SHA512_DIGEST_LENGTH];
     CC_SHA512([self bytes], (CC_LONG)[self length], digest);
-    return [NSData dataWithBytes:digest length:CC_SHA512_DIGEST_LENGTH];
+    return [[NSData alloc] initWithBytes:digest length:CC_SHA512_DIGEST_LENGTH];
 }
 
 - (NSData *)ripemd160 {
@@ -129,13 +130,13 @@
                                           [self bytes], dataLength, /* input */
                                           buffer, bufferSize, /* output */
                                           &numBytesEncrypted);
-    if (cryptStatus == kCCSuccess) {
-        //the returned NSData takes ownership of the buffer and will free it on deallocation
-        return [NSData dataWithBytesNoCopy:buffer length:numBytesEncrypted];
+    if (cryptStatus != kCCSuccess) {
+        free(buffer); //free the buffer;
+        return nil;
     }
     
-    free(buffer); //free the buffer;
-    return nil;
+    //the returned NSData takes ownership of the buffer and will free it on deallocation
+    return [[NSData alloc] initWithBytesNoCopy:buffer length:numBytesEncrypted];
 }
 
 - (NSData *)AES256DecryptWithKey:(const NSString *)key {
@@ -162,13 +163,13 @@
                                           buffer, bufferSize, /* output */
                                           &numBytesDecrypted);
     
-    if (cryptStatus == kCCSuccess) {
-        //the returned NSData takes ownership of the buffer and will free it on deallocation
-        return [NSData dataWithBytesNoCopy:buffer length:numBytesDecrypted];
+    if (cryptStatus != kCCSuccess) {
+        free(buffer); //free the buffer;
+        return nil;
     }
     
-    free(buffer); //free the buffer;
-    return nil;
+    //the returned NSData takes ownership of the buffer and will free it on deallocation
+    return [[NSData alloc] initWithBytesNoCopy:buffer length:numBytesDecrypted];
 }
 
 @end
