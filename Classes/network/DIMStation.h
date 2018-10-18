@@ -12,15 +12,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMStation : NSObject
 
+@property (readonly, strong, nonatomic) NSString *host; // Domain/IP
+@property (readonly, nonatomic) NSUInteger port;        // default: 9527
+
 @property (strong, nonatomic) DIMCertificateAuthority *CA;
 
 @property (readonly, nonatomic) NSString *name;
 @property (readonly, nonatomic) MKMPublicKey *publicKey;
 
-@property (readonly, strong, nonatomic) NSString *host; // Domain/IP
-@property (readonly, nonatomic) NSUInteger port;        // 9527
+- (instancetype)initWithHost:(const NSString *)host;
 
-- (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port;
+- (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

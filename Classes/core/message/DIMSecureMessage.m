@@ -67,6 +67,17 @@ static NSDate *number_time(const NSNumber *number) {
 
 @implementation DIMSecureMessage
 
++ (instancetype)messageWithMessage:(id)msg {
+    if ([msg isKindOfClass:[DIMSecureMessage class]]) {
+        return msg;
+    } else if ([msg isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:msg];
+    } else {
+        NSAssert(!msg, @"unexpected message: %@", msg);
+        return nil;
+    }
+}
+
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
     NSData *content = nil;

@@ -52,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSData *encryptedKey;
 @property (readonly, strong, nonatomic) DIMEncryptedKeyMap *encryptedKeys;
 
++ (instancetype)messageWithMessage:(id)msg;
+
 /**
  Secure Message for Personal
 

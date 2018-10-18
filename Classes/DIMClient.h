@@ -13,11 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMStation;
 @class DIMConnection;
 
+@protocol DIMConnector;
+
 @interface DIMClient : NSObject <DIMConnectionDelegate>
 
 @property (strong, nonatomic) DIMUser *currentUser;
 
-@property (strong, nonatomic) DIMConnection *currentConnection;
+@property (readonly, strong, nonatomic) DIMConnection *connection;
+@property (weak, nonatomic) id<DIMConnector> connector;
 
 + (instancetype)sharedInstance;
 
@@ -25,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeUser:(DIMUser *)user;
 
 - (BOOL)connect:(const DIMStation *)station;
-- (BOOL)reconnect;
 - (void)disconnect;
 
 @end
@@ -37,17 +39,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Send message (secured + certified) to target station
  
- @param message - certified message
+ @param cMsg - certified message
  @return YES on success
  */
-- (BOOL)sendMessage:(const DIMCertifiedMessage *)message;
+- (BOOL)sendMessage:(const DIMCertifiedMessage *)cMsg;
 
 /**
  Save received message (secured + certified) from target station
 
- @param message - certified message
+ @param iMsg - instant message
  */
-- (void)saveMessage:(const DIMCertifiedMessage *)message;
+- (void)recvMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 

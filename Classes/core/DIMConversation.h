@@ -16,6 +16,8 @@ enum UInt8 {
 };
 typedef MKMNetworkID DIMConversationType;
 
+@protocol DIMConversationDelegate;
+
 @interface DIMConversation : NSObject {
     
     // the latest message is in the first
@@ -27,6 +29,8 @@ typedef MKMNetworkID DIMConversationType;
 @property (readonly, strong, nonatomic) MKMID *ID;
 @property (readonly, strong, nonatomic) NSString *title;
 
+@property (weak, nonatomic) id<DIMConversationDelegate> delegate;
+
 - (instancetype)initWithEntity:(const MKMEntity *)entity
 NS_DESIGNATED_INITIALIZER;
 
@@ -37,6 +41,49 @@ NS_DESIGNATED_INITIALIZER;
  @return message position in the list, -1 on error
  */
 - (NSInteger)insertInstantMessage:(const DIMInstantMessage *)iMsg;
+
+- (NSArray *)messagesWithRange:(NSRange)range;
+
+@end
+
+#pragma mark - Conversation Delegate
+
+@protocol DIMConversationDelegate <NSObject>
+
+/**
+ Save new message
+ 
+ @param chatroom - conversation
+ @param iMsg - instant message
+ */
+- (void)conversation:(const DIMConversation *)chatroom
+   didReceiveMessage:(const DIMInstantMessage *)iMsg;
+
+/**
+ Get messages
+ 
+ @param chatroom - conversation
+ @param time - looking back from that time (excludes)
+ @param count - max count (default is 10)
+ @return messages
+ */
+- (NSArray *)conversation:(const DIMConversation *)chatroom
+           messagesBefore:(const NSDate *)time
+                 maxCount:(NSUInteger)count;
+
+@end
+
+#pragma mark - Conversations Pool
+
+@interface DIMConversationManager : NSObject
+
+@property (weak, nonatomic) id<DIMConversationDelegate> delegate;
+
++ (instancetype)sharedInstance;
+
+- (DIMConversation *)conversationWithID:(const MKMID *)ID;
+
+- (void)setConversation:(DIMConversation *)chatroom;
 
 @end
 

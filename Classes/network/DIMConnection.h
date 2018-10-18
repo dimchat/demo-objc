@@ -10,12 +10,44 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMClient;
 @class DIMStation;
 @class DIMConnection;
 
+@protocol DIMConnector <NSObject>
+
+/**
+ Connection to station, from client
+
+ @param srv - station
+ @param cli - client
+ @return connection that connected to the server
+ */
+- (DIMConnection *)connectToStation:(const DIMStation *)srv
+                             client:(const DIMClient *)cli;
+
+/**
+ Disconnect
+
+ @param conn - connection
+ */
+- (void)closeConnection:(const DIMConnection *)conn;
+
+@end
+
 @protocol DIMConnectionDelegate <NSObject>
 
+/**
+ Callback when receive data
+
+ @param conn - connection
+ @param data - received data
+ */
 - (void)connection:(const DIMConnection *)conn didReceiveData:(NSData *)data;
+
+@optional
+- (void)connection:(const DIMConnection *)conn didSendData:(NSData *)data;
+- (void)connection:(const DIMConnection *)conn didFailWithError:(NSError *)error;
 
 @end
 
@@ -28,18 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithTargetStation:(const DIMStation *)station
 NS_DESIGNATED_INITIALIZER;
-
-/**
- Connect to target station
-
- @return YES on success
- */
-- (BOOL)connect;
-
-/**
- Disconnect target station
- */
-- (void)disconnect;
 
 /**
  Send data to target station

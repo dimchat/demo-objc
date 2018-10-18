@@ -30,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) DIMEnvelope *envelope;
 @property (readonly, strong, nonatomic) DIMMessageContent *content;
 
++ (instancetype)messageWithMessage:(id)msg;
+
 - (instancetype)initWithContent:(const DIMMessageContent *)content
                          sender:(const MKMID *)from
                        receiver:(const MKMID *)to

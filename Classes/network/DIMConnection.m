@@ -36,22 +36,9 @@
     return self;
 }
 
-- (BOOL)connect {
-    NSString *IP = _target.host;
-    NSUInteger port = _target.port;
-    NSLog(@"connecting to %@:%lu ...", IP, port);
-    
-    // TODO: connect to target station
-    _connected = YES;
-    
-    return YES;
-}
-
-- (void)disconnect {
-    // TODO: disconnect the current connection
-    _connected = NO;
-    
-    NSLog(@"disconnected");
+- (BOOL)isEqual:(id)object {
+    DIMConnection *conn = (DIMConnection *)object;
+    return [conn.target isEqual:_target];
 }
 
 - (BOOL)sendData:(const NSData *)jsonData {
@@ -59,7 +46,7 @@
         NSLog(@"not connected yet");
         return NO;
     }
-    NSLog(@"sending data: %@", [jsonData jsonString]);
+    NSLog(@"sending data: %@ to station(%@)", [jsonData jsonString], _target.host);
     
     // TODO: send data to target station
     
