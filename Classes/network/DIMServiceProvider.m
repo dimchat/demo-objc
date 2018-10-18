@@ -8,6 +8,9 @@
 
 #import "NSObject+JsON.h"
 
+#import "DIMCertificateAuthority.h"
+#import "DIMStation.h"
+
 #import "DIMServiceProvider.h"
 
 @implementation DIMServiceProvider

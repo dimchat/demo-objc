@@ -6,6 +6,14 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSObject+JsON.h"
+
+#import "DIMEnvelope.h"
+#import "DIMCertifiedMessage.h"
+
+#import "DIMStation.h"
+#import "DIMConnection.h"
+
 #import "DIMClient.h"
 
 @interface DIMClient () {
@@ -38,6 +46,8 @@ static DIMClient *s_sharedInstance = nil;
     return self;
 }
 
+#pragma mark - Users
+
 - (void)setCurrentUser:(DIMUser *)currentUser {
     if (![_currentUser.ID isEqual:currentUser.ID]) {
         _currentUser = currentUser;
@@ -63,6 +73,77 @@ static DIMClient *s_sharedInstance = nil;
     if ([_currentUser isEqual:user]) {
         _currentUser = _users.firstObject;
     }
+}
+
+#pragma mark - Station Connection
+
+- (void)setCurrentConnection:(DIMConnection *)currentConnection {
+    if (![_currentConnection isEqual:currentConnection]) {
+        [_currentConnection disconnect];
+        
+        _currentConnection = currentConnection;
+    }
+}
+
+- (BOOL)connect:(const DIMStation *)station {
+    DIMConnection *conn = [[DIMConnection alloc] initWithTargetStation:station];
+    if ([conn connect]) {
+        self.currentConnection = conn;
+        return YES;
+    } else {
+        NSLog(@"connect failed");
+        return NO;
+    }
+}
+
+- (BOOL)reconnect {
+    if (_currentConnection.isConnected) {
+        NSLog(@"already connected");
+        return YES;
+    }
+    return [_currentConnection connect];
+}
+
+- (void)disconnect {
+    [_currentConnection disconnect];
+}
+
+#pragma mark - DIMConnectionDelegate
+
+- (void)connection:(const DIMConnection *)conn didReceiveData:(NSData *)data {
+    NSLog(@"received data from %@ ...", conn.target.host);
+    
+    NSString *json = [data jsonString];
+    
+    DIMCertifiedMessage *cMsg;
+    cMsg = [[DIMCertifiedMessage alloc] initWithJSONString:json];
+    
+    [self saveMessage:cMsg];
+}
+
+@end
+
+#pragma mark - Message
+
+@implementation DIMClient (Message)
+
+- (BOOL)sendMessage:(const DIMCertifiedMessage *)message {
+    if (_currentConnection.isConnected != YES) {
+        NSLog(@"connect first");
+        return NO;
+    }
+    MKMID *sender = message.envelope.sender;
+    NSAssert(sender.address.network == MKMNetwork_Main, @"error");
+    NSAssert(message.signature, @"signature cannot be empty");
+    
+    NSData *jsonData = [message jsonData];
+    return [_currentConnection sendData:jsonData];
+}
+
+- (void)saveMessage:(const DIMCertifiedMessage *)message {
+    NSLog(@"saving message: %@", message);
+    
+    // TODO: process message
 }
 
 @end

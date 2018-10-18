@@ -6,10 +6,12 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMCertificateAuthority.h"
-#import "DIMStation.h"
+#import "DIMCore.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class DIMCertificateAuthority;
+@class DIMStation;
 
 @interface DIMServiceProvider : NSObject {
     

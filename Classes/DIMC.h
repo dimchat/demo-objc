@@ -14,8 +14,9 @@
 
 // Network
 #import "DIMCertificateAuthority.h"
-#import "DIMStation.h"
 #import "DIMServiceProvider.h"
+#import "DIMStation.h"
+#import "DIMConnection.h"
 
 //-
 #import "DIMBarrack.h"
