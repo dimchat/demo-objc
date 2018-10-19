@@ -48,24 +48,19 @@ static MKMFacebook *s_sharedInstance = nil;
     MKMProfile *profile = [_profileTable objectForKey:ID.address];
     if (!profile && _delegate) {
         profile = [_delegate queryProfileWithID:ID];
-        if (profile) {
+        if ([profile matchID:ID]) {
             [_profileTable setObject:profile forKey:ID.address];
         }
     }
     return profile;
 }
 
-- (BOOL)setProfile:(MKMProfile *)profile
+- (void)setProfile:(MKMProfile *)profile
              forID:(const MKMID *)ID {
     NSAssert(profile, @"profile cannot be empty");
     NSAssert([ID isValid], @"Invalid ID");
-    
     if ([profile matchID:ID]) {
         [_profileTable setObject:profile forKey:ID.address];
-        return YES;
-    } else {
-        NSAssert(false, @"profile signature error");
-        return NO;
     }
 }
 

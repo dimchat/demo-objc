@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#pragma mark history.events.operation
+
 /**
  *  history.events.operation
  *
@@ -40,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id)extraInfoForKey:(NSString *)key;
 
 @end
+
+#pragma mark - history.events
 
 /**
  *  history.events

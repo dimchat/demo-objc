@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMID;
 @class MKMHistoryEvent;
 
+#pragma mark history.records
+
 /**
  *  history record item
  *
@@ -89,9 +91,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - history
+
 @interface MKMHistory : MKMArray
 
 + (instancetype)historyWithHistory:(id)history;
+
+/**
+ Verify signature of this history with entity ID
+ 
+ @param ID - User/Contact/Group ID
+ @return YES/NO
+ */
+- (BOOL)matchID:(const MKMID *)ID;
 
 @end
 

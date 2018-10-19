@@ -17,8 +17,14 @@
 #import "MKMID.h"
 #import "MKMMeta.h"
 #import "MKMHistoryEvent.h"
+#import "MKMEntity.h"
+#import "MKMEntity+History.h"
+
+#import "MKMAccount.h"
+#import "MKMGroup.h"
 
 #import "MKMEntityManager.h"
+#import "MKMConsensus.h"
 
 #import "MKMHistory.h"
 
@@ -54,6 +60,8 @@ static NSMutableArray *copy_events(const NSArray *events) {
     
     return mArray;
 }
+
+#pragma mark - history.records
 
 @interface MKMHistoryRecord ()
 
@@ -262,6 +270,8 @@ static NSMutableArray *copy_events(const NSArray *events) {
 
 @end
 
+#pragma mark - history
+
 @interface MKMHistory ()
 
 @end
@@ -279,6 +289,25 @@ static NSMutableArray *copy_events(const NSArray *events) {
         NSAssert(!history, @"unexpected history: %@", history);
         return nil;
     }
+}
+
+- (BOOL)matchID:(const MKMID *)ID {
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
+    
+    // create a sandbox entity
+    MKMEntity *sandbox = nil;
+    MKMMeta *meta = [eman metaForID:ID];
+    if (ID.address.network == MKMNetwork_Main) {
+        sandbox = [[MKMAccount alloc] initWithID:ID meta:meta];
+    } else if (ID.address.network == MKMNetwork_Group) {
+        sandbox = [[MKMGroup alloc] initWithID:ID meta:meta];
+    }
+    NSAssert(sandbox, @"entity info error");
+    
+    sandbox.historyDelegate = delegate;
+    NSUInteger count = [sandbox runHistory:self];
+    return count == _storeArray.count;
 }
 
 @end

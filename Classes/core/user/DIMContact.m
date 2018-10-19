@@ -22,13 +22,14 @@
 
 + (instancetype)contactWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
-    MKMConsensus *cons = [MKMConsensus sharedInstance];
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
+    
     MKMMeta *meta = [eman metaForID:ID];
     MKMHistory *history = [eman historyForID:ID];
     DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
     if (contact) {
-        contact.historyDelegate = cons;
+        contact.historyDelegate = delegate;
         NSUInteger count = [contact runHistory:history];
         NSAssert(count == history.count, @"history error");
     }

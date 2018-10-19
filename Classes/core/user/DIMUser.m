@@ -24,13 +24,14 @@
 
 + (instancetype)userWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
-    MKMConsensus *cons = [MKMConsensus sharedInstance];
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
+    
     MKMMeta *meta = [eman metaForID:ID];
     MKMHistory *history = [eman historyForID:ID];
     DIMUser *user = [[DIMUser alloc] initWithID:ID meta:meta];
     if (user) {
-        user.historyDelegate = cons;
+        user.historyDelegate = delegate;
         NSUInteger count = [user runHistory:history];
         NSAssert(count == history.count, @"history error");
     }

@@ -22,13 +22,14 @@
 
 + (instancetype)groupWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Group, @"address error");
-    MKMConsensus *cons = [MKMConsensus sharedInstance];
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
+    
     MKMMeta *meta = [eman metaForID:ID];
     MKMHistory *history = [eman historyForID:ID];
     DIMGroup *group = [[DIMGroup alloc] initWithID:ID meta:meta];
     if (group) {
-        group.historyDelegate = cons;
+        group.historyDelegate = delegate;
         NSUInteger count = [group runHistory:history];
         NSAssert(count == history.count, @"history error");
     }

@@ -7,6 +7,7 @@
 //
 
 #import "MKMID.h"
+#import "MKMAddress.h"
 
 #import "MKMProfile.h"
 
@@ -43,7 +44,9 @@
     return self;
 }
 
-- (BOOL)matchID:(const MKMID *)ID; {
+- (BOOL)matchID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    
     // TODO: check the signature of profile
 //    NSData *data = nil;
 //    NSData *signature = nil;

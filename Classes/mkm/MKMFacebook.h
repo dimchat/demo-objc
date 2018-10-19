@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 - (MKMProfile *)profileWithID:(const MKMID *)ID;
-- (BOOL)setProfile:(MKMProfile *)profile forID:(const MKMID *)ID;
+- (void)setProfile:(MKMProfile *)profile forID:(const MKMID *)ID;
 
 @end
 

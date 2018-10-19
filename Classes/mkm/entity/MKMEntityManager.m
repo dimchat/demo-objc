@@ -52,8 +52,10 @@ static MKMEntityManager *s_sharedInstance = nil;
     MKMMeta *meta = [_metaTable objectForKey:ID.address];
     if (!meta && _delegate) {
         meta = [_delegate queryMetaWithID:ID];
-        if (meta) {
+        if ([meta matchID:ID]) {
             [_metaTable setObject:meta forKey:ID.address];
+        } else {
+            meta = nil;
         }
     }
     return meta;
@@ -72,8 +74,10 @@ static MKMEntityManager *s_sharedInstance = nil;
     MKMHistory *history = [_historyTable objectForKey:ID.address];
     if (!history && _delegate) {
         history = [_delegate queryHistoryWithID:ID];
-        if (history) {
+        if ([history matchID:ID]) {
             [_historyTable setObject:history forKey:ID.address];
+        } else {
+            history = nil;
         }
     }
     return history;
@@ -81,7 +85,9 @@ static MKMEntityManager *s_sharedInstance = nil;
 
 - (void)setHistory:(MKMHistory *)history forID:(const MKMID *)ID {
     NSAssert([ID isValid], @"Invalid ID");
-    if (history) {
+    MKMHistory *old = [_historyTable objectForKey:ID.address];
+    if (history.count > old.count && [history matchID:ID]) {
+        // only update longest history
         [_historyTable setObject:history forKey:ID.address];
     }
 }
