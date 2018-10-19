@@ -91,6 +91,11 @@ static DIMClient *s_sharedInstance = nil;
             NSAssert(_connector, @"connector cannot be empty");
             [_connector closeConnection:_connection];
         }
+        
+        // check connection delegate
+        if (connection.delegate == nil) {
+            connection.delegate = self;
+        }
         // replace with the new connection
         _connection = connection;
     }

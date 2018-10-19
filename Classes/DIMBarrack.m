@@ -275,50 +275,83 @@ static DIMBarrack *s_sharedInstance = nil;
 
 - (void)postHistory:(const MKMHistory *)history
               forID:(const MKMID *)ID {
-    // 1. save history in local documents
-    if (history) {
+    // 1. check and save history in local documents
+    if ([history matchID:ID]) {
         NSString *path = full_filepath(ID, @"history.plist");
         [history writeToFile:path atomically:YES];
+    } else {
+        NSAssert(false, @"history error: %@", history);
+        return;
     }
     
-    // TODO: post onto network
+    // TODO: 2. post history onto network
     NSLog(@"post history of %@: %@", ID, history);
 }
 
 - (void)postHistoryRecord:(const MKMHistoryRecord *)record
                     forID:(const MKMID *)ID {
-    // TODO: save history record in local documents
+    // 1. get record(s) from local history
+    MKMHistory *history = nil;
+    NSString *path = full_filepath(ID, @"history.plist");
+    if (file_exists(path)) {
+        NSArray *array;
+        array = [NSArray arrayWithContentsOfFile:path];
+        history = [[MKMHistory alloc] initWithArray:array];
+    } else {
+        history = [[MKMHistory alloc] init];
+    }
     
-    // TODO: post onto network
+    // 1.1. add new record
+    [history addObject:record];
+    
+    // 2. check and save new history in local documents
+    if ([history matchID:ID]) {
+        [history writeToFile:path atomically:YES];
+    } else {
+        NSAssert(false, @"history record error: %@", record);
+        return;
+    }
+    
+    // TODO: 3. post history record onto network
     NSLog(@"post history record of %@: %@", ID, record);
 }
 
 - (void)postMeta:(const MKMMeta *)meta
            forID:(const MKMID *)ID {
-    // 1. save meta in local documents
+    // 1. check and save meta in local documents
     if ([meta matchID:ID]) {
         NSString *path = full_filepath(ID, @"meta.plist");
         [meta writeToFile:path atomically:YES];
+    } else {
+        NSAssert(false, @"meta error: %@", meta);
+        return;
     }
     
-    // TODO: post onto network
+    // TODO: 2. post meta onto network
     NSLog(@"post meta of %@: %@", ID, meta);
 }
 
 - (void)postMeta:(const MKMMeta *)meta
          history:(const MKMHistory *)history
            forID:(const MKMID *)ID {
-    // 1. save meta & history in local documents
+    // 1.1. check and save meta in local documents
     if ([meta matchID:ID]) {
         NSString *path = full_filepath(ID, @"meta.plist");
         [meta writeToFile:path atomically:YES];
+    } else {
+        NSAssert(false, @"meta error: %@", meta);
+        return;
     }
-    if (history) {
+    // 1.2. check and save history in local documents
+    if ([history matchID:ID]) {
         NSString *path = full_filepath(ID, @"history.plist");
         [history writeToFile:path atomically:YES];
+    } else {
+        NSAssert(false, @"history error: %@", history);
+        return;
     }
     
-    // TODO: post onto network
+    // TODO: 2. post meta & history onto network
     NSLog(@"post meta of %@: %@", ID, meta);
     NSLog(@"and history of %@: %@", ID, history);
 }
@@ -408,6 +441,9 @@ static DIMBarrack *s_sharedInstance = nil;
     if ([profile matchID:ID]) {
         NSString *path = full_filepath(ID, @"profile.plist");
         [profile writeToFile:path atomically:YES];
+    } else {
+        NSAssert(false, @"profile error: %@", profile);
+        return;
     }
     
     // TODO: post onto network
