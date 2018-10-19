@@ -78,7 +78,13 @@ static void load_immortal_file(NSString *filename) {
     assert(SK.algorithm);
     
     // profile
-    MKMProfile *profile = [dict objectForKey:@"profile"];
+    id profile = [dict objectForKey:@"profile"];
+    if (profile) {
+        NSMutableDictionary *mDict = [[NSMutableDictionary alloc] init];
+        [mDict setObject:ID forKey:@"ID"];
+        [mDict addEntriesFromDictionary:profile];
+        profile = mDict;
+    }
     profile = [MKMProfile profileWithProfile:profile];
     assert(profile);
     
