@@ -23,6 +23,8 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 @interface MKMProfile : MKMDictionary
 
+@property (readonly, strong, nonatomic) MKMID *ID;
+
 /**
  Profile fields that anyone can read
  */
@@ -40,7 +42,7 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 + (instancetype)profileWithProfile:(id)profile;
 
-- (instancetype)init;
+- (instancetype)initWithID:(const MKMID *)ID;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 /**

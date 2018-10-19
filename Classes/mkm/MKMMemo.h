@@ -10,7 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MKMID;
+
 @interface MKMMemo : MKMDictionary
+
+@property (readonly, strong, nonatomic) MKMID *ID;
+
+- (instancetype)initWithID:(const MKMID *)ID;
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 @end
 

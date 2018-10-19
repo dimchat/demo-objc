@@ -8,8 +8,17 @@
 
 #import "MKMID.h"
 #import "MKMAddress.h"
+#import "MKMMeta.h"
+
+#import "MKMEntityManager.h"
 
 #import "MKMProfile.h"
+
+@interface MKMProfile ()
+
+@property (strong, nonatomic) MKMID *ID;
+
+@end
 
 @implementation MKMProfile
 
@@ -26,8 +35,14 @@
     }
 }
 
-- (instancetype)init {
-    if (self = [super init]) {
+- (instancetype)initWithID:(const MKMID *)ID {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    if (self = [self init]) {
+        // account ID
+        if (ID.isValid) {
+            _ID = [ID copy];
+        }
+        
         _publicFields = [[NSMutableArray alloc] init];
         _protectedFields = [[NSMutableArray alloc] init];
         _privateFields = [[NSMutableArray alloc] init];
@@ -37,6 +52,14 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
+        dict = _storeDictionary;
+        // account ID
+        MKMID *ID = [dict objectForKey:@"ID"];
+        ID = [MKMID IDWithID:ID];
+        if (ID.isValid) {
+            _ID = ID;
+        }
+        
         _publicFields = [[NSMutableArray alloc] init];
         _protectedFields = [[NSMutableArray alloc] init];
         _privateFields = [[NSMutableArray alloc] init];
@@ -46,11 +69,16 @@
 
 - (BOOL)matchID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    
+    if (![ID isEqual:_ID]) {
+        return NO;
+    }
+//    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+//    MKMMeta *meta = [eman metaForID:ID];
+//    MKMPublicKey *PK = meta.key;
+
     // TODO: check the signature of profile
 //    NSData *data = nil;
 //    NSData *signature = nil;
-//    MKMPublicKey *PK = nil;
     return YES;//[PK verify:data signature:signature];
 }
 
