@@ -2,10 +2,10 @@
 
 ## Network connections:
 
-* TCP Connection
+* Your Connection
 
 ```
-@interface TCPConnection : DIMConnection
+@interface MyConnection : DIMConnection
 
 // send message data (JsON) via the connected connection
 - (BOOL)sendData:(const NSData *)jsonData;
@@ -13,16 +13,12 @@
 @end
 ```
 
-* TCP Client
+* Your TCP Connector
 
 ```
 #import "DIMC.h"
 
-@interface TCPClient : NSObject <DIMConnector>
-
-+ (instancetype)sharedInstance;
-
-#pragma mark - DIMConnector
+@interface MyTCPConnector : NSObject <DIMConnector>
 
 // connect to a server
 - (DIMConnection *)connectToStation:(const DIMStation *)srv client:(const DIMClient *)cli;
@@ -36,11 +32,14 @@
 * Samples
 
 ```
-// create TCP connector
-DIMClient *client = [DINClient sharedInstance];
-client.connector = [TCPClient sharedInstance];
+// create your TCP connector
+_myConnector = [[MyTCPConnector alloc] init];
 
-// connect to a station
+// set the connector to DIM client
+DIMClient *client = [DINClient sharedInstance];
+client.connector = _myConnector;
+
+// connect the client to a station
 DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
 [client connect:server];
 
@@ -51,22 +50,33 @@ DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
 * Samples
 
 ```
-// generate RSA keys
-MKMPrivateKey *SK = [[MKMPrivateKey alloc] initWithAlgorithm:ACAlgorithmRSA];
+// generate asymmetric keys
+MKMPrivateKey *SK = [[MKMPrivateKey alloc] init];
 MKMPublicKey *PK = SK.publicKey;
 
 // register user
 DIMUser *moky = [DIMUser registerWithName:@"moky" publicKey:PK privateKey:SK];
-// set current user for the DIM client
-DIMClient *client = [DINClient sharedInstance];
-[client setCurrentUser:moky];
+NSLog(@"my new ID: %@", moky.ID);
 
+// set current user for the DIM client
+[[DINClient sharedInstance] setCurrentUser:moky];
+```
+```
+// load user
+NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"; // from your db
+MKMID *ID = [[MKMID alloc] initWithString:str];
+DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
+
+// set current user for the DIM client
+[[DINClient sharedInstance] setCurrentUser:moky];
+```
+```
 // get contacts from barrack
 MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
 MKMID *ID2 = [[MKMID alloc] initWithString:MKM_MONKEY_KING_ID];
-DIMBarrack *barrack = [DIMBarrack sharedInstance];
-DIMContact *hulk = [barrack contactForID:ID1];
-DIMContact *moki = [barrack contactForID:ID2];
+DIMContact *hulk = [[DIMBarrack sharedInstance] contactForID:ID1];
+DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
+
 // add contacts to user
 [moky addContact:hulk];
 [moky addContact:moki];
@@ -92,7 +102,7 @@ DIMContact *moki = [barrack contactForID:ID2];
 @end
 ```
 
-* Samples - Send
+* Samples: send messate
 
 ```
 // get message content
@@ -109,11 +119,12 @@ DIMConnection *connection = client.currentConnection
 [connection sendData:[cMsg jsonData]];
 ```
 
-* Samples - Receive
+* Samples: receive message
 
 ```
 DIMConversationManager *chatrooms = [DIMConversationManager sharedInstance];
 chatrooms.delegate = [ConversationProcessor sharedInstance];
+
 // TODO: save the received message by the conversation processer
 ```
 
