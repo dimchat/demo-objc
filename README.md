@@ -5,7 +5,7 @@
 * Your Connection
 
 ```
-@interface MyConnection : DIMConnection
+@interface Connection : DIMConnection
 
 // send message data (JsON) via the connected connection
 - (BOOL)sendData:(const NSData *)jsonData;
@@ -18,7 +18,7 @@
 ```
 #import "DIMC.h"
 
-@interface MyTCPConnector : NSObject <DIMConnector>
+@interface TCPConnector : NSObject <DIMConnector>
 
 // connect to a server
 - (DIMConnection *)connectToStation:(const DIMStation *)srv client:(const DIMClient *)cli;
@@ -33,7 +33,7 @@
 
 ```
 // create your TCP connector
-_myConnector = [[MyTCPConnector alloc] init];
+_myConnector = [[TCPConnector alloc] init];
 
 // set the connector to DIM client
 DIMClient *client = [DINClient sharedInstance];
@@ -84,30 +84,28 @@ DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
 
 ## Instant messages:
 
-* Conversation Delegate
+* Your Conversation Delegate
 
 ```
 #import "DIMC.h"
 
-@interface ConversationProcessor : NSObject <DIMConversationDelegate>
+@interface MessageProcessor : NSObject <DIMConversationDelegate>
 
-+ (instancetype)sharedInstance;
-
-// save new message
+// save new message to local db
 - (void)conversation:(const DIMConversation *)chatroom didReceiveMessage:(const DIMInstantMessage *)iMsg;
 
-// load messages
+// get messages from local db
 - (NSArray *)conversation:(const DIMConversation *)chatroom messagesBefore:(const NSDate *)time maxCount:(NSUInteger)count;
 
 @end
 ```
 
-* Samples: send messate
+* Sample: send out message
 
 ```
 // get message content
 NSString *text = @"Hey boy!"
-DIMMessageContent *content = [[DIMMessageContent alloc] initWithText];
+DIMMessageContent *content = [[DIMMessageContent alloc] initWithText:text];
 
 // encrypt and sign the message content by transceiver
 DIMTransceiver *trans = [[DIMTransceiver alloc] init];
@@ -119,11 +117,14 @@ DIMConnection *connection = client.currentConnection
 [connection sendData:[cMsg jsonData]];
 ```
 
-* Samples: receive message
+* Sample: receive message
 
 ```
-DIMConversationManager *chatrooms = [DIMConversationManager sharedInstance];
-chatrooms.delegate = [ConversationProcessor sharedInstance];
+// create your message processor
+_myProcessor = [[MessageProcessor alloc] init];
+
+// set to the conversation manager
+[DIMConversationManager sharedInstance].delegate = _myProcessor;
 
 // TODO: save the received message by the conversation processer
 ```
