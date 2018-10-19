@@ -115,7 +115,6 @@ static void load_immortal_file(NSString *filename) {
     NSMutableDictionary<const MKMAddress *, DIMContact *> *_contactTable;
     
     NSMutableDictionary<const MKMAddress *, DIMGroup *> *_groupTable;
-    NSMutableDictionary<const MKMAddress *, DIMMoments *> *_momentsTable;
 }
 
 @end
@@ -142,7 +141,6 @@ static DIMBarrack *s_sharedInstance = nil;
         _contactTable = [[NSMutableDictionary alloc] init];
         
         _groupTable = [[NSMutableDictionary alloc] init];
-        _momentsTable = [[NSMutableDictionary alloc] init];
         
 #if DEBUG
         // Immortals
@@ -175,24 +173,10 @@ static DIMBarrack *s_sharedInstance = nil;
 
 - (void)setUser:(DIMUser *)user {
     [_userTable setObject:user forKey:user.ID.address];
-    
-    // check moments for ID, maybe created by other contact
-    DIMMoments *moments = [_momentsTable objectForKey:user.ID.address];
-    if (!moments) {
-        // create moments for this user
-        moments = [DIMMoments momentsWithID:user.ID];
-        [_momentsTable setObject:moments forKey:user.ID.address];
-        [_momentsTable setObject:moments forKey:moments.ID.address];
-    }
 }
 
 - (void)removeUser:(const DIMUser *)user {
     [_userTable removeObjectForKey:user.ID.address];
-    
-    // remove moments of this user
-    MKMID *ID = user.moments;
-    [_momentsTable removeObjectForKey:ID.address];
-    [_momentsTable removeObjectForKey:user.ID.address];
 }
 
 #pragma mark Contact
@@ -214,24 +198,10 @@ static DIMBarrack *s_sharedInstance = nil;
 
 - (void)setContact:(DIMContact *)contact {
     [_contactTable setObject:contact forKey:contact.ID.address];
-    
-    // check moments for ID, maybe created by other user
-    DIMMoments *moments = [_momentsTable objectForKey:contact.ID.address];
-    if (!moments) {
-        // create moments for this contact
-        moments = [DIMMoments momentsWithID:contact.ID];
-        [_momentsTable setObject:moments forKey:contact.ID.address];
-        [_momentsTable setObject:moments forKey:moments.ID.address];
-    }
 }
 
 - (void)removeContact:(const DIMContact *)contact {
     [_contactTable removeObjectForKey:contact.ID.address];
-    
-    // remove moments of this contact
-    MKMID *ID = contact.moments;
-    [_momentsTable removeObjectForKey:ID.address];
-    [_momentsTable removeObjectForKey:contact.ID.address];
 }
 
 #pragma mark Group
@@ -253,23 +223,6 @@ static DIMBarrack *s_sharedInstance = nil;
 - (void)removeGroup:(const DIMGroup *)group {
     [_groupTable removeObjectForKey:group.ID.address];
 }
-
-#pragma mark Moments
-
-- (DIMMoments *)momentsForID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"must be account");
-    DIMMoments *moments = [_momentsTable objectForKey:ID.address];
-    NSAssert(moments, @"set user/contact first");
-    return moments;
-}
-
-//- (void)setMoments:(DIMMoments *)moments {
-//    [_momentsTable setObject:moments forKey:moments.ID];
-//}
-//
-//- (void)removeMoments:(const DIMMoments *)moments {
-//    [_momentsTable removeObjectForKey:moments.ID];
-//}
 
 #pragma mark - MKMEntityDelegate
 

@@ -35,11 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setGroup:(DIMGroup *)group;
 - (void)removeGroup:(const DIMGroup *)group;
 
-// moments, only set by user/contact
-- (DIMMoments *)momentsForID:(const MKMID *)ID; // won't create instance here
-//- (void)setMoments:(DIMMoments *)moments;
-//- (void)removeMoments:(const DIMMoments *)moments;
-
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1,6 +1,6 @@
 # Decentralized Instant Messaging Client (Objective-C)
 
-## Network connections:
+## Network connection:
 
 * Your Connection
 
@@ -13,7 +13,7 @@
 @end
 ```
 
-* Your TCP Connector
+* Your Connector
 
 ```
 #import "DIMC.h"

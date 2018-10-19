@@ -12,12 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define MKMAddressDefaultVersion 0x01
 
-typedef NS_ENUM(UInt8, MKMNetworkID) {
+NS_ENUM(UInt8) {
     // Network_BitCoin = 0x00,
     MKMNetwork_Main    = 0x08,  // 0000 1000
     MKMNetwork_Group   = 0x10,  // 0001 0000
-    MKMNetwork_Moments = 0x20,  // 0010 0000
 };
+typedef UInt8 MKMNetworkID;
 
 /**
  *  Address like BitCoin

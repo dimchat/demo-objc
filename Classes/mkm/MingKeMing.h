@@ -50,7 +50,6 @@
 // group
 #import "MKMSocialEntity.h"
 #import "MKMGroup.h"
-#import "MKMMoments.h"
 
 // user
 #import "MKMAccount.h"

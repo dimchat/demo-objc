@@ -133,12 +133,6 @@ static UInt32 user_number(const NSData *cc) {
         // address like BTC
         const char *bytes = [addr bytes];
         UInt8 network = bytes[0];
-        if (network != MKMNetwork_Main &&
-            network != MKMNetwork_Group &&
-            network != MKMNetwork_Moments) {
-            // network id error
-            return NO;
-        }
         
         NSData *prefix = [addr subdataWithRange:NSMakeRange(0, len-4)];
         NSData *suffix = [addr subdataWithRange:NSMakeRange(len-4, 4)];

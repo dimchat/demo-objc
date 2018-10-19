@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-enum UInt8 {
+NS_ENUM(UInt8) {
     DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000
     DIMConversationGroup    = MKMNetwork_Group, // 0001 0000
 };
