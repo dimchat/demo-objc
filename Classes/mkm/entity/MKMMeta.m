@@ -147,12 +147,12 @@
     return [address isEqualToString:addr];
 }
 
-- (MKMID *)buildIDWithNetworkID:(MKMNetworkID)type {
+- (MKMID *)buildIDWithNetworkID:(MKMNetworkType)type {
     MKMAddress *addr = [self buildAddressWithNetworkID:type];
     return [[MKMID alloc] initWithName:_seed address:addr];
 }
 
-- (MKMAddress *)buildAddressWithNetworkID:(MKMNetworkID)type {
+- (MKMAddress *)buildAddressWithNetworkID:(MKMNetworkType)type {
     return [[MKMAddress alloc] initWithFingerprint:_fingerprint
                                            network:type
                                            version:_version];

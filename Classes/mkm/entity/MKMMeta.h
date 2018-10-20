@@ -94,8 +94,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)matchID:(const MKMID *)ID;
 - (BOOL)matchAddress:(const MKMAddress *)address;
 
-- (MKMID *)buildIDWithNetworkID:(MKMNetworkID)type;
-- (MKMAddress *)buildAddressWithNetworkID:(MKMNetworkID)type;
+- (MKMID *)buildIDWithNetworkID:(MKMNetworkType)type;
+- (MKMAddress *)buildAddressWithNetworkID:(MKMNetworkType)type;
 
 @end
 

@@ -43,7 +43,7 @@ static NSData * btc_checkcode(const NSData *data) {
  @param type - Network ID
  @return address
  */
-static NSString *btc_address(const NSData * CT, MKMNetworkID type) {
+static NSString *btc_address(const NSData * CT, MKMNetworkType type) {
     // 1. hash = ripemd160(sha256(CT))
     NSData *hash = btc_hash(CT);
     // 2. _h = network + hash
@@ -72,7 +72,7 @@ static UInt32 user_number(const NSData *cc) {
 
 @interface MKMAddress ()
 
-@property (nonatomic) MKMNetworkID network;
+@property (nonatomic) MKMNetworkType network;
 @property (nonatomic) UInt32 code;
 
 @property (nonatomic, getter=isValid) BOOL valid;
@@ -100,7 +100,7 @@ static UInt32 user_number(const NSData *cc) {
 }
 
 - (instancetype)initWithFingerprint:(const NSData *)CT
-                            network:(MKMNetworkID)type
+                            network:(MKMNetworkType)type
                             version:(NSUInteger)metaVersion {
     NSAssert(metaVersion == MKMAddressDefaultVersion, @"version error");
     NSString *addr = nil;

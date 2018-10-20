@@ -12,6 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMConsensus : NSObject <MKMEntityHistoryDelegate>
 
+@property (weak, nonatomic) id<MKMEntityHistoryDelegate> accountHistoryDelegate;
+@property (weak, nonatomic) id<MKMEntityHistoryDelegate> groupHistoryDelegate;
+
 + (instancetype)sharedInstance;
 
 @end

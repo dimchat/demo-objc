@@ -181,7 +181,7 @@ static DIMBarrack *s_sharedInstance = nil;
     [_userTable setObject:user forKey:user.ID.address];
 }
 
-- (void)removeUser:(const DIMUser *)user {
+- (void)removeUser:(DIMUser *)user {
     [_userTable removeObjectForKey:user.ID.address];
 }
 
@@ -206,7 +206,7 @@ static DIMBarrack *s_sharedInstance = nil;
     [_contactTable setObject:contact forKey:contact.ID.address];
 }
 
-- (void)removeContact:(const DIMContact *)contact {
+- (void)removeContact:(DIMContact *)contact {
     [_contactTable removeObjectForKey:contact.ID.address];
 }
 
@@ -226,7 +226,7 @@ static DIMBarrack *s_sharedInstance = nil;
     [_groupTable setObject:group forKey:group.ID.address];
 }
 
-- (void)removeGroup:(const DIMGroup *)group {
+- (void)removeGroup:(DIMGroup *)group {
     [_groupTable removeObjectForKey:group.ID.address];
 }
 

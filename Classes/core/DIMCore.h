@@ -9,6 +9,10 @@
 //// Types
 //#import "DIMDictionary.h"
 
+// Delegates
+#import "DIMConversationDataSource.h"
+#import "DIMConversationDelegate.h"
+
 // User
 #import "DIMUser.h"
 #import "DIMUser+History.h"

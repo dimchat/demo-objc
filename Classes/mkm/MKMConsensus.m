@@ -16,8 +16,8 @@
 
 @interface MKMConsensus () {
     
-    MKMAccountHistoryDelegate *_accountDelegate;
-    MKMGroupHistoryDelegate *_groupDelegate;
+    MKMAccountHistoryDelegate *_defaultAccountDelegate;
+    MKMGroupHistoryDelegate *_defaultGroupDelegate;
 }
 
 @end
@@ -40,23 +40,34 @@ static MKMConsensus *s_sharedInstance = nil;
 
 - (instancetype)init {
     if (self = [super init]) {
-        _accountDelegate = [[MKMAccountHistoryDelegate alloc] init];
-        _groupDelegate = [[MKMGroupHistoryDelegate alloc] init];
+        _defaultAccountDelegate = [[MKMAccountHistoryDelegate alloc] init];
+        _defaultGroupDelegate = [[MKMGroupHistoryDelegate alloc] init];
+        
+        _accountHistoryDelegate = nil;
+        _groupHistoryDelegate = nil;
     }
     return self;
 }
 
 #pragma mark - MKMEntityHistoryDelegate
 
-- (MKMEntityHistoryDelegate *)historyDelegateWithID:(const MKMID *)ID {
+- (id<MKMEntityHistoryDelegate>)historyDelegateWithID:(const MKMID *)ID {
     MKMEntityHistoryDelegate *delegate = nil;
     switch (ID.address.network) {
         case MKMNetwork_Main:
-            delegate = _accountDelegate;
+            if (_accountHistoryDelegate) {
+                delegate = _accountHistoryDelegate;
+            } else {
+                delegate = _defaultAccountDelegate;
+            }
             break;
             
         case MKMNetwork_Group:
-            delegate = _groupDelegate;
+            if (_groupHistoryDelegate) {
+                delegate = _groupHistoryDelegate;
+            } else {
+                delegate = _defaultGroupDelegate;
+            }
             break;
             
         default:
@@ -66,22 +77,30 @@ static MKMConsensus *s_sharedInstance = nil;
     return delegate;
 }
 
-- (BOOL)recorder:(nonnull const MKMID *)ID canWriteRecord:(nonnull const MKMHistoryRecord *)record inEntity:(nonnull const MKMEntity *)entity {
-    MKMEntityHistoryDelegate *delegate = [self historyDelegateWithID:ID];
+- (BOOL)recorder:(const MKMID *)ID
+  canWriteRecord:(const MKMHistoryRecord *)record
+        inEntity:(const MKMEntity *)entity {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    id<MKMEntityHistoryDelegate> delegate;
+    delegate = [self historyDelegateWithID:ID];
     return [delegate recorder:ID canWriteRecord:record inEntity:entity];
 }
 
-- (BOOL)commander:(nonnull const MKMID *)ID
-       canExecute:(nonnull const MKMHistoryOperation *)operation
-         inEntity:(nonnull const MKMEntity *)entity {
-    MKMEntityHistoryDelegate *delegate = [self historyDelegateWithID:ID];
+- (BOOL)commander:(const MKMID *)ID
+       canExecute:(const MKMHistoryOperation *)operation
+         inEntity:(const MKMEntity *)entity {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    id<MKMEntityHistoryDelegate> delegate;
+    delegate = [self historyDelegateWithID:ID];
     return [delegate commander:ID canExecute:operation inEntity:entity];
 }
 
-- (void)commander:(nonnull const MKMID *)ID
-          execute:(nonnull const MKMHistoryOperation *)operation
-         inEntity:(nonnull const MKMEntity *)entity {
-    MKMEntityHistoryDelegate *delegate = [self historyDelegateWithID:ID];
+- (void)commander:(const MKMID *)ID
+          execute:(const MKMHistoryOperation *)operation
+         inEntity:(const MKMEntity *)entity {
+    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    id<MKMEntityHistoryDelegate> delegate;
+    delegate = [self historyDelegateWithID:ID];
     return [delegate commander:ID execute:operation inEntity:entity];
 }
 

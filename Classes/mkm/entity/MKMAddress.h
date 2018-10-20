@@ -12,12 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define MKMAddressDefaultVersion 0x01
 
-NS_ENUM(UInt8) {
+typedef NS_ENUM(UInt8, MKMNetworkID) {
     // Network_BitCoin = 0x00,
     MKMNetwork_Main    = 0x08,  // 0000 1000
     MKMNetwork_Group   = 0x10,  // 0001 0000
 };
-typedef UInt8 MKMNetworkID;
+typedef UInt8 MKMNetworkType;
 
 /**
  *  Address like BitCoin
@@ -35,7 +35,7 @@ typedef UInt8 MKMNetworkID;
  */
 @interface MKMAddress : MKMString
 
-@property (readonly, nonatomic) MKMNetworkID network; // Network ID
+@property (readonly, nonatomic) MKMNetworkType network; // Network ID
 @property (readonly, nonatomic) UInt32 code; // check code
 
 @property (readonly, nonatomic, getter=isValid) BOOL valid;
@@ -59,7 +59,7 @@ typedef UInt8 MKMNetworkID;
  @return Address object
  */
 - (instancetype)initWithFingerprint:(const NSData *)CT
-                            network:(MKMNetworkID)type
+                            network:(MKMNetworkType)type
                             version:(NSUInteger)metaVersion;
 
 @end

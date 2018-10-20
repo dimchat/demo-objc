@@ -10,80 +10,62 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_ENUM(UInt8) {
+typedef NS_ENUM(UInt8, DIMConversationID) {
     DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000
     DIMConversationGroup    = MKMNetwork_Group, // 0001 0000
 };
-typedef MKMNetworkID DIMConversationType;
+typedef UInt8 DIMConversationType;
 
+@protocol DIMConversationDataSource;
 @protocol DIMConversationDelegate;
 
-@interface DIMConversation : NSObject {
-    
-    // the latest message is in the first
-    NSMutableArray<const DIMInstantMessage *> *_messages;
-}
+@interface DIMConversation : NSObject
 
-@property (readonly, nonatomic) DIMConversationType type;
+@property (readonly, nonatomic) DIMConversationType type; // Network ID
 
 @property (readonly, strong, nonatomic) MKMID *ID;
 @property (readonly, strong, nonatomic) NSString *title;
 
+@property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;
 
 - (instancetype)initWithEntity:(const MKMEntity *)entity
 NS_DESIGNATED_INITIALIZER;
 
+#pragma mark - Read
+
 /**
- Insert an instant message into the list
+ Get message count
+
+ @return total count
+ */
+- (NSInteger)numberOfMessage;
+
+/**
+ Get message at index
+
+ @param index - start from 0, latest first
+ @return instant message
+ */
+- (DIMInstantMessage *)messageAtIndex:(NSInteger)index;
+
+#pragma mark - Write
+
+- (void)insertMessage:(DIMInstantMessage *)iMsg;
+
+/**
+ Delete the message
 
  @param iMsg - instant message
- @return message position in the list, -1 on error
  */
-- (NSInteger)insertInstantMessage:(const DIMInstantMessage *)iMsg;
-
-- (NSArray *)messagesWithRange:(NSRange)range;
-
-@end
-
-#pragma mark - Conversation Delegate
-
-@protocol DIMConversationDelegate <NSObject>
+- (void)removeMessage:(const DIMInstantMessage *)iMsg;
 
 /**
- Save new message
- 
- @param chatroom - conversation
+ Try to withdraw the message
+
  @param iMsg - instant message
  */
-- (void)conversation:(const DIMConversation *)chatroom
-   didReceiveMessage:(const DIMInstantMessage *)iMsg;
-
-/**
- Get messages
- 
- @param chatroom - conversation
- @param time - looking back from that time (excludes)
- @param count - max count (default is 10)
- @return messages
- */
-- (NSArray *)conversation:(const DIMConversation *)chatroom
-           messagesBefore:(const NSDate *)time
-                 maxCount:(NSUInteger)count;
-
-@end
-
-#pragma mark - Conversations Pool
-
-@interface DIMConversationManager : NSObject
-
-@property (weak, nonatomic) id<DIMConversationDelegate> delegate;
-
-+ (instancetype)sharedInstance;
-
-- (DIMConversation *)conversationWithID:(const MKMID *)ID;
-
-- (void)setConversation:(DIMConversation *)chatroom;
+- (void)withdrawMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 
