@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- *  Entity pool to manage Conversation instances
+ *  Conversation pool to manage chatroom instances
  *
  *      1st, get instance here to avoid create same instance,
  *      2nd, if their history was updated, we can notice them here immediately

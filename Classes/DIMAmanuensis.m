@@ -38,9 +38,21 @@ static DIMAmanuensis *s_sharedInstance = nil;
     return self;
 }
 
+- (void)setDataSource:(id<DIMConversationDataSource>)dataSource {
+    if (dataSource) {
+        // update exists chatrooms
+        DIMConversation *chatroom;
+        for (id addr in _conversations) {
+            chatroom = [_conversations objectForKey:addr];
+            if (chatroom.dataSource == nil) {
+                chatroom.dataSource = dataSource;
+            }
+        }
+    }
+    _dataSource = dataSource;
+}
+
 - (void)setDelegate:(id<DIMConversationDelegate>)delegate {
-    _delegate = delegate;
-    
     if (delegate) {
         // update exists chatrooms
         DIMConversation *chatroom;
@@ -51,6 +63,7 @@ static DIMAmanuensis *s_sharedInstance = nil;
             }
         }
     }
+    _delegate = delegate;
 }
 
 - (DIMConversation *)conversationWithID:(const MKMID *)ID {
@@ -60,9 +73,6 @@ static DIMAmanuensis *s_sharedInstance = nil;
 }
 
 - (void)setConversation:(DIMConversation *)chatroom {
-    MKMID *ID = chatroom.ID;
-    [_conversations setObject:chatroom forKey:ID.address];
-    
     // check data source
     if (chatroom.dataSource == nil) {
         chatroom.dataSource = _dataSource;
@@ -71,6 +81,8 @@ static DIMAmanuensis *s_sharedInstance = nil;
     if (chatroom.delegate == nil) {
         chatroom.delegate = _delegate;
     }
+    MKMID *ID = chatroom.ID;
+    [_conversations setObject:chatroom forKey:ID.address];
 }
 
 - (void)removeConversation:(DIMConversation *)chatroom {

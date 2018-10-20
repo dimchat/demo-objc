@@ -11,33 +11,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class DIMStation;
-@class DIMConnection;
 
-/**
- Connection delegate to process the callback
- */
-@protocol DIMConnectionDelegate <NSObject>
-
-/**
- Callback when receive data
-
- @param conn - connection
- @param data - received data
- */
-- (void)connection:(const DIMConnection *)conn didReceiveData:(NSData *)data;
-
-@optional
-- (void)connection:(const DIMConnection *)conn didSendData:(NSData *)data;
-- (void)connection:(const DIMConnection *)conn didFailWithError:(NSError *)error;
-
-@end
+@protocol DIMConnectionDelegate;
 
 /**
  Connection to process connect/send/receive...
  */
 @protocol DIMConnection <NSObject>
 
-@property (readonly, nonatomic) DIMStation *target;
+@property (readonly, strong, nonatomic) DIMStation *target;
 @property (readonly, nonatomic, getter=isConnected) BOOL connected;
 
 /**
@@ -74,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMConnection : NSObject <DIMConnection> {
     
-    __strong DIMStation * _target;
+    DIMStation * _target;
     BOOL _connected;
 }
 

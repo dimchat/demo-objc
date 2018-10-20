@@ -10,12 +10,18 @@
 
 #import "DIMStation.h"
 
+#import "DIMConnectionDelegate.h"
+
 #import "DIMConnection.h"
 
-@implementation DIMConnection
+@interface DIMConnection ()
 
-@synthesize target;
-@synthesize connected;
+@property (strong, nonatomic) DIMStation *target;
+@property (nonatomic, getter=isConnected) BOOL connected;
+
+@end
+
+@implementation DIMConnection
 
 - (instancetype)init {
     DIMStation * station = nil;

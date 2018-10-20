@@ -10,6 +10,7 @@
 //#import "DIMDictionary.h"
 
 // Delegates
+#import "DIMConnectionDelegate.h"
 #import "DIMConversationDataSource.h"
 #import "DIMConversationDelegate.h"
 
