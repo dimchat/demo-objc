@@ -1,51 +1,51 @@
 //
-//  DIMInstantMessage.m
+//  DIMSystemCommand.m
 //  DIM
 //
-//  Created by Albert Moky on 2018/9/30.
+//  Created by Albert Moky on 2018/10/20.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
 #import "DIMEnvelope.h"
-#import "DIMMessageContent.h"
+#import "DIMCommandContent.h"
 
-#import "DIMInstantMessage.h"
+#import "DIMSystemCommand.h"
 
-@interface DIMInstantMessage ()
+@interface DIMSystemCommand ()
 
-@property (strong, nonatomic) DIMMessageContent *content;
+@property (strong, nonatomic) DIMCommandContent *command;
 
 @end
 
-@implementation DIMInstantMessage
+@implementation DIMSystemCommand
 
 - (instancetype)initWithEnvelope:(const DIMEnvelope *)env {
     NSAssert(false, @"DON'T call me");
-    DIMMessageContent *content = nil;
-    self = [self initWithContent:content envelope:env];
+    DIMCommandContent *cmd = nil;
+    self = [self initWithCommand:cmd envelope:env];
     return self;
 }
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
+- (instancetype)initWithCommand:(const DIMCommandContent *)cmd
                          sender:(const MKMID *)from
                        receiver:(const MKMID *)to
                            time:(const NSDate *)time {
     DIMEnvelope *env = [[DIMEnvelope alloc] initWithSender:from
                                                   receiver:to
                                                       time:time];
-    self = [self initWithContent:content envelope:env];
+    self = [self initWithCommand:cmd envelope:env];
     return self;
 }
 
 /* designated initializer */
-- (instancetype)initWithContent:(const DIMMessageContent *)content
+- (instancetype)initWithCommand:(const DIMCommandContent *)cmd
                        envelope:(const DIMEnvelope *)env {
-    NSAssert(content, @"content cannot be empty");
+    NSAssert(cmd, @"command cannot be empty");
     NSAssert(env, @"envelope cannot be empty");
     if (self = [super initWithEnvelope:env]) {
-        // content
-        _content = [DIMMessageContent contentWithContent:content];
-        [_storeDictionary setObject:_content forKey:@"content"];
+        // command
+        _command = [DIMCommandContent commandWithCommand:cmd];
+        [_storeDictionary setObject:_command forKey:@"command"];
     }
     return self;
 }
@@ -55,9 +55,9 @@
     if (self = [super initWithDictionary:dict]) {
         dict = _storeDictionary;
         
-        // content
-        id content = [dict objectForKey:@"content"];
-        _content = [DIMMessageContent contentWithContent:content];
+        // command
+        id cmd = [dict objectForKey:@"command"];
+        _command = [DIMCommandContent commandWithCommand:cmd];
     }
     return self;
 }

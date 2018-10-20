@@ -58,8 +58,8 @@
     
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
-                                         envelope:env
-                                     encryptedKey:PW];
+                                     encryptedKey:PW
+                                         envelope:env];
 }
 
 - (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg {
@@ -83,8 +83,8 @@
     
     // 2. create secure message
     return [[DIMSecureMessage alloc] initWithData:content
-                                         envelope:env
-                                     encryptedKey:PW];
+                                     encryptedKey:PW
+                                         envelope:env];
 }
 
 #pragma mark - Encrypt/Verify functions for passphrase/signature

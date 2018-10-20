@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSDate *time;
 
++ (instancetype)envelopeWithEnvelope:(id)env;
+
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to;
 

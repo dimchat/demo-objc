@@ -10,14 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, DIMMessageType) {
+typedef NS_ENUM(UInt8, DIMMessageType) {
     DIMMessageType_Text  = 0x01, // 0000 0001
-    DIMMessageType_Quote = 0x03, // 0000 0011
+    DIMMessageType_Quote = 0x81, // 1000 0001
     
     DIMMessageType_File  = 0x10, // 0001 0000
-    DIMMessageType_Image = 0x11, // 0001 0001
-    DIMMessageType_Audio = 0x12, // 0001 0010
-    DIMMessageType_Video = 0x13, // 0001 0011
+    DIMMessageType_Image = 0x12, // 0001 0010
+    DIMMessageType_Audio = 0x14, // 0001 0100
+    DIMMessageType_Video = 0x16, // 0001 0110
     
     DIMMessageType_Page  = 0x20, // 0010 0000
 };
@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  Text message: {
  *      type: 0x01,
- *      serial: 123,
+ *      sn: 123,
  *
  *      text: "..."
  *  }
@@ -62,7 +62,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  File message: {
  *      type: 0x10,
- *      serial: 123,
+ *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
  *      data: "...",        // if (!url) base64(fileContent)
@@ -75,7 +75,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  Image message: {
  *      type: 0x11,
- *      serial: 123,
+ *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
  *      data: "...",        // if (!url) base64(image)
@@ -89,7 +89,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  Audio message: {
  *      type: 0x12,
- *      serial: 123,
+ *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
  *      data: "...",        // if (!url) base64(audio)
@@ -101,7 +101,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  Video message: {
  *      type: 0x13,
- *      serial: 123,
+ *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
  *      data: "...",        // if (!url) base64(video)
@@ -115,7 +115,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  Web Page message: {
  *      type: 0x20,
- *      serial: 123,
+ *      sn: 123,
  *
  *      url: "https://...", // Page URL
  *      icon: "...",        // base64(icon)
@@ -141,7 +141,7 @@ typedef NS_ENUM(NSUInteger, DIMMessageType) {
 /**
  *  Quote text message: {
  *      type: 0x03,
- *      serial: 123,
+ *      sn: 123,
  *
  *      text: "...",
  *      quote: 123   // referenced serial number of previous message

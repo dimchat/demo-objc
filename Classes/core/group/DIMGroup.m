@@ -58,8 +58,8 @@
     
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
-                                         envelope:env
-                                    encryptedKeys:keys];
+                                    encryptedKeys:keys
+                                         envelope:env];
 }
 
 - (DIMEncryptedKeyMap *)encryptPassphrase:(const NSData *)PW {

@@ -17,7 +17,7 @@ static NSNumber *time_number(const NSDate *time) {
         time = now();
     }
     NSTimeInterval ti = [time timeIntervalSince1970];
-    return [NSNumber numberWithDouble:ti];
+    return [[NSNumber alloc] initWithDouble:ti];
 }
 
 static NSDate *number_time(const NSNumber *number) {
@@ -39,6 +39,19 @@ static NSDate *number_time(const NSNumber *number) {
 
 @implementation DIMEnvelope
 
++ (instancetype)envelopeWithEnvelope:(id)env {
+    if ([env isKindOfClass:[DIMEnvelope class]]) {
+        return env;
+    } else if ([env isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:env];
+    } else if ([env isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:env];
+    } else {
+        NSAssert(!env, @"unexpected envelope: %@", env);
+        return nil;
+    }
+}
+
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
     MKMID *from = nil;
@@ -58,24 +71,13 @@ static NSDate *number_time(const NSNumber *number) {
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
                           time:(const NSDate *)time {
-    NSMutableDictionary *mDict;
-    mDict = [[NSMutableDictionary alloc] initWithCapacity:3];
-    // sender
-    if (from) {
-        [mDict setObject:from forKey:@"sender"];
-    }
-    // receiver
-    if (to) {
-        [mDict setObject:to forKey:@"receiver"];
-    }
-    // time
-    if (time) {
-        [mDict setObject:time_number(time) forKey:@"time"];
-    }
-    
-    if (self = [super initWithDictionary:mDict]) {
-        self.sender = [MKMID IDWithID:from];
-        self.receiver = [MKMID IDWithID:to];
+    NSDictionary *dict = @{@"sender"  :from,
+                           @"receiver":to,
+                           @"time"    :time_number(time),
+                           };
+    if (self = [super initWithDictionary:dict]) {
+        _sender = [MKMID IDWithID:from];
+        _receiver = [MKMID IDWithID:to];
         _time = [time copy];
     }
     return self;
@@ -83,15 +85,19 @@ static NSDate *number_time(const NSNumber *number) {
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
+        dict = _storeDictionary;
+        
         // sender
         NSString *from = [dict objectForKey:@"sender"];
-        self.sender = [MKMID IDWithID:from];
+        _sender = [MKMID IDWithID:from];
+        
         // receiver
         NSString *to = [dict objectForKey:@"receiver"];
-        self.receiver = [MKMID IDWithID:to];
+        _receiver = [MKMID IDWithID:to];
+        
         // time
         NSNumber *time = [dict objectForKey:@"time"];
-        self.time = number_time(time);
+        _time = number_time(time);
     }
     return self;
 }

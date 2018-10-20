@@ -20,9 +20,14 @@
 // Message
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
+#import "DIMMessage.h"
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
 #import "DIMCertifiedMessage.h"
+
+// System Command
+#import "DIMCommandContent.h"
+#import "DIMSystemCommand.h"
 
 //-
 #import "DIMTransceiver.h"

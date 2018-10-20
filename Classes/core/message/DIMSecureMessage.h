@@ -6,7 +6,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMDictionary.h"
+#import "DIMMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@class DIMEnvelope;
 @class DIMInstantMessage;
 
 /**
@@ -31,16 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
  *          sender   : "moki@xxx",
  *          receiver : "hulk@yyy",
  *          time     : 123,
- *          //-- content
- *          content  : "...",  // Base64(symmetric)
- *          //-- key/keys
+ *          //-- content data & key/keys
+ *          data     : "...",  // Base64(symmetric)
  *          key      : "...",  // Base64(asymmetric)
  *          keys     : []
  *      }
  */
-@interface DIMSecureMessage : DIMDictionary
+@interface DIMSecureMessage : DIMMessage
 
-@property (readonly, strong, nonatomic) DIMEnvelope *envelope;
 @property (readonly, strong, nonatomic) NSData *data;
 
 /**
@@ -52,8 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSData *encryptedKey;
 @property (readonly, strong, nonatomic) DIMEncryptedKeyMap *encryptedKeys;
 
-+ (instancetype)messageWithMessage:(id)msg;
-
 /**
  Secure Message for Personal
 
@@ -63,8 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
  @return SecureMessage object
  */
 - (instancetype)initWithData:(const NSData *)content
-                    envelope:(const DIMEnvelope *)env
                 encryptedKey:(const NSData *)key
+                    envelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
 /**
@@ -76,8 +71,8 @@ NS_DESIGNATED_INITIALIZER;
  @return SecureMessage object
  */
 - (instancetype)initWithData:(const NSData *)content
-                    envelope:(const DIMEnvelope *)env
                encryptedKeys:(const DIMEncryptedKeyMap *)keys
+                    envelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

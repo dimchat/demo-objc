@@ -31,7 +31,7 @@
         return [[self alloc] initWithJSONString:content];
     } else {
         NSAssert(!content, @"unexpected message content: %@", content);
-        return content;
+        return nil;
     }
 }
 
@@ -45,19 +45,21 @@
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
+        dict = _storeDictionary;
+        
         // type
         NSNumber *type = [dict objectForKey:@"type"];
         _type = [type unsignedIntegerValue];
+        
         // serial number
         NSNumber *sn = [dict objectForKey:@"sn"];
         _serialNumber = [sn unsignedIntegerValue];
+        NSAssert(_serialNumber > 0, @"sn cannot be empty");
         
         // group ID
         MKMID *ID = [dict objectForKey:@"group"];
-        if (ID) {
-            ID = [MKMID IDWithID:ID];
-            _group = [ID copy];
-        }
+        _group = [MKMID IDWithID:ID];
+        
         // quote
         NSNumber *quote = [dict objectForKey:@"quote"];
         _quoteNumber = [quote unsignedIntegerValue];
@@ -180,7 +182,7 @@
         } else {
             [_storeDictionary removeObjectForKey:@"group"];
         }
-        _group = [group copy];
+        _group = group;
     }
 }
 

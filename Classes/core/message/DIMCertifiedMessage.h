@@ -18,8 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
  *          sender   : "moki@xxx",
  *          receiver : "hulk@yyy",
  *          time     : 123,
- *          //-- content & key/keys
- *          content  : "...",  // Base64(symmetric)
+ *          //-- content data & key/keys
+ *          data     : "...",  // Base64(symmetric)
  *          key      : "...",  // Base64(asymmetric)
  *          keys     : [],
  *          //-- signature
@@ -31,15 +31,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSData *signature;
 
 - (instancetype)initWithData:(const NSData *)content
-                    envelope:(const DIMEnvelope *)env
-                encryptedKey:(const NSData *)key
                    signature:(const NSData *)CT
+                encryptedKey:(const NSData *)key
+                    envelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithData:(const NSData *)content
-                    envelope:(const DIMEnvelope *)env
-               encryptedKeys:(const DIMEncryptedKeyMap *)keys
                    signature:(const NSData *)CT
+               encryptedKeys:(const DIMEncryptedKeyMap *)keys
+                    envelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

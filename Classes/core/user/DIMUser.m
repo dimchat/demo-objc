@@ -79,17 +79,17 @@
         NSData *key = msg.encryptedKey;
         NSAssert(key, @"encrypted key not found");
         cMsg = [[DIMCertifiedMessage alloc] initWithData:content
-                                                envelope:env
+                                               signature:CT
                                             encryptedKey:key
-                                               signature:CT];
+                                                envelope:env];
     } else if (env.receiver.address.network == MKMNetwork_Group) {
         // Group Message
         DIMEncryptedKeyMap *keys = msg.encryptedKeys;
         NSAssert(keys, @"encrypted keys not found");
         cMsg = [[DIMCertifiedMessage alloc] initWithData:content
-                                                envelope:env
+                                               signature:CT
                                            encryptedKeys:keys
-                                               signature:CT];
+                                                envelope:env];
     }
     return cMsg;
 }

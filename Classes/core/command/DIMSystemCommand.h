@@ -1,8 +1,8 @@
 //
-//  DIMInstantMessage.h
+//  DIMSystemCommand.h
 //  DIM
 //
-//  Created by Albert Moky on 2018/9/30.
+//  Created by Albert Moky on 2018/10/20.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
@@ -10,30 +10,30 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMMessageContent;
+@class DIMCommandContent;
 
 /**
- *  Instant Message
+ *  System Command
  *
  *      data format: {
  *          //-- envelope
  *          sender   : "moki@xxx",
  *          receiver : "hulk@yyy",
  *          time     : 123,
- *          //-- content
- *          content  : {...}
+ *          //-- command
+ *          command  : {...}
  *      }
  */
-@interface DIMInstantMessage : DIMMessage
+@interface DIMSystemCommand : DIMMessage
 
-@property (readonly, strong, nonatomic) DIMMessageContent *content;
+@property (readonly, strong, nonatomic) DIMCommandContent *command;
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
+- (instancetype)initWithCommand:(const DIMCommandContent *)command
                          sender:(const MKMID *)from
                        receiver:(const MKMID *)to
                            time:(const NSDate *)time;
 
-- (instancetype)initWithContent:(const DIMMessageContent *)content
+- (instancetype)initWithCommand:(const DIMCommandContent *)command
                        envelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
