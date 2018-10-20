@@ -2,7 +2,7 @@
 
 ## Network connection:
 
-* Write your connection
+* Write your connection handler
 
 ```
 @interface TCPConnection : DIMConnection
@@ -52,6 +52,9 @@ NSLog(@"my new ID: %@", moky.ID);
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
+* The private key of the registered user will save into the Keychain automatically.
+* The meta & history of this user will save in files (Documents/barrack/{address}/*.plist) by the entity delegate (DIMBarrack) after registered.
+
 ```
 // load user
 NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"; // from your db
@@ -61,6 +64,8 @@ DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
+* The entity delegate (DIMBarrack) will load the user's meta & history & profile from local files first to create a user, and after that it will try to query the newest history & profile from the network.
+
 ```
 // get contacts from barrack
 MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
@@ -72,6 +77,8 @@ DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
 [moky addContact:hulk];
 [moky addContact:moki];
 ```
+* The entity delegate (DIMBarrack) will load the contact's meta & history & profile just like the above.
+* You need to manage the user's relationship, here just add the contacts to the user in memory, not persistent store.
 
 ## Instant messages:
 
@@ -117,8 +124,9 @@ _myProcessor = [[MessageProcessor alloc] init];
 // set to the conversation manager
 [DIMConversationManager sharedInstance].delegate = _myProcessor;
 
-// TODO: save the received message by the conversation processer
+// TODO: save the received message by your message processer
 ```
+* Your message processor should implement saving new message and loading message partially from local store.
 
 ---
 Written by [Albert Moky](http://moky.github.com/) @2018
