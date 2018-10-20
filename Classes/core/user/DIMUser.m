@@ -49,7 +49,7 @@
     
     // 2. use the symmetric key to decrypt the content
     MKMSymmetricKey *scKey = [self cipherKeyForDecrpyt:msg];
-    NSData *data = [scKey decrypt:msg.content];
+    NSData *data = [scKey decrypt:msg.data];
     NSAssert(data, @"decrypt content failed");
     
     // 3. JsON
@@ -66,7 +66,7 @@
     DIMEnvelope *env = msg.envelope;
     NSAssert([env.sender isEqual:_ID], @"sender error");
     
-    NSData *content = msg.content;
+    NSData *content = msg.data;
     NSAssert(content, @"content cannot be empty");
     
     // 1. use the user's private key to sign the content
@@ -78,18 +78,18 @@
         // Personal Message
         NSData *key = msg.encryptedKey;
         NSAssert(key, @"encrypted key not found");
-        cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
-                                                   envelope:env
-                                               encryptedKey:key
-                                                  signature:CT];
+        cMsg = [[DIMCertifiedMessage alloc] initWithData:content
+                                                envelope:env
+                                            encryptedKey:key
+                                               signature:CT];
     } else if (env.receiver.address.network == MKMNetwork_Group) {
         // Group Message
         DIMEncryptedKeyMap *keys = msg.encryptedKeys;
         NSAssert(keys, @"encrypted keys not found");
-        cMsg = [[DIMCertifiedMessage alloc] initWithContent:content
-                                                   envelope:env
-                                              encryptedKeys:keys
-                                                  signature:CT];
+        cMsg = [[DIMCertifiedMessage alloc] initWithData:content
+                                                envelope:env
+                                           encryptedKeys:keys
+                                               signature:CT];
     }
     return cMsg;
 }

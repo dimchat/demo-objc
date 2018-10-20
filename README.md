@@ -2,7 +2,7 @@
 
 ## Network connection:
 
-* Write Your Connection
+* Write your connection
 
 ```
 @interface TCPConnection : DIMConnection
@@ -19,7 +19,7 @@
 @end
 ```
 
-* Usage
+* Samples
 
 ```
 // create your connection
@@ -33,7 +33,7 @@ DIMClient  *client = [DIMClient sharedInstance];
 DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
 [client connect:server];
 
-// see *Instant Messages* section for usage of 'sendData:'
+// see *Instant Messages* section for samples of 'sendData:'
 ```
 
 ## User & Contacts:
@@ -75,7 +75,7 @@ DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
 
 ## Instant messages:
 
-* Your Conversation Delegate
+* Write your conversation(chatroom) delegate
 
 ```
 #import "DIMC.h"

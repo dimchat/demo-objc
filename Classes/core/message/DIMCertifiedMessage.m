@@ -19,38 +19,38 @@
 
 @implementation DIMCertifiedMessage
 
-- (instancetype)initWithContent:(const NSData *)content
-                       envelope:(const DIMEnvelope *)env
-                   encryptedKey:(const NSData *)key {
+- (instancetype)initWithData:(const NSData *)content
+                    envelope:(const DIMEnvelope *)env
+                encryptedKey:(const NSData *)key {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
-    self = [self initWithContent:content
-                        envelope:env
-                    encryptedKey:key
-                       signature:CT];
+    self = [self initWithData:content
+                     envelope:env
+                 encryptedKey:key
+                    signature:CT];
     return self;
 }
 
-- (instancetype)initWithContent:(const NSData *)content
-                       envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const DIMEncryptedKeyMap *)keys {
+- (instancetype)initWithData:(const NSData *)content
+                    envelope:(const DIMEnvelope *)env
+               encryptedKeys:(const DIMEncryptedKeyMap *)keys {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
-    self = [self initWithContent:content
-                        envelope:env
-                   encryptedKeys:keys
-                       signature:CT];
+    self = [self initWithData:content
+                     envelope:env
+                encryptedKeys:keys
+                    signature:CT];
     return self;
 }
 
-- (instancetype)initWithContent:(const NSData *)content
-                       envelope:(const DIMEnvelope *)env
-                   encryptedKey:(const NSData *)key
-                      signature:(const NSData *)CT {
+- (instancetype)initWithData:(const NSData *)content
+                    envelope:(const DIMEnvelope *)env
+                encryptedKey:(const NSData *)key
+                   signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
-    if (self = [super initWithContent:content
-                             envelope:env
-                         encryptedKey:key]) {
+    if (self = [super initWithData:content
+                          envelope:env
+                      encryptedKey:key]) {
         // signature
         if (CT) {
             [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];
@@ -60,14 +60,14 @@
     return self;
 }
 
-- (instancetype)initWithContent:(const NSData *)content
-                       envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const DIMEncryptedKeyMap *)keys
-                      signature:(const NSData *)CT {
+- (instancetype)initWithData:(const NSData *)content
+                    envelope:(const DIMEnvelope *)env
+               encryptedKeys:(const DIMEncryptedKeyMap *)keys
+                   signature:(const NSData *)CT {
     NSAssert(CT, @"signature cannot be empty");
-    if (self = [super initWithContent:content
-                             envelope:env
-                        encryptedKeys:keys]) {
+    if (self = [super initWithData:content
+                          envelope:env
+                     encryptedKeys:keys]) {
         // signature
         if (CT) {
             [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];

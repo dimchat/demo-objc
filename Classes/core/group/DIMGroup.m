@@ -57,9 +57,9 @@
     DIMEncryptedKeyMap *keys = [self encryptPassphrase:PW];
     
     // 4. create secure message
-    return [[DIMSecureMessage alloc] initWithContent:CT
-                                            envelope:env
-                                       encryptedKeys:keys];
+    return [[DIMSecureMessage alloc] initWithData:CT
+                                         envelope:env
+                                    encryptedKeys:keys];
 }
 
 - (DIMEncryptedKeyMap *)encryptPassphrase:(const NSData *)PW {

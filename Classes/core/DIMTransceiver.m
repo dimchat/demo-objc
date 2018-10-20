@@ -79,7 +79,7 @@
         sMsg = [group encryptMessage:iMsg];
     }
     
-    NSAssert(sMsg.content, @"encrypt failed");
+    NSAssert(sMsg.data, @"encrypt failed");
     return sMsg;
 }
 
@@ -121,7 +121,7 @@
         sMsg = [contact verifyMessage:cMsg];
     }
     
-    NSAssert(sMsg.content, @"verify failed");
+    NSAssert(sMsg.data, @"verify failed");
     return sMsg;
 }
 

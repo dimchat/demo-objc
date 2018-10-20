@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMSecureMessage : DIMDictionary
 
 @property (readonly, strong, nonatomic) DIMEnvelope *envelope;
-@property (readonly, strong, nonatomic) NSData *content;
+@property (readonly, strong, nonatomic) NSData *data;
 
 /**
  * Password to decode the content, which encrypted by contact.PK
@@ -62,9 +62,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param key - Symmetic key encrypted with receiver's PK
  @return SecureMessage object
  */
-- (instancetype)initWithContent:(const NSData *)content
-                       envelope:(const DIMEnvelope *)env
-                   encryptedKey:(const NSData *)key
+- (instancetype)initWithData:(const NSData *)content
+                    envelope:(const DIMEnvelope *)env
+                encryptedKey:(const NSData *)key
 NS_DESIGNATED_INITIALIZER;
 
 /**
@@ -75,9 +75,9 @@ NS_DESIGNATED_INITIALIZER;
  @param keys - Symmetic keys encrypted with group members' PKs
  @return SecureMessage object
  */
-- (instancetype)initWithContent:(const NSData *)content
-                       envelope:(const DIMEnvelope *)env
-                  encryptedKeys:(const DIMEncryptedKeyMap *)keys
+- (instancetype)initWithData:(const NSData *)content
+                    envelope:(const DIMEnvelope *)env
+               encryptedKeys:(const DIMEncryptedKeyMap *)keys
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict
