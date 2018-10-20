@@ -22,13 +22,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 // user
 - (DIMUser *)userForID:(const MKMID *)ID; // if not found, create new one
-- (void)setUser:(DIMUser *)user; // create moments at the same time
-- (void)removeUser:(const DIMUser *)user; // remove moments too
+- (void)setUser:(DIMUser *)user;
+- (void)removeUser:(const DIMUser *)user;
 
 // contact
 - (DIMContact *)contactForID:(const MKMID *)ID; // if not found, create new one
-- (void)setContact:(DIMContact *)contact; // create moments at the same time
-- (void)removeContact:(const DIMContact *)contact; // remove moments too
+- (void)setContact:(DIMContact *)contact;
+- (void)removeContact:(const DIMContact *)contact;
 
 // group
 - (DIMGroup *)groupForID:(const MKMID *)ID; // if not found, create new one

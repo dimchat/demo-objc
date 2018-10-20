@@ -2,47 +2,38 @@
 
 ## Network connection:
 
-* Your Connection
+* Write Your Connection
 
 ```
-@interface Connection : DIMConnection
+@interface TCPConnection : DIMConnection
 
-// send message data (JsON) via the connected connection
+// Connect to the target station
+- (BOOL)connect;
+
+// Close this connection
+- (void)close;
+
+// send data to the target station
 - (BOOL)sendData:(const NSData *)jsonData;
 
 @end
 ```
 
-* Your Connector
+* Usage
 
 ```
-#import "DIMC.h"
+// create your connection
+TCPConnection *myConnection = [[TCPConnection alloc] init];
 
-@interface TCPConnector : NSObject <DIMConnector>
-
-// connect to a server
-- (DIMConnection *)connectToStation:(const DIMStation *)srv client:(const DIMClient *)cli;
-
-// disconnect
-- (void)closeConnection:(const DIMConnection *)conn;
-
-@end
-```
-
-* Samples
-
-```
-// create your TCP connector
-_myConnector = [[TCPConnector alloc] init];
-
-// set the connector to DIM client
-DIMClient *client = [DINClient sharedInstance];
-client.connector = _myConnector;
+// set current connection for the DIM client
+DIMClient  *client = [DIMClient sharedInstance];
+[client setCurrentConnection:myConnection];
 
 // connect the client to a station
 DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
 [client connect:server];
 
+// see *Instant Messages* section for usage of 'sendData:'
 ```
 
 ## User & Contacts:
@@ -59,7 +50,7 @@ DIMUser *moky = [DIMUser registerWithName:@"moky" publicKey:PK privateKey:SK];
 NSLog(@"my new ID: %@", moky.ID);
 
 // set current user for the DIM client
-[[DINClient sharedInstance] setCurrentUser:moky];
+[[DIMClient sharedInstance] setCurrentUser:moky];
 ```
 ```
 // load user
@@ -68,7 +59,7 @@ MKMID *ID = [[MKMID alloc] initWithString:str];
 DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
 
 // set current user for the DIM client
-[[DINClient sharedInstance] setCurrentUser:moky];
+[[DIMClient sharedInstance] setCurrentUser:moky];
 ```
 ```
 // get contacts from barrack

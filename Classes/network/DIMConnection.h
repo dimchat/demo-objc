@@ -10,31 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMClient;
 @class DIMStation;
 @class DIMConnection;
 
-@protocol DIMConnector <NSObject>
-
 /**
- Connection to station, from client
-
- @param srv - station
- @param cli - client
- @return connection that connected to the server
+ Connection delegate to process the callback
  */
-- (DIMConnection *)connectToStation:(const DIMStation *)srv
-                             client:(const DIMClient *)cli;
-
-/**
- Disconnect
-
- @param conn - connection
- */
-- (void)closeConnection:(const DIMConnection *)conn;
-
-@end
-
 @protocol DIMConnectionDelegate <NSObject>
 
 /**
@@ -51,23 +32,56 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMConnection : NSObject
+/**
+ Connection to process connect/send/receive...
+ */
+@protocol DIMConnection <NSObject>
 
-@property (readonly, strong, nonatomic) DIMStation *target;
+@property (readonly, nonatomic) DIMStation *target;
 @property (readonly, nonatomic, getter=isConnected) BOOL connected;
 
-@property (weak, nonatomic) id<DIMConnectionDelegate> delegate;
+/**
+ Connect to a station
 
-- (instancetype)initWithTargetStation:(const DIMStation *)station
-NS_DESIGNATED_INITIALIZER;
+ @param station - station will replace the target
+ @return YES on success
+ */
+- (BOOL)connectTo:(DIMStation *)station;
 
 /**
- Send data to target station
+ (Re)connect to the target station
 
+ @return YES on success
+ */
+- (BOOL)connect;
+
+/**
+ Close this connectiion
+ */
+- (void)close;
+
+/**
+ Send data to the target station
+ 
  @param jsonData - json data pack
  @return YES on success
  */
 - (BOOL)sendData:(const NSData *)jsonData;
+
+@end
+
+#pragma mark - Base Connection
+
+@interface DIMConnection : NSObject <DIMConnection> {
+    
+    __strong DIMStation * _target;
+    BOOL _connected;
+}
+
+@property (weak, nonatomic) id<DIMConnectionDelegate> delegate;
+
+- (instancetype)initWithTargetStation:(DIMStation *)station
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

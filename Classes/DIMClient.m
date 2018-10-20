@@ -14,16 +14,13 @@
 #import "DIMStation.h"
 #import "DIMConnection.h"
 
-#import "DIMBarrack.h"
-
+#import "DIMClient+Message.h"
 #import "DIMClient.h"
 
 @interface DIMClient () {
     
     NSMutableArray<DIMUser *> *_users;
 }
-
-@property (strong, nonatomic) DIMConnection *connection;
 
 @end
 
@@ -46,6 +43,8 @@ static DIMClient *s_sharedInstance = nil;
 - (instancetype)init {
     if (self = [super init]) {
         _users = [[NSMutableArray alloc] init];
+        _currentUser = nil;
+        _currentConnection = nil;
     }
     return self;
 }
@@ -82,35 +81,37 @@ static DIMClient *s_sharedInstance = nil;
     }
 }
 
-#pragma mark - Station Connection
+#pragma mark - Connection
 
-- (void)setConnection:(DIMConnection *)connection {
-    if (![_connection isEqual:connection]) {
-        // disconnect the old connection
-        if (_connection.isConnected) {
-            NSAssert(_connector, @"connector cannot be empty");
-            [_connector closeConnection:_connection];
-        }
-        
-        // check connection delegate
-        if (connection.delegate == nil) {
-            connection.delegate = self;
-        }
-        // replace with the new connection
-        _connection = connection;
+- (void)setCurrentConnection:(DIMConnection *)newConnection {
+    if ([_currentConnection isEqual:newConnection]) {
+        return;
     }
+    
+    // 1. close the current connection
+    [_currentConnection close];
+    
+    // 2. check the connection delegate
+    if (newConnection.delegate == nil) {
+        newConnection.delegate = self;
+    }
+    
+    // 3. replace current connection
+    _currentConnection = newConnection;
+}
+
+- (BOOL)connect:(DIMStation *)station {
+    if (!_currentConnection) {
+        NSAssert(false, @"current connection cannot be empty");
+        return NO;
+    }
+    NSAssert(station.host, @"station.host cannot be empty");
+    return [_currentConnection connectTo:station];
 }
 
 - (void)disconnect {
-    self.connection = nil;
-}
-
-- (BOOL)connect:(const DIMStation *)station {
-    NSAssert(_connector, @"connector cannot be empty");
-    NSAssert(station.host, @"station.host cannot be empty");
-    self.connection = [_connector connectToStation:station client:self];
-    NSAssert(_connection.isConnected, @"connect failed");
-    return _connection.isConnected;
+    NSAssert(_currentConnection, @"current connection not set");
+    [_currentConnection close];
 }
 
 #pragma mark - DIMConnectionDelegate
@@ -141,59 +142,6 @@ static DIMClient *s_sharedInstance = nil;
 - (void)connection:(const DIMConnection *)conn didFailWithError:(NSError *)error {
     NSLog(@"connection failed: %@", error);
     // TODO: try to send again or mark failed
-}
-
-@end
-
-#pragma mark - Message
-
-@implementation DIMClient (Message)
-
-- (BOOL)sendMessage:(const DIMCertifiedMessage *)cMsg {
-    if (_connection.isConnected != YES) {
-        NSLog(@"connect first");
-        return NO;
-    }
-    MKMID *sender = cMsg.envelope.sender;
-    NSAssert(sender.address.network == MKMNetwork_Main, @"error");
-    NSAssert(cMsg.signature, @"signature cannot be empty");
-    
-    NSData *jsonData = [cMsg jsonData];
-    return [_connection sendData:jsonData];
-}
-
-- (void)recvMessage:(const DIMInstantMessage *)iMsg {
-    NSLog(@"saving message: %@", iMsg);
-    
-    DIMBarrack *barrack = [DIMBarrack sharedInstance];
-    
-    DIMConversationManager *chatman = [DIMConversationManager sharedInstance];
-    DIMConversation *chatroom;
-    
-    DIMEnvelope *env = iMsg.envelope;
-    MKMID *sender = env.sender;
-    MKMID *receiver = env.receiver;
-    
-    if ([receiver isEqual:_currentUser.ID]) {
-        // personal chat, get chatroom with contact ID
-        chatroom = [chatman conversationWithID:sender];
-        if (!chatroom) {
-            DIMContact *contact = [barrack contactForID:sender];
-            chatroom = [[DIMConversation alloc] initWithEntity:contact];
-            [chatman setConversation:chatroom];
-        }
-    } else if (receiver.address.network == MKMNetwork_Group) {
-        // group chat, get chatroom with group ID
-        chatroom = [chatman conversationWithID:receiver];
-        if (!chatroom) {
-            DIMGroup *group = [barrack groupForID:receiver];
-            chatroom = [[DIMConversation alloc] initWithEntity:group];
-            [chatman setConversation:chatroom];
-        }
-    }
-    NSAssert(chatroom, @"chat room not found");
-    
-    [chatroom insertInstantMessage:iMsg];
 }
 
 @end

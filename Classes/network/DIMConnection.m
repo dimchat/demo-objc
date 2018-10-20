@@ -12,14 +12,10 @@
 
 #import "DIMConnection.h"
 
-@interface DIMConnection ()
-
-@property (strong, nonatomic) DIMStation *target;
-@property (nonatomic, getter=isConnected) BOOL connected;
-
-@end
-
 @implementation DIMConnection
+
+@synthesize target;
+@synthesize connected;
 
 - (instancetype)init {
     DIMStation * station = nil;
@@ -28,9 +24,9 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithTargetStation:(const DIMStation *)station {
+- (instancetype)initWithTargetStation:(DIMStation *)station {
     if (self = [super init]) {
-        _target = [station copy];
+        _target = station;
         _connected = NO;
     }
     return self;
@@ -41,6 +37,29 @@
     return [conn.target isEqual:_target];
 }
 
+#pragma mark Connect / Close
+
+- (BOOL)connectTo:(DIMStation *)station {
+    if (_connected) {
+        [self close];
+    }
+    _target = station;
+    return [self connect];
+}
+
+- (BOOL)connect {
+    NSAssert(_target, @"set target station first");
+    // let the subclass to do the job
+    return YES;
+}
+
+- (void)close {
+    NSAssert(_target, @"target station cannot be empty");
+    // let the subclass to do the job
+}
+
+#pragma mark Send / Receive
+
 - (BOOL)sendData:(const NSData *)jsonData {
     if (!_connected) {
         NSLog(@"not connected yet");
@@ -48,9 +67,14 @@
     }
     NSLog(@"sending data: %@ to station(%@)", [jsonData jsonString], _target.host);
     
-    // TODO: send data to target station
-    
+    // let the subclass to the job
     return YES;
+}
+
+- (void)receivedData:(NSData *)jsonData {
+    NSLog(@"received data: %@", [jsonData UTF8String]);
+    NSAssert(_delegate, @"connection delegate cannot be empty");
+    [_delegate connection:self didReceiveData:jsonData];
 }
 
 @end
