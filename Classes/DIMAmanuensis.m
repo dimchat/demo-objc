@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMBarrack.h"
+
 #import "DIMAmanuensis.h"
 
 @interface DIMAmanuensis () {
@@ -68,7 +70,20 @@ static DIMAmanuensis *s_sharedInstance = nil;
 
 - (DIMConversation *)conversationWithID:(const MKMID *)ID {
     DIMConversation *chatroom = [_conversations objectForKey:ID.address];
-    //NSAssert(chatroom, @"chatroom not found");
+    if (!chatroom) {
+        // get entity with ID
+        DIMBarrack *barrack = [DIMBarrack sharedInstance];
+        MKMEntity *entity = nil;
+        if (ID.address.network == MKMNetwork_Main) {
+            entity = [barrack contactForID:ID];
+        } else if (ID.address.network == MKMNetwork_Group) {
+            entity = [barrack groupForID:ID];
+        }
+        NSAssert(entity, @"ID error");
+        // create new conversation with entity (Contact/Group)
+        chatroom = [[DIMConversation alloc] initWithEntity:entity];
+        [self setConversation:chatroom];
+    }
     return chatroom;
 }
 

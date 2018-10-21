@@ -51,7 +51,7 @@ NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Write
 
-- (void)insertMessage:(DIMInstantMessage *)iMsg;
+- (void)insertMessage:(const DIMInstantMessage *)iMsg;
 
 /**
  Delete the message

@@ -13,18 +13,22 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMStation;
 @class DIMConnection;
 
+@protocol DIMConnector;
+
 @interface DIMClient : NSObject <DIMConnectionDelegate>
 
 @property (strong, nonatomic) DIMUser *currentUser;
 
-@property (strong, nonatomic) DIMConnection *currentConnection;
+@property (strong, nonatomic, nullable) DIMConnection *currentConnection;
+@property (weak, nonatomic) id<DIMConnector> connector;
 
 + (instancetype)sharedInstance;
 
 - (void)addUser:(DIMUser *)user;
 - (void)removeUser:(DIMUser *)user;
 
-- (BOOL)connect:(DIMStation *)station;
+- (BOOL)connectTo:(const DIMStation *)station;
+- (BOOL)reconnect;
 - (void)disconnect;
 
 @end

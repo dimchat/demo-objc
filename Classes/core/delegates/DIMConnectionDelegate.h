@@ -20,11 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param conn - connection
  @param data - received data
  */
-- (void)connection:(const DIMConnection *)conn didReceiveData:(NSData *)data;
+- (void)connection:(const DIMConnection *)conn didReceiveData:(const NSData *)data;
 
 @optional
-- (void)connection:(const DIMConnection *)conn didSendData:(NSData *)data;
-- (void)connection:(const DIMConnection *)conn didFailWithError:(NSError *)error;
+- (void)connection:(const DIMConnection *)conn didSendData:(const NSData *)data;
+- (void)connection:(const DIMConnection *)conn didFailWithError:(const NSError *)error;
 
 @end
 

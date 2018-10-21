@@ -8,33 +8,34 @@
 
 #import "NSObject+JsON.h"
 
+#import "DIMStation.h"
 #import "DIMConnection.h"
 
-#import "DIMBarrack.h"
 #import "DIMAmanuensis.h"
 
 #import "DIMClient+Message.h"
 
 @implementation DIMClient (Message)
 
-- (BOOL)sendMessage:(DIMCertifiedMessage *)cMsg {
+- (BOOL)sendMessage:(const DIMCertifiedMessage *)cMsg {
     NSAssert(cMsg.signature, @"signature cannot be empty");
     DIMConnection *connection = self.currentConnection;
-    if (connection.isConnected != YES) {
-        NSLog(@"connect first");
-        return NO;
+    if (connection.isConnected == NO) {
+        // try to reconnect
+        if ([self reconnect] == NO) {
+            NSLog(@"failed to reconnect: %@", connection.target.host);
+            return NO;
+        }
     }
     NSData *jsonData = [cMsg jsonData];
     return [connection sendData:jsonData];
 }
 
-- (void)recvMessage:(DIMInstantMessage *)iMsg {
+- (void)recvMessage:(const DIMInstantMessage *)iMsg {
     NSLog(@"saving message: %@", iMsg);
     
-    DIMBarrack *barrack = [DIMBarrack sharedInstance];
-    
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
-    DIMConversation *chat = nil;
+    DIMConversation *chatroom = nil;
     
     DIMEnvelope *env = iMsg.envelope;
     MKMID *sender = env.sender;
@@ -42,24 +43,14 @@
     
     if ([receiver isEqual:self.currentUser.ID]) {
         // personal chat, get chatroom with contact ID
-        chat = [clerk conversationWithID:sender];
-        if (!chat) {
-            DIMContact *contact = [barrack contactForID:sender];
-            chat = [[DIMConversation alloc] initWithEntity:contact];
-            [clerk setConversation:chat];
-        }
+        chatroom = [clerk conversationWithID:sender];
     } else if (receiver.address.network == MKMNetwork_Group) {
         // group chat, get chatroom with group ID
-        chat = [clerk conversationWithID:receiver];
-        if (!chat) {
-            DIMGroup *group = [barrack groupForID:receiver];
-            chat = [[DIMConversation alloc] initWithEntity:group];
-            [clerk setConversation:chat];
-        }
+        chatroom = [clerk conversationWithID:receiver];
     }
-    NSAssert(chat, @"chat room not found");
+    NSAssert(chatroom, @"chatroom room not found");
     
-    [chat insertMessage:iMsg];
+    [chatroom insertMessage:iMsg];
 }
 
 @end

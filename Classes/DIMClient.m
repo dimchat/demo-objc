@@ -13,6 +13,7 @@
 
 #import "DIMStation.h"
 #import "DIMConnection.h"
+#import "DIMConnector.h"
 
 #import "DIMClient+Message.h"
 #import "DIMClient.h"
@@ -89,7 +90,10 @@ static DIMClient *s_sharedInstance = nil;
     }
     
     // 1. close the current connection
-    [_currentConnection close];
+    if (_currentConnection.isConnected) {
+        NSAssert(_connector, @"connector not set");
+        [_connector closeConnection:_currentConnection];
+    }
     
     // 2. check the connection delegate
     if (newConnection.delegate == nil) {
@@ -100,46 +104,70 @@ static DIMClient *s_sharedInstance = nil;
     _currentConnection = newConnection;
 }
 
-- (BOOL)connect:(DIMStation *)station {
-    if (!_currentConnection) {
-        NSAssert(false, @"current connection cannot be empty");
-        return NO;
-    }
+- (BOOL)connectTo:(const DIMStation *)station {
     NSAssert(station.host, @"station.host cannot be empty");
-    return [_currentConnection connectTo:station];
+    NSAssert(_connector, @"set connector first");
+    self.currentConnection = nil;
+    DIMConnection *conn = [_connector connectTo:station];
+    self.currentConnection = conn;
+    return conn.isConnected;
+}
+
+- (BOOL)reconnect {
+    if (_currentConnection.isConnected) {
+        return YES;
+    }
+    DIMStation *server = _currentConnection.target;
+    NSAssert(server, @"error");
+    return [self connectTo:server];
 }
 
 - (void)disconnect {
     NSAssert(_currentConnection, @"current connection not set");
-    [_currentConnection close];
+    NSAssert(_connector, @"connector not set");
+    [_connector closeConnection:_currentConnection];
 }
 
 #pragma mark - DIMConnectionDelegate
 
-- (void)connection:(const DIMConnection *)conn didReceiveData:(NSData *)data {
+- (void)connection:(const DIMConnection *)conn didReceiveData:(const NSData *)data {
     NSLog(@"received data from %@ ...", conn.target.host);
     
-    DIMTransceiver *trans = [[DIMTransceiver alloc] init];
+    NSDictionary *dict = [data jsonDictionary];
     
-    NSString *json = [data jsonString];
+    NSDictionary *syscmd = [dict objectForKey:@"command"];
+    if (syscmd) {
+        NSLog(@"received a command: %@", syscmd);
+        // TODO: execute the command
+        
+        return;
+    }
     
-    DIMCertifiedMessage *cMsg;
-    cMsg = [[DIMCertifiedMessage alloc] initWithJSONString:json];
-    NSAssert(cMsg.signature, @"data error: %@", json);
+    NSString *content = [dict objectForKey:@"data"]; // encrypted content
+    if (content) {
+        DIMTransceiver *trans = [[DIMTransceiver alloc] init];
+        
+        DIMCertifiedMessage *cMsg;
+        cMsg = [[DIMCertifiedMessage alloc] initWithDictionary:dict];
+        NSAssert(cMsg.signature, @"data error: %@", dict);
+        
+        DIMInstantMessage *iMsg;
+        iMsg = [trans verifyAndDecryptMessage:cMsg];
+        NSAssert(iMsg.content, @"message error: %@", cMsg);
+        
+        [self recvMessage:iMsg];
+        return;
+    }
     
-    DIMInstantMessage *iMsg;
-    iMsg = [trans verifyAndDecryptMessage:cMsg];
-    NSAssert(iMsg.content, @"message error: %@", cMsg);
-    
-    [self recvMessage:iMsg];
+    NSAssert(false, @"data error: %@", dict);
 }
 
-- (void)connection:(const DIMConnection *)conn didSendData:(NSData *)data {
+- (void)connection:(const DIMConnection *)conn didSendData:(const NSData *)data {
     NSLog(@"data sent");
     // TODO: remove the data from message queue out
 }
 
-- (void)connection:(const DIMConnection *)conn didFailWithError:(NSError *)error {
+- (void)connection:(const DIMConnection *)conn didFailWithError:(const NSError *)error {
     NSLog(@"connection failed: %@", error);
     // TODO: try to send again or mark failed
 }

@@ -79,7 +79,7 @@
 
 #pragma mark - Write
 
-- (void)insertMessage:(DIMInstantMessage *)iMsg {
+- (void)insertMessage:(const DIMInstantMessage *)iMsg {
     NSAssert(_delegate, @"set delegate first");
     [_delegate conversation:self didReceiveMessage:iMsg];
 }

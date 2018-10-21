@@ -43,27 +43,6 @@
     return [conn.target isEqual:_target];
 }
 
-#pragma mark Connect / Close
-
-- (BOOL)connectTo:(DIMStation *)station {
-    if (_connected) {
-        [self close];
-    }
-    _target = station;
-    return [self connect];
-}
-
-- (BOOL)connect {
-    NSAssert(_target, @"set target station first");
-    // let the subclass to do the job
-    return YES;
-}
-
-- (void)close {
-    NSAssert(_target, @"target station cannot be empty");
-    // let the subclass to do the job
-}
-
 #pragma mark Send / Receive
 
 - (BOOL)sendData:(const NSData *)jsonData {
@@ -77,7 +56,7 @@
     return YES;
 }
 
-- (void)receivedData:(NSData *)jsonData {
+- (void)receiveData:(const NSData *)jsonData {
     NSLog(@"received data: %@", [jsonData UTF8String]);
     NSAssert(_delegate, @"connection delegate cannot be empty");
     [_delegate connection:self didReceiveData:jsonData];

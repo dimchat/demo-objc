@@ -18,14 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
  @param cMsg - certified message
  @return YES on success
  */
-- (BOOL)sendMessage:(DIMCertifiedMessage *)cMsg;
+- (BOOL)sendMessage:(const DIMCertifiedMessage *)cMsg;
 
 /**
  Save received message (secured + certified) from target station
  
  @param iMsg - instant message
  */
-- (void)recvMessage:(DIMInstantMessage *)iMsg;
+- (void)recvMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 

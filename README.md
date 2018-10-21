@@ -2,16 +2,23 @@
 
 ## Network connection:
 
-* Write your connection handler
+* Implements a Connector to handle long links between the client & server
+
+```
+@interface TCPConnector : NSObject <DIMConnector>
+
+// connect to a server
+- (DIMConnection *)connectTo:(const DIMStation *)server;
+
+// close a connectiion
+- (void)closeConnection:(const DIMConnection *)connection;
+
+@end
+```
+* Implements the Connection to send data to the connected server
 
 ```
 @interface TCPConnection : DIMConnection
-
-// Connect to the target station
-- (BOOL)connect;
-
-// Close this connection
-- (void)close;
 
 // send data to the target station
 - (BOOL)sendData:(const NSData *)jsonData;
@@ -19,21 +26,21 @@
 @end
 ```
 
-* Samples
+* Usages
 
 ```
-// create your connection
-TCPConnection *myConnection = [[TCPConnection alloc] init];
+// create your connector
+_myConnector = [[TCPConnector alloc] init];
 
 // set current connection for the DIM client
 DIMClient  *client = [DIMClient sharedInstance];
-[client setCurrentConnection:myConnection];
+client.connector = _myConnector;
 
 // connect the client to a station
 DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
-[client connect:server];
+[client connectTo:server];
 
-// see *Instant Messages* section for samples of 'sendData:'
+// see "Instant Messages" section for samples of "sendData:"
 ```
 
 ## User & Contacts:
@@ -52,8 +59,8 @@ NSLog(@"my new ID: %@", moky.ID);
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
-* The private key of the registered user will save into the Keychain automatically.
-* The meta & history of this user will save in files (Documents/barrack/{address}/*.plist) by the entity delegate (DIMBarrack) after registered.
+1. The private key of the registered user will save into the Keychain automatically.
+2. The meta & history of this user will save in files (Documents/barrack/{address}/*.plist) by the entity delegate (DIMBarrack) after registered.
 
 ```
 // load user
@@ -64,7 +71,8 @@ DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
-* The entity delegate (DIMBarrack) will load the user's meta & history & profile from local files first to create a user, and after that it will try to query the newest history & profile from the network.
+1. The entity delegate (DIMBarrack) will load the user's meta & history & profile from local files to create a user,
+2. After that it will try to query the newest history & profile from the network.
 
 ```
 // get contacts from barrack
@@ -77,23 +85,30 @@ DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
 [moky addContact:hulk];
 [moky addContact:moki];
 ```
-* The entity delegate (DIMBarrack) will load the contact's meta & history & profile just like the above.
-* You need to manage the user's relationship, here just add the contacts to the user in memory, not persistent store.
+1. The entity delegate (DIMBarrack) will load the contact's meta & history & profile just like the above.
+2. You need to manage the user's relationship, here just add the contacts to the user in memory, not persistent store.
 
 ## Instant messages:
 
-* Write your conversation(chatroom) delegate
+* Implements the conversation(chatroom) data source & delegate
 
 ```
 #import "DIMC.h"
 
-@interface MessageProcessor : NSObject <DIMConversationDelegate>
+@interface MessageProcessor : NSObject <DIMConversationDataSource, DIMConversationDelegate>
+
+#pragma mark DIMConversationDataSource
+
+// get message count in the conversation
+- (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatroom;
+
+// get message at index of the conversation
+- (DIMInstantMessage *)conversation:(const DIMConversation *)chatroom messageAtIndex:(NSInteger)index;
+
+#pragma mark DIMConversationDelegate
 
 // save new message to local db
 - (void)conversation:(const DIMConversation *)chatroom didReceiveMessage:(const DIMInstantMessage *)iMsg;
-
-// get messages from local db
-- (NSArray *)conversation:(const DIMConversation *)chatroom messagesBefore:(const NSDate *)time maxCount:(NSUInteger)count;
 
 @end
 ```
@@ -110,23 +125,25 @@ DIMTransceiver *trans = [[DIMTransceiver alloc] init];
 DIMCertifiedMessage *cMsg = [trans encryptAndSignContent:content sender:moky.ID receiver:hulk.ID];
 
 // send out
-DIMClient *client = [DINClient sharedInstance];
-DIMConnection *connection = client.currentConnection
-[connection sendData:[cMsg jsonData]];
+DIMConnection *connection = [DINClient sharedInstance].currentConnection;
+NSData *data = [cMsg jsonData];
+[connection sendData:data];
 ```
 
 * Sample: receive message
 
 ```
 // create your message processor
-_myProcessor = [[MessageProcessor alloc] init];
+_myMessageProcessor = [[MessageProcessor alloc] init];
 
 // set to the conversation manager
-[DIMConversationManager sharedInstance].delegate = _myProcessor;
+DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
+clerk.dataSource = _myMessageProcessor;
+clerk.delegate = _myMessageProcessor;
 
-// TODO: save the received message by your message processer
+// TODO: save the received message by your message processer (delegate)
 ```
-* Your message processor should implement saving new message and loading message partially from local store.
+1. Your message processor should implement saving new message and loading message partially from local store.
 
 ---
 Written by [Albert Moky](http://moky.github.com/) @2018
