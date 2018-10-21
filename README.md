@@ -36,7 +36,7 @@ _myConnector = [[TCPConnector alloc] init];
 DIMClient  *client = [DIMClient sharedInstance];
 client.connector = _myConnector;
 
-// connect the client to a station
+// connect the client to a station with the connector's help
 DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
 [client connectTo:server];
 
@@ -124,7 +124,7 @@ DIMMessageContent *content = [[DIMMessageContent alloc] initWithText:text];
 DIMTransceiver *trans = [[DIMTransceiver alloc] init];
 DIMCertifiedMessage *cMsg = [trans encryptAndSignContent:content sender:moky.ID receiver:hulk.ID];
 
-// send out
+// send out the certified secure message via current connection
 DIMConnection *connection = [DINClient sharedInstance].currentConnection;
 NSData *data = [cMsg jsonData];
 [connection sendData:data];
@@ -141,7 +141,17 @@ DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
 clerk.dataSource = _myMessageProcessor;
 clerk.delegate = _myMessageProcessor;
 
-// TODO: save the received message by your message processer (delegate)
+// 1. when current connection received a message data,
+//    it will call the <DIMConnectionDelegate> (DIMClient as default)
+//    to handle it;
+// 2. the DIMClient will try to recognize the message data,
+//    if it's a command, the client will handle it directly;
+// 3. or if it's a certified secure message,
+//    the client will insert it into the chatroom (DIMConversation)
+//    that the message belongs to;
+// 4. finally, the chatroom will call your message processor for saving it,
+//    the clerk (DIMAmanuensis) will set your processor into each chatroom
+//    automatically, unless you have already specify them.
 ```
 1. Your message processor should implement saving new message and loading message partially from local store.
 
