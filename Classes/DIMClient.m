@@ -135,6 +135,7 @@ static DIMClient *s_sharedInstance = nil;
     
     NSDictionary *dict = [data jsonDictionary];
     
+    // Check: system command
     NSDictionary *syscmd = [dict objectForKey:@"command"];
     if (syscmd) {
         NSLog(@"received a command: %@", syscmd);
@@ -143,23 +144,29 @@ static DIMClient *s_sharedInstance = nil;
         return;
     }
     
-    NSString *content = [dict objectForKey:@"data"]; // encrypted content
-    if (content) {
-        DIMTransceiver *trans = [[DIMTransceiver alloc] init];
-        
-        DIMCertifiedMessage *cMsg;
-        cMsg = [[DIMCertifiedMessage alloc] initWithDictionary:dict];
+    DIMTransceiver *trans = [[DIMTransceiver alloc] init];
+    DIMCertifiedMessage *cMsg;
+    DIMInstantMessage *iMsg;
+    
+    // verify & decrypt the receive data
+    cMsg = [[DIMCertifiedMessage alloc] initWithDictionary:dict];
+    NSAssert(cMsg.signature, @"data error: %@", dict);
+    
+    iMsg = [trans verifyAndDecryptMessage:cMsg];
+    NSAssert(iMsg.content, @"message error: %@", cMsg);
+    
+    // Check: top-secret message
+    if (iMsg.content.type == DIMMessageType_Forward) {
+        // do it again to drop the wrapper,
+        // the secret inside the content is the real message
+        cMsg = iMsg.content.secretMessage;
         NSAssert(cMsg.signature, @"data error: %@", dict);
         
-        DIMInstantMessage *iMsg;
         iMsg = [trans verifyAndDecryptMessage:cMsg];
         NSAssert(iMsg.content, @"message error: %@", cMsg);
-        
-        [self recvMessage:iMsg];
-        return;
     }
     
-    NSAssert(false, @"data error: %@", dict);
+    [self recvMessage:iMsg];
 }
 
 - (void)connection:(const DIMConnection *)conn didSendData:(const NSData *)data {

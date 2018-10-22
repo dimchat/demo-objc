@@ -23,8 +23,9 @@
 #import "DIMGroup.h"
 
 // Message
-#import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
+#import "DIMMessageContent+Secret.h"
+#import "DIMEnvelope.h"
 #import "DIMMessage.h"
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"

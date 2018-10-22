@@ -7,6 +7,7 @@
 //
 
 #import "NSData+Crypto.h"
+#import "NSString+Crypto.h"
 
 #import "DIMMessageContent.h"
 
@@ -14,9 +15,6 @@
 
 @property (nonatomic) DIMMessageType type;
 @property (nonatomic) NSUInteger serialNumber;
-
-@property (strong, nonatomic) MKMID *group;
-@property (nonatomic) NSUInteger quoteNumber;
 
 @end
 
@@ -35,6 +33,7 @@
     }
 }
 
+/* designated initializer */
 - (instancetype)init {
     if (self = [super init]) {
         // randomize a serial number
@@ -43,6 +42,7 @@
     return self;
 }
 
+/* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
         dict = _storeDictionary;
@@ -59,13 +59,32 @@
         // group ID
         MKMID *ID = [dict objectForKey:@"group"];
         _group = [MKMID IDWithID:ID];
-        
-        // quote
-        NSNumber *quote = [dict objectForKey:@"quote"];
-        _quoteNumber = [quote unsignedIntegerValue];
     }
     return self;
 }
+
+- (void)setType:(DIMMessageType)type {
+    [_storeDictionary setObject:@(type) forKey:@"type"];
+    _type = type;
+}
+
+- (void)setSerialNumber:(NSUInteger)serialNumber {
+    [_storeDictionary setObject:@(serialNumber) forKey:@"sn"];
+    _serialNumber = serialNumber;
+}
+
+- (void)setGroup:(MKMID *)group {
+    if (![_group isEqual:group]) {
+        if (group) {
+            [_storeDictionary setObject:group forKey:@"group"];
+        } else {
+            [_storeDictionary removeObjectForKey:@"group"];
+        }
+        _group = group;
+    }
+}
+
+#pragma mark - Text message
 
 - (instancetype)initWithText:(const NSString *)text {
     if (self = [self init]) {
@@ -77,6 +96,12 @@
     }
     return self;
 }
+
+- (NSString *)text {
+    return [_storeDictionary objectForKey:@"text"];
+}
+
+#pragma mark - File message
 
 - (instancetype)initWithFileData:(const NSData *)data
                         filename:(nullable const NSString *)name {
@@ -102,6 +127,24 @@
     return self;
 }
 
+- (NSData *)fileData {
+    NSString *str = [_storeDictionary objectForKey:@"data"];
+    if (str) {
+        return [str base64Decode];
+    }
+    NSString *url = [_storeDictionary objectForKey:@"url"];
+    if (url) {
+        // TODO: download file from the URL
+    }
+    return nil;
+}
+
+- (NSString *)filename {
+    return [_storeDictionary objectForKey:@"filename"];
+}
+
+#pragma mark Image message
+
 - (instancetype)initWithImageData:(const NSData *)data
                          filename:(nullable const NSString *)name {
     if (self = [self initWithFileData:data filename:name]) {
@@ -113,8 +156,20 @@
     return self;
 }
 
-- (instancetype)initWithAudioData:(const NSData *)data {
-    if (self = [self initWithFileData:data filename:nil]) {
+- (NSData *)imageData {
+    return [self fileData];
+}
+
+- (NSData *)snapshot {
+    NSString *ss = [_storeDictionary objectForKey:@"snapshot"];
+    return [ss base64Decode];
+}
+
+#pragma mark Audio message
+
+- (instancetype)initWithAudioData:(const NSData *)data
+                         filename:(nullable const NSString *)name {
+    if (self = [self initWithFileData:data filename:name]) {
         // type
         self.type = DIMMessageType_Audio;
         
@@ -122,6 +177,12 @@
     }
     return self;
 }
+
+- (NSData *)audioData {
+    return [self fileData];
+}
+
+#pragma mark Video message
 
 - (instancetype)initWithVideoData:(const NSData *)data
                          filename:(nullable const NSString *)name {
@@ -133,6 +194,12 @@
     }
     return self;
 }
+
+- (NSData *)videoData {
+    return [self fileData];
+}
+
+#pragma mark - Webpage message
 
 - (instancetype)initWithURLString:(const NSString *)url
                             title:(const NSString *)title
@@ -163,36 +230,21 @@
     return self;
 }
 
-- (void)setType:(DIMMessageType)type {
-    [_storeDictionary setObject:@(type) forKey:@"type"];
-    _type = type;
+- (NSString *)URLString {
+    return [_storeDictionary objectForKey:@"url"];
 }
 
-- (void)setSerialNumber:(NSUInteger)serialNumber {
-    [_storeDictionary setObject:@(serialNumber) forKey:@"sn"];
-    _serialNumber = serialNumber;
+- (NSString *)title {
+    return [_storeDictionary objectForKey:@"title"];
 }
 
-#pragma mark Group message content
-
-- (void)setGroup:(MKMID *)group {
-    if (![_group isEqual:group]) {
-        if (group) {
-            [_storeDictionary setObject:group forKey:@"group"];
-        } else {
-            [_storeDictionary removeObjectForKey:@"group"];
-        }
-        _group = group;
-    }
+- (NSString *)desc {
+    return [_storeDictionary objectForKey:@"desc"];
 }
 
-- (void)setQuoteNumber:(NSUInteger)quoteNumber {
-    if (quoteNumber == 0) {
-        [_storeDictionary removeObjectForKey:@"quote"];
-    } else {
-        [_storeDictionary setObject:@(quoteNumber) forKey:@"quote"];
-    }
-    _quoteNumber = quoteNumber;
+- (NSData *)icon {
+    NSString *str = [_storeDictionary objectForKey:@"icon"];
+    return [str base64Decode];
 }
 
 @end
@@ -204,9 +256,14 @@
 - (instancetype)initWithText:(const NSString *)text
                        quote:(NSUInteger)sn {
     if (self = [self initWithText:text]) {
-        self.quoteNumber = sn;
+        [_storeDictionary setObject:@(sn) forKey:@"quote"];
     }
     return self;
+}
+
+- (NSUInteger)quoteNumber {
+    NSNumber *sn = [_storeDictionary objectForKey:@"quote"];
+    return sn.unsignedIntegerValue;
 }
 
 @end

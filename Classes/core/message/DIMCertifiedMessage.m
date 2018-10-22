@@ -83,6 +83,7 @@
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
         NSString *CT = [dict objectForKey:@"signature"];
+        NSAssert(CT, @"signature cannot be empty");
         self.signature = [CT base64Decode];
     }
     return self;

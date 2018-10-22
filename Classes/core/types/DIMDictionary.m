@@ -10,11 +10,13 @@
 
 @implementation DIMDictionary
 
+/* designated initializer */
 - (instancetype)init {
     self = [super init];
     return self;
 }
 
+/* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     self = [super initWithDictionary:dict];
     return self;

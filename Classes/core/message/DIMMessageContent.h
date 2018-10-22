@@ -11,15 +11,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(UInt8, DIMMessageType) {
-    DIMMessageType_Text  = 0x01, // 0000 0001
-    DIMMessageType_Quote = 0x81, // 1000 0001
+    DIMMessageType_Text    = 0x01, // 0000 0001
     
-    DIMMessageType_File  = 0x10, // 0001 0000
-    DIMMessageType_Image = 0x12, // 0001 0010
-    DIMMessageType_Audio = 0x14, // 0001 0100
-    DIMMessageType_Video = 0x16, // 0001 0110
+    DIMMessageType_File    = 0x10, // 0001 0000
+    DIMMessageType_Image   = 0x12, // 0001 0010
+    DIMMessageType_Audio   = 0x14, // 0001 0100
+    DIMMessageType_Video   = 0x16, // 0001 0110
     
-    DIMMessageType_Page  = 0x20, // 0010 0000
+    DIMMessageType_Page    = 0x20, // 0010 0000
+    
+    // quote a message before and reply it with text
+    DIMMessageType_Quote   = 0x31, // 0011 0001
+    
+    // top-secret message forward by proxy (Service Provider)
+    DIMMessageType_Forward = 0xFF  // 1111 1111
 };
 
 @protocol DIMMessageContentDelegate <NSObject>
@@ -44,10 +49,17 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 // random number to identify message content
 @property (readonly, nonatomic) NSUInteger serialNumber;
 
+// Group ID for group message
+@property (strong, nonatomic, nullable) MKMID *group;
+
 // delegate to upload file data
 @property (weak, nonatomic) id<DIMMessageContentDelegate> delegate;
 
 + (instancetype)contentWithContent:(id)content;
+
+#pragma mark - Text message
+
+@property (readonly, strong, nonatomic) NSString *text;
 
 /**
  *  Text message: {
@@ -58,6 +70,11 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
  *  }
  */
 - (instancetype)initWithText:(const NSString *)text;
+
+#pragma mark - File message
+
+@property (readonly, strong, nonatomic) NSData *fileData;
+@property (readonly, strong, nonatomic, nullable) NSString *filename;
 
 /**
  *  File message: {
@@ -71,6 +88,11 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
  */
 - (instancetype)initWithFileData:(const NSData *)data
                         filename:(nullable const NSString *)name;
+
+#pragma mark Image message
+
+@property (readonly, strong, nonatomic) NSData *imageData;
+@property (readonly, strong, nonatomic, nullable) NSData *snapshot;
 
 /**
  *  Image message: {
@@ -86,6 +108,10 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 - (instancetype)initWithImageData:(const NSData *)data
                          filename:(nullable const NSString *)name;
 
+#pragma mark Audio message
+
+@property (readonly, strong, nonatomic) NSData *audioData;
+
 /**
  *  Audio message: {
  *      type: 0x12,
@@ -94,9 +120,15 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
  *      url: "https://...", // upload to CDN
  *      data: "...",        // if (!url) base64(audio)
  *      text: "...",        // Automatic Speech Recognition
+ *      filename: "..."
  *  }
  */
-- (instancetype)initWithAudioData:(const NSData *)data;
+- (instancetype)initWithAudioData:(const NSData *)data
+                         filename:(nullable const NSString *)name;
+
+#pragma mark Video message
+
+@property (readonly, strong, nonatomic) NSData *videoData;
 
 /**
  *  Video message: {
@@ -111,6 +143,13 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
  */
 - (instancetype)initWithVideoData:(const NSData *)data
                          filename:(nullable const NSString *)name;
+
+#pragma mark - Webpage message
+
+@property (readonly, strong, nonatomic) NSString *URLString;
+@property (readonly, strong, nonatomic) NSString *title;
+@property (readonly, strong, nonatomic, nullable) NSString *desc;
+@property (readonly, strong, nonatomic, nullable) NSData *icon;
 
 /**
  *  Web Page message: {
@@ -130,17 +169,16 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 @end
 
-@interface DIMMessageContent (GroupMessage)
+#pragma mark - Group message content
 
-// GroupID for group message
-@property (strong, nonatomic) MKMID *group;
+@interface DIMMessageContent (GroupMessage)
 
 // SerialNumber for referenced reply in group chatting
 @property (readonly, nonatomic) NSUInteger quoteNumber;
 
 /**
  *  Quote text message: {
- *      type: 0x03,
+ *      type: 0x31,
  *      sn: 123,
  *
  *      text: "...",
