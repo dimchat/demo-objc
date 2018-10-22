@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMMessageContent (TopSecret)
 
 // Top-Secret message forwarded by a proxy (Service Provider)
-@property (readonly, nonatomic) DIMCertifiedMessage *secretMessage;
+@property (readonly, nonatomic) DIMCertifiedMessage *forwardMessage;
 
 /**
  *  Top-Secret message: {
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      forward: {...}  // certified secure message
  *  }
  */
-- (instancetype)initWithSecretMessage:(const DIMCertifiedMessage *)cMsg;
+- (instancetype)initWithForwardMessage:(const DIMCertifiedMessage *)cMsg;
 
 @end
 

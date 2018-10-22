@@ -159,7 +159,7 @@ static DIMClient *s_sharedInstance = nil;
     if (iMsg.content.type == DIMMessageType_Forward) {
         // do it again to drop the wrapper,
         // the secret inside the content is the real message
-        cMsg = iMsg.content.secretMessage;
+        cMsg = iMsg.content.forwardMessage;
         NSAssert(cMsg.signature, @"data error: %@", dict);
         
         iMsg = [trans verifyAndDecryptMessage:cMsg];

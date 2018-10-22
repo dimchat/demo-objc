@@ -18,27 +18,27 @@
 
 @implementation DIMMessageContent (TopSecret)
 
-- (instancetype)initWithSecretMessage:(const DIMCertifiedMessage *)cMsg {
+- (instancetype)initWithForwardMessage:(const DIMCertifiedMessage *)cMsg {
     if (self = [self init]) {
         // type
         self.type = DIMMessageType_Forward;
         
         // top-secret message
-        [_storeDictionary setObject:cMsg forKey:@"secret"];
+        [_storeDictionary setObject:cMsg forKey:@"forward"];
     }
     return self;
 }
 
-- (DIMCertifiedMessage *)secretMessage {
-    NSDictionary *secret = [_storeDictionary objectForKey:@"secret"];
-    if (!secret) {
-        secret = [_storeDictionary objectForKey:@"forward"];
-        if (!secret) {
-            secret = [_storeDictionary objectForKey:@"message"];
+- (DIMCertifiedMessage *)forwardMessage {
+    NSDictionary *message = [_storeDictionary objectForKey:@"forward"];
+    if (!message) {
+        message = [_storeDictionary objectForKey:@"secret"];
+        if (!message) {
+            message = [_storeDictionary objectForKey:@"message"];
         }
     }
-    NSAssert(secret, @"data error: %@", _storeDictionary);
-    return [DIMCertifiedMessage messageWithMessage:secret];
+    NSAssert(message, @"data error: %@", _storeDictionary);
+    return [DIMCertifiedMessage messageWithMessage:message];
 }
 
 @end
