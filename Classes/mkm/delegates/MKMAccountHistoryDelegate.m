@@ -69,7 +69,7 @@
         // Immortal Accounts
         if ([ID isEqualToString:MKM_IMMORTAL_HULK_ID] ||
             [ID isEqualToString:MKM_MONKEY_KING_ID]) {
-            // cannot suicide!
+            NSAssert(false, @"immortals cannot suicide!");
             return NO;
         }
         // status: Registerd -> Dead

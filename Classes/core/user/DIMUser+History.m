@@ -73,6 +73,7 @@
     [eman setHistory:history forID:ID];
     // 4.2. upload the meta & history onto the network
     [eman.delegate entityID:ID sendMeta:meta];
+    [eman.delegate entityID:ID sendHistory:history];
     
     // Mission Accomplished!
     NSLog(@"user account(%@) registered!", ID);

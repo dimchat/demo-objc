@@ -10,8 +10,6 @@
 #import "MKMAddress.h"
 #import "MKMMeta.h"
 
-#import "MKMEntityManager.h"
-
 #import "MKMProfile.h"
 
 @interface MKMProfile ()

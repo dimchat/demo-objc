@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MKMEntityDataSource <NSObject>
 
+// query
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID;
-
 - (MKMHistory *)historyForEntityID:(const MKMID *)ID;
 
 @end
@@ -39,8 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-#define MKMMetaForID(ID) [[MKMEntityManager sharedInstance] metaForID:ID]
-#define MKMHistoryForID(ID) [[MKMEntityManager sharedInstance] historyForID:ID]
+#define MKMMetaForID(ID) [[MKMEntityManager sharedInstance] metaForID:(ID)]
+#define MKMHistoryForID(ID) [[MKMEntityManager sharedInstance] historyForID:(ID)]
 #define MKMPublicKeyForAccountID(ID) MKMMetaForID(ID).key
 
 @interface MKMEntityManager : NSObject

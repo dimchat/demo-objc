@@ -13,14 +13,26 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMID;
 @class MKMProfile;
 
-@protocol MKMProfileDelegate <NSObject>
+@protocol MKMProfileDataSource <NSObject>
 
-- (nullable MKMProfile *)queryProfileForID:(const MKMID *)ID;
-
-- (void)postProfile:(const MKMProfile *)profile
-              forID:(const MKMID *)ID;
+// query
+- (MKMProfile *)profileForEntityID:(const MKMID *)ID;
 
 @end
+
+@protocol MKMProfileDelegate <NSObject>
+
+// send
+- (void)entityID:(const MKMID *)ID sendProfile:(const MKMProfile *)profile;
+
+// receive
+- (void)entityID:(const MKMID *)ID didReceiveProfile:(const MKMProfile *)profile;
+
+@end
+
+#pragma mark -
+
+#define MKMProfileForID(ID) [[MKMProfileManager sharedInstance] profileForID:(ID)]
 
 /**
  *  Profile Manager
@@ -29,11 +41,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMProfileManager : NSObject
 
+@property (weak, nonatomic) id<MKMProfileDataSource> dataSource;
 @property (weak, nonatomic) id<MKMProfileDelegate> delegate;;
 
 + (instancetype)sharedInstance;
 
-- (MKMProfile *)profileWithID:(const MKMID *)ID;
+- (MKMProfile *)profileForID:(const MKMID *)ID;
 - (void)setProfile:(MKMProfile *)profile forID:(const MKMID *)ID;
 
 @end

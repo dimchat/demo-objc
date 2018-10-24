@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMUserForID(ID)    [[DIMBarrack sharedInstance] userForID:(ID)]
+#define DIMContactForID(ID) [[DIMBarrack sharedInstance] contactForID:(ID)]
+#define DIMGroupForID(ID)   [[DIMBarrack sharedInstance] groupForID:(ID)]
+
 /**
  *  Entity pool to manage User/Contace/Group instances
  *

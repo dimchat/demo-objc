@@ -42,11 +42,11 @@ static MKMProfileManager *s_sharedInstance = nil;
     return self;
 }
 
-- (MKMProfile *)profileWithID:(const MKMID *)ID {
+- (MKMProfile *)profileForID:(const MKMID *)ID {
     NSAssert([ID isValid], @"Invalid ID");
     MKMProfile *profile = [_profileTable objectForKey:ID.address];
     if (!profile && _delegate) {
-        profile = [_delegate queryProfileForID:ID];
+        profile = [_dataSource profileForEntityID:ID];
         if ([profile matchID:ID]) {
             [_profileTable setObject:profile forKey:ID.address];
         }

@@ -33,11 +33,6 @@ static void load_immortal_file(NSString *filename) {
     history = [MKMHistory historyWithHistory:history];
     assert(history.count > 0);
     
-    // private key
-    MKMPrivateKey *SK = [dict objectForKey:@"privateKey"];
-    SK = [MKMPrivateKey keyWithKey:SK];
-    assert(SK.algorithm);
-    
     // profile
     id profile = [dict objectForKey:@"profile"];
     if (profile) {
@@ -49,18 +44,22 @@ static void load_immortal_file(NSString *filename) {
     profile = [MKMProfile profileWithProfile:profile];
     assert(profile);
     
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
+    // private key
+    MKMPrivateKey *SK = [dict objectForKey:@"privateKey"];
+    SK = [MKMPrivateKey keyWithKey:SK];
+    assert(SK.algorithm);
     
-    // 1. store meta & history by entity manager
+    // 1. set meta & history to entity manager
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
     [eman setMeta:meta forID:ID];
     [eman setHistory:history forID:ID];
     
-    // 2. store private key by keychain
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    // 3. store profile by profile manager (facebook)
+    // 2. set profile to profile manager (facebook)
+    MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
     [facebook setProfile:profile forID:ID];
+    
+    // 3. store private key into keychain
+    [SK saveKeyWithIdentifier:ID.address];
 }
 
 @interface MKMEntity (Hacking)
@@ -124,8 +123,7 @@ static DIMBarrack *s_sharedInstance = nil;
     DIMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
         // get profile with ID
-        MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
-        id prof = [facebook profileWithID:ID];
+        id prof = MKMProfileForID(ID);
         prof = [MKMAccountProfile profileWithProfile:prof];
         // create new user with ID
         user = [DIMUser userWithID:ID];
@@ -149,8 +147,7 @@ static DIMBarrack *s_sharedInstance = nil;
     DIMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
         // get profile with ID
-        MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
-        id prof = [facebook profileWithID:ID];
+        id prof = MKMProfileForID(ID);
         prof = [MKMAccountProfile profileWithProfile:prof];
         // create new contact with ID
         contact = [DIMContact contactWithID:ID];

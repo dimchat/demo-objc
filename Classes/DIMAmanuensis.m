@@ -72,12 +72,11 @@ static DIMAmanuensis *s_sharedInstance = nil;
     DIMConversation *chatroom = [_conversations objectForKey:ID.address];
     if (!chatroom) {
         // get entity with ID
-        DIMBarrack *barrack = [DIMBarrack sharedInstance];
         MKMEntity *entity = nil;
         if (ID.address.network == MKMNetwork_Main) {
-            entity = [barrack contactForID:ID];
+            entity = DIMContactForID(ID);
         } else if (ID.address.network == MKMNetwork_Group) {
-            entity = [barrack groupForID:ID];
+            entity = DIMGroupForID(ID);
         }
         NSAssert(entity, @"ID error");
         // create new conversation with entity (Contact/Group)
