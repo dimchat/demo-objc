@@ -1,5 +1,5 @@
 //
-//  MKMFacebook.h
+//  MKMProfileManager.h
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/10.
@@ -13,14 +13,21 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMID;
 @class MKMProfile;
 
-@protocol MKMProfileDelegate;
+@protocol MKMProfileDelegate <NSObject>
+
+- (nullable MKMProfile *)queryProfileForID:(const MKMID *)ID;
+
+- (void)postProfile:(const MKMProfile *)profile
+              forID:(const MKMID *)ID;
+
+@end
 
 /**
  *  Profile Manager
  *
  *      To look up someone's profile on the Internet social network 'MKM'
  */
-@interface MKMFacebook : NSObject
+@interface MKMProfileManager : NSObject
 
 @property (weak, nonatomic) id<MKMProfileDelegate> delegate;;
 

@@ -144,7 +144,7 @@ static DIMClient *s_sharedInstance = nil;
         return;
     }
     
-    DIMTransceiver *trans = [[DIMTransceiver alloc] init];
+    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
     DIMCertifiedMessage *cMsg;
     DIMInstantMessage *iMsg;
     

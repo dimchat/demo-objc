@@ -17,7 +17,6 @@
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
     
     // 1. create user
     DIMUser *user;
@@ -65,7 +64,7 @@
     NSLog(@"register history: %@", history);
     
     // 3. running history with delegate to update status
-    user.historyDelegate = delegate;
+    user.historyDelegate = [MKMConsensus sharedInstance];
     NSInteger count = [user runHistory:history];
     NSAssert([history count] == count, @"register failed");
     
@@ -73,7 +72,7 @@
     // 4.1. store the history in entity manager
     [eman setHistory:history forID:ID];
     // 4.2. upload the meta & history onto the network
-    [eman.delegate postMeta:meta history:history forID:ID];
+    [eman.delegate entityID:ID sendMeta:meta];
     
     // Mission Accomplished!
     NSLog(@"user account(%@) registered!", ID);
@@ -115,7 +114,7 @@
     // 3.1. store the history in entity manager
     [eman setHistory:_history forID:_ID];
     // 3.2. upload the new history record onto the network
-    [eman.delegate postHistoryRecord:record forID:_ID];
+    [eman.delegate entityID:_ID sendHistoryRecord:record];
     
     // Mission Accomplished!
     NSLog(@"user account(%@) dead!", _ID);

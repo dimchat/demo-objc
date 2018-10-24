@@ -1,5 +1,5 @@
 //
-//  MKMFacebook.m
+//  MKMProfileManager.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/10.
@@ -9,20 +9,19 @@
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMProfile.h"
-#import "MKMProfileDelegate.h"
 
-#import "MKMFacebook.h"
+#import "MKMProfileManager.h"
 
-@interface MKMFacebook () {
+@interface MKMProfileManager () {
     
     NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
 }
 
 @end
 
-@implementation MKMFacebook
+@implementation MKMProfileManager
 
-static MKMFacebook *s_sharedInstance = nil;
+static MKMProfileManager *s_sharedInstance = nil;
 
 + (instancetype)sharedInstance {
     if (!s_sharedInstance) {
@@ -47,7 +46,7 @@ static MKMFacebook *s_sharedInstance = nil;
     NSAssert([ID isValid], @"Invalid ID");
     MKMProfile *profile = [_profileTable objectForKey:ID.address];
     if (!profile && _delegate) {
-        profile = [_delegate queryProfileWithID:ID];
+        profile = [_delegate queryProfileForID:ID];
         if ([profile matchID:ID]) {
             [_profileTable setObject:profile forKey:ID.address];
         }

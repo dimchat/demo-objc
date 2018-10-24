@@ -30,12 +30,10 @@
 //#import "MKMECCPrivateKey.h"
 
 // Delegates
-#import "MKMEntityDelegate.h"
 #import "MKMEntityHistoryDelegate.h"
 #import "MKMSocialEntityHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
 #import "MKMAccountHistoryDelegate.h"
-#import "MKMProfileDelegate.h"
 
 // Entity
 #import "MKMID.h"
@@ -58,8 +56,8 @@
 
 // profile
 #import "MKMProfile.h"
+#import "MKMProfileManager.h"
 #import "MKMMemo.h"
-#import "MKMFacebook.h"
 
 // others
 #import "MKMConsensus.h"

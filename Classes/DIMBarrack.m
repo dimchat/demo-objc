@@ -8,51 +8,12 @@
 
 #import "DIMBarrack.h"
 
-static inline NSString *documents_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
-}
-
-/**
- Get full filepath to Documents Directory
-
- @param ID - contact ID
- @param filename - "*.plist"
- @return "Documents/barrack/{address}/\*.plist"
- */
-static inline NSString *full_filepath(const MKMID *ID, NSString *filename) {
-    // base directory: Documents/barrack/{address}
-    NSString *dir = documents_directory();
-    dir = [dir stringByAppendingPathComponent:@"barrack"];
-    MKMAddress *addr = ID.address;
-    dir = [dir stringByAppendingPathComponent:addr];
-    
-    // check base directory exists
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if (![fm fileExistsAtPath:dir isDirectory:nil]) {
-        NSError *error = nil;
-        // make sure directory exists
-        [fm createDirectoryAtPath:dir withIntermediateDirectories:YES
-                       attributes:nil error:&error];
-        assert(!error);
-    }
-    
-    // build filepath
-    return [dir stringByAppendingPathComponent:filename];
-}
-
-static inline BOOL file_exists(NSString *path) {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    return [fm fileExistsAtPath:path];
-}
-
 static void load_immortal_file(NSString *filename) {
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path = [bundle pathForResource:filename ofType:@"plist"];
-    if (!file_exists(path)) {
-        NSLog(@"cannot load: %@", path);
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:path]) {
+        NSLog(@"file not exists: %@", path);
         return ;
     }
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -89,7 +50,7 @@ static void load_immortal_file(NSString *filename) {
     assert(profile);
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMFacebook *facebook = [MKMFacebook sharedInstance];
+    MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
     
     // 1. store meta & history by entity manager
     [eman setMeta:meta forID:ID];
@@ -153,9 +114,6 @@ static DIMBarrack *s_sharedInstance = nil;
         load_immortal_file(@"mkm_hulk");
         load_immortal_file(@"mkm_moki");
 #endif
-        
-        [MKMEntityManager sharedInstance].delegate = self;
-        [MKMFacebook sharedInstance].delegate = self;
     }
     return self;
 }
@@ -166,7 +124,7 @@ static DIMBarrack *s_sharedInstance = nil;
     DIMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
         // get profile with ID
-        MKMFacebook *facebook = [MKMFacebook sharedInstance];
+        MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
         id prof = [facebook profileWithID:ID];
         prof = [MKMAccountProfile profileWithProfile:prof];
         // create new user with ID
@@ -191,7 +149,7 @@ static DIMBarrack *s_sharedInstance = nil;
     DIMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
         // get profile with ID
-        MKMFacebook *facebook = [MKMFacebook sharedInstance];
+        MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
         id prof = [facebook profileWithID:ID];
         prof = [MKMAccountProfile profileWithProfile:prof];
         // create new contact with ID
@@ -228,221 +186,6 @@ static DIMBarrack *s_sharedInstance = nil;
 
 - (void)removeGroup:(DIMGroup *)group {
     [_groupTable removeObjectForKey:group.ID.address];
-}
-
-#pragma mark - MKMEntityDelegate
-
-- (void)postHistory:(const MKMHistory *)history
-              forID:(const MKMID *)ID {
-    // 1. check and save history in local documents
-    if ([history matchID:ID]) {
-        NSString *path = full_filepath(ID, @"history.plist");
-        [history writeToFile:path atomically:YES];
-    } else {
-        NSAssert(false, @"history error: %@", history);
-        return;
-    }
-    
-    // TODO: 2. post history onto network
-    NSLog(@"post history of %@: %@", ID, history);
-}
-
-- (void)postHistoryRecord:(const MKMHistoryRecord *)record
-                    forID:(const MKMID *)ID {
-    // 1. get record(s) from local history
-    MKMHistory *history = nil;
-    NSString *path = full_filepath(ID, @"history.plist");
-    if (file_exists(path)) {
-        NSArray *array;
-        array = [NSArray arrayWithContentsOfFile:path];
-        history = [[MKMHistory alloc] initWithArray:array];
-    } else {
-        history = [[MKMHistory alloc] init];
-    }
-    
-    // 1.1. add new record
-    [history addObject:record];
-    
-    // 2. check and save new history in local documents
-    if ([history matchID:ID]) {
-        [history writeToFile:path atomically:YES];
-    } else {
-        NSAssert(false, @"history record error: %@", record);
-        return;
-    }
-    
-    // TODO: 3. post history record onto network
-    NSLog(@"post history record of %@: %@", ID, record);
-}
-
-- (void)postMeta:(const MKMMeta *)meta
-           forID:(const MKMID *)ID {
-    // 1. check and save meta in local documents
-    if ([meta matchID:ID]) {
-        NSString *path = full_filepath(ID, @"meta.plist");
-        [meta writeToFile:path atomically:YES];
-    } else {
-        NSAssert(false, @"meta error: %@", meta);
-        return;
-    }
-    
-    // TODO: 2. post meta onto network
-    NSLog(@"post meta of %@: %@", ID, meta);
-}
-
-- (void)postMeta:(const MKMMeta *)meta
-         history:(const MKMHistory *)history
-           forID:(const MKMID *)ID {
-    // 1.1. check and save meta in local documents
-    if ([meta matchID:ID]) {
-        NSString *path = full_filepath(ID, @"meta.plist");
-        [meta writeToFile:path atomically:YES];
-    } else {
-        NSAssert(false, @"meta error: %@", meta);
-        return;
-    }
-    // 1.2. check and save history in local documents
-    if ([history matchID:ID]) {
-        NSString *path = full_filepath(ID, @"history.plist");
-        [history writeToFile:path atomically:YES];
-    } else {
-        NSAssert(false, @"history error: %@", history);
-        return;
-    }
-    
-    // TODO: 2. post meta & history onto network
-    NSLog(@"post meta of %@: %@", ID, meta);
-    NSLog(@"and history of %@: %@", ID, history);
-}
-
-- (nullable MKMHistory *)queryHistoryWithID:(const MKMID *)ID {
-    MKMHistory *history = nil;
-    
-    do {
-        // 1. try contact pool
-        DIMContact *contact = [_contactTable objectForKey:ID.address];
-        if (contact) {
-            history = contact.history;
-            break;
-        }
-        
-        // 2. try user pool
-        DIMUser *user = [_userTable objectForKey:ID.address];
-        if (user) {
-            history = user.history;
-            break;
-        }
-        
-        // 3. try local documents
-        NSString *path = full_filepath(ID, @"history.plist");
-        if (file_exists(path)) {
-            NSArray *array;
-            array = [NSArray arrayWithContentsOfFile:path];
-            MKMHistory *his = [[MKMHistory alloc] initWithArray:array];
-            if (his.count > 0) {
-                history = his;
-                break;
-            }
-        }
-    } while (false);
-
-    // TODO: query from network to update, don't do it too frequently
-    NSLog(@"querying history of %@", ID);
-    return history;
-}
-
-- (nullable MKMMeta *)queryMetaWithID:(const MKMID *)ID {
-    MKMMeta *meta = nil;
-    
-    do {
-        // 1. try contact pool
-        DIMContact *contact = [_contactTable objectForKey:ID.address];
-        if (contact) {
-            meta = contact.meta;
-            break;
-        }
-        
-        // 2. try user pool
-        DIMUser *user = [_userTable objectForKey:ID.address];
-        if (user) {
-            meta = user.meta;
-            break;
-        }
-        
-        // 3. try local documents
-        NSString *path = full_filepath(ID, @"meta.plist");
-        if (file_exists(path)) {
-            NSDictionary *dict;
-            dict = [NSDictionary dictionaryWithContentsOfFile:path];
-            MKMMeta *met = [[MKMMeta alloc] initWithDictionary:dict];
-            if ([met matchID:ID]) {
-                meta = met;
-                break;
-            }
-        }
-    } while (false);
-    
-    if (meta) {
-        // meta won't change, no need to update
-        return meta;
-    }
-    
-    // TODO: query from network if not found
-    NSLog(@"querying meta of %@", ID);
-    return meta;
-}
-
-#pragma mark - MKMProfileDelegate
-
-- (void)postProfile:(const MKMProfile *)profile
-              forID:(const MKMID *)ID {
-    // 1. save in local documents
-    if ([profile matchID:ID]) {
-        NSString *path = full_filepath(ID, @"profile.plist");
-        [profile writeToFile:path atomically:YES];
-    } else {
-        NSAssert(false, @"profile error: %@", profile);
-        return;
-    }
-    
-    // TODO: post onto network
-    NSLog(@"post profile of %@: %@", ID, profile);
-}
-
-- (nullable MKMProfile *)queryProfileWithID:(const MKMID *)ID {
-    MKMProfile *profile = nil;
-    
-    do {
-        // 1. try contact pool
-        DIMContact *contact = [_contactTable objectForKey:ID.address];
-        if (contact) {
-            profile = contact.profile;
-            break;
-        }
-        
-        // 2. try user pool
-        DIMUser *user = [_userTable objectForKey:ID.address];
-        if (user) {
-            profile = user.profile;
-            break;
-        }
-        
-        // 3. try local documents
-        NSString *path = full_filepath(ID, @"profile.plist");
-        if (file_exists(path)) {
-            NSDictionary *dict;
-            dict = [NSDictionary dictionaryWithContentsOfFile:path];
-            MKMProfile *prof = [[MKMProfile alloc] initWithDictionary:dict];
-            if ([prof matchID:ID]) {
-                profile = prof;
-                break;
-            }
-        }
-    } while (false);
-    
-    // TODO: query from network to update, don't do it too frequently
-    NSLog(@"querying profile of %@", ID);
-    return nil;
 }
 
 @end

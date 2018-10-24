@@ -11,8 +11,6 @@
 #import "MKMAddress.h"
 #import "MKMMeta.h"
 
-#import "MKMEntityManager.h"
-
 #import "MKMID.h"
 
 @interface MKMID ()

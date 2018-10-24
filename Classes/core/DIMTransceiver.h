@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTransceiver : NSObject
 
++ (instancetype)sharedInstance;
+
 /**
  Pack message content with sender and receiver to deliver it
 

@@ -22,14 +22,11 @@
 
 + (instancetype)contactWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
-    
-    MKMMeta *meta = [eman metaForID:ID];
-    MKMHistory *history = [eman historyForID:ID];
+    MKMMeta *meta = MKMMetaForID(ID);
+    MKMHistory *history = MKMHistoryForID(ID);
     DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
     if (contact) {
-        contact.historyDelegate = delegate;
+        contact.historyDelegate = [MKMConsensus sharedInstance];
         NSUInteger count = [contact runHistory:history];
         NSAssert(count == history.count, @"history error");
     }
@@ -73,7 +70,7 @@
     NSAssert(CT, @"signature cannot be empty");
     
     // 1. use the contact's public key to verify the signature
-    if (![self verify:content signature:CT]) {
+    if (![self verify:content withSignature:CT]) {
         // signature error
         return nil;
     }
@@ -95,9 +92,9 @@
 }
 
 - (BOOL)verify:(const NSData *)plaintext
-     signature:(const NSData *)ciphertext {
+ withSignature:(const NSData *)ciphertext {
     MKMPublicKey *PK = self.publicKey;
-    return [PK verify:plaintext signature:ciphertext];
+    return [PK verify:plaintext withSignature:ciphertext];
 }
 
 @end

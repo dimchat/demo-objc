@@ -151,13 +151,11 @@ static NSDate *date(NSTimeInterval time) {
             NSAssert(commander, @"commander cannot be empty");
             NSAssert([operation isKindOfClass:[NSString class]],
                      @"event info error: %@", dict);
-            MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-            
             operation = [operation data];
             CT = [signature base64Decode];
             ID = [MKMID IDWithID:commander];
-            MKMPublicKey *PK = [eman metaForID:ID].key;
-            correct = [PK verify:operation signature:CT];
+            MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
+            correct = [PK verify:operation withSignature:CT];
             NSAssert(correct, @"signature error");
         }
         

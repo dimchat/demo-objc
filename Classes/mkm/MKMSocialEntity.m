@@ -58,12 +58,11 @@
     if (_founder) {
         return [_founder isEqual:ID];
     }
-    // founder not set yet, check by meta
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMMeta *meta = [eman metaForID:ID];
+    // founder not set yet, check by meta.key
+    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
     // the key in social entity's meta
     // must be the same (public) key of founder
-    return [meta.key isEqual:self.meta.key];
+    return [self.meta.key isEqual:PK];
 }
 
 - (BOOL)isOwner:(const MKMID *)ID {

@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      1st, get instance here to avoid create same instance,
  *      2nd, if their history was updated, we can notice them here immediately
  */
-@interface DIMBarrack : NSObject <MKMEntityDelegate, MKMProfileDelegate>
+@interface DIMBarrack : NSObject
 
 + (instancetype)sharedInstance;
 

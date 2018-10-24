@@ -49,7 +49,7 @@
     NSString *promise = @"Moky loves May Lee forever!";
     NSData *data = [promise dataUsingEncoding:NSUTF8StringEncoding];
     NSData *signature = [SK sign:data];
-    return [self verify:data signature:signature];
+    return [self verify:data withSignature:signature];
 }
 
 - (NSData *)encrypt:(const NSData *)plaintext {
@@ -58,7 +58,7 @@
 }
 
 - (BOOL)verify:(const NSData *)plaintext
-     signature:(const NSData *)ciphertext {
+ withSignature:(const NSData *)ciphertext {
     // implements in subclass
     return NO;
 }

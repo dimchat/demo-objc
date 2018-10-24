@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  OK = verify(text, signature, PK)
  */
 - (BOOL)verify:(const NSData *)plaintext
-     signature:(const NSData *)ciphertext;
+ withSignature:(const NSData *)ciphertext;
 
 @end
 

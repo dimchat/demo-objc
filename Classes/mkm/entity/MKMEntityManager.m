@@ -11,7 +11,6 @@
 #import "MKMID.h"
 #import "MKMMeta.h"
 #import "MKMHistory.h"
-#import "MKMEntityDelegate.h"
 
 #import "MKMEntityManager.h"
 
@@ -51,7 +50,7 @@ static MKMEntityManager *s_sharedInstance = nil;
     NSAssert([ID isValid], @"Invalid ID");
     MKMMeta *meta = [_metaTable objectForKey:ID.address];
     if (!meta && _delegate) {
-        meta = [_delegate queryMetaWithID:ID];
+        meta = [_dataSource metaForEntityID:ID];
         if ([meta matchID:ID]) {
             [_metaTable setObject:meta forKey:ID.address];
         } else {
@@ -73,7 +72,7 @@ static MKMEntityManager *s_sharedInstance = nil;
     NSAssert(ID, @"ID cannot be empty");
     MKMHistory *history = [_historyTable objectForKey:ID.address];
     if (!history && _delegate) {
-        history = [_delegate queryHistoryWithID:ID];
+        history = [_dataSource historyForEntityID:ID];
         if ([history matchID:ID]) {
             [_historyTable setObject:history forKey:ID.address];
         } else {

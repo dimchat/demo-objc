@@ -154,7 +154,7 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
 }
 
 - (BOOL)verify:(const NSData *)plaintext
-     signature:(const NSData *)ciphertext {
+ withSignature:(const NSData *)ciphertext {
     NSAssert([plaintext length] > 0, @"plaintext cannot be empty");
     NSAssert([plaintext length] <= (_keySize/8 - 11), @"plaintext too long");
     NSAssert([ciphertext length] > 0, @"signature cannot be empty");

@@ -81,8 +81,6 @@
 }
 
 - (BOOL)runHistoryRecord:(const MKMHistoryRecord *)record {
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    
     // recorder
     MKMID *recorder = record.recorder;
     recorder = [MKMID IDWithID:recorder];
@@ -101,7 +99,7 @@
     
     // 2. check signature for this record
     MKMHistoryRecord *prev = _history.lastObject;
-    MKMPublicKey *PK = [eman metaForID:recorder].key;
+    MKMPublicKey *PK = MKMPublicKeyForAccountID(recorder);
     prev = [MKMHistoryRecord recordWithRecord:prev];
     PK = [MKMPublicKey keyWithKey:PK];
     if (![record verifyWithPreviousMerkle:prev.merkleRoot
@@ -146,8 +144,8 @@
         data = [op data];
         
         // 3.2. check signature for this event
-        PK = [eman metaForID:commander].key;
-        if (![PK verify:data signature:CT]) {
+        PK = MKMPublicKeyForAccountID(commander);
+        if (![PK verify:data withSignature:CT]) {
             NSAssert(false, @"signature error");
             return NO;
         }

@@ -19,6 +19,26 @@
 
 @implementation DIMTransceiver
 
+static DIMTransceiver *s_sharedInstance = nil;
+
++ (instancetype)sharedInstance {
+    if (!s_sharedInstance) {
+        s_sharedInstance = [[self alloc] init];
+    }
+    return s_sharedInstance;
+}
+
++ (instancetype)alloc {
+    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
+    return [super alloc];
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+    }
+    return self;
+}
+
 - (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
                                         sender:(const MKMID *)sender
                                       receiver:(const MKMID *)receiver {

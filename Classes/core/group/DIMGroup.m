@@ -22,14 +22,11 @@
 
 + (instancetype)groupWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Group, @"address error");
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
-    
-    MKMMeta *meta = [eman metaForID:ID];
-    MKMHistory *history = [eman historyForID:ID];
+    MKMMeta *meta = MKMMetaForID(ID);
+    MKMHistory *history = MKMHistoryForID(ID);
     DIMGroup *group = [[DIMGroup alloc] initWithID:ID meta:meta];
     if (group) {
-        group.historyDelegate = delegate;
+        group.historyDelegate = [MKMConsensus sharedInstance];
         NSUInteger count = [group runHistory:history];
         NSAssert(count == history.count, @"history error");
     }
@@ -66,14 +63,11 @@
     DIMEncryptedKeyMap *map;
     map = [[DIMEncryptedKeyMap alloc] initWithCapacity:[_members count]];
     
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    
     MKMPublicKey *PK;
     NSData *key;
     for (MKMID *ID in _members) {
-        PK = [eman metaForID:ID].key;
-        NSAssert(PK, @"failed to get meta for ID: %@", ID);
-        
+        PK = MKMPublicKeyForAccountID(ID);
+        NSAssert(PK, @"failed to get PK for ID: %@", ID);
         if (PK) {
             key = [PK encrypt:PW];
             NSAssert(key, @"error");

@@ -60,7 +60,7 @@
         NSAssert(ver == MKMAddressDefaultVersion, @"unknown version");
         
         // check seed & fingerprint with (public) key
-        BOOL correct = [PK verify:data signature:CT];
+        BOOL correct = [PK verify:data withSignature:CT];
         NSAssert(correct, @"fingerprint error");
         
         if (correct) {
@@ -86,7 +86,7 @@
     NSAssert(ver == MKMAddressDefaultVersion, @"unknown version: %lu", ver);
     NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:4];
     
-    BOOL correct = [PK verify:[name data] signature:CT];
+    BOOL correct = [PK verify:[name data] withSignature:CT];
     NSAssert(correct, @"fingerprint error");
     
     if (correct) {

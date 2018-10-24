@@ -121,7 +121,7 @@ NSString *text = @"Hey boy!"
 DIMMessageContent *content = [[DIMMessageContent alloc] initWithText:text];
 
 // encrypt and sign the message content by transceiver
-DIMTransceiver *trans = [[DIMTransceiver alloc] init];
+DIMTransceiver *trans = [DIMTransceiver sharedInstance];
 DIMCertifiedMessage *cMsg = [trans encryptAndSignContent:content sender:moky.ID receiver:hulk.ID];
 
 // send out the certified secure message via current connection

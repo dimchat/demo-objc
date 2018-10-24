@@ -46,7 +46,7 @@
     // public key
     MKMPublicKey *PK = self.publicKey;
     // verify the signature
-    return [PK verify:data signature:CA.signature];
+    return [PK verify:data withSignature:CA.signature];
 }
 
 - (void)addStation:(DIMStation *)station {

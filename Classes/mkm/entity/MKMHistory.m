@@ -190,8 +190,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
                           privateKey:(const MKMPrivateKey *)SK {
     if (_recorder) {
         // make sure the recorder's PK is match with this SK
-        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        MKMPublicKey *PK = [eman metaForID:_recorder].key;
+        MKMPublicKey *PK = MKMPublicKeyForAccountID(_recorder);
         if (![PK isMatch:SK]) {
             NSAssert(false, @"keys not match");
             return nil;
@@ -214,8 +213,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
                        publicKey:(const MKMPublicKey *)PK {
     if (_recorder) {
         // make sure the recorder's PK is match with this PK
-        MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-        MKMPublicKey *PK2 = [eman metaForID:_recorder].key;
+        MKMPublicKey *PK2 = MKMPublicKeyForAccountID(_recorder);
         if (![PK isEqual:PK2]) {
             NSAssert(false, @"keys not equal");
             return nil;
@@ -226,7 +224,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     NSData *merkle = self.merkleRoot;
     merkle = link_merkle(merkle, prev);
     // verify(hash, signature, PK)
-    return [PK verify:merkle signature:self.signature];
+    return [PK verify:merkle withSignature:self.signature];
 }
 
 - (NSUInteger)count {
@@ -292,12 +290,9 @@ static NSMutableArray *copy_events(const NSArray *events) {
 }
 
 - (BOOL)matchID:(const MKMID *)ID {
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    id<MKMEntityHistoryDelegate> delegate = [MKMConsensus sharedInstance];
-    
     // create a sandbox entity
     MKMEntity *sandbox = nil;
-    MKMMeta *meta = [eman metaForID:ID];
+    MKMMeta *meta = MKMMetaForID(ID);
     if (ID.address.network == MKMNetwork_Main) {
         sandbox = [[MKMAccount alloc] initWithID:ID meta:meta];
     } else if (ID.address.network == MKMNetwork_Group) {
@@ -305,7 +300,7 @@ static NSMutableArray *copy_events(const NSArray *events) {
     }
     NSAssert(sandbox, @"entity info error");
     
-    sandbox.historyDelegate = delegate;
+    sandbox.historyDelegate = [MKMConsensus sharedInstance];
     NSUInteger count = [sandbox runHistory:self];
     return count == _storeArray.count;
 }

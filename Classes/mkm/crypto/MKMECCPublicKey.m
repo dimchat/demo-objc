@@ -62,7 +62,7 @@
 }
 
 - (BOOL)verify:(const NSData *)plaintext
-     signature:(const NSData *)ciphertext {
+ withSignature:(const NSData *)ciphertext {
     BOOL match = NO;
     
     if (_publicData.length == (ECC_BYTES + 1) &&

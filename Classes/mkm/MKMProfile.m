@@ -72,14 +72,12 @@
     if (![ID isEqual:_ID]) {
         return NO;
     }
-//    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-//    MKMMeta *meta = [eman metaForID:ID];
-//    MKMPublicKey *PK = meta.key;
 
     // TODO: check the signature of profile
+//    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
 //    NSData *data = nil;
 //    NSData *signature = nil;
-    return YES;//[PK verify:data signature:signature];
+    return YES;//[PK verify:data withSignature:signature];
 }
 
 - (void)setArrayValue:(NSString *)value forKey:(const NSString *)arrName {
