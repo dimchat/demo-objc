@@ -1,48 +1,5 @@
 # Decentralized Instant Messaging Client (Objective-C)
 
-## Network connection:
-
-* Implements a Connector to handle long links between the client & server
-
-```
-@interface TCPConnector : NSObject <DIMConnector>
-
-// connect to a server
-- (DIMConnection *)connectTo:(const DIMStation *)server;
-
-// close a connectiion
-- (void)closeConnection:(const DIMConnection *)connection;
-
-@end
-```
-* Implements the Connection to send data to the connected server
-
-```
-@interface TCPConnection : DIMConnection
-
-// send data to the target station
-- (BOOL)sendData:(const NSData *)jsonData;
-
-@end
-```
-
-* Usages
-
-```
-// create your connector
-_myConnector = [[TCPConnector alloc] init];
-
-// set current connection for the DIM client
-DIMClient  *client = [DIMClient sharedInstance];
-client.connector = _myConnector;
-
-// connect the client to a station with the connector's help
-DIMStation *server = [[DIMStation alloc] initWithHost:@"127.0.0.1" port:9527];
-[client connectTo:server];
-
-// see "Instant Messages" section for samples of "sendData:"
-```
-
 ## User & Contacts:
 
 * Samples
@@ -60,7 +17,7 @@ NSLog(@"my new ID: %@", moky.ID);
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
 1. The private key of the registered user will save into the Keychain automatically.
-2. The meta & history of this user will save in files (Documents/barrack/{address}/*.plist) by the entity delegate (DIMBarrack) after registered.
+2. The meta & history of this user must be saved by the entity delegate after registered.
 
 ```
 // load user
@@ -71,8 +28,8 @@ DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
-1. The entity delegate (DIMBarrack) will load the user's meta & history & profile from local files to create a user,
-2. After that it will try to query the newest history & profile from the network.
+1. The entity delegate must load the user's meta & history & profile from local files for creating a user,
+2. After that it should try to query the newest history & profile from the network.
 
 ```
 // get contacts from barrack
@@ -85,7 +42,7 @@ DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
 [moky addContact:hulk];
 [moky addContact:moki];
 ```
-1. The entity delegate (DIMBarrack) will load the contact's meta & history & profile just like the above.
+1. The entity delegate must load the contact's meta & history & profile when need.
 2. You need to manage the user's relationship, here just add the contacts to the user in memory, not persistent store.
 
 ## Instant messages:
@@ -153,7 +110,7 @@ clerk.delegate = _myMessageProcessor;
 //    the clerk (DIMAmanuensis) will set your processor into each chatroom
 //    automatically, unless you have already specify them.
 ```
-1. Your message processor should implement saving new message and loading message partially from local store.
+1. Your message processor should implement saving new message and loading messages partially from local store.
 
 ---
 Written by [Albert Moky](http://moky.github.com/) @2018

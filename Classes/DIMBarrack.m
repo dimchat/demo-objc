@@ -119,7 +119,7 @@ static DIMBarrack *s_sharedInstance = nil;
 
 #pragma mark User
 
-- (DIMUser *)userForID:(const MKMID *)ID {
+- (DIMUser *)userWithID:(const MKMID *)ID {
     DIMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
         // get profile with ID
@@ -143,7 +143,7 @@ static DIMBarrack *s_sharedInstance = nil;
 
 #pragma mark Contact
 
-- (DIMContact *)contactForID:(const MKMID *)ID {
+- (DIMContact *)contactWithID:(const MKMID *)ID {
     DIMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
         // get profile with ID
@@ -167,7 +167,7 @@ static DIMBarrack *s_sharedInstance = nil;
 
 #pragma mark Group
 
-- (DIMGroup *)groupForID:(const MKMID *)ID {
+- (DIMGroup *)groupWithID:(const MKMID *)ID {
     DIMGroup *group = [_groupTable objectForKey:ID.address];
     if (!group) {
         // create new group with ID

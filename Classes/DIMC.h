@@ -17,9 +17,6 @@
 #import "DIMServiceProvider.h"
 #import "DIMStation.h"
 
-#import "DIMConnection.h"
-#import "DIMConnector.h"
-
 //-
 #import "DIMBarrack.h"
 #import "DIMAmanuensis.h"

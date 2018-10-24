@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMConversationWithID(ID) [[DIMAmanuensis sharedInstance] conversationWithID:(ID)]
+
 /**
  *  Conversation pool to manage chatroom instances
  *

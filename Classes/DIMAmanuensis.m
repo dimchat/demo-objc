@@ -74,9 +74,9 @@ static DIMAmanuensis *s_sharedInstance = nil;
         // get entity with ID
         MKMEntity *entity = nil;
         if (ID.address.network == MKMNetwork_Main) {
-            entity = DIMContactForID(ID);
+            entity = DIMContactWithID(ID);
         } else if (ID.address.network == MKMNetwork_Group) {
-            entity = DIMGroupForID(ID);
+            entity = DIMGroupWithID(ID);
         }
         NSAssert(entity, @"ID error");
         // create new conversation with entity (Contact/Group)

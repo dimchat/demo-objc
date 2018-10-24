@@ -10,9 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMUserForID(ID)    [[DIMBarrack sharedInstance] userForID:(ID)]
-#define DIMContactForID(ID) [[DIMBarrack sharedInstance] contactForID:(ID)]
-#define DIMGroupForID(ID)   [[DIMBarrack sharedInstance] groupForID:(ID)]
+#define DIMUserWithID(ID)    [[DIMBarrack sharedInstance] userWithID:(ID)]
+#define DIMContactWithID(ID) [[DIMBarrack sharedInstance] contactWithID:(ID)]
+#define DIMGroupWithID(ID)   [[DIMBarrack sharedInstance] groupWithID:(ID)]
 
 /**
  *  Entity pool to manage User/Contace/Group instances
@@ -25,17 +25,17 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 // user
-- (DIMUser *)userForID:(const MKMID *)ID; // if not found, create new one
+- (DIMUser *)userWithID:(const MKMID *)ID; // if not found, create new one
 - (void)setUser:(DIMUser *)user;
 - (void)removeUser:(DIMUser *)user;
 
 // contact
-- (DIMContact *)contactForID:(const MKMID *)ID; // if not found, create new one
+- (DIMContact *)contactWithID:(const MKMID *)ID; // if not found, create new one
 - (void)setContact:(DIMContact *)contact;
 - (void)removeContact:(DIMContact *)contact;
 
 // group
-- (DIMGroup *)groupForID:(const MKMID *)ID; // if not found, create new one
+- (DIMGroup *)groupWithID:(const MKMID *)ID; // if not found, create new one
 - (void)setGroup:(DIMGroup *)group;
 - (void)removeGroup:(DIMGroup *)group;
 

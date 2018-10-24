@@ -12,6 +12,8 @@
 
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
+#import "DIMMessageContent+Secret.h"
+
 #import "DIMInstantMessage.h"
 #import "DIMCertifiedMessage.h"
 
@@ -76,6 +78,14 @@ static DIMTransceiver *s_sharedInstance = nil;
     // 2. decrypt to instant message
     DIMInstantMessage *iMsg;
     iMsg = [self decryptMessage:sMsg];
+    
+    // 3. check: top-secret message
+    if (iMsg.content.type == DIMMessageType_Forward) {
+        // do it again to drop the wrapper,
+        // the secret inside the content is the real message
+        cMsg = iMsg.content.forwardMessage;
+        return [self verifyAndDecryptMessage:cMsg];
+    }
     
     // OK
     NSAssert(iMsg.content, @"content cannot be empty");
