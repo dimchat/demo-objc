@@ -48,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (MKMProfile *)profileForID:(const MKMID *)ID;
 - (void)setProfile:(MKMProfile *)profile forID:(const MKMID *)ID;
+- (void)sendProfileForID:(const MKMID *)ID;
 
 @end
 

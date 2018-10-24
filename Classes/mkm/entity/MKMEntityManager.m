@@ -46,10 +46,11 @@ static MKMEntityManager *s_sharedInstance = nil;
     return self;
 }
 
+#pragma mark - Meta
+
 - (MKMMeta *)metaForID:(const MKMID *)ID {
-    NSAssert([ID isValid], @"Invalid ID");
     MKMMeta *meta = [_metaTable objectForKey:ID.address];
-    if (!meta && _delegate) {
+    if (!meta && _dataSource) {
         meta = [_dataSource metaForEntityID:ID];
         if ([meta matchID:ID]) {
             [_metaTable setObject:meta forKey:ID.address];
@@ -61,17 +62,25 @@ static MKMEntityManager *s_sharedInstance = nil;
 }
 
 - (void)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID {
-    NSAssert([ID isValid], @"Invalid ID");
     if ([meta matchID:ID]) {
         // set meta
         [_metaTable setObject:meta forKey:ID.address];
     }
 }
 
+- (void)sendMetaForID:(const MKMID *)ID {
+    MKMMeta *meta = [_metaTable objectForKey:ID.address];
+    if (meta && _delegate) {
+        // send out onto the network
+        [_delegate entityID:ID sendMeta:meta];
+    }
+}
+
+#pragma mark - History
+
 - (MKMHistory *)historyForID:(const MKMID *)ID {
-    NSAssert(ID, @"ID cannot be empty");
     MKMHistory *history = [_historyTable objectForKey:ID.address];
-    if (!history && _delegate) {
+    if (!history && _dataSource) {
         history = [_dataSource historyForEntityID:ID];
         if ([history matchID:ID]) {
             [_historyTable setObject:history forKey:ID.address];
@@ -83,11 +92,25 @@ static MKMEntityManager *s_sharedInstance = nil;
 }
 
 - (void)setHistory:(MKMHistory *)history forID:(const MKMID *)ID {
-    NSAssert([ID isValid], @"Invalid ID");
     MKMHistory *old = [_historyTable objectForKey:ID.address];
     if (history.count > old.count && [history matchID:ID]) {
         // only update longest history
         [_historyTable setObject:history forKey:ID.address];
+    }
+}
+
+- (void)sendHistoryForID:(const MKMID *)ID {
+    MKMHistory *history = [_historyTable objectForKey:ID.address];
+    if (history && _delegate) {
+        // only sendout longest history
+        [_delegate entityID:ID sendHistory:history];
+    }
+}
+
+- (void)sendHistoryRecord:(MKMHistoryRecord *)record
+                    forID:(const MKMID *)ID {
+    if (record && _delegate) {
+        [_delegate entityID:ID sendHistoryRecord:record];
     }
 }
 
