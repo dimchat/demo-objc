@@ -109,6 +109,10 @@
     return self;
 }
 
+- (NSUInteger)number {
+    return _address.code;
+}
+
 - (id)copy {
     return [[[self class] alloc] initWithName:_name
                                       address:_address

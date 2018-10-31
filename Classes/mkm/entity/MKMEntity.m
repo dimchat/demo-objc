@@ -83,7 +83,7 @@
 }
 
 - (NSUInteger)number {
-    return _ID.address.code;
+    return _ID.number;
 }
 
 @end

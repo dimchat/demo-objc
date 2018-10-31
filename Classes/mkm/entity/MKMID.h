@@ -26,8 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface MKMID : MKMString
 
-@property (readonly, strong, nonatomic, nonnull) NSString *name;
-@property (readonly, strong, nonatomic, nonnull) MKMAddress *address;
+@property (readonly, strong, nonatomic) NSString *name;
+@property (readonly, strong, nonatomic) MKMAddress *address;
+@property (readonly, nonatomic) NSUInteger number;
 
 @property (readonly, strong, nonatomic, nullable) NSString * terminal;
 
