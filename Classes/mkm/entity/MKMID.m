@@ -142,11 +142,8 @@ static void parse_id_string(const NSString *string, MKMID *ID) {
 }
 
 - (BOOL)isEqual:(id)object {
-    if (!_valid) {
-        return NO;
-    }
     MKMID *ID = [MKMID IDWithID:object];
-    if (!ID.isValid) {
+    if (!self.isValid || !ID.isValid) {
         return NO;
     }
     // name

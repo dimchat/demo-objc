@@ -65,6 +65,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (readonly, strong, nonatomic) NSData *fingerprint;
 
+@property (readonly, nonatomic, getter=isValid) BOOL valid;
+
 + (instancetype)metaWithMeta:(id)meta;
 
 /**
