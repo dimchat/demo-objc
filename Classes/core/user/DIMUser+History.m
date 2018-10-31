@@ -17,6 +17,7 @@
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMConsensus *conse = [MKMConsensus sharedInstance];
     
     // 1. create user
     DIMUser *user;
@@ -64,8 +65,7 @@
     NSLog(@"register history: %@", history);
     
     // 3. running history with delegate to update status
-    user.historyDelegate = [MKMConsensus sharedInstance];
-    NSInteger count = [user runHistory:history];
+    NSInteger count = [conse runHistory:history forEntity:user];
     NSAssert([history count] == count, @"register failed");
     
     // 4. store meta + history and send out
@@ -82,9 +82,10 @@
 
 - (MKMHistoryRecord *)suicideWithMessage:(const NSString *)lastWords
                               privateKey:(const MKMPrivateKey *)SK {
-    NSAssert([self matchPrivateKey:SK], @"not your SK");
+    NSAssert([self.publicKey isMatch:SK], @"not your SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    MKMConsensus *conse = [MKMConsensus sharedInstance];
     
     // 1. generate history record
     MKMHistoryRecord *record;
@@ -103,17 +104,18 @@
                                                merkle:hash
                                             signature:CT];
     // 1.4. sign with previous merkle root
-    MKMHistoryRecord *prev = _history.lastObject;
+    MKMHistory *oldHis = MKMHistoryForID(self.ID);
+    MKMHistoryRecord *prev = oldHis.lastObject;
     [record signWithPreviousMerkle:prev.merkleRoot privateKey:SK];
     NSLog(@"suicide record: %@", record);
     
     // 2. run history to update status
-    BOOL OK = [self runHistoryRecord:record];
+    BOOL OK = [conse runHistoryRecord:record forEntity:self];
     NSAssert(OK, @"suicide failed");
     
     // 3. store and send the history record out
     // 3.1. store the history in entity manager
-    [eman setHistory:_history forID:_ID];
+//    [eman setHistory:_history forID:_ID];
     // 3.2. upload the new history record onto the network
     [eman.delegate entityID:_ID sendHistoryRecord:record];
     

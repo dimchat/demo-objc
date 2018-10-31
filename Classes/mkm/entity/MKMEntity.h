@@ -13,30 +13,18 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMID;
 @class MKMMeta;
 
-@class MKMHistory;
-
-@protocol MKMEntityHistoryDelegate;
-
 @interface MKMEntity : NSObject {
     
     MKMID *_ID;
-    MKMHistory *_history;
-    __weak id<MKMEntityHistoryDelegate> _historyDelegate;
+    MKMMeta *_meta;
 }
 
-@property (readonly, strong, nonatomic) MKMID *ID;
+@property (readonly, strong, nonatomic) MKMID *ID;   // name@address
 
-@property (readonly, nonatomic) NSUInteger number;
+@property (readonly, nonatomic) MKMNetworkType type; // Network ID
+@property (readonly, nonatomic) UInt32 number;       // search number
+@property (strong, nonatomic) NSString *name;        // name or seed
 
-@property (weak, nonatomic) id<MKMEntityHistoryDelegate> historyDelegate;
-
-/**
- Initialize an entity with ID and given meta info
-
- @param ID - User/Contact/Group ID
- @param meta - meta info includes PK, CT, ...
- @return Entity object
- */
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta
 NS_DESIGNATED_INITIALIZER;

@@ -29,11 +29,8 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
     
     // parse the history to update status
     MKMAccountStatus _status;
-    
-    MKMPublicKey *_publicKey;
 }
 
-@property (readonly, strong, nonatomic) MKMAccountProfile *profile;
 @property (readonly, nonatomic) MKMAccountStatus status;
 
 @property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
@@ -46,6 +43,8 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 @property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, nonatomic) MKMGender gender;
 @property (readonly, strong, nonatomic) NSString *avatar; // URL
+
+- (void)updateProfile:(const MKMAccountProfile *)profile;
 
 @end
 

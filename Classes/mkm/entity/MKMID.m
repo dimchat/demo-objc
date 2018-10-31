@@ -24,6 +24,31 @@
 
 @end
 
+static void parse_id_string(const NSString *string, MKMID *ID) {
+    // get terminal
+    NSArray *pair = [string componentsSeparatedByString:@"/"];
+    if (pair.count == 2) {
+        string = pair.firstObject; // drop the tail
+        ID.terminal = pair.lastObject;
+    }
+    
+    pair = [string componentsSeparatedByString:@"@"];
+    assert(pair.count == 2);
+    
+    // get name
+    ID.name = [pair firstObject];
+    assert(ID.name.length > 0);
+    
+    // get address
+    NSString *addr = [pair lastObject];
+    assert(addr.length >= 15);
+    ID.address = [[MKMAddress alloc] initWithString:addr];
+    assert(ID.address.isValid);
+    
+    // isValid
+    ID.valid = (ID.name.length > 0 && ID.address.isValid);
+}
+
 @implementation MKMID
 
 + (instancetype)IDWithID:(id)ID {
@@ -39,38 +64,11 @@
 
 - (instancetype)initWithString:(NSString *)aString {
     if (self = [super initWithString:aString]) {
-        // get terminal
-        NSString *terminal = nil;
-        NSArray *pair = [aString componentsSeparatedByString:@"/"];
-        if (pair.count == 2) {
-            aString = pair.firstObject; // drop the tail
-            terminal = pair.lastObject;
-        }
-        
-        pair = [aString componentsSeparatedByString:@"@"];
-        NSAssert(pair.count == 2, @"ID format error: %@", aString);
-        
-        // get name
-        NSString *name = [pair firstObject];
-        NSAssert(name.length > 0, @"ID.name error");
-        
-        // get address
-        NSString *addr = [pair lastObject];
-        NSAssert(addr.length >= 15, @"ID.address error");
-        MKMAddress *address = [[MKMAddress alloc] initWithString:addr];
-        NSAssert(address.isValid, @"address error");
-        
-        if (name.length > 0 && address.isValid) {
-            _name = [name copy];
-            _address = address;
-            _terminal = [terminal copy];
-            _valid = YES;
-        } else {
-            _name = nil;
-            _address = nil;
-            _terminal = nil;
-            _valid = NO;
-        }
+        // lazy
+        _name = nil;
+        _address = nil;
+        _terminal = nil;
+        _valid = NO;
     }
     return self;
 }
@@ -93,23 +91,47 @@
     }
     
     if (self = [super initWithString:string]) {
-        addr = [MKMAddress addressWithAddress:addr];
-        if (seed.length > 0 && addr.isValid) {
-            _name = [seed copy];
-            _address = [addr copy];
-            _terminal = [res copy];
-            _valid = YES;
-        } else {
-            _name = nil;
-            _address = nil;
-            _terminal = nil;
-            _valid = NO;
-        }
+        _name = [seed copy];
+        _address = [addr copy];
+        _terminal = [res copy];
+        _valid = (seed.length > 0 && addr.isValid);
     }
     return self;
 }
 
-- (NSUInteger)number {
+- (NSString *)name {
+    if (!_name) {
+        parse_id_string(_storeString, self);
+    }
+    return _name;
+}
+
+- (MKMAddress *)address {
+    if (!_address) {
+        parse_id_string(_storeString, self);
+    }
+    return _address;
+}
+
+- (NSString *)terminal {
+    if (!_name && !_address) {
+        parse_id_string(_storeString, self);
+    }
+    return _terminal;
+}
+
+- (BOOL)isValid {
+    if (!_name && !_address) {
+        parse_id_string(_storeString, self);
+    }
+    return _valid;
+}
+
+- (MKMNetworkType)type {
+    return _address.network;
+}
+
+- (UInt32)number {
     return _address.code;
 }
 

@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
     MKMContactMemo *_memo; // same keys to the profile
 }
 
-@property (readonly, strong, nonatomic) MKMContactMemo *memo;
-
 @end
 
 NS_ASSUME_NONNULL_END

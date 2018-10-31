@@ -14,19 +14,14 @@
 
 #import "MKMSocialEntity.h"
 
-@interface MKMEntity (Hacking)
-
-@property (strong, nonatomic) MKMMeta *meta;
-
-@end
-
 @interface MKMSocialEntity ()
 
 @property (strong, nonatomic) MKMID *founder;
 @property (strong, nonatomic) MKMID *owner;
-@property (strong, nonatomic) NSString *name;
 
 @property (strong, nonatomic) NSArray<const MKMID *> *members;
+
+@property (strong, nonatomic) MKMSocialEntityProfile *profile;
 
 @end
 
@@ -37,6 +32,7 @@
                       meta:(const MKMMeta *)meta {
     if (self = [super initWithID:ID meta:meta]) {
         _members = [[NSMutableArray alloc] init];
+        _profile = [[MKMSocialEntityProfile alloc] init];
     }
     
     return self;
@@ -47,9 +43,8 @@
     if (social) {
         social.founder = _founder;
         social.owner = _owner;
-        social.name = _name;
-        
         social.members = _members;
+        social.profile = _profile;
     }
     return social;
 }
@@ -59,10 +54,11 @@
         return [_founder isEqual:ID];
     }
     // founder not set yet, check by meta.key
+    MKMMeta *meta = MKMMetaForID(ID);
     MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
     // the key in social entity's meta
     // must be the same (public) key of founder
-    return [self.meta.key isEqual:PK];
+    return [meta.key isEqual:PK];
 }
 
 - (BOOL)isOwner:(const MKMID *)ID {
@@ -88,6 +84,27 @@
 - (BOOL)isMember:(const MKMID *)ID {
     NSAssert(ID.isValid, @"Invalid ID");
     return [_members containsObject:ID];
+}
+
+@end
+
+@implementation MKMSocialEntity (Profile)
+
+- (NSString *)name {
+    NSString *str = _profile.name;
+    if (!str) {
+        str = _ID.name;
+    }
+    return str;
+}
+
+- (NSString *)logo {
+    return _profile.logo;
+}
+
+- (void)updateProfile:(const MKMSocialEntityProfile *)profile {
+    NSAssert([profile matchID:_ID], @"profile not match");
+    // TODO: update profiles
 }
 
 @end

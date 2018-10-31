@@ -35,27 +35,10 @@
 - (id)copy {
     MKMUser *user = [super copy];
     if (user) {
-        user.contacts = _contacts;
         user.privateKey = _privateKey;
+        user.contacts = _contacts;
     }
     return user;
-}
-
-- (void)setPrivateKey:(MKMPrivateKey *)privateKey {
-    if (privateKey) {
-        // check the key first
-        if ([self matchPrivateKey:privateKey]) {
-            if (![_privateKey isEqual:privateKey]) {
-                _privateKey = [privateKey copy];
-                // persistent store to keychain
-                [privateKey saveKeyWithIdentifier:_ID.address];
-            }
-        } else {
-            NSAssert(false, @"private key not match");
-        }
-    } else {
-        _privateKey = nil;
-    }
 }
 
 - (MKMPrivateKey *)privateKey {
@@ -64,6 +47,7 @@
         MKMPrivateKey *SK = [MKMPrivateKey loadKeyWithIdentifier:_ID.address];
         _privateKey = [SK copy];
     }
+    NSAssert([self.publicKey isMatch:_privateKey], @"keys not match");
     return _privateKey;
 }
 
@@ -84,10 +68,6 @@
 - (void)removeContact:(const MKMID *)ID {
     NSAssert([self containsContact:ID], @"contact not found");
     [_contacts removeObject:ID];
-}
-
-- (BOOL)matchPrivateKey:(const MKMPrivateKey *)SK {
-    return [self.publicKey isMatch:SK];
 }
 
 @end

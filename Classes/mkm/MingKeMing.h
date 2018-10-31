@@ -39,11 +39,12 @@
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMMeta.h"
+#import "MKMEntity.h"
+
+// History
 #import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
-#import "MKMEntity.h"
-#import "MKMEntity+History.h"
-#import "MKMEntityManager.h"
+#import "MKMConsensus.h"
 
 // group
 #import "MKMSocialEntity.h"
@@ -54,13 +55,11 @@
 #import "MKMUser.h"
 #import "MKMContact.h"
 
-// profile
+// others
+#import "MKMEntityManager.h"
 #import "MKMProfile.h"
 #import "MKMProfileManager.h"
 #import "MKMMemo.h"
-
-// others
-#import "MKMConsensus.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

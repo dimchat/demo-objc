@@ -28,8 +28,8 @@
     MKMHistory *history = MKMHistoryForID(ID);
     DIMUser *user = [[DIMUser alloc] initWithID:ID meta:meta];
     if (user) {
-        user.historyDelegate = [MKMConsensus sharedInstance];
-        NSUInteger count = [user runHistory:history];
+        MKMConsensus *conse = [MKMConsensus sharedInstance];
+        NSUInteger count = [conse runHistory:history forEntity:user];
         NSAssert(count == history.count, @"history error");
     }
     return user;

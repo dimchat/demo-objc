@@ -76,4 +76,13 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 @end
 
+#pragma mark - Social Entity Profile
+
+@interface MKMSocialEntityProfile : MKMProfile
+
+@property (strong, nonatomic) NSString *name;
+@property (strong, nonatomic) NSString *logo; // URL
+
+@end
+
 NS_ASSUME_NONNULL_END

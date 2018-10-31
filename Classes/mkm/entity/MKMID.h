@@ -6,12 +6,11 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMString.h"
+#import "MKMAddress.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPublicKey;
-@class MKMAddress;
 @class MKMMeta;
 
 /**
@@ -28,7 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, strong, nonatomic) MKMAddress *address;
-@property (readonly, nonatomic) NSUInteger number;
+
+@property (readonly, nonatomic) MKMNetworkType type; // Network ID
+@property (readonly, nonatomic) UInt32 number;       // search number
 
 @property (readonly, strong, nonatomic, nullable) NSString * terminal;
 

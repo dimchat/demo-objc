@@ -14,18 +14,11 @@
 
 #import "MKMAccount.h"
 
-@interface MKMEntity (Hacking)
-
-@property (strong, nonatomic) MKMMeta *meta;
-
-@end
-
 @interface MKMAccount ()
 
 @property (strong, nonatomic) MKMAccountProfile *profile;
-@property (nonatomic) MKMAccountStatus status;
 
-@property (strong, nonatomic) MKMPublicKey *publicKey;
+@property (nonatomic) MKMAccountStatus status;
 
 @end
 
@@ -33,6 +26,11 @@
 
 - (instancetype)init {
     MKMID *ID = [MKMID IDWithID:MKM_IMMORTAL_HULK_ID];
+    self = [self initWithID:ID];
+    return self;
+}
+
+- (instancetype)initWithID:(const MKMID *)ID {
     MKMMeta *meta = MKMMetaForID(ID);
     self = [self initWithID:ID meta:meta];
     return self;
@@ -42,9 +40,8 @@
 - (instancetype)initWithID:(const MKMID *)ID
                       meta:(const MKMMeta *)meta {
     if (self = [super initWithID:ID meta:meta]) {
-        _profile = [[MKMAccountProfile alloc] init];
         _status = MKMAccountStatusInitialized;
-        _publicKey = meta.key;
+        _profile = [[MKMAccountProfile alloc] init];
     }
     return self;
 }
@@ -52,11 +49,14 @@
 - (id)copy {
     MKMAccount *account = [super copy];
     if (account) {
-        account.profile = _profile;
         account.status = _status;
-        account.publicKey = _publicKey;
+        account.profile = _profile;
     }
     return account;
+}
+
+- (MKMPublicKey *)publicKey {
+    return _meta.key;
 }
 
 @end
@@ -64,7 +64,7 @@
 @implementation MKMAccount (Profile)
 
 - (NSString *)name {
-    NSString *str = self.profile.name;
+    NSString *str = _profile.name;
     if (!str) {
         str = _ID.name;
     }
@@ -72,11 +72,16 @@
 }
 
 - (MKMGender)gender {
-    return self.profile.gender;
+    return _profile.gender;
 }
 
 - (NSString *)avatar {
-    return self.profile.avatar;
+    return _profile.avatar;
+}
+
+- (void)updateProfile:(const MKMAccountProfile *)profile {
+    NSAssert([profile matchID:_ID], @"profile not match");
+    // TODO: update profiles
 }
 
 @end

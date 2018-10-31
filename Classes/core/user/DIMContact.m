@@ -26,8 +26,8 @@
     MKMHistory *history = MKMHistoryForID(ID);
     DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
     if (contact) {
-        contact.historyDelegate = [MKMConsensus sharedInstance];
-        NSUInteger count = [contact runHistory:history];
+        MKMConsensus *conse = [MKMConsensus sharedInstance];
+        NSUInteger count = [conse runHistory:history forEntity:contact];
         NSAssert(count == history.count, @"history error");
     }
     return contact;

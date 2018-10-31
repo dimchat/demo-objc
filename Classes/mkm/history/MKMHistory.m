@@ -18,7 +18,6 @@
 #import "MKMMeta.h"
 #import "MKMHistoryEvent.h"
 #import "MKMEntity.h"
-#import "MKMEntity+History.h"
 
 #import "MKMAccount.h"
 #import "MKMGroup.h"
@@ -300,8 +299,8 @@ static NSMutableArray *copy_events(const NSArray *events) {
     }
     NSAssert(sandbox, @"entity info error");
     
-    sandbox.historyDelegate = [MKMConsensus sharedInstance];
-    NSUInteger count = [sandbox runHistory:self];
+    MKMConsensus *conse = [MKMConsensus sharedInstance];
+    NSUInteger count = [conse runHistory:self forEntity:sandbox];
     return count == _storeArray.count;
 }
 

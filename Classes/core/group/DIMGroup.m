@@ -26,8 +26,8 @@
     MKMHistory *history = MKMHistoryForID(ID);
     DIMGroup *group = [[DIMGroup alloc] initWithID:ID meta:meta];
     if (group) {
-        group.historyDelegate = [MKMConsensus sharedInstance];
-        NSUInteger count = [group runHistory:history];
+        MKMConsensus *conse = [MKMConsensus sharedInstance];
+        NSUInteger count = [conse runHistory:history forEntity:group];
         NSAssert(count == history.count, @"history error");
     }
     return group;

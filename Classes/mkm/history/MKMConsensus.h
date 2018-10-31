@@ -19,4 +19,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class MKMHistory;
+@class MKMHistoryRecord;
+
+@interface MKMConsensus (History)
+
+/**
+ Run the whole history, stop when error
+ 
+ @param history - history records
+ @return Cout of success
+ */
+- (NSUInteger)runHistory:(const MKMHistory *)history forEntity:(MKMEntity *)entity;
+
+/**
+ Run one new history record
+ 
+ @param record - history record
+ @return YES when success
+ */
+- (BOOL)runHistoryRecord:(const MKMHistoryRecord *)record forEntity:(MKMEntity *)entity;
+
+@end
+
 NS_ASSUME_NONNULL_END

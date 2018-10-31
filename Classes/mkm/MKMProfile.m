@@ -217,3 +217,60 @@
 }
 
 @end
+
+#pragma mark - Social Entity profile
+
+@implementation MKMSocialEntityProfile
+
++ (instancetype)profileWithProfile:(id)profile {
+    if ([profile isKindOfClass:[MKMSocialEntityProfile class]]) {
+        return profile;
+    } else if ([profile isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:profile];
+    } else if ([profile isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:profile];
+    } else {
+        NSAssert(!profile, @"unexpected profile: %@", profile);
+        return nil;
+    }
+}
+
+- (void)setObject:(id)anObject forKey:(const NSString *)aKey {
+    if ([aKey isEqualToString:@"name"]) {
+        [self setName:anObject];
+    } else if ([aKey isEqualToString:@"logo"]) {
+        [self setLogo:anObject];
+    } else {
+        [_storeDictionary setObject:anObject forKey:aKey];
+    }
+}
+
+- (id)objectForKey:(const NSString *)aKey {
+    if ([aKey isEqualToString:@"name"]) {
+        return self.name;
+    } else if ([aKey isEqualToString:@"logo"]) {
+        return self.logo;
+    } else {
+        return [_storeDictionary objectForKey:aKey];
+    }
+}
+
+- (NSString *)name {
+    NSArray *array = [_storeDictionary objectForKey:@"names"];
+    return [array firstObject];
+}
+
+- (void)setName:(NSString *)name {
+    [self setArrayValue:name forKey:@"names"];
+}
+
+- (NSString *)logo {
+    NSArray *array = [_storeDictionary objectForKey:@"photos"];
+    return array.firstObject;
+}
+
+- (void)setLogo:(NSString *)logo {
+    [self setArrayValue:logo forKey:@"photos"];
+}
+
+@end

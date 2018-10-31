@@ -7,6 +7,7 @@
 //
 
 #import "MKMEntity.h"
+#import "MKMProfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,15 +18,16 @@ NS_ASSUME_NONNULL_BEGIN
     // parse the history to update profiles
     MKMID *_founder;
     MKMID *_owner;
-    NSString *_name;
     
     // parse the history to update members
     NSMutableArray<const MKMID *> *_members;
+    
+    // profiles
+    MKMSocialEntityProfile *_profile;
 }
 
 @property (readonly, strong, nonatomic) MKMID *founder;
 @property (readonly, strong, nonatomic) MKMID *owner;
-@property (readonly, strong, nonatomic) NSString *name;
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *members;
 
@@ -46,6 +48,16 @@ NS_ASSUME_NONNULL_BEGIN
 // -expel(member, admin)
 // -join(user)
 // -quit(member)
+
+@end
+
+@interface MKMSocialEntity (Profile)
+
+// special fields in profile
+@property (readonly, strong, nonatomic) NSString *name;
+@property (readonly, strong, nonatomic) NSString *logo; // URL
+
+- (void)updateProfile:(const MKMSocialEntityProfile *)profile;
 
 @end
 

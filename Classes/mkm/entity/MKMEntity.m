@@ -9,19 +9,8 @@
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMMeta.h"
-#import "MKMHistory.h"
-
-#import "MKMConsensus.h"
 
 #import "MKMEntity.h"
-
-@interface MKMEntity ()
-
-@property (strong, nonatomic) MKMID *ID;
-@property (strong, nonatomic) MKMMeta *meta;
-@property (strong, nonatomic) MKMHistory *history;
-
-@end
 
 @implementation MKMEntity
 
@@ -34,56 +23,44 @@
 }
 
 /* designated initializer */
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta {
-    NSAssert([ID isValid], @"Invalid ID");
+- (instancetype)initWithID:(const MKMID *)ID meta:(const MKMMeta *)meta {
     if (self = [super init]) {
         // ID
-        if (ID.isValid) {
-            _ID = [ID copy];
-        }
+        NSAssert([ID isValid], @"Invalid ID");
+        _ID = [ID copy];
         
         // meta
-        if ([meta matchID:ID]) {
-            _meta = [meta copy];
-        }
-        
-        // history
-        _history = [[MKMHistory alloc] init];
-        // delegate
-        _historyDelegate = [MKMConsensus sharedInstance];
+        NSAssert([meta matchID:ID], @"meta error");
+        _meta = [meta copy];
     }
     
     return self;
 }
 
 - (id)copy {
-    MKMEntity *entity = [[[self class] alloc] initWithID:_ID meta:_meta];
-    if (entity) {
-        entity.history = _history;
-        entity.historyDelegate = _historyDelegate;
-    }
-    return entity;
+    return [[[self class] alloc] initWithID:_ID meta:_meta];
 }
 
 - (BOOL)isEqual:(id)object {
     MKMEntity *entity = (MKMEntity *)object;
-    
-    // check ID
-    if (![entity.ID isEqual:_ID]) {
-        return NO;
-    }
-    
-    // check meta
-    if (![entity.meta isEqual:_meta]) {
-        return NO;
-    }
-    
-    return YES;
+    NSAssert([entity.ID isValid], @"Invalid ID");
+    return [entity.ID isEqual:_ID];
 }
 
-- (NSUInteger)number {
+- (MKMNetworkType)type {
+    return _ID.type;
+}
+
+- (UInt32)number {
     return _ID.number;
+}
+
+- (NSString *)name {
+    if (_name) {
+        return _name;
+    } else {
+        return _ID.name;
+    }
 }
 
 @end

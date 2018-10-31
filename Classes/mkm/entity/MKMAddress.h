@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMAddressDefaultVersion 0x01
 
 typedef NS_ENUM(UInt8, MKMNetworkID) {
-    // Network_BitCoin = 0x00,
+    MKMNetwork_Unknown = 0x00,  // Network_BitCoin
     MKMNetwork_Main    = 0x08,  // 0000 1000
     MKMNetwork_Group   = 0x10,  // 0001 0000
 };
@@ -36,7 +36,7 @@ typedef UInt8 MKMNetworkType;
 @interface MKMAddress : MKMString
 
 @property (readonly, nonatomic) MKMNetworkType network; // Network ID
-@property (readonly, nonatomic) UInt32 code; // check code
+@property (readonly, nonatomic) UInt32 code;            // Check Code
 
 @property (readonly, nonatomic, getter=isValid) BOOL valid;
 

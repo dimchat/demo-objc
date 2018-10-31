@@ -11,8 +11,6 @@
 
 #import "MKMHistory.h"
 
-#import "MKMEntity+History.h"
-
 #import "MKMConsensus.h"
 
 #import "MKMGroup.h"
