@@ -40,7 +40,7 @@ static NSData *link_merkle(const NSData *merkle, const NSData *prev) {
     NSMutableData *mData = [NSMutableData dataWithCapacity:len];
     [mData appendData:left];
     [mData appendData:right];
-    return [mData sha256];
+    return [mData sha256d];
 }
 
 static NSMutableArray *copy_events(const NSArray *events) {
@@ -291,17 +291,18 @@ static NSMutableArray *copy_events(const NSArray *events) {
 - (BOOL)matchID:(const MKMID *)ID {
     // create a sandbox entity
     MKMEntity *sandbox = nil;
-    MKMMeta *meta = MKMMetaForID(ID);
     if (ID.address.network == MKMNetwork_Main) {
-        sandbox = [[MKMAccount alloc] initWithID:ID meta:meta];
+        MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
+        sandbox = [[MKMAccount alloc] initWithID:ID publicKey:PK];
     } else if (ID.address.network == MKMNetwork_Group) {
-        sandbox = [[MKMGroup alloc] initWithID:ID meta:meta];
+        sandbox = [[MKMGroup alloc] initWithID:ID];
     }
     NSAssert(sandbox, @"entity info error");
     
-    MKMConsensus *conse = [MKMConsensus sharedInstance];
-    NSUInteger count = [conse runHistory:self forEntity:sandbox];
-    return count == _storeArray.count;
+//    MKMConsensus *conse = [MKMConsensus sharedInstance];
+//    NSUInteger count = [conse runHistory:self forEntity:sandbox];
+//    return count == _storeArray.count;
+    return YES;
 }
 
 @end

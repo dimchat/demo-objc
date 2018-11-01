@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)sha384;
 - (NSData *)sha512;
 
+- (NSData *)sha256d; // sha256(sha256(data))
+
 - (NSData *)ripemd160;
 
 @end

@@ -14,7 +14,6 @@
 #import "MKMPrivateKey.h"
 
 #import "MKMID.h"
-#import "MKMAddress.h"
 
 #import "MKMMeta.h"
 
@@ -54,7 +53,6 @@
         _fingerprint = nil;
         _valid = NO;
     }
-    
     return self;
 }
 
@@ -69,15 +67,13 @@
                            @"fingerprint":[CT base64Encode],
                            };
     if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
         _version = ver;
-        _seed = [dict objectForKey:@"seed"];
-        _key = [dict objectForKey:@"key"];
+        _seed = [_storeDictionary objectForKey:@"seed"];
+        _key = [_storeDictionary objectForKey:@"key"];
         _fingerprint = [CT copy];
         _valid = [PK verify:[name data] withSignature:CT];
-        NSAssert(_valid, @"fingerprint error");
+        NSAssert(_valid, @"meta invalid");
     }
-    
     return self;
 }
 
@@ -90,15 +86,19 @@
                     publicKey:PK
                   fingerprint:CT
                       version:MKMAddressDefaultVersion];
-    
     return self;
 }
 
-- (id)copy {
-    return [[[self class] alloc] initWithSeed:_seed
-                                    publicKey:_key
-                                  fingerprint:_fingerprint
-                                      version:_version];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMMeta *meta = [super copyWithZone:zone];
+    if (meta) {
+        meta.version = _version;
+        meta.seed = _seed;
+        meta.key = _key;
+        meta.fingerprint = _fingerprint;
+        meta.valid = _valid;
+    }
+    return meta;
 }
 
 - (NSUInteger)version {
@@ -152,7 +152,13 @@
 
 - (BOOL)matchID:(const MKMID *)ID {
     NSAssert(ID.isValid, @"Invalid ID");
-    return [self.seed isEqualToString:ID.name] && [self matchAddress:ID.address];
+    if (![self matchAddress:ID.address]) {
+        return NO;
+    }
+    if (![self.seed isEqualToString:ID.name]) {
+        return NO;
+    }
+    return YES;
 }
 
 // check: address == btc_address(network, CT)
@@ -165,7 +171,8 @@
 - (MKMID *)buildIDWithNetworkID:(MKMNetworkType)type {
     MKMAddress *addr = [self buildAddressWithNetworkID:type];
     if (addr) {
-        return [[MKMID alloc] initWithName:_seed address:addr];
+        NSString *name = self.seed;
+        return [[MKMID alloc] initWithName:name address:addr];
     } else {
         return nil;
     }
@@ -176,9 +183,11 @@
         NSAssert(false, @"meta not valid");
         return nil;
     }
-    return [[MKMAddress alloc] initWithFingerprint:_fingerprint
+    NSUInteger version = self.version;
+    NSData *CT = self.fingerprint;
+    return [[MKMAddress alloc] initWithFingerprint:CT
                                            network:type
-                                           version:_version];
+                                           version:version];
 }
 
 @end

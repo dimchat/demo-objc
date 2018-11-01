@@ -90,6 +90,10 @@
     return [[NSData alloc] initWithBytes:digest length:CC_SHA512_DIGEST_LENGTH];
 }
 
+- (NSData *)sha256d {
+    return [[self sha256] sha256];
+}
+
 - (NSData *)ripemd160 {
     NSData *output = nil;
     

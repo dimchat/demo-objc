@@ -28,18 +28,20 @@
 @implementation MKMSocialEntity
 
 /* designated initializer */
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta {
-    if (self = [super initWithID:ID meta:meta]) {
-        _members = [[NSMutableArray alloc] init];
-        _profile = [[MKMSocialEntityProfile alloc] init];
+- (instancetype)initWithID:(const MKMID *)ID {
+    if (self = [super initWithID:ID]) {
+        _founder = nil;
+        _owner = nil;
+        // lazy
+        _members = nil;
+        _profile = nil;
     }
     
     return self;
 }
 
-- (id)copy {
-    MKMSocialEntity *social = [super copy];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMSocialEntity *social = [super copyWithZone:zone];
     if (social) {
         social.founder = _founder;
         social.owner = _owner;
@@ -54,7 +56,7 @@
         return [_founder isEqual:ID];
     }
     // founder not set yet, check by meta.key
-    MKMMeta *meta = MKMMetaForID(ID);
+    MKMMeta *meta = MKMMetaForID(_ID);
     MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
     // the key in social entity's meta
     // must be the same (public) key of founder
@@ -73,6 +75,9 @@
         // don't add same member twice
         return;
     }
+    if (!_members) {
+        _members = [[NSMutableArray alloc] init];
+    }
     [_members addObject:ID];
 }
 
@@ -90,12 +95,27 @@
 
 @implementation MKMSocialEntity (Profile)
 
+- (void)setName:(NSString *)name {
+    if (!_profile) {
+        _profile = [[MKMSocialEntityProfile alloc] init];
+    }
+    _profile.name = name;
+    [super setName:name];
+}
+
 - (NSString *)name {
     NSString *str = _profile.name;
-    if (!str) {
-        str = _ID.name;
+    if (str) {
+        return str;
     }
-    return str;
+    return [super name];
+}
+
+- (void)setLogo:(NSString *)logo {
+    if (!_profile) {
+        _profile = [[MKMSocialEntityProfile alloc] init];
+    }
+    _profile.logo = logo;
 }
 
 - (NSString *)logo {
@@ -104,7 +124,11 @@
 
 - (void)updateProfile:(const MKMSocialEntityProfile *)profile {
     NSAssert([profile matchID:_ID], @"profile not match");
-    // TODO: update profiles
+    if (!_profile) {
+        _profile = [profile copy];
+    } else {
+        // TODO: update profiles
+    }
 }
 
 @end

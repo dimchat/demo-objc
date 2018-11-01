@@ -15,7 +15,6 @@
     if (self = [super init]) {
         _storeString = [[NSString alloc] initWithString:aString];
     }
-    
     return self;
 }
 
@@ -35,8 +34,14 @@
     return self;
 }
 
-- (id)copy {
-    return [[[self class] alloc] initWithString:_storeString];
+- (id)copyWithZone:(NSZone *)zone {
+    id string = [[self class] allocWithZone:zone];
+    string = [string initWithString:_storeString];
+    return string;
+}
+
+- (BOOL)isEqual:(id)object {
+    return [_storeString isEqualToString:object];
 }
 
 - (NSUInteger)length {

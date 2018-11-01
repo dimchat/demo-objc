@@ -22,14 +22,8 @@
 
 + (instancetype)contactWithID:(const MKMID *)ID {
     NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
-    MKMMeta *meta = MKMMetaForID(ID);
-    MKMHistory *history = MKMHistoryForID(ID);
-    DIMContact *contact = [[DIMContact alloc] initWithID:ID meta:meta];
-    if (contact) {
-        MKMConsensus *conse = [MKMConsensus sharedInstance];
-        NSUInteger count = [conse runHistory:history forEntity:contact];
-        NSAssert(count == history.count, @"history error");
-    }
+    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
+    DIMContact *contact = [[DIMContact alloc] initWithID:ID publicKey:PK];
     return contact;
 }
 
@@ -87,14 +81,12 @@
 #pragma mark - Encrypt/Verify functions for passphrase/signature
 
 - (NSData *)encrypt:(const NSData *)plaintext {
-    MKMPublicKey *PK = self.publicKey;
-    return [PK encrypt:plaintext];
+    return [_publicKey encrypt:plaintext];
 }
 
 - (BOOL)verify:(const NSData *)plaintext
  withSignature:(const NSData *)ciphertext {
-    MKMPublicKey *PK = self.publicKey;
-    return [PK verify:plaintext withSignature:ciphertext];
+    return [_publicKey verify:plaintext withSignature:ciphertext];
 }
 
 @end

@@ -11,9 +11,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MKM_IMMORTAL_HULK_ID @"hulk@4bejC3UratNYGoRagiw8Lj9xJrx8bq6nnN"
-#define MKM_MONKEY_KING_ID   @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"
-
 @class MKMPublicKey;
 
 typedef NS_ENUM(SInt32, MKMAccountStatus) {
@@ -24,25 +21,31 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
 
 @interface MKMAccount : MKMEntity {
     
+    // public key
+    MKMPublicKey *_publicKey;
+    
+    // account status (parse history to update)
+    MKMAccountStatus _status;
+
     // profiles
     MKMAccountProfile *_profile;
-    
-    // parse the history to update status
-    MKMAccountStatus _status;
 }
+
+@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
 
 @property (readonly, nonatomic) MKMAccountStatus status;
 
-@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
+- (instancetype)initWithID:(const MKMID *)ID
+                 publicKey:(const MKMPublicKey *)PK
+NS_DESIGNATED_INITIALIZER;
 
 @end
 
 @interface MKMAccount (Profile)
 
 // special fields in profile
-@property (readonly, strong, nonatomic) NSString *name;
-@property (readonly, nonatomic) MKMGender gender;
-@property (readonly, strong, nonatomic) NSString *avatar; // URL
+@property (nonatomic) MKMGender gender;
+@property (strong, nonatomic) NSString *avatar; // URL
 
 - (void)updateProfile:(const MKMAccountProfile *)profile;
 

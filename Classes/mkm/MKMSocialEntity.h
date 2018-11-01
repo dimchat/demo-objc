@@ -11,8 +11,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMID;
-
 @interface MKMSocialEntity : MKMEntity {
     
     // parse the history to update profiles
@@ -54,8 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MKMSocialEntity (Profile)
 
 // special fields in profile
-@property (readonly, strong, nonatomic) NSString *name;
-@property (readonly, strong, nonatomic) NSString *logo; // URL
+@property (strong, nonatomic) NSString *logo; // URL
 
 - (void)updateProfile:(const MKMSocialEntityProfile *)profile;
 

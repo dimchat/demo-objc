@@ -29,7 +29,7 @@ static NSData *merge_data(NSData *data1, NSData *data2) {
         return nil;
     }
     
-    // 1. get all leaves with SHA256
+    // 1. get all leaves with SHA256D
     NSMutableArray *mArray;
     mArray = [[NSMutableArray alloc] initWithCapacity:count];
     NSData *data;
@@ -40,7 +40,7 @@ static NSData *merge_data(NSData *data1, NSData *data2) {
             NSAssert([item isKindOfClass:[NSData class]], @"error item: %@", item);
             data = item;
         }
-        [mArray addObject:[data sha256]];
+        [mArray addObject:[data sha256d]];
     }
     
     NSData *data1, *data2;
@@ -59,7 +59,7 @@ static NSData *merge_data(NSData *data1, NSData *data2) {
             data2 = [mArray objectAtIndex:(pos+1)];
             // data = sha256(data1 + data2)
             data = merge_data(data1, data2);
-            data = [data sha256];
+            data = [data sha256d];
             [mArray replaceObjectAtIndex:(pos/2) withObject:data];
         }
         

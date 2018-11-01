@@ -59,8 +59,14 @@
     return self;
 }
 
-- (id)copy {
-    return [[[self class] alloc] initWithDictionary:_storeDictionary];
+- (id)copyWithZone:(NSZone *)zone {
+    id dict = [[self class] allocWithZone:zone];
+    dict = [dict initWithDictionary:_storeDictionary];
+    return dict;
+}
+
+- (BOOL)isEqual:(id)object {
+    return [_storeDictionary isEqualToDictionary:object];
 }
 
 - (NSUInteger)count {

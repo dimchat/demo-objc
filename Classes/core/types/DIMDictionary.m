@@ -25,12 +25,8 @@
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     NSMutableDictionary *dict;
     dict = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
-    if (dict) {
-        if (self = [self init]) {
-            _storeDictionary = dict;
-        }
-    } else {
-        self = nil;
+    if (self = [self init]) {
+        _storeDictionary = dict;
     }
     return self;
 }
@@ -38,8 +34,12 @@
 - (instancetype)initWithObjects:(const id _Nonnull [_Nullable])objects
                         forKeys:(const id <NSCopying> _Nonnull [_Nullable])keys
                           count:(NSUInteger)cnt {
+    NSMutableDictionary *dict;
+    dict = [[NSMutableDictionary alloc] initWithObjects:objects
+                                                forKeys:keys
+                                                  count:cnt];
     if (self = [self init]) {
-        _storeDictionary = [[NSMutableDictionary alloc] initWithObjects:objects forKeys:keys count:cnt];
+        _storeDictionary = dict;
     }
     return self;
 }

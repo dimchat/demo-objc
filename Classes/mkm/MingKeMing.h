@@ -7,6 +7,7 @@
 //
 
 //// Extends
+//#import "NSObject+Singleton.h"
 //#import "NSObject+JsON.h"
 //#import "NSData+Crypto.h"
 //#import "NSString+Crypto.h"
@@ -46,6 +47,12 @@
 #import "MKMHistory.h"
 #import "MKMConsensus.h"
 
+// Facebook
+#import "MKMProfile.h"
+#import "MKMProfileManager.h"
+#import "MKMMemo.h"
+#import "MKMEntityManager.h"
+
 // group
 #import "MKMSocialEntity.h"
 #import "MKMGroup.h"
@@ -54,12 +61,6 @@
 #import "MKMAccount.h"
 #import "MKMUser.h"
 #import "MKMContact.h"
-
-// others
-#import "MKMEntityManager.h"
-#import "MKMProfile.h"
-#import "MKMProfileManager.h"
-#import "MKMMemo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

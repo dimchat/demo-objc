@@ -10,9 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMPublicKey;
-@class MKMMeta;
-
 /**
  *  ID for entity (User/Contact/Group/...)
  *

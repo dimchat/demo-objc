@@ -10,8 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMAccountHistoryDelegate : MKMEntityHistoryDelegate
+#define MKM_IMMORTAL_HULK_ID @"hulk@4bejC3UratNYGoRagiw8Lj9xJrx8bq6nnN"
+#define MKM_MONKEY_KING_ID   @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"
 
-@end
+//@interface MKMAccountHistoryDelegate : MKMEntityHistoryDelegate
+//
+//@end
 
 NS_ASSUME_NONNULL_END

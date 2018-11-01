@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPrivateKey;
 
-@class MKMID;
-
 @interface MKMUser : MKMAccount {
     
     MKMPrivateKey *_privateKey;

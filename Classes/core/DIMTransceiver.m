@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSObject+Singleton.h"
+
 #import "DIMUser.h"
 #import "DIMContact.h"
 #import "DIMGroup.h"
@@ -21,19 +23,7 @@
 
 @implementation DIMTransceiver
 
-static DIMTransceiver *s_sharedInstance = nil;
-
-+ (instancetype)sharedInstance {
-    if (!s_sharedInstance) {
-        s_sharedInstance = [[self alloc] init];
-    }
-    return s_sharedInstance;
-}
-
-+ (instancetype)alloc {
-    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
-    return [super alloc];
-}
+SingletonImplementations(DIMTransceiver, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

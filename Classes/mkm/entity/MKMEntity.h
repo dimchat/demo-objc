@@ -6,28 +6,28 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "MKMAddress.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class MKMID;
 @class MKMMeta;
 
-@interface MKMEntity : NSObject {
+@interface MKMEntity : NSObject <NSCopying> {
     
+    // convenience for instance accessing
     MKMID *_ID;
-    MKMMeta *_meta;
+    NSString *_name;
 }
 
 @property (readonly, strong, nonatomic) MKMID *ID;   // name@address
 
 @property (readonly, nonatomic) MKMNetworkType type; // Network ID
 @property (readonly, nonatomic) UInt32 number;       // search number
+
 @property (strong, nonatomic) NSString *name;        // name or seed
 
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta
-NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithID:(const MKMID *)ID NS_DESIGNATED_INITIALIZER;
 
 @end
 

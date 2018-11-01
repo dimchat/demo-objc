@@ -17,23 +17,23 @@
 
 - (instancetype)initWithCA:(const DIMCertificateAuthority *)CA {
     if (self = [self init]) {
+        // CA
         _CA = [CA copy];
         
+        // name
+        if (_CA.info.subject.commonName) {
+            _name = _CA.info.subject.commonName;
+        } else {
+            _name = _CA.info.subject.organization;
+        }
+        
+        // public key
+        _publicKey = _CA.info.publicKey;
+        
+        // stations
         _stations = [[NSMutableArray alloc] init];
     }
     return self;
-}
-
-- (NSString *)name {
-    NSString *str = _CA.info.subject.commonName;
-    if (!str) {
-        str = _CA.info.subject.organization;
-    }
-    return str;
-}
-
-- (MKMPublicKey *)publicKey {
-    return _CA.info.publicKey;
 }
 
 #pragma mark Station
@@ -43,10 +43,8 @@
     DIMCertificateAuthority *CA = station.CA;
     NSString *json = [CA.info jsonString];
     NSData *data = [json data];
-    // public key
-    MKMPublicKey *PK = self.publicKey;
     // verify the signature
-    return [PK verify:data withSignature:CA.signature];
+    return [_publicKey verify:data withSignature:CA.signature];
 }
 
 - (void)addStation:(DIMStation *)station {

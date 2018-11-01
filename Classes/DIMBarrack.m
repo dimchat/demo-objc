@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSObject+Singleton.h"
+
 #import "DIMBarrack.h"
 
 static void load_immortal_file(NSString *filename) {
@@ -62,13 +64,6 @@ static void load_immortal_file(NSString *filename) {
     [SK saveKeyWithIdentifier:ID.address];
 }
 
-@interface MKMEntity (Hacking)
-
-@property (strong, nonatomic) MKMMeta *meta;
-@property (strong, nonatomic) MKMHistory *history;
-
-@end
-
 @interface MKMAccount (Hacking)
 
 @property (strong, nonatomic) MKMAccountProfile *profile;
@@ -87,19 +82,7 @@ static void load_immortal_file(NSString *filename) {
 
 @implementation DIMBarrack
 
-static DIMBarrack *s_sharedInstance = nil;
-
-+ (instancetype)sharedInstance {
-    if (!s_sharedInstance) {
-        s_sharedInstance = [[self alloc] init];
-    }
-    return s_sharedInstance;
-}
-
-+ (instancetype)alloc {
-    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
-    return [super alloc];
-}
+SingletonImplementations(DIMBarrack, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

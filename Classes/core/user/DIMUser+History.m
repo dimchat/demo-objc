@@ -17,7 +17,6 @@
     NSAssert([PK isMatch:SK], @"PK must match SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMConsensus *conse = [MKMConsensus sharedInstance];
     
     // 1. create user
     DIMUser *user;
@@ -33,7 +32,7 @@
     ID = [[MKMID alloc] initWithName:seed address:address];
     NSLog(@"register ID: %@", ID);
     // 1.4. create user with ID & meta
-    user = [[self alloc] initWithID:ID meta:meta];
+    user = [[self alloc] initWithID:ID publicKey:meta.key];
     // 1.5. store private key for user in keychain
     user.privateKey = [SK copy];
     // 1.6. store the meta for user in entity manager
@@ -65,8 +64,6 @@
     NSLog(@"register history: %@", history);
     
     // 3. running history with delegate to update status
-    NSInteger count = [conse runHistory:history forEntity:user];
-    NSAssert([history count] == count, @"register failed");
     
     // 4. store meta + history and send out
     // 4.1. store the history in entity manager
@@ -82,10 +79,9 @@
 
 - (MKMHistoryRecord *)suicideWithMessage:(const NSString *)lastWords
                               privateKey:(const MKMPrivateKey *)SK {
-    NSAssert([self.publicKey isMatch:SK], @"not your SK");
+    NSAssert([_publicKey isMatch:SK], @"not your SK");
     
     MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    MKMConsensus *conse = [MKMConsensus sharedInstance];
     
     // 1. generate history record
     MKMHistoryRecord *record;
@@ -110,8 +106,6 @@
     NSLog(@"suicide record: %@", record);
     
     // 2. run history to update status
-    BOOL OK = [conse runHistoryRecord:record forEntity:self];
-    NSAssert(OK, @"suicide failed");
     
     // 3. store and send the history record out
     // 3.1. store the history in entity manager

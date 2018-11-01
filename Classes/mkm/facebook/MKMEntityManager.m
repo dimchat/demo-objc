@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSObject+Singleton.h"
+
 #import "MKMPrivateKey.h"
 
 #import "MKMID.h"
@@ -24,19 +26,7 @@
 
 @implementation MKMEntityManager
 
-static MKMEntityManager *s_sharedInstance = nil;
-
-+ (instancetype)sharedInstance {
-    if (!s_sharedInstance) {
-        s_sharedInstance = [[self alloc] init];
-    }
-    return s_sharedInstance;
-}
-
-+ (instancetype)alloc {
-    NSAssert(!s_sharedInstance, @"Attempted to allocate a second instance of a singleton.");
-    return [super alloc];
-}
+SingletonImplementations(MKMEntityManager, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

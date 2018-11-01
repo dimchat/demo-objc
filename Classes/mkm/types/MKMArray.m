@@ -56,8 +56,14 @@
     return self;
 }
 
-- (id)copy {
-    return [[[self class] alloc] initWithArray:_storeArray];
+- (id)copyWithZone:(NSZone *)zone {
+    id array = [[self class] allocWithZone:zone];
+    array = [array initWithArray:_storeArray];
+    return array;
+}
+
+- (BOOL)isEqual:(id)object {
+    return [_storeArray isEqualToArray:object];
 }
 
 - (NSUInteger)count {

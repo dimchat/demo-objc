@@ -7,7 +7,6 @@
 //
 
 #import "MKMID.h"
-#import "MKMAddress.h"
 #import "MKMMeta.h"
 
 #import "MKMEntity.h"
@@ -17,28 +16,32 @@
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
     MKMID *ID = nil;
-    MKMMeta *meta = nil;
-    self = [self initWithID:ID meta:meta];
+    self = [self initWithID:ID];
     return self;
 }
 
 /* designated initializer */
-- (instancetype)initWithID:(const MKMID *)ID meta:(const MKMMeta *)meta {
+- (instancetype)initWithID:(const MKMID *)ID {
     if (self = [super init]) {
-        // ID
-        NSAssert([ID isValid], @"Invalid ID");
-        _ID = [ID copy];
-        
-        // meta
-        NSAssert([meta matchID:ID], @"meta error");
-        _meta = [meta copy];
+        if ([ID isValid]) {
+            _ID = [ID copy];
+            _name = _ID.name;
+        } else {
+            _ID = nil;
+            _name = nil;
+        }
     }
     
     return self;
 }
 
-- (id)copy {
-    return [[[self class] alloc] initWithID:_ID meta:_meta];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMEntity *entity = [[self class] allocWithZone:zone];
+    entity = [entity initWithID:_ID];
+    if (entity) {
+        entity.name = _name;
+    }
+    return entity;
 }
 
 - (BOOL)isEqual:(id)object {
@@ -53,14 +56,6 @@
 
 - (UInt32)number {
     return _ID.number;
-}
-
-- (NSString *)name {
-    if (_name) {
-        return _name;
-    } else {
-        return _ID.name;
-    }
 }
 
 @end

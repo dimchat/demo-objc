@@ -6,13 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMID.h"
-#import "MKMAddress.h"
-
-#import "MKMHistory.h"
-
-#import "MKMConsensus.h"
-
 #import "MKMGroup.h"
 
 @interface MKMSocialEntity (Hacking)
@@ -31,17 +24,17 @@
 @implementation MKMGroup
 
 /* designated initializer */
-- (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta {
-    if (self = [super initWithID:ID meta:meta]) {
-        _administrators = [[NSMutableArray alloc] init];
+- (instancetype)initWithID:(const MKMID *)ID {
+    if (self = [super initWithID:ID]) {
+        // lazy
+        _administrators = nil;
     }
     
     return self;
 }
 
-- (id)copy {
-    MKMGroup *group = [super copy];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMGroup *group = [super copyWithZone:zone];
     if (group) {
         group.administrators = _administrators;
     }
@@ -68,6 +61,9 @@
     if (![self isMember:ID]) {
         NSAssert(false, @"should be a member first");
         [self addMember:ID];
+    }
+    if (!_administrators) {
+        _administrators = [[NSMutableArray alloc] init];
     }
     [_administrators addObject:ID];
 }

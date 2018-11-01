@@ -6,7 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMID.h"
 #import "MKMMemo.h"
 
 #import "MKMContact.h"
@@ -21,16 +20,17 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta {
-    if (self = [super initWithID:ID meta:meta]) {
-        _memo = [[MKMContactMemo alloc] init];
+                 publicKey:(const MKMPublicKey *)PK {
+    if (self = [super initWithID:ID publicKey:PK]) {
+        // lazy
+        _memo = nil;
     }
     
     return self;
 }
 
-- (id)copy {
-    MKMContact *contact = [super copy];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMContact *contact = [super copyWithZone:zone];
     if (contact) {
         contact.memo = _memo;
     }

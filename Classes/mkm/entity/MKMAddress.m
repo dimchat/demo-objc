@@ -9,8 +9,6 @@
 #import "NSString+Crypto.h"
 #import "NSData+Crypto.h"
 
-#import "MKMMeta.h"
-
 #import "MKMAddress.h"
 
 @interface MKMAddress ()
@@ -30,7 +28,7 @@
  */
 static NSData * btc_checkcode(const NSData *data) {
     assert([data length] == 21);
-    data = [[data sha256] sha256];
+    data = [data sha256d];
     assert([data length] == 32);
     return [data subdataWithRange:NSMakeRange(0, 4)];
 }
@@ -130,7 +128,7 @@ static void parse_address(const NSString *string, MKMAddress *address) {
         valid = YES;
     }
     
-    if (self = [self initWithString:string]) {
+    if (self = [super initWithString:string]) {
         _network = type;
         _code = code;
         _valid = valid;
@@ -138,14 +136,19 @@ static void parse_address(const NSString *string, MKMAddress *address) {
     return self;
 }
 
-- (id)copy {
-    MKMAddress *addr = [[[self class] alloc] initWithString:_storeString];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMAddress *addr = [super copyWithZone:zone];
     if (addr) {
         addr.network = _network;
         addr.code = _code;
         addr.valid = _valid;
     }
     return addr;
+}
+
+- (BOOL)isEqual:(id)object {
+    NSAssert([object isKindOfClass:[NSString class]], @"error");
+    return [_storeString isEqualToString:object];
 }
 
 - (MKMNetworkType)network {

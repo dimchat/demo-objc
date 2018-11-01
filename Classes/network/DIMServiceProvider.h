@@ -15,13 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMServiceProvider : NSObject {
     
+    DIMCertificateAuthority *_CA;
+    NSString *_name;
+    MKMPublicKey *_publicKey;
+    
     NSMutableArray<DIMStation *> *_stations;
 }
 
 @property (readonly, strong, nonatomic) DIMCertificateAuthority *CA;
 
-@property (readonly, nonatomic) NSString *name;
-@property (readonly, nonatomic) MKMPublicKey *publicKey;
+@property (readonly, strong, nonatomic) NSString *name;
+@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
 
 @property (readonly, strong, nonatomic) NSArray<DIMStation *> *stations;
 

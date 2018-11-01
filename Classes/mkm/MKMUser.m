@@ -10,7 +10,6 @@
 #import "MKMPrivateKey.h"
 
 #import "MKMID.h"
-#import "MKMMeta.h"
 
 #import "MKMUser.h"
 
@@ -24,16 +23,17 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
-                      meta:(const MKMMeta *)meta {
-    if (self = [super initWithID:ID meta:meta]) {
-        _contacts = [[NSMutableArray alloc] init];
+                 publicKey:(const MKMPublicKey *)PK {
+    if (self = [super initWithID:ID publicKey:PK]) {
+        // lazy
+        _privateKey = nil;
+        _contacts = nil;
     }
-    
     return self;
 }
 
-- (id)copy {
-    MKMUser *user = [super copy];
+- (id)copyWithZone:(NSZone *)zone {
+    MKMUser *user = [super copyWithZone:zone];
     if (user) {
         user.privateKey = _privateKey;
         user.contacts = _contacts;
@@ -44,10 +44,9 @@
 - (MKMPrivateKey *)privateKey {
     if (!_privateKey) {
         // try to load private key from the keychain
-        MKMPrivateKey *SK = [MKMPrivateKey loadKeyWithIdentifier:_ID.address];
-        _privateKey = [SK copy];
+        _privateKey = [MKMPrivateKey loadKeyWithIdentifier:_ID.address];
     }
-    NSAssert([self.publicKey isMatch:_privateKey], @"keys not match");
+    NSAssert([_publicKey isMatch:_privateKey], @"keys not match");
     return _privateKey;
 }
 
@@ -55,6 +54,9 @@
     if ([_contacts containsObject:ID]) {
         // already exists
         return NO;
+    }
+    if (!_contacts) {
+        _contacts = [[NSMutableArray alloc] init];
     }
     // add it
     [_contacts addObject:ID];

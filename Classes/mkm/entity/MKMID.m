@@ -6,11 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMPublicKey.h"
-
-#import "MKMAddress.h"
-#import "MKMMeta.h"
-
 #import "MKMID.h"
 
 @interface MKMID ()
@@ -99,6 +94,33 @@ static void parse_id_string(const NSString *string, MKMID *ID) {
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    MKMID *ID = [super copyWithZone:zone];
+    if (ID) {
+        ID.name = _name;
+        ID.address = _address;
+        ID.terminal = _terminal;
+        ID.valid = _valid;
+    }
+    return ID;
+}
+
+- (BOOL)isEqual:(id)object {
+    MKMID *ID = [MKMID IDWithID:object];
+    if (!self.isValid || !ID.isValid) {
+        return NO;
+    }
+    // name
+    if (![self.name isEqualToString:ID.name]) {
+        return NO;
+    }
+    // address
+    if (![self.address isEqual:ID.address]) {
+        return NO;
+    }
+    return YES;
+}
+
 - (NSString *)name {
     if (!_name) {
         parse_id_string(_storeString, self);
@@ -114,14 +136,14 @@ static void parse_id_string(const NSString *string, MKMID *ID) {
 }
 
 - (NSString *)terminal {
-    if (!_name && !_address) {
+    if (!_name || !_address) {
         parse_id_string(_storeString, self);
     }
     return _terminal;
 }
 
 - (BOOL)isValid {
-    if (!_name && !_address) {
+    if (!_name || !_address) {
         parse_id_string(_storeString, self);
     }
     return _valid;
@@ -135,32 +157,10 @@ static void parse_id_string(const NSString *string, MKMID *ID) {
     return _address.code;
 }
 
-- (id)copy {
-    return [[[self class] alloc] initWithName:_name
-                                      address:_address
-                                     terminal:_terminal];
-}
-
-- (BOOL)isEqual:(id)object {
-    MKMID *ID = [MKMID IDWithID:object];
-    if (!self.isValid || !ID.isValid) {
-        return NO;
-    }
-    // name
-    if (![ID.name isEqualToString:_name]) {
-        return NO;
-    }
-    // address
-    if (![ID.address isEqual:_address]) {
-        return NO;
-    }
-    return YES;
-}
-
 - (instancetype)naked {
-    if (_terminal) {
-        return [[[self class] alloc] initWithName:_name
-                                          address:_address];
+    if (self.terminal) {
+        return [[[self class] alloc] initWithName:self.name
+                                          address:self.address];
     } else {
         return self;
     }
