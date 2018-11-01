@@ -10,46 +10,54 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MKMFacebook()       [MKMProfileManager sharedInstance]
+
+#define MKMProfileForID(ID) [MKMFacebook() profileForID:(ID)]
+#define MKMMemoForID(ID)    [MKMFacebook() memoForID:(ID)]
+
 @class MKMID;
+
 @class MKMProfile;
+@class MKMMemo;
 
 @protocol MKMProfileDataSource <NSObject>
 
-// query
-- (MKMProfile *)profileForEntityID:(const MKMID *)ID;
+- (MKMProfile *)profileForID:(const MKMID *)ID;
+
+- (MKMMemo *)memoForID:(const MKMID *)ID;
 
 @end
-
-@protocol MKMProfileDelegate <NSObject>
-
-// send
-- (void)entityID:(const MKMID *)ID sendProfile:(const MKMProfile *)profile;
-
-// receive
-- (void)entityID:(const MKMID *)ID didReceiveProfile:(const MKMProfile *)profile;
-
-@end
-
-#pragma mark -
-
-#define MKMProfileForID(ID) [[MKMProfileManager sharedInstance] profileForID:(ID)]
 
 /**
  *  Profile Manager
  *
  *      To look up someone's profile on the Internet social network 'MKM'
  */
-@interface MKMProfileManager : NSObject
+@interface MKMProfileManager : NSObject <MKMProfileDataSource>
 
 @property (weak, nonatomic) id<MKMProfileDataSource> dataSource;
-@property (weak, nonatomic) id<MKMProfileDelegate> delegate;;
 
 + (instancetype)sharedInstance;
 
-- (MKMProfile *)profileForID:(const MKMID *)ID;
 - (void)setProfile:(MKMProfile *)profile forID:(const MKMID *)ID;
-- (void)sendProfileForID:(const MKMID *)ID;
+
+- (void)setMemo:(MKMMemo *)memo forID:(const MKMID *)ID;
+
+- (void)reduceMemory; // remove 1/2 objects
 
 @end
+
+//@class MKMID;
+//@class MKMProfile;
+//
+//@protocol MKMProfileDelegate <NSObject>
+//
+//// send
+//- (void)entityID:(const MKMID *)ID sendProfile:(const MKMProfile *)profile;
+//
+//// receive
+//- (void)entityID:(const MKMID *)ID didReceiveProfile:(const MKMProfile *)profile;
+//
+//@end
 
 NS_ASSUME_NONNULL_END

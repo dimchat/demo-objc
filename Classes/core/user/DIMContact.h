@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMContactWithID(ID) (DIMContact *)MKMContactWithID(ID)
+
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 @class DIMCertifiedMessage;
@@ -23,8 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface DIMContact : MKMContact <DIMContact>
-
-+ (instancetype)contactWithID:(const MKMID *)ID;
 
 @end
 

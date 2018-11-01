@@ -26,7 +26,7 @@
  @param data - network + hash(CT)
  @return prefix 4 bytes after sha256*2
  */
-static NSData * btc_checkcode(const NSData *data) {
+static NSData * check_code(const NSData *data) {
     assert([data length] == 21);
     data = [data sha256d];
     assert([data length] == 32);
@@ -63,7 +63,7 @@ static void parse_address(const NSString *string, MKMAddress *address) {
         // Check Code
         NSData *prefix = [data subdataWithRange:NSMakeRange(0, len-4)];
         NSData *suffix = [data subdataWithRange:NSMakeRange(len-4, 4)];
-        NSData *cc = btc_checkcode(prefix);
+        NSData *cc = check_code(prefix);
         address.code = user_number(cc);
         
         // isValid
@@ -119,7 +119,7 @@ static void parse_address(const NSString *string, MKMAddress *address) {
         data = [[NSMutableData alloc] initWithBytes:&type length:1];
         [data appendData:hash];
         // 3. cc = sha256(sha256(_h)).prefix(4)
-        NSData *cc = btc_checkcode(data);
+        NSData *cc = check_code(data);
         code = user_number(cc);
         // 4. addr = base58(_h + cc)
         [data appendData:cc];

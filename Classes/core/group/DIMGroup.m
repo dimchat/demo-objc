@@ -56,13 +56,13 @@
     DIMEncryptedKeyMap *map;
     map = [[DIMEncryptedKeyMap alloc] initWithCapacity:[_members count]];
     
-    MKMPublicKey *PK;
+    MKMMember *member;
     NSData *key;
     for (MKMID *ID in _members) {
-        PK = MKMPublicKeyForAccountID(ID);
-        NSAssert(PK, @"failed to get PK for ID: %@", ID);
-        if (PK) {
-            key = [PK encrypt:PW];
+        member = MKMMemberWithID(ID, _ID);
+        NSAssert(member.publicKey, @"failed to get PK for ID: %@", ID);
+        if (member.publicKey) {
+            key = [member.publicKey encrypt:PW];
             NSAssert(key, @"error");
             [map setEncryptedKey:key forID:ID];
         }

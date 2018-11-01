@@ -91,7 +91,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     MKMID *receiver = iMsg.envelope.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
         // receiver is a contact
-        DIMContact *contact = [DIMContact contactWithID:receiver];
+        DIMContact *contact = DIMContactWithID(receiver);
         sMsg = [contact encryptMessage:iMsg];
     } else if (receiver.address.network == MKMNetwork_Group) {
         // receiver is a group
@@ -109,7 +109,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // decrypt to instant message by receiver
     MKMID *receiver = sMsg.envelope.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
-        DIMUser *user = [DIMUser userWithID:receiver];
+        DIMUser *user = DIMUserWithID(receiver);
         iMsg = [user decryptMessage:sMsg];
     }
     
@@ -123,7 +123,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // sign to certified message by sender
     MKMID *sender = sMsg.envelope.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMUser *user = [DIMUser userWithID:sender];
+        DIMUser *user = (DIMUser *)[MKMEntityPool() userWithID:sender];
         cMsg = [user signMessage:sMsg];;
     }
     
@@ -137,7 +137,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // verify to secure message by sender
     MKMID *sender = cMsg.envelope.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMContact *contact = [DIMContact contactWithID:sender];
+        DIMContact *contact = DIMContactWithID(sender);
         sMsg = [contact verifyMessage:cMsg];
     }
     

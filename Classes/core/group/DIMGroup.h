@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMGroupWithID(ID) (DIMGroup *)MKMGroupWithID(ID)
+
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 

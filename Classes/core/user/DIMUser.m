@@ -22,13 +22,6 @@
 
 @implementation DIMUser
 
-+ (instancetype)userWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
-    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
-    DIMUser *user = [[DIMUser alloc] initWithID:ID publicKey:PK];
-    return user;
-}
-
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     NSAssert([env.receiver isEqual:_ID], @"recipient error");

@@ -10,7 +10,6 @@
 
 #import "MKMID.h"
 #import "MKMMeta.h"
-#import "MKMEntityManager.h"
 
 #import "MKMSocialEntity.h"
 
@@ -52,15 +51,9 @@
 }
 
 - (BOOL)isFounder:(const MKMID *)ID {
-    if (_founder) {
-        return [_founder isEqual:ID];
-    }
-    // founder not set yet, check by meta.key
-    MKMMeta *meta = MKMMetaForID(_ID);
-    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
-    // the key in social entity's meta
-    // must be the same (public) key of founder
-    return [meta.key isEqual:PK];
+    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(_founder, @"founder not set yet");
+    return [_founder isEqual:ID];
 }
 
 - (BOOL)isOwner:(const MKMID *)ID {

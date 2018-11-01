@@ -19,6 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithID:(const MKMID *)ID;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
+/**
+ Verify signature of this profile with public key of ID
+ 
+ @param ID - Account ID
+ @return YES/NO
+ */
+- (BOOL)matchID:(const MKMID *)ID;
+
 @end
 
 @interface MKMContactMemo : MKMMemo

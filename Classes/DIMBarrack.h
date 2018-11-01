@@ -10,34 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMUserWithID(ID)    [[DIMBarrack sharedInstance] userWithID:(ID)]
-#define DIMContactWithID(ID) [[DIMBarrack sharedInstance] contactWithID:(ID)]
-#define DIMGroupWithID(ID)   [[DIMBarrack sharedInstance] groupWithID:(ID)]
+@interface DIMBarrack : NSObject <MKMEntityDelegate, MKMProfileDataSource>
 
-/**
- *  Entity pool to manage User/Contace/Group instances
- *
- *      1st, get instance here to avoid create same instance,
- *      2nd, if their history was updated, we can notice them here immediately
- */
-@interface DIMBarrack : NSObject
+@property (weak, nonatomic) id<MKMEntityDelegate> entityDelegate;
+@property (weak, nonatomic) id<MKMProfileDataSource> profileDataSource;
 
 + (instancetype)sharedInstance;
-
-// user
-- (DIMUser *)userWithID:(const MKMID *)ID; // if not found, create new one
-- (void)setUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
-
-// contact
-- (DIMContact *)contactWithID:(const MKMID *)ID; // if not found, create new one
-- (void)setContact:(DIMContact *)contact;
-- (void)removeContact:(DIMContact *)contact;
-
-// group
-- (DIMGroup *)groupWithID:(const MKMID *)ID; // if not found, create new one
-- (void)setGroup:(DIMGroup *)group;
-- (void)removeGroup:(DIMGroup *)group;
 
 @end
 

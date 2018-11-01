@@ -30,11 +30,6 @@ static void load_immortal_file(NSString *filename) {
     meta = [MKMMeta metaWithMeta:meta];
     assert([meta matchID:ID]);
     
-    // history
-    MKMHistory *history = [dict objectForKey:@"history"];
-    history = [MKMHistory historyWithHistory:history];
-    assert(history.count > 0);
-    
     // profile
     id profile = [dict objectForKey:@"profile"];
     if (profile) {
@@ -43,42 +38,26 @@ static void load_immortal_file(NSString *filename) {
         [mDict addEntriesFromDictionary:profile];
         profile = mDict;
     }
-    profile = [MKMProfile profileWithProfile:profile];
+    profile = [MKMAccountProfile profileWithProfile:profile];
     assert(profile);
     
-    // private key
+    // 1. create contact & user
+    DIMUser *user = [[DIMUser alloc] initWithID:ID publicKey:meta.key];
+    [user updateProfile:profile];
+    DIMContact *contact = [[DIMContact alloc] initWithID:ID publicKey:meta.key];
+    [contact updateProfile:profile];
+    
+    // 2. add to entity manager
+    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
+    [eman addUser:user];
+    [eman addContact:contact];
+    
+    // 3. store private key into keychain
     MKMPrivateKey *SK = [dict objectForKey:@"privateKey"];
     SK = [MKMPrivateKey keyWithKey:SK];
     assert(SK.algorithm);
-    
-    // 1. set meta & history to entity manager
-    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
-    [eman setMeta:meta forID:ID];
-    [eman setHistory:history forID:ID];
-    
-    // 2. set profile to profile manager (facebook)
-    MKMProfileManager *facebook = [MKMProfileManager sharedInstance];
-    [facebook setProfile:profile forID:ID];
-    
-    // 3. store private key into keychain
     [SK saveKeyWithIdentifier:ID.address];
 }
-
-@interface MKMAccount (Hacking)
-
-@property (strong, nonatomic) MKMAccountProfile *profile;
-
-@end
-
-@interface DIMBarrack () {
-    
-    NSMutableDictionary<const MKMAddress *, DIMUser *> *_userTable;
-    NSMutableDictionary<const MKMAddress *, DIMContact *> *_contactTable;
-    
-    NSMutableDictionary<const MKMAddress *, DIMGroup *> *_groupTable;
-}
-
-@end
 
 @implementation DIMBarrack
 
@@ -86,11 +65,8 @@ SingletonImplementations(DIMBarrack, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        _userTable = [[NSMutableDictionary alloc] init];
-        _contactTable = [[NSMutableDictionary alloc] init];
-        
-        _groupTable = [[NSMutableDictionary alloc] init];
-        
+        [MKMEntityManager sharedInstance].delegate = self;
+        [MKMProfileManager sharedInstance].dataSource = self;
 #if DEBUG
         // Immortals
         load_immortal_file(@"mkm_hulk");
@@ -100,72 +76,38 @@ SingletonImplementations(DIMBarrack, sharedInstance)
     return self;
 }
 
-#pragma mark User
+#pragma mark - MKMEntityDelegate
 
-- (DIMUser *)userWithID:(const MKMID *)ID {
-    DIMUser *user = [_userTable objectForKey:ID.address];
-    if (!user) {
-        // get profile with ID
-        id prof = MKMProfileForID(ID);
-        prof = [MKMAccountProfile profileWithProfile:prof];
-        // create new user with ID
-        user = [DIMUser userWithID:ID];
-        user.profile = prof;
-        [self setUser:user];
-    }
-    return user;
+- (MKMContact *)contactWithID:(const MKMID *)ID {
+    // TODO:
+    return nil;
 }
 
-- (void)setUser:(DIMUser *)user {
-    [_userTable setObject:user forKey:user.ID.address];
+- (MKMUser *)userWithID:(const MKMID *)ID {
+    // TODO:
+    return nil;
 }
 
-- (void)removeUser:(DIMUser *)user {
-    [_userTable removeObjectForKey:user.ID.address];
+- (MKMGroup *)groupWithID:(const MKMID *)ID {
+    // TODO:
+    return nil;
 }
 
-#pragma mark Contact
-
-- (DIMContact *)contactWithID:(const MKMID *)ID {
-    DIMContact *contact = [_contactTable objectForKey:ID.address];
-    if (!contact) {
-        // get profile with ID
-        id prof = MKMProfileForID(ID);
-        prof = [MKMAccountProfile profileWithProfile:prof];
-        // create new contact with ID
-        contact = [DIMContact contactWithID:ID];
-        contact.profile = prof;
-        [self setContact:contact];
-    }
-    return contact;
+- (MKMMember *)memberWithID:(const MKMID *)ID groupID:(const MKMID *)gID {
+    // TODO:
+    return nil;
 }
 
-- (void)setContact:(DIMContact *)contact {
-    [_contactTable setObject:contact forKey:contact.ID.address];
+#pragma mark - MKMProfileDataSource
+
+- (MKMProfile *)profileForID:(const MKMID *)ID {
+    // TODO:
+    return nil;
 }
 
-- (void)removeContact:(DIMContact *)contact {
-    [_contactTable removeObjectForKey:contact.ID.address];
-}
-
-#pragma mark Group
-
-- (DIMGroup *)groupWithID:(const MKMID *)ID {
-    DIMGroup *group = [_groupTable objectForKey:ID.address];
-    if (!group) {
-        // create new group with ID
-        group = [DIMGroup groupWithID:ID];
-        [self setGroup:group];
-    }
-    return group;
-}
-
-- (void)setGroup:(DIMGroup *)group {
-    [_groupTable setObject:group forKey:group.ID.address];
-}
-
-- (void)removeGroup:(DIMGroup *)group {
-    [_groupTable removeObjectForKey:group.ID.address];
+- (MKMMemo *)memoForID:(const MKMID *)ID {
+    // TODO:
+    return nil;
 }
 
 @end

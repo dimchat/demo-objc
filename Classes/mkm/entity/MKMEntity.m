@@ -50,10 +50,6 @@
     return [entity.ID isEqual:_ID];
 }
 
-- (MKMNetworkType)type {
-    return _ID.type;
-}
-
 - (UInt32)number {
     return _ID.number;
 }

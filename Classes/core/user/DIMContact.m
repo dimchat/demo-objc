@@ -20,13 +20,6 @@
 
 @implementation DIMContact
 
-+ (instancetype)contactWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"address error");
-    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
-    DIMContact *contact = [[DIMContact alloc] initWithID:ID publicKey:PK];
-    return contact;
-}
-
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     MKMID *to = env.receiver;
