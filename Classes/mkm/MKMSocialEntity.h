@@ -25,18 +25,19 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @property (readonly, strong, nonatomic) MKMID *founder;
-@property (readonly, strong, nonatomic) MKMID *owner;
+@property (strong, nonatomic) MKMID *owner;
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *members;
 
+- (instancetype)initWithID:(const MKMID *)ID
+                 founderID:(const MKMID *)founderID
+NS_DESIGNATED_INITIALIZER;
+
 - (BOOL)isFounder:(const MKMID *)ID;
 - (BOOL)isOwner:(const MKMID *)ID;
-/**
- *  DON'T call these methods to update social entity directly,
- *  use runHistory:/runHistoryRecord: to change members
- */
-//- (void)addMember:(const MKMID *)ID;
-//- (void)removeMember:(const MKMID *)ID;
+
+- (void)addMember:(const MKMID *)ID;
+- (void)removeMember:(const MKMID *)ID;
 - (BOOL)isMember:(const MKMID *)ID;
 
 // +create(founder)

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMAddressDefaultVersion 0x01
 
 typedef NS_ENUM(UInt8, MKMNetworkID) {
-    MKMNetwork_Unknown = 0x00,  // Network_BitCoin
+    // Network_BitCoin = 0x00,  // 0000 0000
     MKMNetwork_Main    = 0x08,  // 0000 1000
     MKMNetwork_Group   = 0x10,  // 0001 0000
 };

@@ -122,28 +122,28 @@ static void parse_id_string(const NSString *string, MKMID *ID) {
 }
 
 - (NSString *)name {
-    if (!_name) {
+    if (!_name && !_address && !_terminal && _valid == NO) {
         parse_id_string(_storeString, self);
     }
     return _name;
 }
 
 - (MKMAddress *)address {
-    if (!_address) {
+    if (!_name && !_address && !_terminal && _valid == NO) {
         parse_id_string(_storeString, self);
     }
     return _address;
 }
 
 - (NSString *)terminal {
-    if (!_name || !_address) {
+    if (!_name && !_address && !_terminal && _valid == NO) {
         parse_id_string(_storeString, self);
     }
     return _terminal;
 }
 
 - (BOOL)isValid {
-    if (!_name || !_address) {
+    if (!_name && !_address && !_terminal && _valid == NO) {
         parse_id_string(_storeString, self);
     }
     return _valid;

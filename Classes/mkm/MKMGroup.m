@@ -24,8 +24,9 @@
 @implementation MKMGroup
 
 /* designated initializer */
-- (instancetype)initWithID:(const MKMID *)ID {
-    if (self = [super initWithID:ID]) {
+- (instancetype)initWithID:(const MKMID *)ID
+                 founderID:(const MKMID *)founderID {
+    if (self = [super initWithID:ID founderID:founderID]) {
         // lazy
         _administrators = nil;
     }

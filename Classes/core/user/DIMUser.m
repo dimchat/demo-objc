@@ -103,7 +103,7 @@
     MKMID *sender = env.sender;
     MKMID *receiver = env.receiver;
     
-    if (MKMNetwork_Main == receiver.address.network) {
+    if (receiver.address.network == MKMNetwork_Main) {
         NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);
         // get passphrase in personal message
         PW = msg.encryptedKey;
@@ -111,7 +111,7 @@
             // get passphrase from contact
             scKey = [store cipherKeyFromContact:sender];
         }
-    } else if (MKMNetwork_Group == receiver.address.network) {
+    } else if (receiver.address.network == MKMNetwork_Group) {
         // get passphrase in group message
         PW = [msg.encryptedKeys encryptedKeyForID:_ID];
         if (!PW) {

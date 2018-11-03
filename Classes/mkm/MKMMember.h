@@ -34,8 +34,26 @@ NS_ASSUME_NONNULL_BEGIN
  *  \=============+=======+=============+=============+=============+=======/
  *                                (Wai: Waiting, Nor: Normal, Fre: Freezing)
  *
+ *  Role Transition Model:
+ *
+ *        Founder
+ *           |      (Freezing) ----+         (Freezing) ------+
+ *           |        /            |           /              |
+ *           V       /             V          /               V
+ *        Owner (Normal)          Member (Normal)           Other User
+ *                   \             |  ^   |   \               |
+ *                    \            |  |   |    \              |
+ *                  (Waiting) <----+  |   |  (Waiting) <------+
+ *                     ^              |   |
+ *                     |      (Freezing)  |
+ *                     |        /         |
+ *                   Admin (Normal)       |
+ *                              \         |
+ *                            (Waiting) <-+
+ *
  *  1000 0000 - Freezing
  *  0100 0000 - Waiting
+ *
  *  0010 0000 - write history
  *  0001 0000 - abdicate/hire/fire (owner)
  *
@@ -44,14 +62,14 @@ NS_ASSUME_NONNULL_BEGIN
  *  0000 0010 - rename
  *  0000 0001 - speak
  */
-typedef NS_ENUM(UInt8, MKMMemberStatus) {
-    MKMMember_Other   = 0x00, // 0000 0000
+typedef NS_ENUM(UInt8, MKMMemberType) {
     MKMMember_Founder = 0x20, // 0010 0000
     MKMMember_Owner   = 0x3F, // 0011 1111
-    MKMMember_Member  = 0x07, // 0000 0111
     MKMMember_Admin   = 0x0F, // 0000 1111
+    MKMMember_Member  = 0x07, // 0000 0111
+    MKMMember_Other   = 0x00, // 0000 0000
 };
-typedef NS_ENUM(UInt8, MKMMemberStatusPlus) {
+typedef NS_ENUM(UInt8, MKMMemberTypePlus) {
     MKMMember_Freezing = 0x80, // 1000 0000
     MKMMember_Waiting  = 0x40, // 0100 0000
     
@@ -62,17 +80,17 @@ typedef NS_ENUM(UInt8, MKMMemberStatusPlus) {
     MKMMember_AdminWaiting   = MKMMember_Admin  | MKMMember_Waiting,
     MKMMember_AdminFreezing  = MKMMember_Admin  | MKMMember_Freezing,
 };
-typedef UInt8 MKMMemberType;
+typedef UInt8 MKMMemberRole;
 
 @interface MKMMember : MKMAccount {
     
     MKMID *_groupID;
     
-    MKMMemberType _type;
+    MKMMemberRole _role;
 }
 
 @property (readonly, strong, nonatomic) MKMID *groupID;
-@property (readonly, nonatomic) MKMMemberType type;
+@property (nonatomic) MKMMemberRole role;
 
 - (instancetype)initWithGroupID:(const MKMID *)groupID
                          userID:(const MKMID *)ID

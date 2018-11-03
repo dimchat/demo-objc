@@ -76,6 +76,11 @@ SingletonImplementations(DIMBarrack, sharedInstance)
     return self;
 }
 
+- (void)reduceMemory {
+    [[MKMEntityManager sharedInstance] reduceMemory];
+    [[MKMProfileManager sharedInstance] reduceMemory];
+}
+
 #pragma mark - MKMEntityDelegate
 
 - (MKMContact *)contactWithID:(const MKMID *)ID {

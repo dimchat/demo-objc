@@ -13,28 +13,27 @@
 @interface MKMMember ()
 
 @property (strong, nonatomic) MKMID *groupID;
-@property (nonatomic) MKMMemberType type;
 
 @end
 
 @implementation MKMMember
 
-/* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK {
-    MKMID *gID = nil;
-    self = [self initWithGroupID:gID
+    MKMID *groupID = nil;
+    self = [self initWithGroupID:groupID
                           userID:ID
                        publicKey:PK];
     return self;
 }
 
+/* designated initializer */
 - (instancetype)initWithGroupID:(const MKMID *)groupID
                          userID:(const MKMID *)ID
                       publicKey:(const MKMPublicKey *)PK {
     if (self = [super initWithID:ID publicKey:PK]) {
         _groupID = [groupID copy];
-        _type = MKMMember_Other;
+        _role = MKMMember_Other;
     }
     return self;
 }
@@ -43,7 +42,7 @@
     MKMMember *member = [super copyWithZone:zone];
     if (member) {
         member.groupID = _groupID;
-        member.type = _type;
+        member.role = _role;
     }
     return member;
 }

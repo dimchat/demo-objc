@@ -16,7 +16,6 @@
 @interface MKMSocialEntity ()
 
 @property (strong, nonatomic) MKMID *founder;
-@property (strong, nonatomic) MKMID *owner;
 
 @property (strong, nonatomic) NSArray<const MKMID *> *members;
 
@@ -26,10 +25,17 @@
 
 @implementation MKMSocialEntity
 
-/* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID {
+    MKMID *founderID = nil;
+    self = [self initWithID:ID founderID:founderID];
+    return self;
+}
+
+/* designated initializer */
+- (instancetype)initWithID:(const MKMID *)ID
+                 founderID:(const MKMID *)founderID {
     if (self = [super initWithID:ID]) {
-        _founder = nil;
+        _founder = [founderID copy];
         _owner = nil;
         // lazy
         _members = nil;

@@ -20,12 +20,6 @@
 
 @implementation DIMGroup
 
-+ (instancetype)groupWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Group, @"address error");
-    DIMGroup *group = [[DIMGroup alloc] initWithID:ID];
-    return group;
-}
-
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     MKMID *to = env.receiver;

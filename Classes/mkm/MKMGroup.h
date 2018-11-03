@@ -17,12 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) NSArray<const MKMID *> *administrators;
 
-/**
- *  DON'T call these methods to update group directly,
- *  use runHistory:/runHistoryRecord: to change administrators
- */
-//- (void)addAdmin:(const MKMID *)ID;
-//- (void)removeAdmin:(const MKMID *)ID;
+- (void)addAdmin:(const MKMID *)ID;
+- (void)removeAdmin:(const MKMID *)ID;
 - (BOOL)isAdmin:(const MKMID *)ID;
 
 // -hire(admin, owner)

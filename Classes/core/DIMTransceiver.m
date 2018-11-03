@@ -95,7 +95,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
         sMsg = [contact encryptMessage:iMsg];
     } else if (receiver.address.network == MKMNetwork_Group) {
         // receiver is a group
-        DIMGroup *group = [DIMGroup groupWithID:receiver];
+        DIMGroup *group = DIMGroupWithID(receiver);
         sMsg = [group encryptMessage:iMsg];
     }
     

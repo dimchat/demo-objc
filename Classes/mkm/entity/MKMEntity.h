@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, strong, nonatomic) MKMID *ID;   // name@address
 
+@property (readonly, nonatomic) MKMNetworkType type; // Network ID
 @property (readonly, nonatomic) UInt32 number;       // search number
 
 @property (strong, nonatomic) NSString *name;        // name or seed

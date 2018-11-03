@@ -90,7 +90,7 @@ static void parse_address(const NSString *string, MKMAddress *address) {
 - (instancetype)initWithString:(NSString *)aString {
     if (self = [super initWithString:aString]) {
         // lazy
-        _network = MKMNetwork_Unknown;
+        _network = 0x00;
         _code = 0;
         _valid = NO;
     }
@@ -152,21 +152,21 @@ static void parse_address(const NSString *string, MKMAddress *address) {
 }
 
 - (MKMNetworkType)network {
-    if (_network == MKMNetwork_Unknown) {
+    if (_network == 0x00 && _code == 0 && _valid == NO) {
         parse_address(_storeString, self);
     }
     return _network;
 }
 
 - (UInt32)code {
-    if (_network == MKMNetwork_Unknown) {
+    if (_network == 0x00 && _code == 0 && _valid == NO) {
         parse_address(_storeString, self);
     }
     return _code;
 }
 
 - (BOOL)isValid {
-    if (_network == MKMNetwork_Unknown) {
+    if (_network == 0x00 && _code == 0 && _valid == NO) {
         parse_address(_storeString, self);
     }
     return _valid;
