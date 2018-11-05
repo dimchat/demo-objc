@@ -10,7 +10,6 @@
 #import "NSData+Crypto.h"
 
 #import "DIMMember.h"
-#import "DIMBarrack.h"
 
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
@@ -24,7 +23,7 @@
 @implementation DIMGroup
 
 - (NSString *)name {
-    MKMProfile *profile = DIMProfileForID(_ID);
+    MKMProfile *profile = MKMProfileForID(_ID);
     NSString *str = profile.name;
     if (str) {
         return str;

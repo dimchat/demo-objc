@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMContactWithID(ID)  (DIMContact *)MKMContactWithID(ID)
+
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 @class DIMCertifiedMessage;

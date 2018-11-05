@@ -30,12 +30,6 @@
 //#import "MKMECCPublicKey.h"
 //#import "MKMECCPrivateKey.h"
 
-// Delegates
-#import "MKMEntityHistoryDelegate.h"
-#import "MKMSocialEntityHistoryDelegate.h"
-#import "MKMGroupHistoryDelegate.h"
-#import "MKMAccountHistoryDelegate.h"
-
 // Entity
 #import "MKMID.h"
 #import "MKMAddress.h"
@@ -43,8 +37,14 @@
 #import "MKMEntity.h"
 
 // History
-#import "MKMHistoryEvent.h"
+#import "MKMHistoryOperation.h"
+#import "MKMHistoryTransaction.h"
+#import "MKMHistoryBlock.h"
 #import "MKMHistory.h"
+#import "MKMEntityHistoryDelegate.h"
+#import "MKMAccountHistoryDelegate.h"
+#import "MKMSocialEntityHistoryDelegate.h"
+#import "MKMGroupHistoryDelegate.h"
 #import "MKMConsensus.h"
 
 // group
@@ -59,6 +59,7 @@
 
 // facebook
 #import "MKMProfile.h"
+#import "MKMBarrack.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

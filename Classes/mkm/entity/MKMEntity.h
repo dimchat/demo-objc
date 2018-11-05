@@ -31,4 +31,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - Entity Delegate
+
+@protocol MKMEntityDataSource <NSObject>
+
+- (MKMMeta *)metaForEntityID:(const MKMID *)ID;
+
+@end
+
 NS_ASSUME_NONNULL_END

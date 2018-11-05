@@ -75,10 +75,10 @@ typedef NS_ENUM(UInt8, MKMMemberTypePlus) {
     
     MKMMember_OwnerWaiting   = MKMMember_Owner  | MKMMember_Waiting,
     MKMMember_OwnerFreezing  = MKMMember_Owner  | MKMMember_Freezing,
-    MKMMember_MemberWaiting  = MKMMember_Member | MKMMember_Waiting,
-    MKMMember_MemberFreezing = MKMMember_Member | MKMMember_Freezing,
     MKMMember_AdminWaiting   = MKMMember_Admin  | MKMMember_Waiting,
     MKMMember_AdminFreezing  = MKMMember_Admin  | MKMMember_Freezing,
+    MKMMember_MemberWaiting  = MKMMember_Member | MKMMember_Waiting,
+    MKMMember_MemberFreezing = MKMMember_Member | MKMMember_Freezing,
 };
 typedef UInt8 MKMMemberRole;
 
@@ -92,10 +92,32 @@ typedef UInt8 MKMMemberRole;
 @property (readonly, strong, nonatomic) MKMID *groupID;
 @property (nonatomic) MKMMemberRole role;
 
-- (instancetype)initWithSocialID:(const MKMID *)groupID
-                          userID:(const MKMID *)ID
-                       publicKey:(const MKMPublicKey *)PK
+- (instancetype)initWithGroupID:(const MKMID *)groupID
+                      accountID:(const MKMID *)ID
+                      publicKey:(const MKMPublicKey *)PK
 NS_DESIGNATED_INITIALIZER;
+
+@end
+
+#pragma mark - Member Delegate
+
+@protocol MKMMemberDelegate <NSObject>
+
+- (MKMMember *)memberWithID:(const MKMID *)ID groupID:(const MKMID *)gID;
+
+@end
+
+#pragma mark -
+
+@interface MKMFounder : MKMMember
+
+@end
+
+@interface MKMOwner : MKMMember
+
+@end
+
+@interface MKMAdmin : MKMMember
 
 @end
 

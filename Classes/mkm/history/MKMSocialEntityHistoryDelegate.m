@@ -10,7 +10,6 @@
 #import "MKMEntity.h"
 #import "MKMSocialEntity.h"
 
-#import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
 #import "MKMSocialEntityHistoryDelegate.h"

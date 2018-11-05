@@ -17,7 +17,7 @@
 
 @property (strong, nonatomic) MKMID *founder;
 
-@property (strong, nonatomic) NSArray<const MKMID *> *members;
+@property (strong, nonatomic) MKMMemberListM *members;
 
 @end
 
@@ -35,7 +35,8 @@
     if (self = [super initWithID:ID]) {
         _founder = [founderID copy];
         _owner = nil;
-        _members = [[NSMutableArray alloc] init];
+        // lazy
+        _members = nil;
     }
     
     return self;
@@ -68,6 +69,9 @@
     if ([self isMember:ID]) {
         // don't add same member twice
         return;
+    }
+    if (!_members) {
+        _members = [[MKMMemberListM alloc] init];
     }
     [_members addObject:ID];
 }

@@ -14,7 +14,6 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
-#import "DIMBarrack.h"
 #import "DIMKeyStore.h"
 
 #import "DIMContact.h"
@@ -22,7 +21,7 @@
 @implementation DIMContact
 
 - (NSString *)name {
-    MKMProfile *profile = DIMProfileForID(_ID);
+    MKMProfile *profile = MKMProfileForID(_ID);
     NSString *str = profile.name;
     if (str) {
         return str;

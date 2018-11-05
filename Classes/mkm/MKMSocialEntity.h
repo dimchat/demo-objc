@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NSMutableArray<const MKMID *> MKMMemberListM;
+typedef NSArray<const MKMID *> MKMMemberList;
+
 @interface MKMSocialEntity : MKMEntity {
     
     // parse the history to update profiles
@@ -17,13 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
     MKMID *_owner;
     
     // parse the history to update members
-    NSMutableArray<const MKMID *> *_members;
+    MKMMemberListM *_members;
 }
 
 @property (readonly, strong, nonatomic) MKMID *founder;
 @property (strong, nonatomic) MKMID *owner;
 
-@property (readonly, strong, nonatomic) NSArray<const MKMID *> *members;
+@property (readonly, strong, nonatomic) MKMMemberList *members;
 
 - (instancetype)initWithID:(const MKMID *)ID
                  founderID:(const MKMID *)founderID
@@ -43,6 +46,17 @@ NS_DESIGNATED_INITIALIZER;
 // -expel(member, admin)
 // -join(user)
 // -quit(member)
+
+@end
+
+#pragma mark - Social Entity Delegate
+
+@protocol MKMSocialEntityDataSource <NSObject>
+
+- (MKMID *)founderForSocialEntityID:(const MKMID *)ID;
+
+@optional
+- (MKMID *)ownerForSocialEntityID:(const MKMID *)ID;
 
 @end
 

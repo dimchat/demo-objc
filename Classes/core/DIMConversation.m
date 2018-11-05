@@ -12,9 +12,6 @@
 #import "DIMEnvelope.h"
 #import "DIMInstantMessage.h"
 
-#import "DIMConversationDataSource.h"
-#import "DIMConversationDelegate.h"
-
 #import "DIMConversation.h"
 
 @interface DIMConversation ()

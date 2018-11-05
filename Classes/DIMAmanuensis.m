@@ -1,14 +1,12 @@
 //
 //  DIMAmanuensis.m
-//  DIM
+//  DIMC
 //
 //  Created by Albert Moky on 2018/10/21.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
 #import "NSObject+Singleton.h"
-
-#import "DIMBarrack.h"
 
 #import "DIMAmanuensis.h"
 
@@ -64,9 +62,9 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         // get entity with ID
         MKMEntity *entity = nil;
         if (ID.address.network == MKMNetwork_Main) {
-            entity = DIMContactWithID(ID);
+            entity = MKMContactWithID(ID);
 //        } else if (ID.address.network == MKMNetwork_Group) {
-//            entity = DIMGroupWithID(ID);
+//            entity = MKMGroupWithID(ID);
         }
         NSAssert(entity, @"ID error");
         // create new conversation with entity (Contact/Group)

@@ -13,7 +13,6 @@
 #import "MKMMeta.h"
 #import "MKMEntity.h"
 
-#import "MKMHistoryEvent.h"
 #import "MKMHistory.h"
 
 #import "MKMAccountHistoryDelegate.h"

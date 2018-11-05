@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMUserWithID(ID)  (DIMUser *)MKMUserWithID(ID)
+
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 @class DIMCertifiedMessage;

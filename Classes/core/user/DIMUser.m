@@ -17,8 +17,6 @@
 #import "DIMContact.h"
 #import "DIMGroup.h"
 
-#import "DIMBarrack.h"
-
 #import "DIMKeyStore.h"
 
 #import "DIMUser.h"
@@ -26,7 +24,7 @@
 @implementation DIMUser
 
 - (NSString *)name {
-    MKMProfile *profile = DIMProfileForID(_ID);
+    MKMProfile *profile = MKMProfileForID(_ID);
     NSString *str = profile.name;
     if (str) {
         return str;

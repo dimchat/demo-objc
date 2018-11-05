@@ -10,9 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MKMContactMemo;
-
 @interface MKMContact : MKMAccount
+
+@end
+
+#pragma mark - Contact Delegate
+
+@protocol MKMContactDelegate <NSObject>
+
+- (MKMContact *)contactWithID:(const MKMID *)ID;
 
 @end
 

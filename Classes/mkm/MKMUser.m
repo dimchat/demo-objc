@@ -15,7 +15,7 @@
 
 @interface MKMUser ()
 
-@property (strong, nonatomic) NSArray<const MKMID *> *contacts;
+@property (strong, nonatomic) MKMContactListM *contacts;
 
 @end
 
@@ -56,7 +56,7 @@
         return NO;
     }
     if (!_contacts) {
-        _contacts = [[NSMutableArray alloc] init];
+        _contacts = [[MKMContactListM alloc] init];
     }
     // add it
     [_contacts addObject:ID];

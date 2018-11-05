@@ -21,19 +21,17 @@
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK {
     MKMID *groupID = nil;
-    self = [self initWithSocialID:groupID
-                           userID:ID
-                        publicKey:PK];
+    self = [self initWithGroupID:groupID accountID:ID publicKey:PK];
     return self;
 }
 
 /* designated initializer */
-- (instancetype)initWithSocialID:(const MKMID *)groupID
-                          userID:(const MKMID *)ID
-                       publicKey:(const MKMPublicKey *)PK {
+- (instancetype)initWithGroupID:(const MKMID *)groupID
+                      accountID:(const MKMID *)ID
+                      publicKey:(const MKMPublicKey *)PK {
     if (self = [super initWithID:ID publicKey:PK]) {
         _groupID = [groupID copy];
-        _role = MKMMember_Other;
+        _role = MKMMember_Member;
     }
     return self;
 }
@@ -45,6 +43,47 @@
         member.role = _role;
     }
     return member;
+}
+
+@end
+
+#pragma mark -
+
+@implementation MKMFounder
+
+- (instancetype)initWithGroupID:(const MKMID *)groupID
+                      accountID:(const MKMID *)ID
+                      publicKey:(const MKMPublicKey *)PK {
+    if (self = [super initWithGroupID:groupID accountID:ID publicKey:PK]) {
+        _role = MKMMember_Founder;
+    }
+    return self;
+}
+
+@end
+
+@implementation MKMOwner
+
+- (instancetype)initWithGroupID:(const MKMID *)groupID
+                      accountID:(const MKMID *)ID
+                      publicKey:(const MKMPublicKey *)PK {
+    if (self = [super initWithGroupID:groupID accountID:ID publicKey:PK]) {
+        _role = MKMMember_Owner;
+    }
+    return self;
+}
+
+@end
+
+@implementation MKMAdmin
+
+- (instancetype)initWithGroupID:(const MKMID *)groupID
+                      accountID:(const MKMID *)ID
+                      publicKey:(const MKMPublicKey *)PK {
+    if (self = [super initWithGroupID:groupID accountID:ID publicKey:PK]) {
+        _role = MKMMember_Admin;
+    }
+    return self;
 }
 
 @end

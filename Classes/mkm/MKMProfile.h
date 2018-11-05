@@ -49,6 +49,14 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 @end
 
+#pragma mark - Profile Delegate
+
+@protocol MKMProfileDataSource <NSObject>
+
+- (MKMProfile *)profileForID:(const MKMID *)ID;
+
+@end
+
 #pragma mark - Account profile
 
 @interface MKMAccountProfile : MKMProfile

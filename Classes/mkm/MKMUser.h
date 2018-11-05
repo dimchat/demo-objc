@@ -11,22 +11,34 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class MKMPrivateKey;
+@class MKMContact;
+
+typedef NSMutableArray<const MKMID *> MKMContactListM;
+typedef NSArray<const MKMID *> MKMContactList;
 
 @interface MKMUser : MKMAccount {
     
     MKMPrivateKey *_privateKey;
     
-    NSMutableArray<const MKMID *> *_contacts;
+    MKMContactListM *_contacts;
 }
 
 @property (strong, nonatomic) MKMPrivateKey *privateKey;
 
-@property (readonly, strong, nonatomic) NSArray<const MKMID *> *contacts;
+@property (readonly, strong, nonatomic) MKMContactList *contacts;
 
 // contacts
 - (BOOL)addContact:(MKMID *)ID;
 - (BOOL)containsContact:(const MKMID *)ID;
 - (void)removeContact:(const MKMID *)ID;
+
+@end
+
+#pragma mark - User Delegate
+
+@protocol MKMUserDelegate <NSObject>
+
+- (MKMUser *)userWithID:(const MKMID *)ID;
 
 @end
 

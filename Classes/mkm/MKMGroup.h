@@ -10,12 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NSMutableArray<const MKMID *> MKMAdminListM;
+typedef NSArray<const MKMID *> MKMAdminList;
+
 @interface MKMGroup : MKMSocialEntity {
     
-    NSMutableArray<const MKMID *> *_administrators;
+    MKMAdminListM *_administrators;
 }
 
-@property (readonly, strong, nonatomic) NSArray<const MKMID *> *administrators;
+@property (readonly, strong, nonatomic) MKMAdminList *administrators;
 
 - (void)addAdmin:(const MKMID *)ID;
 - (void)removeAdmin:(const MKMID *)ID;
@@ -24,6 +27,14 @@ NS_ASSUME_NONNULL_BEGIN
 // -hire(admin, owner)
 // -fire(admin, owner)
 // -resign(admin)
+
+@end
+
+#pragma mark - Group Delegate
+
+@protocol MKMGroupDelegate <NSObject>
+
+- (MKMGroup *)groupWithID:(const MKMID *)ID;
 
 @end
 

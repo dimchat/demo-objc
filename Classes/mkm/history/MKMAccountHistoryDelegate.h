@@ -10,8 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-//@interface MKMAccountHistoryDelegate : MKMEntityHistoryDelegate
-//
-//@end
+@interface MKMAccountHistoryDelegate : MKMEntityHistoryDelegate
+
+@end
 
 NS_ASSUME_NONNULL_END

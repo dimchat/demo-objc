@@ -9,8 +9,6 @@
 #import "MKMID.h"
 #import "MKMGroup.h"
 
-#import "MKMHistoryEvent.h"
-
 #import "MKMGroupHistoryDelegate.h"
 
 //@interface MKMGroup (Hacking)

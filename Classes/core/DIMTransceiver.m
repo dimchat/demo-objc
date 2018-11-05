@@ -11,7 +11,6 @@
 #import "DIMUser.h"
 #import "DIMContact.h"
 #import "DIMGroup.h"
-#import "DIMBarrack.h"
 
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"

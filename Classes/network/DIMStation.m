@@ -1,6 +1,6 @@
 //
 //  DIMStation.m
-//  DIM
+//  DIMC
 //
 //  Created by Albert Moky on 2018/10/13.
 //  Copyright © 2018 DIM Group. All rights reserved.

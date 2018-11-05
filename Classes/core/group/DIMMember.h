@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMMemberWithID(ID, gID)  (DIMMember *)MKMMemberWithID(ID, gID)
+
 @interface DIMMember : MKMMember
 
 @end
