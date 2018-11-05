@@ -92,9 +92,9 @@ typedef UInt8 MKMMemberRole;
 @property (readonly, strong, nonatomic) MKMID *groupID;
 @property (nonatomic) MKMMemberRole role;
 
-- (instancetype)initWithGroupID:(const MKMID *)groupID
-                         userID:(const MKMID *)ID
-                      publicKey:(const MKMPublicKey *)PK
+- (instancetype)initWithSocialID:(const MKMID *)groupID
+                          userID:(const MKMID *)ID
+                       publicKey:(const MKMPublicKey *)PK
 NS_DESIGNATED_INITIALIZER;
 
 @end

@@ -10,15 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MKM_IMMORTAL_HULK_ID @"hulk@4bejC3UratNYGoRagiw8Lj9xJrx8bq6nnN"
+#define MKM_MONKEY_KING_ID   @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"
+
 /**
- *  ID for entity (User/Contact/Group/...)
+ *  ID for entity (Account/Group)
  *
  *      data format: "name@address[/terminal]"
  *
  *      fileds:
- *          name     - username, any nonempty string
- *          address  - hash(signature) to identify a user
- *          terminal - login point/device, OPTIONAL
+ *          name     - entity name, the seed of fingerprint to build address
+ *          address  - a string to identify an entity
+ *          terminal - entity login resource(device), OPTIONAL
  */
 @interface MKMID : MKMString
 

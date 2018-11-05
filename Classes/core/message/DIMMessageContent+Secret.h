@@ -1,6 +1,6 @@
 //
 //  DIMMessageContent+Secret.h
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/23.
 //  Copyright © 2018 DIM Group. All rights reserved.

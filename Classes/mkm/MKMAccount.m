@@ -16,10 +16,6 @@
 
 @property (strong, nonatomic) MKMPublicKey *publicKey;
 
-@property (nonatomic) MKMAccountStatus status;
-
-@property (strong, nonatomic) MKMAccountProfile *profile;
-
 @end
 
 @implementation MKMAccount
@@ -39,9 +35,6 @@
         
         // account status
         _status = MKMAccountStatusInitialized;
-        
-        // profile
-        _profile = nil; // lazy
     }
     return self;
 }
@@ -51,60 +44,8 @@
     if (account) {
         account.publicKey = _publicKey;
         account.status = _status;
-        account.profile = _profile;
     }
     return account;
-}
-
-@end
-
-@implementation MKMAccount (Profile)
-
-- (void)setName:(NSString *)name {
-    if (!_profile) {
-        _profile = [[MKMAccountProfile alloc] init];
-    }
-    _profile.name = name;
-    [super setName:name];
-}
-
-- (NSString *)name {
-    NSString *str = _profile.name;
-    if (str) {
-        return str;
-    }
-    return [super name];
-}
-
-- (void)setGender:(MKMGender)gender {
-    if (!_profile) {
-        _profile = [[MKMAccountProfile alloc] init];
-    }
-    _profile.gender = gender;
-}
-
-- (MKMGender)gender {
-    return _profile.gender;
-}
-
-- (void)setAvatar:(NSString *)avatar {
-    if (!_profile) {
-        _profile = [[MKMAccountProfile alloc] init];
-    }
-    _profile.avatar = avatar;
-}
-
-- (NSString *)avatar {
-    return _profile.avatar;
-}
-
-- (void)updateProfile:(const MKMAccountProfile *)profile {
-    NSAssert([profile matchID:_ID], @"profile not match");
-    if (!_profile) {
-        _profile = [profile copy];
-    } else {
-        // TODO: update profiles
-    }
 }
 
 @end

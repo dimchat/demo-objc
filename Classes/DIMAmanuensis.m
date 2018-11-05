@@ -65,8 +65,8 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         MKMEntity *entity = nil;
         if (ID.address.network == MKMNetwork_Main) {
             entity = DIMContactWithID(ID);
-        } else if (ID.address.network == MKMNetwork_Group) {
-            entity = DIMGroupWithID(ID);
+//        } else if (ID.address.network == MKMNetwork_Group) {
+//            entity = DIMGroupWithID(ID);
         }
         NSAssert(entity, @"ID error");
         // create new conversation with entity (Contact/Group)

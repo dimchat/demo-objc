@@ -1,6 +1,6 @@
 //
 //  DIMKeyStore.h
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/12.
 //  Copyright © 2018 DIM Group. All rights reserved.

@@ -7,7 +7,6 @@
 //
 
 #import "MKMEntity.h"
-#import "MKMProfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,28 +25,15 @@ typedef NS_ENUM(SInt32, MKMAccountStatus) {
     
     // account status (parse history to update)
     MKMAccountStatus _status;
-
-    // profiles
-    MKMAccountProfile *_profile;
 }
 
 @property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
 
-@property (readonly, nonatomic) MKMAccountStatus status;
+@property (nonatomic) MKMAccountStatus status;
 
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK
 NS_DESIGNATED_INITIALIZER;
-
-@end
-
-@interface MKMAccount (Profile)
-
-// special fields in profile
-@property (nonatomic) MKMGender gender;
-@property (strong, nonatomic) NSString *avatar; // URL
-
-- (void)updateProfile:(const MKMAccountProfile *)profile;
 
 @end
 

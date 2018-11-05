@@ -19,7 +19,7 @@
 #import "MKMAccountHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
 
-#import "MKMEntityManager.h"
+//#import "MKMEntityManager.h"
 
 #import "MKMConsensus.h"
 

@@ -1,6 +1,6 @@
 //
 //  DIMUser.m
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -16,11 +16,23 @@
 
 #import "DIMContact.h"
 #import "DIMGroup.h"
+
+#import "DIMBarrack.h"
+
 #import "DIMKeyStore.h"
 
 #import "DIMUser.h"
 
 @implementation DIMUser
+
+- (NSString *)name {
+    MKMProfile *profile = DIMProfileForID(_ID);
+    NSString *str = profile.name;
+    if (str) {
+        return str;
+    }
+    return [super name];
+}
 
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     DIMEnvelope *env = msg.envelope;
@@ -82,17 +94,17 @@
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
     MKMPrivateKey *SK = [self privateKey];
+    NSAssert(SK, @"private key not found");
     return [SK decrypt:ciphertext];
 }
 
 - (NSData *)sign:(const NSData *)plaintext {
     MKMPrivateKey *SK = [self privateKey];
+    NSAssert(SK, @"private key not found");
     return [SK sign:plaintext];
 }
 
-@end
-
-@implementation DIMUser (Passphrase)
+#pragma mark - Passphrase
 
 - (MKMSymmetricKey *)cipherKeyForDecrpyt:(const DIMSecureMessage *)msg {
     MKMSymmetricKey *scKey = nil;

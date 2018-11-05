@@ -25,6 +25,8 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 @property (readonly, strong, nonatomic) MKMID *ID;
 
+@property (strong, nonatomic) NSString *name;
+
 /**
  Profile fields that anyone can read
  */
@@ -45,21 +47,12 @@ typedef NS_ENUM(SInt32, MKMGender) {
 - (instancetype)initWithID:(const MKMID *)ID;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-/**
- Verify signature of this profile with public key of ID
-
- @param ID - Account ID
- @return YES/NO
- */
-- (BOOL)matchID:(const MKMID *)ID;
-
 @end
 
 #pragma mark - Account profile
 
 @interface MKMAccountProfile : MKMProfile
 
-@property (strong, nonatomic) NSString *name;
 @property (nonatomic) MKMGender gender;
 @property (strong, nonatomic) NSString *avatar; // URL
 
@@ -80,7 +73,6 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 @interface MKMSocialEntityProfile : MKMProfile
 
-@property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *logo; // URL
 
 @end

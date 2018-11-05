@@ -1,6 +1,6 @@
 //
 //  DIMTransceiver.m
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/7.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -11,6 +11,7 @@
 #import "DIMUser.h"
 #import "DIMContact.h"
 #import "DIMGroup.h"
+#import "DIMBarrack.h"
 
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
@@ -123,7 +124,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // sign to certified message by sender
     MKMID *sender = sMsg.envelope.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMUser *user = (DIMUser *)[MKMEntityPool() userWithID:sender];
+        DIMUser *user = DIMUserWithID(sender);
         cMsg = [user signMessage:sMsg];;
     }
     

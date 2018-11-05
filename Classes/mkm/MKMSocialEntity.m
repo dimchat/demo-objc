@@ -19,8 +19,6 @@
 
 @property (strong, nonatomic) NSArray<const MKMID *> *members;
 
-@property (strong, nonatomic) MKMSocialEntityProfile *profile;
-
 @end
 
 @implementation MKMSocialEntity
@@ -37,9 +35,7 @@
     if (self = [super initWithID:ID]) {
         _founder = [founderID copy];
         _owner = nil;
-        // lazy
-        _members = nil;
-        _profile = nil;
+        _members = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -51,7 +47,6 @@
         social.founder = _founder;
         social.owner = _owner;
         social.members = _members;
-        social.profile = _profile;
     }
     return social;
 }
@@ -74,9 +69,6 @@
         // don't add same member twice
         return;
     }
-    if (!_members) {
-        _members = [[NSMutableArray alloc] init];
-    }
     [_members addObject:ID];
 }
 
@@ -88,46 +80,6 @@
 - (BOOL)isMember:(const MKMID *)ID {
     NSAssert(ID.isValid, @"Invalid ID");
     return [_members containsObject:ID];
-}
-
-@end
-
-@implementation MKMSocialEntity (Profile)
-
-- (void)setName:(NSString *)name {
-    if (!_profile) {
-        _profile = [[MKMSocialEntityProfile alloc] init];
-    }
-    _profile.name = name;
-    [super setName:name];
-}
-
-- (NSString *)name {
-    NSString *str = _profile.name;
-    if (str) {
-        return str;
-    }
-    return [super name];
-}
-
-- (void)setLogo:(NSString *)logo {
-    if (!_profile) {
-        _profile = [[MKMSocialEntityProfile alloc] init];
-    }
-    _profile.logo = logo;
-}
-
-- (NSString *)logo {
-    return _profile.logo;
-}
-
-- (void)updateProfile:(const MKMSocialEntityProfile *)profile {
-    NSAssert([profile matchID:_ID], @"profile not match");
-    if (!_profile) {
-        _profile = [profile copy];
-    } else {
-        // TODO: update profiles
-    }
 }
 
 @end

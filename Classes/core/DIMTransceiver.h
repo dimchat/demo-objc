@@ -1,6 +1,6 @@
 //
 //  DIMTransceiver.h
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/7.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -9,6 +9,11 @@
 #import "MingKeMing.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class DIMMessageContent;
+@class DIMInstantMessage;
+@class DIMSecureMessage;
+@class DIMCertifiedMessage;
 
 @interface DIMTransceiver : NSObject
 

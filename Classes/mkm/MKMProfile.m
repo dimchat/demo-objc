@@ -65,19 +65,6 @@
     return self;
 }
 
-- (BOOL)matchID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    if (![ID isEqual:_ID]) {
-        return NO;
-    }
-
-    // TODO: check the signature of profile
-//    MKMPublicKey *PK = MKMPublicKeyForAccountID(ID);
-//    NSData *data = nil;
-//    NSData *signature = nil;
-    return YES;//[PK verify:data withSignature:signature];
-}
-
 - (void)setArrayValue:(NSString *)value forKey:(const NSString *)arrName {
     NSMutableArray *mArray = [_storeDictionary objectForKey:arrName];
     if (mArray) {
@@ -107,6 +94,15 @@
         [mArray addObject:value];
         [_storeDictionary setObject:mArray forKey:arrName];
     }
+}
+
+- (NSString *)name {
+    NSArray *array = [_storeDictionary objectForKey:@"names"];
+    return [array firstObject];
+}
+
+- (void)setName:(NSString *)name {
+    [self setArrayValue:name forKey:@"names"];
 }
 
 @end
@@ -146,15 +142,6 @@
     } else {
         return [_storeDictionary objectForKey:aKey];
     }
-}
-
-- (NSString *)name {
-    NSArray *array = [_storeDictionary objectForKey:@"names"];
-    return [array firstObject];
-}
-
-- (void)setName:(NSString *)name {
-    [self setArrayValue:name forKey:@"names"];
 }
 
 - (MKMGender)gender {
@@ -253,15 +240,6 @@
     } else {
         return [_storeDictionary objectForKey:aKey];
     }
-}
-
-- (NSString *)name {
-    NSArray *array = [_storeDictionary objectForKey:@"names"];
-    return [array firstObject];
-}
-
-- (void)setName:(NSString *)name {
-    [self setArrayValue:name forKey:@"names"];
 }
 
 - (NSString *)logo {

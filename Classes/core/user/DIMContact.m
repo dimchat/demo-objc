@@ -1,6 +1,6 @@
 //
 //  DIMContact.m
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -14,11 +14,21 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
+#import "DIMBarrack.h"
 #import "DIMKeyStore.h"
 
 #import "DIMContact.h"
 
 @implementation DIMContact
+
+- (NSString *)name {
+    MKMProfile *profile = DIMProfileForID(_ID);
+    NSString *str = profile.name;
+    if (str) {
+        return str;
+    }
+    return [super name];
+}
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;
@@ -82,9 +92,7 @@
     return [_publicKey verify:plaintext withSignature:ciphertext];
 }
 
-@end
-
-@implementation DIMContact (Passphrase)
+#pragma mark - Passphrase
 
 - (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];

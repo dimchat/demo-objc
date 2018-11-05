@@ -47,12 +47,6 @@
 #import "MKMHistory.h"
 #import "MKMConsensus.h"
 
-// Facebook
-#import "MKMProfile.h"
-#import "MKMProfileManager.h"
-#import "MKMMemo.h"
-#import "MKMEntityManager.h"
-
 // group
 #import "MKMSocialEntity.h"
 #import "MKMGroup.h"
@@ -62,6 +56,9 @@
 #import "MKMAccount.h"
 #import "MKMUser.h"
 #import "MKMContact.h"
+
+// facebook
+#import "MKMProfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

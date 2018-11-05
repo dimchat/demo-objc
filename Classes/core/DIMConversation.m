@@ -1,6 +1,6 @@
 //
 //  DIMConversation.m
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/9.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -54,13 +54,13 @@
         NSString *name = contact.name;
         // "xxx"
         return name;
-    } else if (self.type == DIMConversationGroup) {
-        NSAssert([_entity isKindOfClass:[DIMGroup class]], @"error");
-        DIMGroup *group = (DIMGroup *)_entity;
-        NSString *name = group.name;
-        NSUInteger count = group.members.count;
-        // "yyy (123)"
-        return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
+//    } else if (self.type == DIMConversationGroup) {
+//        NSAssert([_entity isKindOfClass:[DIMGroup class]], @"error");
+//        DIMGroup *group = (DIMGroup *)_entity;
+//        NSString *name = group.name;
+//        NSUInteger count = group.members.count;
+//        // "yyy (123)"
+//        return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
     }
     return @"Conversation";
 }

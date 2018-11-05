@@ -1,6 +1,6 @@
 //
 //  DIMGroup.m
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -8,6 +8,9 @@
 
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
+
+#import "DIMMember.h"
+#import "DIMBarrack.h"
 
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
@@ -19,6 +22,15 @@
 #import "DIMGroup.h"
 
 @implementation DIMGroup
+
+- (NSString *)name {
+    MKMProfile *profile = DIMProfileForID(_ID);
+    NSString *str = profile.name;
+    if (str) {
+        return str;
+    }
+    return [super name];
+}
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;
@@ -50,10 +62,10 @@
     DIMEncryptedKeyMap *map;
     map = [[DIMEncryptedKeyMap alloc] initWithCapacity:[_members count]];
     
-    MKMMember *member;
+    DIMMember *member;
     NSData *key;
     for (MKMID *ID in _members) {
-        member = MKMMemberWithID(ID, _ID);
+        member = DIMMemberWithID(ID, _ID);
         NSAssert(member.publicKey, @"failed to get PK for ID: %@", ID);
         if (member.publicKey) {
             key = [member.publicKey encrypt:PW];
@@ -65,9 +77,7 @@
     return map;
 }
 
-@end
-
-@implementation DIMGroup (Passphrase)
+#pragma mark - Passphrase
 
 - (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];

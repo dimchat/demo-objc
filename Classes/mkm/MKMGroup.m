@@ -8,13 +8,6 @@
 
 #import "MKMGroup.h"
 
-@interface MKMSocialEntity (Hacking)
-
-- (void)addMember:(const MKMID *)ID;
-- (void)removeMember:(const MKMID *)ID;
-
-@end
-
 @interface MKMGroup ()
 
 @property (strong, nonatomic) NSArray<const MKMID *> *administrators;
@@ -27,8 +20,8 @@
 - (instancetype)initWithID:(const MKMID *)ID
                  founderID:(const MKMID *)founderID {
     if (self = [super initWithID:ID founderID:founderID]) {
-        // lazy
-        _administrators = nil;
+        // admins
+        _administrators = [[NSMutableArray alloc] init];
     }
     
     return self;
@@ -62,9 +55,6 @@
     if (![self isMember:ID]) {
         NSAssert(false, @"should be a member first");
         [self addMember:ID];
-    }
-    if (!_administrators) {
-        _administrators = [[NSMutableArray alloc] init];
     }
     [_administrators addObject:ID];
 }

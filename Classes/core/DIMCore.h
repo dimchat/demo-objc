@@ -1,6 +1,6 @@
 //
 //  DIMCore.h
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/1.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -35,6 +35,7 @@
 #import "DIMSystemCommand.h"
 
 //-
+#import "DIMBarrack.h"
 #import "DIMTransceiver.h"
 #import "DIMConversation.h"
 #import "DIMKeyStore.h"

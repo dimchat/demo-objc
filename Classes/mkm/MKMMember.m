@@ -21,16 +21,16 @@
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK {
     MKMID *groupID = nil;
-    self = [self initWithGroupID:groupID
-                          userID:ID
-                       publicKey:PK];
+    self = [self initWithSocialID:groupID
+                           userID:ID
+                        publicKey:PK];
     return self;
 }
 
 /* designated initializer */
-- (instancetype)initWithGroupID:(const MKMID *)groupID
-                         userID:(const MKMID *)ID
-                      publicKey:(const MKMPublicKey *)PK {
+- (instancetype)initWithSocialID:(const MKMID *)groupID
+                          userID:(const MKMID *)ID
+                       publicKey:(const MKMPublicKey *)PK {
     if (self = [super initWithID:ID publicKey:PK]) {
         _groupID = [groupID copy];
         _role = MKMMember_Other;

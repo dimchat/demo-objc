@@ -1,6 +1,6 @@
 //
 //  DIMGroup.h
-//  DIM
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
 //  Copyright © 2018 DIM Group. All rights reserved.
@@ -10,23 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMGroupWithID(ID) (DIMGroup *)MKMGroupWithID(ID)
-
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 
-@protocol DIMGroup <NSObject>
+@interface DIMGroup : MKMGroup
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
 
-@end
-
-@interface DIMGroup : MKMGroup <DIMGroup>
-
-@end
-
-@interface DIMGroup (Passphrase)
-
+// passphrase
 - (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg;
 
 @end
