@@ -9,8 +9,6 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
-#import "MKMMember+Message.h"
-
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
 #import "DIMEnvelope.h"

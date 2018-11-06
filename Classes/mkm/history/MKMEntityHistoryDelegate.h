@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class MKMEntity;
 
 @class MKMHistoryOperation;
-@class MKMHistoryRecord;
+@class MKMHistoryBlock;
 
 @protocol MKMEntityHistoryDelegate <NSObject>
 
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return YES/NO
  */
 - (BOOL)recorder:(const MKMID *)ID
-  canWriteRecord:(const MKMHistoryRecord *)record
+   canWriteBlock:(const MKMHistoryBlock *)record
         inEntity:(const MKMEntity *)entity;
 
 /**

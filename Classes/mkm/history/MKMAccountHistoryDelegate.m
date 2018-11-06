@@ -11,6 +11,7 @@
 #import "MKMAccount.h"
 
 #import "MKMHistoryOperation.h"
+#import "MKMHistoryBlock.h"
 #import "MKMHistory.h"
 
 #import "MKMAccountHistoryDelegate.h"
@@ -18,10 +19,10 @@
 @implementation MKMAccountHistoryDelegate
 
 - (BOOL)recorder:(const MKMID *)ID
-  canWriteRecord:(const MKMHistoryRecord *)record
+   canWriteBlock:(const MKMHistoryBlock *)record
         inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super recorder:ID canWriteRecord:record inEntity:entity]) {
+    if (![super recorder:ID canWriteBlock:record inEntity:entity]) {
         return NO;
     }
     

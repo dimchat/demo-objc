@@ -16,7 +16,6 @@
 
 // Group
 #import "MKMGroup+Message.h"
-#import "MKMMember+Message.h"
 
 // Types
 //#import "DIMDictionary.h"

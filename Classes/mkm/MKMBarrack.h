@@ -6,7 +6,15 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import "MKMEntity.h"
+#import "MKMAccount.h"
+
+#import "MKMContact.h"
+#import "MKMUser.h"
+#import "MKMGroup.h"
+#import "MKMMember.h"
+
+#import "MKMProfile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,21 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMMetaForID(ID)         [MKMFacebook() metaForEntityID:(ID)]
 #define MKMPublicKeyForID(ID)    [MKMFacebook() publicKeyForAccountID:(ID)]
 #define MKMProfileForID(ID)      [MKMFacebook() profileForID:(ID)]
-
-@class MKMUser;
-@class MKMContact;
-
-@class MKMGroup;
-@class MKMMember;
-
-@protocol MKMContactDelegate;
-@protocol MKMUserDelegate;
-@protocol MKMGroupDelegate;
-@protocol MKMMemberDelegate;
-
-@protocol MKMEntityDataSource;
-@protocol MKMAccountDataSource;
-@protocol MKMProfileDataSource;
 
 /**
  *  Entity pool to manage User/Contace/Group/Member instances

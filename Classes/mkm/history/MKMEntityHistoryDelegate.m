@@ -8,6 +8,8 @@
 
 #import "MKMID.h"
 #import "MKMEntity.h"
+
+#import "MKMHistoryBlock.h"
 #import "MKMHistory.h"
 
 #import "MKMEntityHistoryDelegate.h"
@@ -15,7 +17,7 @@
 @implementation MKMEntityHistoryDelegate
 
 - (BOOL)recorder:(nonnull const MKMID *)ID
-  canWriteRecord:(nonnull const MKMHistoryRecord *)record
+   canWriteBlock:(nonnull const MKMHistoryBlock *)record
         inEntity:(nonnull const MKMEntity *)entity {
     if (![ID isValid]) {
         return NO;
