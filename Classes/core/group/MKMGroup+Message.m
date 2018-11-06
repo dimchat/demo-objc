@@ -1,5 +1,5 @@
 //
-//  DIMGroup.m
+//  MKMGroup+Message.m
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -9,7 +9,7 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
-#import "DIMMember.h"
+#import "MKMMember+Message.h"
 
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
@@ -18,9 +18,9 @@
 
 #import "DIMKeyStore.h"
 
-#import "DIMGroup.h"
+#import "MKMGroup+Message.h"
 
-@implementation DIMGroup
+@implementation MKMGroup (Message)
 
 - (NSString *)name {
     MKMProfile *profile = MKMProfileForID(_ID);
@@ -43,13 +43,12 @@
     NSData *json = [content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    MKMSymmetricKey *scKey = [self cipherKeyForEncrypt:msg];
+    MKMSymmetricKey *scKey = [self keyForEncryptMessage:msg];
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
     // 3. use the group members' PKs to encrypt the symmetric key
-    NSData *PW = [scKey jsonData];
-    DIMEncryptedKeyMap *keys = [self encryptPassphrase:PW];
+    DIMEncryptedKeyMap *keys = [self secretKeysForKey:scKey];
     
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
@@ -57,28 +56,9 @@
                                          envelope:env];
 }
 
-- (DIMEncryptedKeyMap *)encryptPassphrase:(const NSData *)PW {
-    DIMEncryptedKeyMap *map;
-    map = [[DIMEncryptedKeyMap alloc] initWithCapacity:[_members count]];
-    
-    DIMMember *member;
-    NSData *key;
-    for (MKMID *ID in _members) {
-        member = DIMMemberWithID(ID, _ID);
-        NSAssert(member.publicKey, @"failed to get PK for ID: %@", ID);
-        if (member.publicKey) {
-            key = [member.publicKey encrypt:PW];
-            NSAssert(key, @"error");
-            [map setEncryptedKey:key forID:ID];
-        }
-    }
-    
-    return map;
-}
-
 #pragma mark - Passphrase
 
-- (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg {
+- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)msg {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];
     DIMEnvelope *env = msg.envelope;
     //MKMID *sender = env.sender;
@@ -92,6 +72,25 @@
         [store setCipherKey:PW forGroup:_ID];
     }
     return PW;
+}
+
+- (DIMEncryptedKeyMap *)secretKeysForKey:(const MKMSymmetricKey *)PW {
+    DIMEncryptedKeyMap *map;
+    map = [[DIMEncryptedKeyMap alloc] initWithCapacity:[_members count]];
+    
+    MKMMember *member;
+    NSData *key;
+    for (MKMID *ID in _members) {
+        member = MKMMemberWithID(ID, _ID);
+        NSAssert(member.publicKey, @"failed to get PK for ID: %@", ID);
+        if (member.publicKey) {
+            key = [member.publicKey encrypt:[PW jsonData]];
+            NSAssert(key, @"error");
+            [map setEncryptedKey:key forID:ID];
+        }
+    }
+    
+    return map;
 }
 
 @end

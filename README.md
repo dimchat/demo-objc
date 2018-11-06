@@ -10,7 +10,7 @@ MKMPrivateKey *SK = [[MKMPrivateKey alloc] init];
 MKMPublicKey *PK = SK.publicKey;
 
 // register user
-DIMUser *moky = [DIMUser registerWithName:@"moky" publicKey:PK privateKey:SK];
+MKMUser *moky = [MKMUser registerWithName:@"moky" publicKey:PK privateKey:SK];
 NSLog(@"my new ID: %@", moky.ID);
 
 // set current user for the DIM client
@@ -23,7 +23,7 @@ NSLog(@"my new ID: %@", moky.ID);
 // load user
 NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"; // from your db
 MKMID *ID = [[MKMID alloc] initWithString:str];
-DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
+MKMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
 
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
@@ -35,8 +35,8 @@ DIMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
 // get contacts from barrack
 MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
 MKMID *ID2 = [[MKMID alloc] initWithString:MKM_MONKEY_KING_ID];
-DIMContact *hulk = [[DIMBarrack sharedInstance] contactForID:ID1];
-DIMContact *moki = [[DIMBarrack sharedInstance] contactForID:ID2];
+MKMContact *hulk = [[MKMBarrack sharedInstance] contactForID:ID1];
+MKMContact *moki = [[MKMBarrack sharedInstance] contactForID:ID2];
 
 // add contacts to user
 [moky addContact:hulk];

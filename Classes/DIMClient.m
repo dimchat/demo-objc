@@ -19,7 +19,7 @@
 
 @interface DIMClient () {
     
-    NSMutableArray<DIMUser *> *_users;
+    NSMutableArray<MKMUser *> *_users;
 }
 
 @end
@@ -63,9 +63,9 @@ static void load_immortal_file(NSString *filename) {
     MKMBarrack *barrack = [MKMBarrack sharedInstance];
     
     // 1. create contact & user
-    DIMUser *user = [[DIMUser alloc] initWithID:ID
+    MKMUser *user = [[MKMUser alloc] initWithID:ID
                                       publicKey:meta.key];
-    DIMContact *contact = [[DIMContact alloc] initWithID:ID
+    MKMContact *contact = [[MKMContact alloc] initWithID:ID
                                                publicKey:meta.key];
     
     // 2. save entities into barrack
@@ -106,7 +106,7 @@ SingletonImplementations(DIMClient, sharedInstance)
 
 #pragma mark - Users
 
-- (void)setCurrentUser:(DIMUser *)currentUser {
+- (void)setCurrentUser:(MKMUser *)currentUser {
     if (![_currentUser isEqual:currentUser]) {
         _currentUser = currentUser;
         // add to list
@@ -116,7 +116,7 @@ SingletonImplementations(DIMClient, sharedInstance)
     }
 }
 
-- (void)addUser:(DIMUser *)user {
+- (void)addUser:(MKMUser *)user {
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
     }
@@ -126,7 +126,7 @@ SingletonImplementations(DIMClient, sharedInstance)
     }
 }
 
-- (void)removeUser:(DIMUser *)user {
+- (void)removeUser:(MKMUser *)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }

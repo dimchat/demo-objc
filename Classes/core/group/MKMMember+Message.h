@@ -1,5 +1,5 @@
 //
-//  DIMMember.h
+//  MKMMember+Message.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/11/5.
@@ -10,9 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMMemberWithID(ID, gID)  (DIMMember *)MKMMemberWithID(ID, gID)
-
-@interface DIMMember : MKMMember
+@interface MKMMember (Message)
 
 @end
 

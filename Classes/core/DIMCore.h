@@ -6,16 +6,20 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-//// Types
-//#import "DIMDictionary.h"
+// MKM
+//#import "MingKeMing.h"
 
 // User
-#import "DIMUser.h"
-#import "DIMUser+History.h"
-#import "DIMContact.h"
+#import "MKMContact+Message.h"
+#import "MKMUser+Message.h"
+#import "MKMUser+History.h"
 
 // Group
-#import "DIMGroup.h"
+#import "MKMGroup+Message.h"
+#import "MKMMember+Message.h"
+
+// Types
+//#import "DIMDictionary.h"
 
 // Message
 #import "DIMMessageContent.h"

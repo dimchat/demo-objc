@@ -6,8 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMContact.h"
-#import "DIMGroup.h"
+#import "MKMContact+Message.h"
+#import "MKMGroup+Message.h"
 
 #import "DIMEnvelope.h"
 #import "DIMInstantMessage.h"
@@ -46,14 +46,12 @@
 
 - (NSString *)title {
     if (self.type == DIMConversationPersonal) {
-        NSAssert([_entity isKindOfClass:[DIMContact class]], @"error");
-        DIMContact *contact = (DIMContact *)_entity;
+        MKMContact *contact = (MKMContact *)_entity;
         NSString *name = contact.name;
         // "xxx"
         return name;
 //    } else if (self.type == DIMConversationGroup) {
-//        NSAssert([_entity isKindOfClass:[DIMGroup class]], @"error");
-//        DIMGroup *group = (DIMGroup *)_entity;
+//        MKMGroup *group = (MKMGroup *)_entity;
 //        NSString *name = group.name;
 //        NSUInteger count = group.members.count;
 //        // "yyy (123)"

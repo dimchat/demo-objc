@@ -1,5 +1,5 @@
 //
-//  DIMContact.h
+//  MKMContact+Message.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -10,20 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMContactWithID(ID)  (DIMContact *)MKMContactWithID(ID)
-
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 @class DIMCertifiedMessage;
 
-@interface DIMContact : MKMContact
+@interface MKMContact (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
 
 - (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg;
 
 // passphrase
-- (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg;
+- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)msg;
 
 @end
 

@@ -6,14 +6,14 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-//// Extends
+// Extends
 //#import "NSObject+Singleton.h"
 //#import "NSObject+JsON.h"
 //#import "NSData+Crypto.h"
 //#import "NSString+Crypto.h"
 //#import "NSArray+Merkle.h"
-//
-//// Types
+
+// Types
 //#import "MKMString.h"
 //#import "MKMArray.h"
 //#import "MKMDictionary.h"

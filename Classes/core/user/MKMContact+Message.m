@@ -1,5 +1,5 @@
 //
-//  DIMContact.m
+//  MKMContact+Message.m
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -16,9 +16,9 @@
 
 #import "DIMKeyStore.h"
 
-#import "DIMContact.h"
+#import "MKMContact+Message.h"
 
-@implementation DIMContact
+@implementation MKMContact (Message)
 
 - (NSString *)name {
     MKMProfile *profile = MKMProfileForID(_ID);
@@ -41,13 +41,13 @@
     NSData *json = [content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    MKMSymmetricKey *scKey = [self cipherKeyForEncrypt:msg];
+    MKMSymmetricKey *scKey = [self keyForEncryptMessage:msg];
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
     // 3. use the contact's public key to encrypt the symmetric key
     NSData *PW = [scKey jsonData];
-    PW = [self encrypt:PW];
+    PW = [self.publicKey encrypt:PW];
     
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
@@ -66,7 +66,7 @@
     NSAssert(CT, @"signature cannot be empty");
     
     // 1. use the contact's public key to verify the signature
-    if (![self verify:content withSignature:CT]) {
+    if (![self.publicKey verify:content withSignature:CT]) {
         // signature error
         return nil;
     }
@@ -80,20 +80,9 @@
                                          envelope:env];
 }
 
-#pragma mark - Encrypt/Verify functions for passphrase/signature
-
-- (NSData *)encrypt:(const NSData *)plaintext {
-    return [_publicKey encrypt:plaintext];
-}
-
-- (BOOL)verify:(const NSData *)plaintext
- withSignature:(const NSData *)ciphertext {
-    return [_publicKey verify:plaintext withSignature:ciphertext];
-}
-
 #pragma mark - Passphrase
 
-- (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg {
+- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)msg {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];
     DIMEnvelope *env = msg.envelope;
     //MKMID *sender = env.sender;

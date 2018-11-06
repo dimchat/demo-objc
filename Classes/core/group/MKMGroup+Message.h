@@ -1,5 +1,5 @@
 //
-//  DIMGroup.h
+//  MKMGroup+Message.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -10,17 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMGroupWithID(ID)  (DIMGroup *)MKMGroupWithID(ID)
-
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 
-@interface DIMGroup : MKMGroup
+@class DIMEncryptedKeyMap;
+
+@interface MKMGroup (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
 
 // passphrase
-- (MKMSymmetricKey *)cipherKeyForEncrypt:(const DIMInstantMessage *)msg;
+- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)msg;
+- (DIMEncryptedKeyMap *)secretKeysForKey:(const MKMSymmetricKey *)PW;
 
 @end
 

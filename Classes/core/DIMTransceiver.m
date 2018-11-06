@@ -8,9 +8,9 @@
 
 #import "NSObject+Singleton.h"
 
-#import "DIMUser.h"
-#import "DIMContact.h"
-#import "DIMGroup.h"
+#import "MKMUser+Message.h"
+#import "MKMContact+Message.h"
+#import "MKMGroup+Message.h"
 
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
@@ -91,11 +91,11 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     MKMID *receiver = iMsg.envelope.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
         // receiver is a contact
-        DIMContact *contact = DIMContactWithID(receiver);
+        MKMContact *contact = MKMContactWithID(receiver);
         sMsg = [contact encryptMessage:iMsg];
     } else if (receiver.address.network == MKMNetwork_Group) {
         // receiver is a group
-        DIMGroup *group = DIMGroupWithID(receiver);
+        MKMGroup *group = MKMGroupWithID(receiver);
         sMsg = [group encryptMessage:iMsg];
     }
     
@@ -109,7 +109,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // decrypt to instant message by receiver
     MKMID *receiver = sMsg.envelope.receiver;
     if (receiver.address.network == MKMNetwork_Main) {
-        DIMUser *user = DIMUserWithID(receiver);
+        MKMUser *user = MKMUserWithID(receiver);
         iMsg = [user decryptMessage:sMsg];
     }
     
@@ -123,7 +123,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // sign to certified message by sender
     MKMID *sender = sMsg.envelope.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMUser *user = DIMUserWithID(sender);
+        MKMUser *user = MKMUserWithID(sender);
         cMsg = [user signMessage:sMsg];;
     }
     
@@ -137,7 +137,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     // verify to secure message by sender
     MKMID *sender = cMsg.envelope.sender;
     if (sender.address.network == MKMNetwork_Main) {
-        DIMContact *contact = DIMContactWithID(sender);
+        MKMContact *contact = MKMContactWithID(sender);
         sMsg = [contact verifyMessage:cMsg];
     }
     

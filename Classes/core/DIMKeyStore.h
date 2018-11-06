@@ -8,8 +8,6 @@
 
 #import "MingKeMing.h"
 
-#import "DIMUser.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
 #define DIM_KEYSTORE_CONTACTS_FILENAME @"keystore_contacts.plist"

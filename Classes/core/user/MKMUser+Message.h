@@ -1,5 +1,5 @@
 //
-//  DIMUser.h
+//  MKMUser+Message.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -10,20 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMUserWithID(ID)  (DIMUser *)MKMUserWithID(ID)
-
 @class DIMInstantMessage;
 @class DIMSecureMessage;
 @class DIMCertifiedMessage;
 
-@interface DIMUser : MKMUser
+@interface MKMUser (Message)
 
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg;
 
 - (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)msg;
 
 // passphrase
-- (MKMSymmetricKey *)cipherKeyForDecrpyt:(const DIMSecureMessage *)msg;
+- (MKMSymmetricKey *)keyForDecrpytMessage:(const DIMSecureMessage *)msg;
 
 @end
 

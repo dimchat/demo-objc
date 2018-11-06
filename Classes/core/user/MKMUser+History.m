@@ -1,14 +1,14 @@
 //
-//  DIMUser+History.m
+//  MKMUser+History.m
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/10/12.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMUser+History.h"
+#import "MKMUser+History.h"
 
-//@implementation DIMUser (History)
+//@implementation MKMUser (History)
 //
 //+ (instancetype)registerWithName:(const NSString *)seed
 //                       publicKey:(const MKMPublicKey *)PK
@@ -19,7 +19,7 @@
 //    MKMEntityManager *eman = [MKMEntityManager sharedInstance];
 //    
 //    // 1. create user
-//    DIMUser *user;
+//    MKMUser *user;
 //    MKMID *ID;
 //    MKMAddress *address;
 //    MKMMeta *meta;

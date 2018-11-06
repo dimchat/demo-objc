@@ -1,5 +1,5 @@
 //
-//  DIMUser.m
+//  MKMUser+Message.m
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -14,14 +14,14 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
-#import "DIMContact.h"
-#import "DIMGroup.h"
+#import "MKMContact+Message.h"
+#import "MKMGroup+Message.h"
 
 #import "DIMKeyStore.h"
 
-#import "DIMUser.h"
+#import "MKMUser+Message.h"
 
-@implementation DIMUser
+@implementation MKMUser (Message)
 
 - (NSString *)name {
     MKMProfile *profile = MKMProfileForID(_ID);
@@ -39,10 +39,10 @@
     // 1. use the user's private key to decrypt the symmetric key
     NSData *PW = msg.encryptedKey;
     NSAssert(PW, @"encrypted key cannot be empty");
-    PW = [self decrypt:PW];
+    PW = [self.privateKey decrypt:PW];
     
     // 2. use the symmetric key to decrypt the content
-    MKMSymmetricKey *scKey = [self cipherKeyForDecrpyt:msg];
+    MKMSymmetricKey *scKey = [self keyForDecrpytMessage:msg];
     NSData *data = [scKey decrypt:msg.data];
     NSAssert(data, @"decrypt content failed");
     
@@ -64,7 +64,7 @@
     NSAssert(content, @"content cannot be empty");
     
     // 1. use the user's private key to sign the content
-    NSData *CT = [self sign:content];
+    NSData *CT = [self.privateKey sign:content];
     
     // 2. create certified message
     DIMCertifiedMessage *cMsg = nil;
@@ -88,23 +88,9 @@
     return cMsg;
 }
 
-#pragma mark - Decrypt/Sign functions for passphrase/signature
-
-- (NSData *)decrypt:(const NSData *)ciphertext {
-    MKMPrivateKey *SK = [self privateKey];
-    NSAssert(SK, @"private key not found");
-    return [SK decrypt:ciphertext];
-}
-
-- (NSData *)sign:(const NSData *)plaintext {
-    MKMPrivateKey *SK = [self privateKey];
-    NSAssert(SK, @"private key not found");
-    return [SK sign:plaintext];
-}
-
 #pragma mark - Passphrase
 
-- (MKMSymmetricKey *)cipherKeyForDecrpyt:(const DIMSecureMessage *)msg {
+- (MKMSymmetricKey *)keyForDecrpytMessage:(const DIMSecureMessage *)msg {
     MKMSymmetricKey *scKey = nil;
     NSData *PW = nil;
     
@@ -131,7 +117,7 @@
     }
     
     if (PW) {
-        PW = [self decrypt:PW];
+        PW = [self.privateKey decrypt:PW];
         scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
     }
     return scKey;

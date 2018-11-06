@@ -1,16 +1,16 @@
 //
-//  DIMUser+History.h
+//  MKMUser+History.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/10/12.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMUser.h"
+#import "MKMUser.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-//@interface DIMUser (History)
+//@interface MKMUser (History)
 //
 ///**
 // Create a new account

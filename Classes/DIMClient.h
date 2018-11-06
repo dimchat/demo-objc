@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMClient : NSObject
 
-@property (strong, nonatomic) DIMUser *currentUser;
+@property (strong, nonatomic) MKMUser *currentUser;
 
 @property (strong, nonatomic) DIMServiceProvider *serviceProvider;
 
@@ -22,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
+- (void)addUser:(MKMUser *)user;
+- (void)removeUser:(MKMUser *)user;
 
 @end
 
