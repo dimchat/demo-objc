@@ -52,14 +52,14 @@ NS_ASSUME_NONNULL_BEGIN
  *                            (Waiting) <-+
  *
  *  Bits:
- *      1000 0000 - Freezing
- *      0100 0000 - Waiting
- *      0010 0000 - write history
- *      0001 0000 - abdicate/hire/fire (owner)
- *      0000 1000 - expel (admin)
- *      0000 0100 - invite
- *      0000 0010 - rename
  *      0000 0001 - speak
+ *      0000 0010 - rename
+ *      0000 0100 - invite
+ *      0000 1000 - expel (admin)
+ *      0001 0000 - abdicate/hire/fire (owner)
+ *      0010 0000 - write history
+ *      0100 0000 - Waiting
+ *      1000 0000 - Freezing
  *      (All above are just some advices to help choosing numbers :P)
  */
 typedef NS_ENUM(UInt8, MKMMemberType) {

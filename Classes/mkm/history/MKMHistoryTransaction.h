@@ -11,22 +11,34 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class MKMID;
+@class MKMAddress;
 @class MKMHistoryOperation;
+
+typedef NSDictionary<const MKMAddress *, NSString *> MKMConfirmTable;
 
 /**
  *  history.records[i].events[j]
  *
  *      data format: {
  *          operation: "{...}",
- *          commander: "moky@address", // user ID
- *          signature: "..." // algorithm defined by version
+ *          commander: "...",   // account ID
+ *          signature: "...",   // algorithm defined by version
+ *          //-- confirmed by members
+ *          confirmations: {"address":"CT", }, // CT = sign(cmderSig, memberSK)
  *      }
  */
 @interface MKMHistoryTransaction : MKMDictionary
 
 @property (readonly, strong, nonatomic) MKMHistoryOperation *operation;
+
 @property (readonly, strong, nonatomic) MKMID *commander;
 @property (readonly, strong, nonatomic) NSData *signature;
+
+/**
+ NOTICE: The history recorder must collect more than 50% confirmations
+ from members before packing a HistoryBlock for a social entity.
+ */
+@property (readonly, strong, nonatomic) MKMConfirmTable *confirmations;
 
 + (instancetype)transactionWithTransaction:(id)event;
 
@@ -58,6 +70,22 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithOperation:(const NSString *)operation
                         commander:(const MKMID *)ID
                         signature:(const NSData *)CT;
+
+/**
+ Add confirmation of member
+
+ @param CT - confirmation = sign(commander.signature, member.SK)
+ @param ID - member ID
+ */
+- (void)setConfirmation:(const NSData *)CT forID:(const MKMID *)ID;
+
+/**
+ Get confirmation by member ID
+
+ @param ID - member ID
+ @return confirmation of the signature
+ */
+- (NSData *)confirmationForID:(const MKMID *)ID;
 
 @end
 

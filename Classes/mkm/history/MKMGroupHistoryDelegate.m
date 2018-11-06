@@ -28,38 +28,12 @@
     MKMGroup *group = (MKMGroup *)entity;
     
     BOOL isOwner = [group isOwner:ID];
-    BOOL isAdmin = [group isAdmin:ID];
-    BOOL isMember = [group isMember:ID];
-    
-    // 1. owner
     if (isOwner) {
-        // owner can do anything!
         return YES;
     }
     
-    // 2. admin
-    if (isAdmin) {
-        
-        return YES;
-    }
-    
-    // 3. member
-    if (isMember) {
-        // allow all members to write history record,
-        // let the subclass to reduce it
-        return YES;
-    }
-    
-    // 4. others
-    if (!isOwner && !isAdmin && !isMember) {
-        // if someone want to join the social entity,
-        // he must ask the owner or any member to help
-        // to write a record in the history
-        return NO;
-    }
-    
-    // let the subclass to extend the permission control
-    return YES;
+    // only the owner can write history for group
+    return NO;
 }
 
 - (BOOL)commander:(const MKMID *)ID

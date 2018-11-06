@@ -44,34 +44,37 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      MKMNetwork_School indicates this entity is a school.
  *
+ *      MKMNetwork_Government indicates this entity is a government department.
+ *
+ *      MKMNetwork_Thing this is reserved for IoT (Internet of Things).
+ *
  *  Bits:
- *      0100 0000 - (IoT)
- *      0010 0000 - (Group) owner, which can abdicate
- *      0001 0000 - (Group) founder, who create the entity
- *      0000 1000 - (Main) this entity acts like a person
- *      0000 0100 - this entity is top organization
- *      0000 0010 - this entity has branch usually (contains other group)
- *      0000 0001 - this entity's branch is self-governing (big organization)
+ *      0000 0001 - this entity's branch is self-governing (big organization).
+ *      0000 0010 - this entity has branch usually (contains other group).
+ *      0000 0100 - this entity is top organization.
+ *      0000 1000 - (Main) this entity acts like a person.
+ *      0001 0000 - (Group) founder, who create the entity.
+ *      0010 0000 - (Group) owner, which can abdicate.
+ *      0100 0000 - (IoT) this entity is a thing.
  *      (All above are just some advices to help choosing numbers :P)
  */
 typedef NS_ENUM(UInt8, MKMNetworkID) {
     // Network_BitCoin = 0x00, // 0000 0000
     MKMNetwork_Main    = 0x08, // 0000 1000 (Person)
     
-    MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Person Chat < 100)
-    MKMNetwork_Moments   = 0x18, // 0001 1000 (Twitter)
-    
+    MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)
+    //MKMNetwork_Moments = 0x18, // 0001 1000 (Twitter)
     MKMNetwork_Official  = 0x38, // 0011 1000 (Official Account)
     
-    MKMNetwork_Social     = 0x30, // 0011 0000
-    MKMNetwork_Group      = 0x34, // 0011 0100 (Multi-Person Chat, >= 100)
+    //MKMNetwork_Social  = 0x30, // 0011 0000
+    MKMNetwork_Group     = 0x34, // 0011 0100 (Multi-Persons Chat, N >= 100)
     
-    MKMNetwork_Company    = 0x36, // 0011 0110
-    MKMNetwork_School     = 0x37, // 0011 0111
-    MKMNetwork_Department = 0x32, // 0011 0010
-    MKMNetwork_Government = 0x33, // 0011 0011
+    //MKMNetwork_Company    = 0x36, // 0011 0110
+    //MKMNetwork_School     = 0x37, // 0011 0111
+    //MKMNetwork_Department = 0x32, // 0011 0010
+    //MKMNetwork_Government = 0x33, // 0011 0011
     
-    MKMNetwork_Thing      = 0x60, // 0110 0000 (IoT)
+    //MKMNetwork_Thing      = 0x60, // 0110 0000 (IoT)
 };
 typedef UInt8 MKMNetworkType;
 

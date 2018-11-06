@@ -15,12 +15,16 @@
 
 #import "MKMHistoryTransaction.h"
 
+typedef NSMutableDictionary<const MKMAddress *, NSString *> MKMConfirmTableM;
+
 @interface MKMHistoryTransaction ()
 
 @property (strong, nonatomic) MKMHistoryOperation *operation;
 
 @property (strong, nonatomic) MKMID *commander;
 @property (strong, nonatomic) NSData *signature;
+
+@property (strong, nonatomic) MKMConfirmTableM *confirmations;
 
 @end
 
@@ -45,6 +49,7 @@
         _operation = nil;
         _commander = nil;
         _signature = nil;
+        _confirmations = nil;
     }
     
     return self;
@@ -56,6 +61,7 @@
         _operation = [op copy];
         _commander = nil;
         _signature = nil;
+        _confirmations = nil;
     }
     return self;
 }
@@ -73,6 +79,7 @@
         _operation = [MKMHistoryOperation operationWithOperation:operation];
         _commander = [ID copy];
         _signature = [CT copy];
+        _confirmations = nil;
     }
     
     return self;
@@ -84,6 +91,7 @@
         event.operation = _operation;
         event.commander = _commander;
         event.signature = _signature;
+        event.confirmations = _confirmations;
     }
     return event;
 }
@@ -112,6 +120,33 @@
         }
     }
     return _signature;
+}
+
+- (MKMConfirmTable *)confirmations {
+    if (!_confirmations) {
+        _confirmations = [_storeDictionary objectForKey:@"confirmations"];
+    }
+    return _confirmations;
+}
+
+- (void)setConfirmation:(const NSData *)CT forID:(const MKMID *)ID {
+    if (!_confirmations) {
+        MKMConfirmTableM *table;
+        table = [_storeDictionary objectForKey:@"confirmations"];
+        if (!table) {
+            table = [[MKMConfirmTableM alloc] init];
+            [_storeDictionary setObject:table forKey:@"confirmations"];
+        }
+        _confirmations = table;
+    }
+    NSString *signature = [CT base64Encode];
+    [_confirmations setObject:signature forKey:ID.address];
+}
+
+- (NSData *)confirmationForID:(const MKMID *)ID {
+    NSString *signature = [self.confirmations objectForKey:ID.address];
+    NSAssert(signature, @"confirmation not found for %@", ID);
+    return [signature base64Decode];
 }
 
 @end

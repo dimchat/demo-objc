@@ -14,6 +14,7 @@
 #import "MKMSocialEntity.h"
 
 #import "MKMHistoryOperation.h"
+#import "MKMHistoryTransaction.h"
 #import "MKMHistoryBlock.h"
 #import "MKMHistory.h"
 
@@ -39,8 +40,38 @@
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;
+    MKMMemberList *members = social.members;
+    NSAssert(members.count > 0, @"members cannot be empty");
     
-    // TODO: check member confirms
+    // check member confirms for each transaction
+    for (id tx in record.transactions) {
+        NSInteger confirms = 1; // include the recorder as default
+        MKMHistoryTransaction *event;
+        event = [MKMHistoryTransaction transactionWithTransaction:tx];
+        for (MKMAddress *addr in event.confirmations) {
+            if ([ID.address isEqualToString:addr]) {
+                // the recorder not need to confirm, skip it
+                continue;
+            }
+            for (id m in members) {
+                MKMID *mid = [MKMID IDWithID:m];
+                if ([mid.address isEqualToString:addr]) {
+                    // address match a member
+                    NSData *CT = [event confirmationForID:mid];
+                    MKMPublicKey *PK = MKMPublicKeyForID(mid);
+                    if ([PK verify:record.signature withSignature:CT]) {
+                        ++confirms;
+                    } else {
+                        NSAssert(false, @"confirmation error");
+                    }
+                }
+            }
+        }
+        if (confirms * 2 <= members.count) {
+            NSAssert(false, @"confirmations not enough for %@", tx);
+            return NO;
+        }
+    }
     
     BOOL isOwner = [social isOwner:ID];
     BOOL isMember = [social isMember:ID];
