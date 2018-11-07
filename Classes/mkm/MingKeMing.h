@@ -46,6 +46,7 @@
 #import "MKMSocialEntityHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
 #import "MKMConsensus.h"
+#import "MKMUser+History.h"
 
 // group
 #import "MKMSocialEntity.h"

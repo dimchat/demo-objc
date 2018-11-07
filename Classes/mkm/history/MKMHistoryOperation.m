@@ -105,7 +105,7 @@ static NSDate *date(NSTimeInterval time) {
 
 - (instancetype)initWithPreviousSignature:(const NSData *)prevSign
                                      time:(const NSDate *)time {
-    NSString *command = @"Link";
+    NSString *command = @"link";
     if (self = [self initWithCommand:command time:time]) {
         // previous signature
         NSString *CT = [prevSign base64Encode];
@@ -116,7 +116,7 @@ static NSDate *date(NSTimeInterval time) {
 
 - (NSData *)previousSignature {
     NSString *CT = nil;
-    if ([_command isEqualToString:@"Link"]) {
+    if ([_command isEqualToString:@"link"]) {
         CT = [_storeDictionary objectForKey:@"prevSign"];
         NSAssert(CT, @"error");
     }

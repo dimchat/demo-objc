@@ -8,8 +8,8 @@
 
 #import "NSObject+Singleton.h"
 
-#import "MKMUser+Message.h"
 #import "MKMContact+Message.h"
+#import "MKMUser+Message.h"
 #import "MKMGroup+Message.h"
 
 #import "DIMEnvelope.h"

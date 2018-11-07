@@ -23,15 +23,6 @@
 
 @implementation MKMUser (Message)
 
-- (NSString *)name {
-    MKMProfile *profile = MKMProfileForID(_ID);
-    NSString *str = profile.name;
-    if (str) {
-        return str;
-    }
-    return [super name];
-}
-
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
     DIMEnvelope *env = msg.envelope;
     NSAssert([env.receiver isEqual:_ID], @"recipient error");

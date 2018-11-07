@@ -9,6 +9,9 @@
 #import "MKMPublicKey.h"
 
 #import "MKMMeta.h"
+#import "MKMProfile.h"
+
+#import "MKMBarrack.h"
 
 #import "MKMAccount.h"
 
@@ -46,6 +49,15 @@
         account.status = _status;
     }
     return account;
+}
+
+- (NSString *)name {
+    MKMProfile *profile = MKMProfileForID(_ID);
+    NSString *str = profile.name;
+    if (str) {
+        return str;
+    }
+    return [super name];
 }
 
 @end

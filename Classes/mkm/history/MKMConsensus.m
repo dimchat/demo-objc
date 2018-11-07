@@ -8,8 +8,6 @@
 
 #import "NSObject+Singleton.h"
 
-#import "MKMPublicKey.h"
-
 #import "MKMID.h"
 #import "MKMAddress.h"
 #import "MKMMeta.h"
@@ -22,8 +20,6 @@
 
 #import "MKMAccountHistoryDelegate.h"
 #import "MKMGroupHistoryDelegate.h"
-
-#import "MKMBarrack.h"
 
 #import "MKMConsensus.h"
 
@@ -65,6 +61,8 @@ SingletonImplementations(MKMConsensus, sharedInstance)
         
         _accountHistoryDelegate = nil;
         _groupHistoryDelegate = nil;
+        
+        _entityHistoryDataSource = nil;
     }
     return self;
 }
@@ -87,34 +85,35 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 
 #pragma mark - MKMEntityHistoryDelegate
 
-- (BOOL)historyRecorder:(const MKMID *)recorder
-          canWriteBlock:(const MKMHistoryBlock *)record
-               inEntity:(const MKMEntity *)entity {
-    NSAssert(recorder.address.network == MKMNetwork_Main, @"ID error");
+- (BOOL)evolvingEntity:(const MKMEntity *)entity
+        canWriteRecord:(const MKMHistoryBlock *)record {
+    NSAssert(record.recorder.type == MKMNetwork_Main, @"recorder error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
-    return [delegate historyRecorder:recorder
-                       canWriteBlock:record
-                            inEntity:entity];
+    return [delegate evolvingEntity:entity canWriteRecord:record];
 }
 
-- (BOOL)historyCommander:(const MKMID *)commander
-              canExecute:(const MKMHistoryOperation *)operation
-                inEntity:(const MKMEntity *)entity {
-    NSAssert(commander.address.network == MKMNetwork_Main, @"ID error");
+- (BOOL)evolvingEntity:(const MKMEntity *)entity
+           canRunEvent:(const MKMHistoryTransaction *)event
+              recorder:(const MKMID *)recorder {
+    NSAssert(!event.commander || event.commander.type == MKMNetwork_Main,
+             @"commander error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
-    return [delegate historyCommander:commander
-                           canExecute:operation
-                             inEntity:entity];
+    return [delegate evolvingEntity:entity canRunEvent:event recorder:recorder];
 }
 
-- (void)historyCommander:(const MKMID *)commander
-                 execute:(const MKMHistoryOperation *)operation
-                inEntity:(const MKMEntity *)entity {
+- (void)evolvingEntity:(MKMEntity *)entity
+               execute:(const MKMHistoryOperation *)operation
+             commander:(const MKMID *)commander {
     NSAssert(commander.address.network == MKMNetwork_Main, @"ID error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
-    return [delegate historyCommander:commander
-                              execute:operation
-                             inEntity:entity];
+    return [delegate evolvingEntity:entity execute:operation commander:commander];
+}
+
+#pragma mark - MKMEntityHistoryDataSource
+
+- (MKMHistory *)historyForEntityID:(const MKMID *)ID {
+    NSAssert(_entityHistoryDataSource, @"entity history data source not set");
+    return [_entityHistoryDataSource historyForEntityID:ID];
 }
 
 @end
@@ -183,88 +182,49 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 
 - (BOOL)runHistoryBlock:(const MKMHistoryBlock *)record
               forEntity:(MKMEntity *)entity {
-    // recorder
+    // 1. get recorder
     MKMID *recorder = record.recorder;
     recorder = [MKMID IDWithID:recorder];
     if (!recorder) {
+        NSAssert(entity.type == MKMNetwork_Main, @"error");
         recorder = entity.ID;
-        NSAssert(recorder.address.network == MKMNetwork_Main, @"error");
     }
     
-    // 1. check signature for this record
-    MKMPublicKey *PK = MKMPublicKeyForID(recorder);
-    if (![PK verify:record.merkleRoot withSignature:record.signature]) {
-        NSAssert(false, @"signature error");
-        return NO;
-    }
-    
-    // 2. check permision for this redcorder
-    if (![self historyRecorder:recorder canWriteBlock:record inEntity:entity]) {
+    // 2. check permision for this recorder
+    if (![self evolvingEntity:entity canWriteRecord:record]) {
         NSAssert(false, @"recorder permission denied");
         return NO;
     }
     
     // 3. check permission for each commander in all events
     MKMHistoryTransaction *event;
-    MKMID *commander;
-    MKMHistoryOperation *operation;
-    id op;
-    NSData *CT;
-    NSData *data;
     for (id item in record.transactions) {
-        // event.commander
+        // 3.1. get commander
         event = [MKMHistoryTransaction transactionWithTransaction:item];
-        commander = event.commander;
-        commander = [MKMID IDWithID:commander];
-        if (!commander || [commander isEqual:recorder]) {
-            // no need to check itself
-            continue;
-        }
         
-        // event.operation
-        op = event.operation;
-        NSAssert([op isKindOfClass:[NSString class]],
-                 @"operation must be string here");
-        operation = [MKMHistoryOperation operationWithOperation:op];
-        
-        // 3.1. check permission for this commander
-        if (![self historyCommander:commander
-                         canExecute:operation
-                           inEntity:entity]) {
+        // 3.2. check permission for this commander
+        if (![self evolvingEntity:entity canRunEvent:event recorder:recorder]) {
             NSAssert(false, @"commander permission denied");
-            return NO;
-        }
-        
-        // event.signature
-        CT = event.signature;
-        NSAssert(CT, @"signature error");
-        data = [op data];
-        
-        // 3.2. check signature for this event
-        PK = MKMPublicKeyForID(commander);
-        if (![PK verify:data withSignature:CT]) {
-            NSAssert(false, @"signature error");
             return NO;
         }
     }
     
     // 4. execute all events in this record
+    MKMHistoryOperation *op;
+    MKMID *commander;
     for (id item in record.transactions) {
         // event.commander
         event = [MKMHistoryTransaction transactionWithTransaction:item];
         commander = event.commander;
-        if (commander) {
-            commander = [MKMID IDWithID:commander];
-        } else {
+        if (!commander) {
             commander = recorder;
         }
         
         // event.operation
-        op = event.operation;
-        operation = [MKMHistoryOperation operationWithOperation:op];
+        op = [MKMHistoryOperation operationWithOperation:event.operation];
         
         // execute
-        [self historyCommander:commander execute:operation inEntity:entity];
+        [self evolvingEntity:entity execute:op commander:commander];
     }
     
     return YES;

@@ -26,6 +26,7 @@ static inline NSString *caches_directory(void) {
  @return "Library/Caches/{address}/keystore_*.plist"
  */
 static inline NSString *full_filepath(MKMID *ID, NSString *filename) {
+    assert(ID.isValid);
     // base directory: Library/Caches/{address}
     NSString *dir = caches_directory();
     MKMAddress *addr = ID.address;

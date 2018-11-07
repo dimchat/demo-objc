@@ -9,12 +9,9 @@
 // MKM
 //#import "MingKeMing.h"
 
-// User
+// Extends
 #import "MKMContact+Message.h"
 #import "MKMUser+Message.h"
-#import "MKMUser+History.h"
-
-// Group
 #import "MKMGroup+Message.h"
 
 // Types

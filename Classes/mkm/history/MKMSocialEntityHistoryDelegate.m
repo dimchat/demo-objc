@@ -32,15 +32,15 @@
 
 @implementation MKMSocialEntityHistoryDelegate
 
-- (BOOL)historyRecorder:(const MKMID *)recorder
-          canWriteBlock:(const MKMHistoryBlock *)record
-               inEntity:(const MKMEntity *)entity {
+- (BOOL)evolvingEntity:(const MKMEntity *)entity
+        canWriteRecord:(const MKMHistoryBlock *)record {
     // call super check
-    if (![super historyRecorder:recorder
-                  canWriteBlock:record
-                       inEntity:entity]) {
+    if (![super evolvingEntity:entity canWriteRecord:record]) {
         return NO;
     }
+    
+    MKMID *recorder = [MKMID IDWithID:record.recorder];
+    NSAssert([recorder isValid], @"recorder error");
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;
@@ -113,15 +113,22 @@
     return YES;
 }
 
-- (BOOL)historyCommander:(const MKMID *)commander
-              canExecute:(const MKMHistoryOperation *)operation
-                inEntity:(const MKMEntity *)entity {
+- (BOOL)evolvingEntity:(const MKMEntity *)entity
+           canRunEvent:(const MKMHistoryTransaction *)event
+              recorder:(const MKMID *)recorder {
     // call super check
-    if (![super historyCommander:commander
-                      canExecute:operation
-                        inEntity:entity]) {
+    if (![super evolvingEntity:entity canRunEvent:event recorder:recorder]) {
         return NO;
     }
+    
+    // check commander
+    const MKMID *commander = event.commander;
+    if (!commander) {
+        commander = recorder;
+    }
+    
+    MKMHistoryOperation *operation = event.operation;
+    operation = [MKMHistoryOperation operationWithOperation:operation];
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;
@@ -192,11 +199,11 @@
     return YES;
 }
 
-- (void)historyCommander:(const MKMID *)commander
-                 execute:(const MKMHistoryOperation *)operation
-                inEntity:(const MKMEntity *)entity {
+- (void)evolvingEntity:(MKMEntity *)entity
+               execute:(const MKMHistoryOperation *)operation
+             commander:(const MKMID *)commander {
     // call super execute
-    [super historyCommander:commander execute:operation inEntity:entity];
+    [super evolvingEntity:entity execute:operation commander:commander];
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;

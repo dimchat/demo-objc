@@ -2,7 +2,7 @@
 //  MKMContact+Message.h
 //  DIMCore
 //
-//  Created by Albert Moky on 2018/9/30.
+//  Created by Albert Moky on 2018/11/7.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 

@@ -162,6 +162,12 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
     NSAssert(_publicKeyRef != NULL, @"public key cannot be empty");
     BOOL match = NO;
     
+    if (plaintext.length > (_keySize/8 - 11)) {
+        // only sign the digest of plaintext
+        // actually you should do it before calling sign/verify
+        plaintext = [plaintext sha256d];
+    }
+    
     // RSA verify
     OSStatus sanityCheck = noErr;
     sanityCheck = SecKeyRawVerify(_publicKeyRef,

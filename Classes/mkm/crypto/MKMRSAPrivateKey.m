@@ -174,6 +174,12 @@
     NSAssert(_privateKeyRef != NULL, @"private key cannot be empty");
     NSData *ciphertext = nil;
     
+    if (plaintext.length > (_keySize/8 - 11)) {
+        // only sign the digest of plaintext
+        // actually you should do it before calling sign/verify
+        plaintext = [plaintext sha256d];
+    }
+    
     // buffer
     size_t bufferSize = SecKeyGetBlockSize(_privateKeyRef);
     uint8_t *buffer = malloc(bufferSize * sizeof(uint8_t));
