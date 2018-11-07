@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSData+Crypto.h"
+
 #import "MKMPublicKey.h"
 
 #import "MKMID.h"
@@ -30,11 +32,13 @@
 
 @implementation MKMSocialEntityHistoryDelegate
 
-- (BOOL)recorder:(const MKMID *)ID
-   canWriteBlock:(const MKMHistoryBlock *)record
-        inEntity:(const MKMEntity *)entity {
+- (BOOL)historyRecorder:(const MKMID *)recorder
+          canWriteBlock:(const MKMHistoryBlock *)record
+               inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super recorder:ID canWriteBlock:record inEntity:entity]) {
+    if (![super historyRecorder:recorder
+                  canWriteBlock:record
+                       inEntity:entity]) {
         return NO;
     }
     
@@ -44,37 +48,45 @@
     NSAssert(members.count > 0, @"members cannot be empty");
     
     // check member confirms for each transaction
+    // it must be confirmed by more than 50% members to write history record
+    NSData *hash = [record.signature sha256d];
     for (id tx in record.transactions) {
         NSInteger confirms = 1; // include the recorder as default
         MKMHistoryTransaction *event;
         event = [MKMHistoryTransaction transactionWithTransaction:tx];
         for (MKMAddress *addr in event.confirmations) {
-            if ([ID.address isEqualToString:addr]) {
+            // is it the recorder?
+            if ([recorder.address isEqualToString:addr]) {
                 // the recorder not need to confirm, skip it
                 continue;
             }
+            // is it a member?
             for (id m in members) {
                 MKMID *mid = [MKMID IDWithID:m];
                 if ([mid.address isEqualToString:addr]) {
                     // address match a member
                     NSData *CT = [event confirmationForID:mid];
                     MKMPublicKey *PK = MKMPublicKeyForID(mid);
-                    if ([PK verify:record.signature withSignature:CT]) {
+                    if ([PK verify:hash withSignature:CT]) {
                         ++confirms;
                     } else {
                         NSAssert(false, @"confirmation error");
                     }
+                    // address processing finished
+                    break;
                 }
             }
+            // go next confirmation
         }
+        // must more than 50%, include the recorder
         if (confirms * 2 <= members.count) {
             NSAssert(false, @"confirmations not enough for %@", tx);
             return NO;
         }
     }
     
-    BOOL isOwner = [social isOwner:ID];
-    BOOL isMember = [social isMember:ID];
+    BOOL isOwner = [social isOwner:recorder];
+    BOOL isMember = [social isMember:recorder];
     
     // 1. owner
     if (isOwner) {
@@ -101,19 +113,21 @@
     return YES;
 }
 
-- (BOOL)commander:(const MKMID *)ID
-       canExecute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
+- (BOOL)historyCommander:(const MKMID *)commander
+              canExecute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super commander:ID canExecute:operation inEntity:entity]) {
+    if (![super historyCommander:commander
+                      canExecute:operation
+                        inEntity:entity]) {
         return NO;
     }
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;
     
-    BOOL isOwner = [social isOwner:ID];
-    BOOL isMember = isOwner || [social isMember:ID];
+    BOOL isOwner = [social isOwner:commander];
+    BOOL isMember = isOwner || [social isMember:commander];
     
     const NSString *op = operation.command;
     // first record
@@ -122,13 +136,13 @@
             [op isEqualToString:@"create"]) {
             // only founder
             MKMMeta *meta = MKMMetaForID(social.ID);
-            MKMPublicKey *PK = MKMPublicKeyForID(ID);
+            MKMPublicKey *PK = MKMPublicKeyForID(commander);
             if (![meta.key isEqual:PK]) {
                 NSAssert(false, @"only founder can create");
                 return NO;
             }
         } else {
-            NSAssert(false, @"first record must be found");
+            NSAssert(false, @"first record must be 'found' or 'create'.");
             return NO;
         }
     } else if ([op isEqualToString:@"abdicate"]) {
@@ -178,11 +192,11 @@
     return YES;
 }
 
-- (void)commander:(const MKMID *)ID
-          execute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
+- (void)historyCommander:(const MKMID *)commander
+                 execute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // call super execute
-    [super commander:ID execute:operation inEntity:entity];
+    [super historyCommander:commander execute:operation inEntity:entity];
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;
@@ -190,6 +204,7 @@
     const NSString *op = operation.command;
     if ([op isEqualToString:@"found"] ||
         [op isEqualToString:@"create"]) {
+        NSAssert(social.founder == nil, @"history error");
         // founder
         MKMID *founder = [operation objectForKey:@"founder"];
         NSAssert(founder, @"history error");
@@ -209,8 +224,7 @@
             social.owner = founder;
         }
     } else if ([op isEqualToString:@"abdicate"]) {
-        NSAssert(social.founder, @"history error");
-        NSAssert([social isOwner:ID], @"permission denied");
+        NSAssert([social isOwner:commander], @"permission denied");
         // abdicate the ownership
         MKMID *owner = [operation objectForKey:@"owner"];
         if (owner) {
@@ -218,7 +232,6 @@
             social.owner = owner;
         }
     } else if ([op isEqualToString:@"invite"]) {
-        NSAssert(social.founder, @"history error");
         // invite user to member
         MKMID *user = [operation objectForKey:@"user"];
         if (!user) {
@@ -229,7 +242,6 @@
             [social addMember:user];
         }
     } else if ([op isEqualToString:@"expel"]) {
-        NSAssert(social.founder, @"history error");
         // expel member
         MKMID *member = [operation objectForKey:@"member"];
         if (member) {
@@ -237,16 +249,13 @@
             [social removeMember:member];
         }
     } else if ([op isEqualToString:@"join"]) {
-        NSAssert(social.founder, @"history error");
         // join
-        [social addMember:ID];
+        [social addMember:commander];
     } else if ([op isEqualToString:@"quit"]) {
-        NSAssert(social.founder, @"history error");
         // quit
-        [social removeMember:ID];
+        [social removeMember:commander];
     } else if ([op isEqualToString:@"name"] ||
                [op isEqualToString:@"setName"]) {
-        NSAssert(social.founder, @"history error");
         // set name
         NSString *name = [operation objectForKey:@"name"];
         if (name) {

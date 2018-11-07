@@ -27,6 +27,25 @@
 
 #import "MKMConsensus.h"
 
+static id<MKMEntityHistoryDelegate>history_delegate(const MKMEntity *entity) {
+    MKMNetworkType network = entity.ID.address.network;
+    MKMEntityHistoryDelegate *delegate = nil;
+    switch (network) {
+        case MKMNetwork_Main:
+            delegate = [MKMConsensus sharedInstance].accountHistoryDelegate;
+            break;
+            
+        case MKMNetwork_Group:
+            delegate = [MKMConsensus sharedInstance].groupHistoryDelegate;
+            break;
+            
+        default:
+            break;
+    }
+    assert(delegate);
+    return delegate;
+}
+
 @interface MKMConsensus () {
     
     MKMAccountHistoryDelegate *_defaultAccountDelegate;
@@ -50,60 +69,52 @@ SingletonImplementations(MKMConsensus, sharedInstance)
     return self;
 }
 
-#pragma mark - Entity History Delegate
-
-- (id<MKMEntityHistoryDelegate>)historyDelegateWithEntity:(const MKMEntity *)entity {
-    MKMID *ID = entity.ID;
-    MKMEntityHistoryDelegate *delegate = nil;
-    switch (ID.address.network) {
-        case MKMNetwork_Main:
-            if (_accountHistoryDelegate) {
-                delegate = _accountHistoryDelegate;
-            } else {
-                delegate = _defaultAccountDelegate;
-            }
-            break;
-            
-        case MKMNetwork_Group:
-            if (_groupHistoryDelegate) {
-                delegate = _groupHistoryDelegate;
-            } else {
-                delegate = _defaultGroupDelegate;
-            }
-            break;
-            
-        default:
-            NSAssert(false, @"network type not support");
-            break;
+- (id<MKMEntityHistoryDelegate>)accountHistoryDelegate {
+    if (_accountHistoryDelegate) {
+        return _accountHistoryDelegate;
+    } else {
+        return _defaultAccountDelegate;
     }
-    return delegate;
 }
 
-- (BOOL)recorder:(const MKMID *)ID
-   canWriteBlock:(const MKMHistoryBlock *)record
-        inEntity:(const MKMEntity *)entity {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    id<MKMEntityHistoryDelegate> delegate;
-    delegate = [self historyDelegateWithEntity:entity];
-    return [delegate recorder:ID canWriteBlock:record inEntity:entity];
+- (id<MKMEntityHistoryDelegate>)groupHistoryDelegate {
+    if (_groupHistoryDelegate) {
+        return _groupHistoryDelegate;
+    } else {
+        return _defaultGroupDelegate;
+    }
 }
 
-- (BOOL)commander:(const MKMID *)ID
-       canExecute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    id<MKMEntityHistoryDelegate> delegate;
-    delegate = [self historyDelegateWithEntity:entity];
-    return [delegate commander:ID canExecute:operation inEntity:entity];
+#pragma mark - MKMEntityHistoryDelegate
+
+- (BOOL)historyRecorder:(const MKMID *)recorder
+          canWriteBlock:(const MKMHistoryBlock *)record
+               inEntity:(const MKMEntity *)entity {
+    NSAssert(recorder.address.network == MKMNetwork_Main, @"ID error");
+    id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
+    return [delegate historyRecorder:recorder
+                       canWriteBlock:record
+                            inEntity:entity];
 }
 
-- (void)commander:(const MKMID *)ID
-          execute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    id<MKMEntityHistoryDelegate> delegate;
-    delegate = [self historyDelegateWithEntity:entity];
-    return [delegate commander:ID execute:operation inEntity:entity];
+- (BOOL)historyCommander:(const MKMID *)commander
+              canExecute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
+    NSAssert(commander.address.network == MKMNetwork_Main, @"ID error");
+    id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
+    return [delegate historyCommander:commander
+                           canExecute:operation
+                             inEntity:entity];
+}
+
+- (void)historyCommander:(const MKMID *)commander
+                 execute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
+    NSAssert(commander.address.network == MKMNetwork_Main, @"ID error");
+    id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
+    return [delegate historyCommander:commander
+                              execute:operation
+                             inEntity:entity];
 }
 
 @end
@@ -149,15 +160,22 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 //    }
     
     // OK, add new history records now
-    MKMHistoryBlock *record;
+    MKMHistoryBlock *record, *prev = nil;
     for (id item in history) {
         record = [MKMHistoryBlock blockWithBlock:item];
+        // check the link with previous record
+        if (prev && ![record.previousSignature isEqualToData:prev.signature]) {
+            NSAssert(false, @"blocks not linked");
+            break;
+        }
+        // run this record
         if ([self runHistoryBlock:record forEntity:entity]) {
             ++pos;
         } else {
             // record error
             break;
         }
+        prev = record;
     }
     
     return pos;
@@ -173,29 +191,18 @@ SingletonImplementations(MKMConsensus, sharedInstance)
         NSAssert(recorder.address.network == MKMNetwork_Main, @"error");
     }
     
-    // delegate
-    id<MKMEntityHistoryDelegate>delegate = [self historyDelegateWithEntity:entity];
-    
-    // 1. check permision for this redcorder
-    if (![delegate recorder:recorder
-              canWriteBlock:record
-                   inEntity:entity]) {
-        NSAssert(false, @"recorder permission denied");
+    // 1. check signature for this record
+    MKMPublicKey *PK = MKMPublicKeyForID(recorder);
+    if (![PK verify:record.merkleRoot withSignature:record.signature]) {
+        NSAssert(false, @"signature error");
         return NO;
     }
     
-    // 2. check signature for this record
-    MKMPublicKey *PK;
-//    MKMHistory * oldHis = MKMHistoryForID(entity.ID);
-//    MKMHistoryRecord *prev = oldHis.lastObject;
-//    PK = MKMPublicKeyForAccountID(recorder);
-//    prev = [MKMHistoryRecord recordWithRecord:prev];
-//    PK = [MKMPublicKey keyWithKey:PK];
-//    if (![record verifyWithPreviousMerkle:prev.merkleRoot
-//                                publicKey:PK]) {
-//        NSAssert(false, @"recorder signature error");
-//        return NO;
-//    }
+    // 2. check permision for this redcorder
+    if (![self historyRecorder:recorder canWriteBlock:record inEntity:entity]) {
+        NSAssert(false, @"recorder permission denied");
+        return NO;
+    }
     
     // 3. check permission for each commander in all events
     MKMHistoryTransaction *event;
@@ -216,13 +223,14 @@ SingletonImplementations(MKMConsensus, sharedInstance)
         
         // event.operation
         op = event.operation;
-        NSAssert([op isKindOfClass:[NSString class]], @"operation must be string here");
+        NSAssert([op isKindOfClass:[NSString class]],
+                 @"operation must be string here");
         operation = [MKMHistoryOperation operationWithOperation:op];
         
         // 3.1. check permission for this commander
-        if (![delegate commander:commander
-                      canExecute:operation
-                        inEntity:entity]) {
+        if (![self historyCommander:commander
+                         canExecute:operation
+                           inEntity:entity]) {
             NSAssert(false, @"commander permission denied");
             return NO;
         }
@@ -256,13 +264,9 @@ SingletonImplementations(MKMConsensus, sharedInstance)
         operation = [MKMHistoryOperation operationWithOperation:op];
         
         // execute
-        [delegate commander:commander
-                    execute:operation
-                   inEntity:entity];
+        [self historyCommander:commander execute:operation inEntity:entity];
     }
     
-    // 5. add this record into local history
-//    [oldHis addObject:record];
     return YES;
 }
 

@@ -18,15 +18,17 @@
 
 @implementation MKMAccountHistoryDelegate
 
-- (BOOL)recorder:(const MKMID *)ID
-   canWriteBlock:(const MKMHistoryBlock *)record
-        inEntity:(const MKMEntity *)entity {
+- (BOOL)historyRecorder:(const MKMID *)recorder
+          canWriteBlock:(const MKMHistoryBlock *)record
+               inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super recorder:ID canWriteBlock:record inEntity:entity]) {
+    if (![super historyRecorder:recorder
+                  canWriteBlock:record
+                       inEntity:entity]) {
         return NO;
     }
     
-    if (![entity.ID isEqual:ID]) {
+    if (![entity.ID isEqual:recorder]) {
         NSAssert(false, @"only itself can write history record");
         return NO;
     }
@@ -34,15 +36,17 @@
     return YES;
 }
 
-- (BOOL)commander:(const MKMID *)ID
-       canExecute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
+- (BOOL)historyCommander:(const MKMID *)commander
+              canExecute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super commander:ID canExecute:operation inEntity:entity]) {
+    if (![super historyCommander:commander
+                      canExecute:operation
+                        inEntity:entity]) {
         return NO;
     }
     
-    if (![entity.ID isEqual:ID]) {
+    if (![entity.ID isEqual:commander]) {
         NSAssert(false, @"only itself can execute operation");
         return NO;
     }
@@ -62,8 +66,8 @@
     } else if ([op isEqualToString:@"suicide"] ||
                [op isEqualToString:@"destroy"]) {
         // Immortal Accounts
-        if ([ID isEqualToString:MKM_IMMORTAL_HULK_ID] ||
-            [ID isEqualToString:MKM_MONKEY_KING_ID]) {
+        if ([commander isEqualToString:MKM_IMMORTAL_HULK_ID] ||
+            [commander isEqualToString:MKM_MONKEY_KING_ID]) {
             NSAssert(false, @"immortals cannot suicide!");
             return NO;
         }
@@ -79,11 +83,11 @@
     return NO;
 }
 
-- (void)commander:(const MKMID *)ID
-          execute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
+- (void)historyCommander:(const MKMID *)commander
+                 execute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // call super execute
-    [super commander:ID execute:operation inEntity:entity];
+    [super historyCommander:commander execute:operation inEntity:entity];
     
     NSAssert([entity isKindOfClass:[MKMAccount class]], @"error");
     const MKMAccount *account = (const MKMAccount *)entity;

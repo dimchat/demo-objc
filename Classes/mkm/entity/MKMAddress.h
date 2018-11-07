@@ -53,13 +53,15 @@ NS_ASSUME_NONNULL_BEGIN
  *      0000 0010 - this entity has branch usually (contains other group).
  *      0000 0100 - this entity is top organization.
  *      0000 1000 - (Main) this entity acts like a person.
- *      0001 0000 - (Group) founder, who create the entity.
- *      0010 0000 - (Group) owner, which can abdicate.
+ *      0001 0000 - (Group) this entity has founder, who create the entity.
+ *      0010 0000 - (Group) this entity has owner, which can abdicate.
  *      0100 0000 - (IoT) this entity is a thing.
  *      (All above are just some advices to help choosing numbers :P)
  */
 typedef NS_ENUM(UInt8, MKMNetworkID) {
-    // Network_BitCoin = 0x00, // 0000 0000
+    // Network_BTCMain = 0x00, // 0000 0000
+    // Network_BTCTest = 0x6f, // 0110 1111
+    
     MKMNetwork_Main    = 0x08, // 0000 1000 (Person)
     
     MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)

@@ -21,37 +21,37 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Define the recorder's permission to the current entity
  
- @param ID - recorder
+ @param recorder - recorder ID
  @param record - history record
  @param entity - User/Group
  @return YES/NO
  */
-- (BOOL)recorder:(const MKMID *)ID
-   canWriteBlock:(const MKMHistoryBlock *)record
-        inEntity:(const MKMEntity *)entity;
+- (BOOL)historyRecorder:(const MKMID *)recorder
+          canWriteBlock:(const MKMHistoryBlock *)record
+               inEntity:(const MKMEntity *)entity;
 
 /**
  Define the commander's permission to the current entity
  
- @param ID - commander
+ @param commander - commander ID
  @param operation - history event operation
  @param entity - User/Group
  @return YES/ON
  */
-- (BOOL)commander:(const MKMID *)ID
-       canExecute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity;
+- (BOOL)historyCommander:(const MKMID *)commander
+              canExecute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity;
 
 /**
  Run operation
  
- @param ID - command
+ @param commander - commander ID
  @param operation - history operation
  @param entity - User/Group
  */
-- (void)commander:(const MKMID *)ID
-          execute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity;
+- (void)historyCommander:(const MKMID *)commander
+                 execute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity;
 
 @end
 

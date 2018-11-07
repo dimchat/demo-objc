@@ -64,6 +64,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)addTransaction:(const MKMHistoryTransaction *)event;
 
+/**
+ Calculate Merkle Root of all transactions and sign it
+
+ @param SK - recorder's private key
+ @return YES on success
+ */
+- (BOOL)signWithPrivateKey:(const MKMPrivateKey *)SK;
+
 @end
 
 #pragma mark - Link Block

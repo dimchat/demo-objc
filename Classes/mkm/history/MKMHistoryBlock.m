@@ -17,6 +17,8 @@
 #import "MKMID.h"
 #import "MKMHistoryTransaction.h"
 
+#import "MKMBarrack.h"
+
 #import "MKMHistoryBlock.h"
 
 static NSMutableArray *json_array(const NSArray *events) {
@@ -171,10 +173,18 @@ static NSMutableArray *json_array(const NSArray *events) {
         if (CT) {
             _signature = [CT base64Decode];
         } else {
-            // TODO: sign(merkle, recorder.SK)
+            NSAssert(false, @"signature not set yet");
         }
     }
     return _signature;
+}
+
+- (MKMID *)recorder {
+    if (!_recorder) {
+        MKMID *ID = [_storeDictionary objectForKey:@"recorder"];
+        _recorder = [MKMID IDWithID:ID];
+    }
+    return _recorder;
 }
 
 - (void)addTransaction:(const MKMHistoryTransaction *)event {
@@ -187,6 +197,17 @@ static NSMutableArray *json_array(const NSArray *events) {
     [_storeDictionary removeObjectForKey:@"signature"];
     _merkleRoot = nil;
     _signature = nil;
+}
+
+- (BOOL)signWithPrivateKey:(const MKMPrivateKey *)SK {
+    MKMPublicKey *PK = MKMPublicKeyForID(self.recorder);
+    if ([PK isMatch:SK]) {
+        self.signature = [SK sign:self.merkleRoot];
+        return _signature != nil;
+    } else {
+        NSAssert(false, @"only recorder's private key allows here");
+        return NO;
+    }
 }
 
 @end

@@ -16,18 +16,20 @@
 
 @implementation MKMGroupHistoryDelegate
 
-- (BOOL)recorder:(const MKMID *)ID
-   canWriteBlock:(const MKMHistoryBlock *)record
-        inEntity:(const MKMEntity *)entity {
+- (BOOL)historyRecorder:(const MKMID *)recorder
+          canWriteBlock:(const MKMHistoryBlock *)record
+               inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super recorder:ID canWriteBlock:record inEntity:entity]) {
+    if (![super historyRecorder:recorder
+                  canWriteBlock:record
+                       inEntity:entity]) {
         return NO;
     }
     
     NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
     MKMGroup *group = (MKMGroup *)entity;
     
-    BOOL isOwner = [group isOwner:ID];
+    BOOL isOwner = [group isOwner:recorder];
     if (isOwner) {
         return YES;
     }
@@ -36,11 +38,13 @@
     return NO;
 }
 
-- (BOOL)commander:(const MKMID *)ID
-       canExecute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
+- (BOOL)historyCommander:(const MKMID *)commander
+              canExecute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // call super check
-    if (![super commander:ID canExecute:operation inEntity:entity]) {
+    if (![super historyCommander:commander
+                      canExecute:operation
+                        inEntity:entity]) {
         return NO;
     }
     
@@ -48,8 +52,8 @@
     MKMGroup *group = (MKMGroup *)entity;
     
     //BOOL isFounder = [group isFounder:ID];
-    BOOL isOwner = [group isOwner:ID];
-    BOOL isAdmin = [group isAdmin:ID];
+    BOOL isOwner = [group isOwner:commander];
+    BOOL isAdmin = [group isAdmin:commander];
     //BOOL isMember = isOwner || isAdmin || [group isMember:ID];
     
     const NSString *op = operation.command;
@@ -95,17 +99,18 @@
     return YES;
 }
 
-- (void)commander:(const MKMID *)ID
-          execute:(const MKMHistoryOperation *)operation
-         inEntity:(const MKMEntity *)entity {
+- (void)historyCommander:(const MKMID *)commander
+                 execute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // call super execute
-    [super commander:ID execute:operation inEntity:entity];
+    [super historyCommander:commander execute:operation inEntity:entity];
     
     NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
     MKMGroup *group = (MKMGroup *)entity;
     
     const NSString *op = operation.command;
     if ([op isEqualToString:@"hire"]) {
+        NSAssert([group isOwner:commander], @"permission denied");
         // hire admin
         MKMID *admin = [operation objectForKey:@"admin"];
         if (!admin) {
@@ -116,6 +121,7 @@
             [group addAdmin:admin];
         }
     } else if ([op isEqualToString:@"fire"]) {
+        NSAssert([group isOwner:commander], @"permission denied");
         // fire admin
         MKMID *admin = [operation objectForKey:@"admin"];
         if (!admin) {
@@ -126,8 +132,9 @@
             [group removeAdmin:admin];
         }
     } else if ([op isEqualToString:@"resign"]) {
+        NSAssert([group isAdmin:commander], @"history error");
         // resign admin
-        [group removeAdmin:ID];
+        [group removeAdmin:commander];
     }
 }
 

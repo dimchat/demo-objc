@@ -16,29 +16,29 @@
 
 @implementation MKMEntityHistoryDelegate
 
-- (BOOL)recorder:(nonnull const MKMID *)ID
-   canWriteBlock:(nonnull const MKMHistoryBlock *)record
-        inEntity:(nonnull const MKMEntity *)entity {
-    if (![ID isValid]) {
+- (BOOL)historyRecorder:(const MKMID *)recorder
+          canWriteBlock:(const MKMHistoryBlock *)record
+               inEntity:(const MKMEntity *)entity {
+    if (![recorder isValid]) {
         return NO;
     }
     // let the subclass to define the permissions
     return YES;
 }
 
-- (BOOL)commander:(nonnull const MKMID *)ID
-       canExecute:(nonnull const MKMHistoryOperation *)operation
-         inEntity:(nonnull const MKMEntity *)entity {
-    if (![ID isValid]) {
+- (BOOL)historyCommander:(const MKMID *)commander
+              canExecute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
+    if (![commander isValid]) {
         return NO;
     }
     // let the subclass to define the permissions
     return YES;
 }
 
-- (void)commander:(nonnull const MKMID *)ID
-          execute:(nonnull const MKMHistoryOperation *)operation
-         inEntity:(nonnull const MKMEntity *)entity {
+- (void)historyCommander:(const MKMID *)commander
+                 execute:(const MKMHistoryOperation *)operation
+                inEntity:(const MKMEntity *)entity {
     // let the subclass to do the operating
     return ;
 }
