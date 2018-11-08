@@ -49,10 +49,4 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-@interface NSDictionary (Binary)
-
-- (BOOL)writeToBinaryFile:(NSString *)path;
-
-@end
-
 NS_ASSUME_NONNULL_END

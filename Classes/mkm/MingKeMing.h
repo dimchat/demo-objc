@@ -12,6 +12,7 @@
 //#import "NSData+Crypto.h"
 //#import "NSString+Crypto.h"
 //#import "NSArray+Merkle.h"
+//#import "NSDictionary+Binary.h"
 
 // Types
 //#import "MKMString.h"

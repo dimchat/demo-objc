@@ -8,6 +8,7 @@
 
 #import "NSObject+Singleton.h"
 #import "NSObject+JsON.h"
+#import "NSDictionary+Binary.h"
 
 #import "DIMKeyStore.h"
 

@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+Singleton.h"
+#import "NSDictionary+Binary.h"
 
 #import "MKMPrivateKey.h"
 
