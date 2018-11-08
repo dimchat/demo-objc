@@ -34,7 +34,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
 - (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
                                         sender:(const MKMID *)sender
                                       receiver:(const MKMID *)receiver {
-    NSAssert(sender.address.network == MKMNetwork_Main, @"sender error");
+    NSAssert(MKMNetwork_IsPerson(sender.type), @"sender error");
     NSAssert(receiver.isValid, @"receiver error");
     
     // 1. make envelope
@@ -91,11 +91,11 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     
     // encrypt to secure message by receiver
     MKMID *receiver = iMsg.envelope.receiver;
-    if (receiver.address.network == MKMNetwork_Main) {
+    if (MKMNetwork_IsPerson(receiver.type)) {
         // receiver is a contact
         MKMContact *contact = MKMContactWithID(receiver);
         sMsg = [contact encryptMessage:iMsg];
-    } else if (receiver.address.network == MKMNetwork_Group) {
+    } else if (MKMNetwork_IsGroup(receiver.type)) {
         // receiver is a group
         MKMGroup *group = MKMGroupWithID(receiver);
         sMsg = [group encryptMessage:iMsg];
@@ -110,7 +110,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     
     // decrypt to instant message by receiver
     MKMID *receiver = sMsg.envelope.receiver;
-    if (receiver.address.network == MKMNetwork_Main) {
+    if (MKMNetwork_IsPerson(receiver.type)) {
         MKMUser *user = MKMUserWithID(receiver);
         iMsg = [user decryptMessage:sMsg];
     }
@@ -124,7 +124,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     
     // sign to certified message by sender
     MKMID *sender = sMsg.envelope.sender;
-    if (sender.address.network == MKMNetwork_Main) {
+    if (MKMNetwork_IsPerson(sender.type)) {
         MKMUser *user = MKMUserWithID(sender);
         cMsg = [user signMessage:sMsg];;
     }
@@ -138,7 +138,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     
     // verify to secure message by sender
     MKMID *sender = cMsg.envelope.sender;
-    if (sender.address.network == MKMNetwork_Main) {
+    if (MKMNetwork_IsPerson(sender.type)) {
         MKMContact *contact = MKMContactWithID(sender);
         sMsg = [contact verifyMessage:cMsg];
     }

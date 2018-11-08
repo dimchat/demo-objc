@@ -61,10 +61,10 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     if (!chatroom) {
         // get entity with ID
         MKMEntity *entity = nil;
-        if (ID.address.network == MKMNetwork_Main) {
+        if (MKMNetwork_IsPerson(ID.type)) {
             entity = MKMContactWithID(ID);
-//        } else if (ID.address.network == MKMNetwork_Group) {
-//            entity = MKMChatroomWithID(ID);
+        } else if (MKMNetwork_IsGroup(ID.type)) {
+            entity = MKMGroupWithID(ID);
         }
         NSAssert(entity, @"ID error");
         // create new conversation with entity (Contact/Group)

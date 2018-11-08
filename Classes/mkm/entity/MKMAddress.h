@@ -30,8 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
  *      where the owner can share informations and interact with its friends.
  *      The owner is the king here, it can do anything and no one can stop it.
  *
- *      MKMNetwork_Official indicates this entity is an official account.
- *
  *      MKMNetwork_Polylogue indicates a virtual (temporary) social network.
  *      It's created to talk with multi-people (but not too much, e.g. < 100).
  *      Any member can invite people in, but only the founder can expel member.
@@ -39,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
  *      MKMNetwork_Chatroom indicates a massive (persistent) social network.
  *      It's usually more than 100 people in it, so we need administrators
  *      to help the owner to manage the group.
+ *
+ *      MKMNetwork_SocialEntity indicates this entity is a social entity.
  *
  *      MKMNetwork_Organization indicates an independent organization.
  *
@@ -60,8 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      0001 0000 - this entity contains members (Group)
  *      0010 0000 - this entity needs other administrators (big organization)
- *      0100 0000 - (RESERVED)
- *      1000 0000 - (IoT) this entity is a thing.
+ *      0100 0000 - this is a social entity
+ *      1000 0000 - (IoT) this entity is a 'Thing'.
  *
  *      (All above are just some advices to help choosing numbers :P)
  */
@@ -69,25 +69,40 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
     // Network_BTCMain = 0x00, // 0000 0000
     // Network_BTCTest = 0x6f, // 0110 1111
     
+    /**
+     *  Person Account
+     */
     MKMNetwork_Main    = 0x08, // 0000 1000 (Person)
     
+    /**
+     *  Virtual Groups
+     */
     MKMNetwork_Group   = 0x10, // 0001 0000 (Multi-Persons)
     
     //MKMNetwork_Moments = 0x18, // 0001 1000 (Twitter)
-    MKMNetwork_Official  = 0x38, // 0011 1000 (Official Account)
-    
     MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)
     MKMNetwork_Chatroom  = 0x30, // 0011 0000 (Multi-Persons Chat, N >= 100)
     
-    //MKMNetwork_Organization = 0x34, // 0011 0100
-    //MKMNetwork_Company      = 0x36, // 0011 0110
-    //MKMNetwork_School       = 0x37, // 0011 0111
-    //MKMNetwork_Government   = 0x33, // 0011 0011
-    //MKMNetwork_Department   = 0x32, // 0011 0010
+    /**
+     *  Social Entities in reality
+     */
+    //MKMNetwork_SocialEntity = 0x50, // 0101 0000
     
+    //MKMNetwork_Organization = 0x74, // 0111 0100
+    //MKMNetwork_Company      = 0x76, // 0111 0110
+    //MKMNetwork_School       = 0x77, // 0111 0111
+    //MKMNetwork_Government   = 0x73, // 0111 0011
+    //MKMNetwork_Department   = 0x52, // 0101 0010
+    
+    /**
+     *  Internet of Things
+     */
     //MKMNetwork_Thing = 0x80, // 1000 0000 (IoT)
 };
 typedef UInt8 MKMNetworkType;
+
+#define MKMNetwork_IsPerson(network) (network) == MKMNetwork_Main
+#define MKMNetwork_IsGroup(network)  (network) & MKMNetwork_Group
 
 /**
  *  Address like BitCoin

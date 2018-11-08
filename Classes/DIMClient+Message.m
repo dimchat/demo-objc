@@ -35,7 +35,7 @@
     if ([receiver isEqual:self.currentUser.ID]) {
         // personal chat, get chatroom with contact ID
         chatroom = DIMConversationWithID(sender);
-    } else if (receiver.address.network == MKMNetwork_Group) {
+    } else if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chatroom with group ID
         chatroom = DIMConversationWithID(receiver);
     }

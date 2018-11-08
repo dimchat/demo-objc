@@ -34,7 +34,7 @@
 }
 
 - (instancetype)initWithID:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
     if (self = [self init]) {
         // account ID
         if (ID.isValid) {

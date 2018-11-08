@@ -133,7 +133,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
             obj = [dict objectForKey:cKey];
             // ID
             cID = [MKMID IDWithID:cKey];
-            NSAssert(cID.address.network == MKMNetwork_Main, @"error");
+            NSAssert(MKMNetwork_IsPerson(cID.type), @"error");
             // key
             PW = [MKMSymmetricKey keyWithKey:obj];
             // update keys table
@@ -155,14 +155,14 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
             obj = [dict objectForKey:gKey];
             // group ID
             gID = [MKMID IDWithID:gKey];
-            NSAssert(gID.address.network == MKMNetwork_Group, @"error");
+            NSAssert(MKMNetwork_IsGroup(gID.type), @"error");
             // table
             table = obj;
             for (eKey in table) {
                 obj = [table objectForKey:eKey];
                 // member ID
                 mID = [MKMID IDWithID:eKey];
-                NSAssert(mID.address.network == MKMNetwork_Main, @"error");
+                NSAssert(MKMNetwork_IsPerson(mID.type), @"error");
                 // key
                 PW = [MKMSymmetricKey keyWithKey:obj];
                 // update keys table
@@ -211,26 +211,26 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 #pragma mark - Cipher key to encpryt message for contact
 
 - (MKMSymmetricKey *)cipherKeyForContact:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
     return [_keysForContacts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
           forContact:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
     [_keysForContacts setObject:key forKey:ID.address];
 }
 
 #pragma mark - Cipher key from contact to decrypt message
 
 - (MKMSymmetricKey *)cipherKeyFromContact:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
     return [_keysFromContacts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
          fromContact:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
     [_keysFromContacts setObject:key forKey:ID.address];
     _dirty = YES;
 }
@@ -238,13 +238,13 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 #pragma mark - Cipher key to encrypt message for all group members
 
 - (MKMSymmetricKey *)cipherKeyForGroup:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Group, @"ID error");
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"ID error");
     return [_keysForGroups objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
             forGroup:(const MKMID *)ID {
-    NSAssert(ID.address.network == MKMNetwork_Group, @"ID error");
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"ID error");
     [_keysForGroups setObject:key forKey:ID.address];
 }
 
@@ -252,8 +252,8 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 
 - (MKMSymmetricKey *)cipherKeyFromMember:(const MKMID *)ID
                                  inGroup:(const MKMID *)group {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    NSAssert(group.address.network == MKMNetwork_Group, @"group ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error");
     KeysTableM *table = [_tablesFromGroups objectForKey:group.address];
     return [table objectForKey:ID.address];
 }
@@ -261,8 +261,8 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 - (void)setCipherKey:(MKMSymmetricKey *)key
           fromMember:(const MKMID *)ID
              inGroup:(const MKMID *)group {
-    NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
-    NSAssert(group.address.network == MKMNetwork_Group, @"group ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error");
     KeysTableM *table = [_tablesFromGroups objectForKey:group.address];
     if (!table) {
         table = [[KeysTableM alloc] init];

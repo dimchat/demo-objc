@@ -26,17 +26,10 @@
 static id<MKMEntityHistoryDelegate>history_delegate(const MKMEntity *entity) {
     MKMNetworkType network = entity.ID.address.network;
     MKMEntityHistoryDelegate *delegate = nil;
-    switch (network) {
-        case MKMNetwork_Main:
-            delegate = [MKMConsensus sharedInstance].accountHistoryDelegate;
-            break;
-            
-        case MKMNetwork_Group:
-            delegate = [MKMConsensus sharedInstance].groupHistoryDelegate;
-            break;
-            
-        default:
-            break;
+    if (MKMNetwork_IsPerson(network)) {
+        delegate = [MKMConsensus sharedInstance].accountHistoryDelegate;
+    } else if (MKMNetwork_IsGroup(network)) {
+        delegate = [MKMConsensus sharedInstance].groupHistoryDelegate;
     }
     assert(delegate);
     return delegate;
@@ -87,7 +80,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 
 - (BOOL)evolvingEntity:(const MKMEntity *)entity
         canWriteRecord:(const MKMHistoryBlock *)record {
-    NSAssert(record.recorder.type == MKMNetwork_Main, @"recorder error");
+    NSAssert(MKMNetwork_IsPerson(record.recorder.type), @"recorder error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
     return [delegate evolvingEntity:entity canWriteRecord:record];
 }
@@ -95,7 +88,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 - (BOOL)evolvingEntity:(const MKMEntity *)entity
            canRunEvent:(const MKMHistoryTransaction *)event
               recorder:(const MKMID *)recorder {
-    NSAssert(!event.commander || event.commander.type == MKMNetwork_Main,
+    NSAssert(!event.commander || MKMNetwork_IsPerson(event.commander.type),
              @"commander error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
     return [delegate evolvingEntity:entity canRunEvent:event recorder:recorder];
@@ -104,7 +97,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 - (void)evolvingEntity:(MKMEntity *)entity
                execute:(const MKMHistoryOperation *)operation
              commander:(const MKMID *)commander {
-    NSAssert(commander.address.network == MKMNetwork_Main, @"ID error");
+    NSAssert(MKMNetwork_IsPerson(commander.type), @"ID error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
     return [delegate evolvingEntity:entity execute:operation commander:commander];
 }
@@ -187,7 +180,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
     MKMID *recorder = record.recorder;
     recorder = [MKMID IDWithID:recorder];
     if (!recorder) {
-        NSAssert(entity.type == MKMNetwork_Main, @"error");
+        NSAssert(MKMNetwork_IsPerson(entity.type), @"error");
         recorder = entity.ID;
     }
     

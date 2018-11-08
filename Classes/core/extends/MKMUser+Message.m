@@ -59,7 +59,7 @@
     
     // 2. create certified message
     DIMCertifiedMessage *cMsg = nil;
-    if (env.receiver.address.network == MKMNetwork_Main) {
+    if (MKMNetwork_IsPerson(env.receiver.type)) {
         // Personal Message
         NSData *key = msg.encryptedKey;
         NSAssert(key, @"encrypted key not found");
@@ -67,7 +67,7 @@
                                                signature:CT
                                             encryptedKey:key
                                                 envelope:env];
-    } else if (env.receiver.address.network == MKMNetwork_Group) {
+    } else if (MKMNetwork_IsGroup(env.receiver.type)) {
         // Group Message
         DIMEncryptedKeyMap *keys = msg.encryptedKeys;
         NSAssert(keys, @"encrypted keys not found");
@@ -90,7 +90,7 @@
     MKMID *sender = env.sender;
     MKMID *receiver = env.receiver;
     
-    if (receiver.address.network == MKMNetwork_Main) {
+    if (MKMNetwork_IsPerson(receiver.type)) {
         NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);
         // get passphrase in personal message
         PW = msg.encryptedKey;
@@ -98,7 +98,7 @@
             // get passphrase from contact
             scKey = [store cipherKeyFromContact:sender];
         }
-    } else if (receiver.address.network == MKMNetwork_Group) {
+    } else if (MKMNetwork_IsGroup(receiver.type)) {
         // get passphrase in group message
         PW = [msg.encryptedKeys encryptedKeyForID:_ID];
         if (!PW) {
