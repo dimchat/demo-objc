@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      An account should have a public key, which proved by meta data.
  *
  *      MKMNetwork_Group indicates this entity is a group of people,
- *      which should have a founder, and some members.
+ *      which should have a founder (also the owner), and some members.
  *
  *      MKMNetwork_Moments indicates a special personal social network,
  *      where the owner can share informations and interact with its friends.
@@ -32,14 +32,11 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      MKMNetwork_Official indicates this entity is an official account.
  *
- *      MKMNetwork_Social indicates this entity is a social entity.
- *      A social entity should have a founder, an owner, and some members.
- *
  *      MKMNetwork_Polylogue indicates a virtual (temporary) social network.
  *      It's created to talk with multi-people (but not too much, e.g. < 100).
  *      Any member can invite people in, but only the founder can expel member.
  *
- *      MKMNetwork_ChatRoom indicates a massive (persistent) social network.
+ *      MKMNetwork_Chatroom indicates a massive (persistent) social network.
  *      It's usually more than 100 people in it, so we need administrators
  *      to help the owner to manage the group.
  *
@@ -80,7 +77,7 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
     MKMNetwork_Official  = 0x38, // 0011 1000 (Official Account)
     
     MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)
-    MKMNetwork_ChatRoom  = 0x30, // 0011 0000 (Multi-Persons Chat, N >= 100)
+    MKMNetwork_Chatroom  = 0x30, // 0011 0000 (Multi-Persons Chat, N >= 100)
     
     //MKMNetwork_Organization = 0x34, // 0011 0100
     //MKMNetwork_Company      = 0x36, // 0011 0110

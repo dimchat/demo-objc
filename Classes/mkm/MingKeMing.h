@@ -44,22 +44,21 @@
 #import "MKMHistory.h"
 #import "MKMEntityHistoryDelegate.h"
 #import "MKMAccountHistoryDelegate.h"
-#import "MKMSocialEntityHistoryDelegate.h"
+#import "MKMGroupHistoryDelegate.h"
 #import "MKMChatroomHistoryDelegate.h"
 #import "MKMConsensus.h"
 #import "MKMUser+History.h"
 
-// group
-#import "MKMSocialEntity.h"
+// Group
+#import "MKMGroup.h"
 #import "MKMChatroom.h"
 #import "MKMMember.h"
 
-// user
+//-
 #import "MKMAccount.h"
 #import "MKMUser.h"
 #import "MKMContact.h"
 
-// facebook
 #import "MKMProfile.h"
 #import "MKMBarrack.h"
 

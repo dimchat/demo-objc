@@ -35,7 +35,7 @@
         return YES;
     }
     
-    // only the owner can write history for group
+    // only the owner can write history for chatroom
     return NO;
 }
 
@@ -59,7 +59,7 @@
     NSAssert([entity isKindOfClass:[MKMChatroom class]], @"error");
     MKMChatroom *chatroom = (MKMChatroom *)entity;
     
-    //BOOL isFounder = [group isFounder:ID];
+    //BOOL isFounder = [chatroom isFounder:ID];
     BOOL isOwner = [chatroom isOwner:commander];
     BOOL isAdmin = [chatroom isAdmin:commander];
     //BOOL isMember = isOwner || isAdmin || [chatroom isMember:ID];

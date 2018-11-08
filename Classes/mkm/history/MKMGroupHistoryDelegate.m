@@ -1,5 +1,5 @@
 //
-//  MKMSocialEntityHistoryDelegate.m
+//  MKMGroupHistoryDelegate.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/6.
@@ -13,7 +13,7 @@
 #import "MKMID.h"
 #import "MKMMeta.h"
 #import "MKMEntity.h"
-#import "MKMSocialEntity.h"
+#import "MKMGroup.h"
 
 #import "MKMHistoryOperation.h"
 #import "MKMHistoryTransaction.h"
@@ -22,15 +22,15 @@
 
 #import "MKMBarrack.h"
 
-#import "MKMSocialEntityHistoryDelegate.h"
+#import "MKMGroupHistoryDelegate.h"
 
-@interface MKMSocialEntity (Hacking)
+@interface MKMGroup (Hacking)
 
 @property (strong, nonatomic) MKMID *founder;
 
 @end
 
-@implementation MKMSocialEntityHistoryDelegate
+@implementation MKMGroupHistoryDelegate
 
 - (BOOL)evolvingEntity:(const MKMEntity *)entity
         canWriteRecord:(const MKMHistoryBlock *)record {
@@ -42,8 +42,8 @@
     MKMID *recorder = [MKMID IDWithID:record.recorder];
     NSAssert([recorder isValid], @"recorder error");
     
-    NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
-    MKMSocialEntity *social = (MKMSocialEntity *)entity;
+    NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
+    MKMGroup *social = (MKMGroup *)entity;
     NSArray *members = social.members;
     NSAssert(members.count > 0, @"members cannot be empty");
     
@@ -130,8 +130,8 @@
     MKMHistoryOperation *operation = event.operation;
     operation = [MKMHistoryOperation operationWithOperation:operation];
     
-    NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
-    MKMSocialEntity *social = (MKMSocialEntity *)entity;
+    NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
+    MKMGroup *social = (MKMGroup *)entity;
     
     BOOL isOwner = [social isOwner:commander];
     BOOL isMember = isOwner || [social isMember:commander];
@@ -205,8 +205,8 @@
     // call super execute
     [super evolvingEntity:entity execute:operation commander:commander];
     
-    NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
-    MKMSocialEntity *social = (MKMSocialEntity *)entity;
+    NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
+    MKMGroup *social = (MKMGroup *)entity;
     
     const NSString *op = operation.command;
     if ([op isEqualToString:@"found"] ||

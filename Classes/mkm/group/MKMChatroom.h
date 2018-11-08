@@ -6,14 +6,14 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMSocialEntity.h"
+#import "MKMGroup.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NSMutableArray<const MKMID *> MKMAdminListM;
 typedef NSArray<const MKMID *> MKMAdminList;
 
-@interface MKMChatroom : MKMSocialEntity {
+@interface MKMChatroom : MKMGroup {
     
     MKMAdminListM *_administrators;
 }
@@ -27,14 +27,6 @@ typedef NSArray<const MKMID *> MKMAdminList;
 // -hire(admin, owner)
 // -fire(admin, owner)
 // -resign(admin)
-
-@end
-
-#pragma mark - Chatroom Delegate
-
-@protocol MKMChatroomDelegate <NSObject>
-
-- (MKMChatroom *)chatroomWithID:(const MKMID *)ID;
 
 @end
 

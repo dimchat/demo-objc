@@ -1,5 +1,5 @@
 //
-//  MKMSocialEntity.m
+//  MKMGroup.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/28.
@@ -11,9 +11,9 @@
 #import "MKMID.h"
 #import "MKMMeta.h"
 
-#import "MKMSocialEntity.h"
+#import "MKMGroup.h"
 
-@interface MKMSocialEntity ()
+@interface MKMGroup ()
 
 @property (strong, nonatomic) MKMID *founder;
 
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation MKMSocialEntity
+@implementation MKMGroup
 
 - (instancetype)initWithID:(const MKMID *)ID {
     MKMID *founderID = nil;
@@ -43,7 +43,7 @@
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    MKMSocialEntity *social = [super copyWithZone:zone];
+    MKMGroup *social = [super copyWithZone:zone];
     if (social) {
         social.founder = _founder;
         social.owner = _owner;

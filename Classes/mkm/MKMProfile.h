@@ -79,7 +79,7 @@ typedef NS_ENUM(SInt32, MKMGender) {
 
 #pragma mark - Social Entity Profile
 
-@interface MKMSocialEntityProfile : MKMProfile
+@interface MKMGroupProfile : MKMProfile
 
 @property (strong, nonatomic) NSString *logo; // URL
 

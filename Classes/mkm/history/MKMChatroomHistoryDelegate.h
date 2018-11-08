@@ -6,11 +6,11 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMSocialEntityHistoryDelegate.h"
+#import "MKMGroupHistoryDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMChatroomHistoryDelegate : MKMSocialEntityHistoryDelegate
+@interface MKMChatroomHistoryDelegate : MKMGroupHistoryDelegate
 
 /**
  *  Permissions Table:

@@ -12,7 +12,7 @@
 // Extends
 #import "MKMContact+Message.h"
 #import "MKMUser+Message.h"
-#import "MKMChatroom+Message.h"
+#import "MKMGroup+Message.h"
 
 // Types
 //#import "DIMDictionary.h"

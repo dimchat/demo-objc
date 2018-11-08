@@ -1,5 +1,5 @@
 //
-//  MKMSocialEntity.h
+//  MKMGroup.h
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/28.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMSocialEntity : MKMEntity {
+@interface MKMGroup : MKMEntity {
     
     // parse the history to update profiles
     MKMID *_founder;
@@ -46,14 +46,20 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-#pragma mark - Social Entity Delegate
+#pragma mark - Group Delegate
 
-@protocol MKMSocialEntityDataSource <NSObject>
+@protocol MKMGroupDataSource <NSObject>
 
-- (MKMID *)founderForSocialEntityID:(const MKMID *)ID;
+- (MKMID *)founderForGroupID:(const MKMID *)ID;
 
 @optional
-- (MKMID *)ownerForSocialEntityID:(const MKMID *)ID;
+- (MKMID *)ownerForGroupID:(const MKMID *)ID;
+
+@end
+
+@protocol MKMGroupDelegate <NSObject>
+
+- (MKMGroup *)groupWithID:(const MKMID *)ID;
 
 @end
 

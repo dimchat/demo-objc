@@ -6,22 +6,11 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "NSObject+JsON.h"
-#import "NSData+Crypto.h"
-#import "NSString+Crypto.h"
-#import "NSArray+Merkle.h"
-
 #import "MKMID.h"
-#import "MKMMeta.h"
-#import "MKMEntity.h"
 
-#import "MKMAccount.h"
-#import "MKMChatroom.h"
-
-#import "MKMConsensus.h"
+#import "MKMHistoryBlock.h"
 
 #import "MKMHistory.h"
-
 
 @interface MKMHistory ()
 

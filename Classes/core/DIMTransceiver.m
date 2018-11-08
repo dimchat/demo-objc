@@ -10,7 +10,7 @@
 
 #import "MKMContact+Message.h"
 #import "MKMUser+Message.h"
-#import "MKMChatroom+Message.h"
+#import "MKMGroup+Message.h"
 
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
@@ -96,9 +96,9 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
         MKMContact *contact = MKMContactWithID(receiver);
         sMsg = [contact encryptMessage:iMsg];
     } else if (receiver.address.network == MKMNetwork_Group) {
-        // receiver is a chatroom
-        MKMChatroom *chatroom = MKMChatroomWithID(receiver);
-        sMsg = [chatroom encryptMessage:iMsg];
+        // receiver is a group
+        MKMGroup *group = MKMGroupWithID(receiver);
+        sMsg = [group encryptMessage:iMsg];
     }
     
     NSAssert(sMsg.data, @"encrypt failed");

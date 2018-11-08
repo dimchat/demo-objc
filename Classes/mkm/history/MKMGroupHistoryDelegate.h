@@ -1,5 +1,5 @@
 //
-//  MKMSocialEntityHistoryDelegate.h
+//  MKMGroupHistoryDelegate.h
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/6.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMSocialEntityHistoryDelegate : MKMEntityHistoryDelegate
+@interface MKMGroupHistoryDelegate : MKMEntityHistoryDelegate
 
 /**
  *  Permissions Table:

@@ -207,10 +207,10 @@
 
 #pragma mark - Social Entity profile
 
-@implementation MKMSocialEntityProfile
+@implementation MKMGroupProfile
 
 + (instancetype)profileWithProfile:(id)profile {
-    if ([profile isKindOfClass:[MKMSocialEntityProfile class]]) {
+    if ([profile isKindOfClass:[MKMGroupProfile class]]) {
         return profile;
     } else if ([profile isKindOfClass:[NSDictionary class]]) {
         return [[self alloc] initWithDictionary:profile];
