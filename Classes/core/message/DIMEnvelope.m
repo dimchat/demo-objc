@@ -52,54 +52,68 @@ static NSDate *number_time(const NSNumber *number) {
     }
 }
 
-- (instancetype)init {
-    NSAssert(false, @"DON'T call me");
-    MKMID *from = nil;
-    MKMID *to = nil;
-    NSDate *time = nil;
-    self = [self initWithSender:from receiver:to time:time];
-    return self;
-}
-
-- (instancetype)initWithSender:(const MKMID *)from
-                      receiver:(const MKMID *)to {
-    NSDate *time = now();
-    self = [self initWithSender:from receiver:to time:time];
-    return self;
-}
-
+/* designated initializer */
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
-                          time:(const NSDate *)time {
+                          time:(nullable const NSDate *)time {
+    if (!time) {
+        time = now();
+    }
     NSDictionary *dict = @{@"sender"  :from,
                            @"receiver":to,
                            @"time"    :time_number(time),
                            };
     if (self = [super initWithDictionary:dict]) {
-        _sender = [MKMID IDWithID:from];
-        _receiver = [MKMID IDWithID:to];
+        _sender = [from copy];
+        _receiver = [to copy];
         _time = [time copy];
     }
     return self;
 }
 
+/* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
-        // sender
-        NSString *from = [dict objectForKey:@"sender"];
-        _sender = [MKMID IDWithID:from];
-        
-        // receiver
-        NSString *to = [dict objectForKey:@"receiver"];
-        _receiver = [MKMID IDWithID:to];
-        
-        // time
-        NSNumber *time = [dict objectForKey:@"time"];
-        _time = number_time(time);
+        // lazy
+        _sender = nil;
+        _receiver = nil;
+        _time = nil;
     }
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DIMEnvelope *env = [super copyWithZone:zone];
+    if (env) {
+        env.sender = _sender;
+        env.receiver = _receiver;
+        env.time = _time;
+    }
+    return env;
+}
+
+- (MKMID *)sender {
+    if (!_sender) {
+        id from = [_storeDictionary objectForKey:@"sender"];
+        _sender = [MKMID IDWithID:from];
+    }
+    return _sender;
+}
+
+- (MKMID *)receiver {
+    if (!_receiver) {
+        id to = [_storeDictionary objectForKey:@"receiver"];
+        _receiver = [MKMID IDWithID:to];
+    }
+    return _receiver;
+}
+
+- (NSDate *)time {
+    if (!_time) {
+        NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
+        _time = number_time(timestamp);
+    }
+    return _time;
 }
 
 @end

@@ -11,6 +11,9 @@
 
 #import "DIMKeyStore.h"
 
+#define DIM_KEYSTORE_CONTACTS_FILENAME @"keystore_contacts.plist"
+#define DIM_KEYSTORE_GROUPS_FILENAME   @"keystore_groups.plist"
+
 static inline NSString *caches_directory(void) {
     NSArray *paths;
     paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
@@ -53,15 +56,16 @@ static inline BOOL file_exists(NSString *path) {
     return [fm fileExistsAtPath:path];
 }
 
-typedef NSMutableDictionary<const MKMAddress *, MKMSymmetricKey *> KeysTable;
+typedef NSMutableDictionary<const MKMAddress *, MKMSymmetricKey *> KeysTableM;
+typedef NSMutableDictionary<const MKMAddress *, KeysTableM *> KeysTablesTableM;
 
 @interface DIMKeyStore () {
     
-    KeysTable *_keysForContacts;
-    KeysTable *_keysFromContacts;
+    KeysTableM *_keysForContacts;
+    KeysTableM *_keysFromContacts;
     
-    KeysTable *_keysForGroups;
-    NSMutableDictionary<const MKMAddress *, KeysTable *> *_tablesFromGroups;
+    KeysTableM *_keysForGroups;
+    KeysTablesTableM *_tablesFromGroups;
 }
 
 @property (nonatomic, getter=isDirty) BOOL dirty;
@@ -79,16 +83,31 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        _keysForContacts = [[KeysTable alloc] init];
-        _keysFromContacts = [[KeysTable alloc] init];
+        _keysForContacts = [[KeysTableM alloc] init];
+        _keysFromContacts = [[KeysTableM alloc] init];
         
-        _keysForGroups = [[KeysTable alloc] init];
-        _tablesFromGroups = [[NSMutableDictionary alloc] init];
+        _keysForGroups = [[KeysTableM alloc] init];
+        _tablesFromGroups = [[KeysTablesTableM alloc] init];
         
-        [self _loadKeyStoreFiles];
         _dirty = NO;
     }
     return self;
+}
+
+- (void)setCurrentUser:(MKMID *)currentUser {
+    if (![_currentUser isEqual:currentUser]) {
+        // 1. save key store files for current user
+        [self _saveKeyStoreFiles];
+        
+        // 2. clear
+        [self clearMemory];
+        
+        // 3. replace current user
+        _currentUser = currentUser;
+        
+        // 4. load key store files for new user
+        [self _loadKeyStoreFiles];
+    }
 }
 
 // inner function
@@ -102,6 +121,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     MKMSymmetricKey *PW;
     
     BOOL changed = NO;
+    BOOL isDirty = _dirty; // save old flag
     
     // keys from contacts
     path = full_filepath(_currentUser, DIM_KEYSTORE_CONTACTS_FILENAME);
@@ -123,7 +143,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     
     id gKey, eKey;
     MKMID *gID, *mID;
-    KeysTable *table;
+    KeysTableM *table;
     
     // keys from group.members
     path = full_filepath(_currentUser, DIM_KEYSTORE_GROUPS_FILENAME);
@@ -151,29 +171,40 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
         changed = YES;
     }
     
+    _dirty = isDirty; // restore the flag
     return changed;
 }
 
 // inner function
 - (BOOL)_saveKeyStoreFiles {
     if (!_dirty) {
+        // nothing changed
         return NO;
     }
     NSString *path;
     
     // keys from contacts
     path = full_filepath(_currentUser, DIM_KEYSTORE_CONTACTS_FILENAME);
-    BOOL OK1 = [_keysFromContacts writeToFile:path atomically:YES];
+    BOOL OK1 = [_keysFromContacts writeToBinaryFile:path];
     
     // keys from group.members
     path = full_filepath(_currentUser, DIM_KEYSTORE_GROUPS_FILENAME);
-    BOOL OK2 = [_tablesFromGroups writeToFile:path atomically:YES];
+    BOOL OK2 = [_tablesFromGroups writeToBinaryFile:path];
     
+    _dirty = NO;
     return OK1 && OK2;
 }
 
 - (BOOL)flush {
     return [self _saveKeyStoreFiles];
+}
+
+- (void)clearMemory {
+    [_keysForContacts removeAllObjects];
+    [_keysFromContacts removeAllObjects];
+    
+    [_keysForGroups removeAllObjects];
+    [_tablesFromGroups removeAllObjects];
 }
 
 #pragma mark - Cipher key to encpryt message for contact
@@ -222,7 +253,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
                                  inGroup:(const MKMID *)group {
     NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
     NSAssert(group.address.network == MKMNetwork_Group, @"group ID error");
-    KeysTable *table = [_tablesFromGroups objectForKey:group.address];
+    KeysTableM *table = [_tablesFromGroups objectForKey:group.address];
     return [table objectForKey:ID.address];
 }
 
@@ -231,9 +262,9 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
              inGroup:(const MKMID *)group {
     NSAssert(ID.address.network == MKMNetwork_Main, @"ID error");
     NSAssert(group.address.network == MKMNetwork_Group, @"group ID error");
-    KeysTable *table = [_tablesFromGroups objectForKey:group.address];
+    KeysTableM *table = [_tablesFromGroups objectForKey:group.address];
     if (!table) {
-        table = [[KeysTable alloc] init];
+        table = [[KeysTableM alloc] init];
         [_tablesFromGroups setObject:table forKey:group.address];
     }
     [table setObject:key forKey:ID.address];

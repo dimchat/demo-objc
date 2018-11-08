@@ -12,9 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMDictionary : MKMDictionary
 
-- (instancetype)init
-NS_DESIGNATED_INITIALIZER;
-
 - (instancetype)initWithDictionary:(NSDictionary *)dict
 NS_DESIGNATED_INITIALIZER;
 

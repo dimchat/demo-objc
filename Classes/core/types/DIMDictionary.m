@@ -11,23 +11,14 @@
 @implementation DIMDictionary
 
 /* designated initializer */
-- (instancetype)init {
-    self = [super init];
-    return self;
-}
-
-/* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     self = [super initWithDictionary:dict];
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    NSMutableDictionary *dict;
-    dict = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
-    if (self = [self init]) {
-        _storeDictionary = dict;
-    }
+- (instancetype)init {
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    self = [self initWithDictionary:dict];
     return self;
 }
 
@@ -38,9 +29,14 @@
     dict = [[NSMutableDictionary alloc] initWithObjects:objects
                                                 forKeys:keys
                                                   count:cnt];
-    if (self = [self init]) {
-        _storeDictionary = dict;
-    }
+    self = [self initWithDictionary:dict];
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    NSMutableDictionary *dict;
+    dict = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
+    self = [self initWithDictionary:dict];
     return self;
 }
 

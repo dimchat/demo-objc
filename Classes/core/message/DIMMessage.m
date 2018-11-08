@@ -43,13 +43,6 @@ static NSDate *number_time(const NSNumber *number) {
     }
 }
 
-- (instancetype)init {
-    NSAssert(false, @"DON'T call me");
-    DIMEnvelope *env = nil;
-    self = [self initWithEnvelope:env];
-    return self;
-}
-
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
                           time:(const NSDate *)time {
@@ -74,22 +67,39 @@ static NSDate *number_time(const NSNumber *number) {
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
         // envelope
-        id from = [dict objectForKey:@"sender"];
+        _envelope = nil; // lazy
+    }
+    return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DIMMessage *msg = [super copyWithZone:zone];
+    if (msg) {
+        msg.envelope = _envelope;
+    }
+    return self;
+}
+
+- (DIMEnvelope *)envelope {
+    if (!_envelope) {
+        // sender
+        id from = [_storeDictionary objectForKey:@"sender"];
         from = [MKMID IDWithID:from];
-        id to = [dict objectForKey:@"receiver"];
+        // receiver
+        id to = [_storeDictionary objectForKey:@"receiver"];
         to = [MKMID IDWithID:to];
-        NSNumber *ti = [dict objectForKey:@"time"];
-        NSDate *time = number_time(ti);
+        // time
+        NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
+        NSDate *time = number_time(timestamp);
+        
         DIMEnvelope *env;
         env = [[DIMEnvelope alloc] initWithSender:from
                                          receiver:to
                                              time:time];
         _envelope = env;
     }
-    return self;
+    return _envelope;
 }
 
 @end

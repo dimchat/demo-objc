@@ -62,4 +62,12 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    DIMSystemCommand *cmd = [super copyWithZone:zone];
+    if (cmd) {
+        cmd.command = _command;
+    }
+    return cmd;
+}
+
 @end

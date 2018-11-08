@@ -8,6 +8,9 @@
 
 #import "MKMID.h"
 
+#import "MKMProfile.h"
+#import "MKMBarrack.h"
+
 #import "MKMEntity.h"
 
 @implementation MKMEntity
@@ -22,13 +25,9 @@
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID {
     if (self = [super init]) {
-        if ([ID isValid]) {
-            _ID = [ID copy];
-            _name = _ID.name;
-        } else {
-            _ID = nil;
-            _name = nil;
-        }
+        NSAssert([ID isValid], @"Invalid ID");
+        _ID = [ID copy];
+        _name = nil; // lazy
     }
     
     return self;
@@ -55,6 +54,20 @@
 
 - (UInt32)number {
     return _ID.number;
+}
+
+- (NSString *)name {
+    if (_name) {
+        return _name;
+    }
+    // profile.name
+    MKMProfile *profile = MKMProfileForID(_ID);
+    NSString *nick = profile.name;
+    if (nick) {
+        return nick;
+    }
+    // ID.name
+    return _ID.name;
 }
 
 @end

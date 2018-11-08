@@ -34,7 +34,7 @@
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
         NSAssert([_algorithm isEqualToString:ACAlgorithmECC], @"algorithm error");
-        //keyInfo = _storeDictionary;
+        keyInfo = _storeDictionary;
         
         // ECC curve
         NSString *curve = [keyInfo objectForKey:@"curve"];

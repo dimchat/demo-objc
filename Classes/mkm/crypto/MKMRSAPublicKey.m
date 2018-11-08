@@ -86,7 +86,7 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
         NSAssert([_algorithm isEqualToString:ACAlgorithmRSA], @"algorithm error");
-        //keyInfo = _storeDictionary;
+        keyInfo = _storeDictionary;
         
         // RSA key data
         NSString *data = [keyInfo objectForKey:@"data"];

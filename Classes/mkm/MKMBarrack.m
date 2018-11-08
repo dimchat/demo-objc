@@ -34,13 +34,13 @@ static inline NSString *document_directory(void) {
  
  @param ID - account ID
  @param filename - "meta.plist"
- @return "Documents/mkm/{address}/meta.plist"
+ @return "Documents/.mkm/{address}/meta.plist"
  */
 static inline NSString *full_filepath(const MKMID *ID, NSString *filename) {
     assert(ID.isValid);
-    // base directory: Documents/mkm/{address}
+    // base directory: Documents/.mkm/{address}
     NSString *dir = document_directory();
-    dir = [dir stringByAppendingPathComponent:@"mkm"];
+    dir = [dir stringByAppendingPathComponent:@".mkm"];
     MKMAddress *addr = ID.address;
     if (addr) {
         dir = [dir stringByAppendingPathComponent:addr];
@@ -247,7 +247,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     }
     NSString *path = full_filepath(ID, @"meta.plist");
     NSAssert(!file_exists(path), @"no need to update meta file");
-    return [meta writeToFile:path atomically:YES];
+    return [meta writeToBinaryFile:path];
 }
 
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {

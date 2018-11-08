@@ -57,7 +57,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addProfile:(MKMProfile *)profile;
 
-- (void)reduceMemory; // remove 1/2 objects
+/**
+ Call it when receive 'UIApplicationDidReceiveMemoryWarningNotification',
+ this will remove 50% of unused objects from the cache
+ */
+- (void)reduceMemory;
 
 @end
 

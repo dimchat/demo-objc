@@ -9,8 +9,6 @@
 #import "MKMPublicKey.h"
 
 #import "MKMMeta.h"
-#import "MKMProfile.h"
-
 #import "MKMBarrack.h"
 
 #import "MKMAccount.h"
@@ -24,7 +22,7 @@
 @implementation MKMAccount
 
 - (instancetype)initWithID:(const MKMID *)ID {
-    MKMPublicKey *PK = nil;
+    MKMPublicKey *PK = MKMPublicKeyForID(ID);
     self = [self initWithID:ID publicKey:PK];
     return self;
 }
@@ -49,15 +47,6 @@
         account.status = _status;
     }
     return account;
-}
-
-- (NSString *)name {
-    MKMProfile *profile = MKMProfileForID(_ID);
-    NSString *str = profile.name;
-    if (str) {
-        return str;
-    }
-    return [super name];
 }
 
 @end

@@ -89,4 +89,12 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    DIMCertifiedMessage *cMsg = [super copyWithZone:zone];
+    if (cMsg) {
+        cMsg.signature = _signature;
+    }
+    return cMsg;
+}
+
 @end

@@ -44,7 +44,7 @@
     NSAssert(env, @"envelope cannot be empty");
     if (self = [super initWithEnvelope:env]) {
         // content
-        _content = [DIMMessageContent contentWithContent:content];
+        _content = [content copy];
         [_storeDictionary setObject:_content forKey:@"content"];
     }
     return self;
@@ -53,13 +53,26 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
         // content
-        id content = [dict objectForKey:@"content"];
-        _content = [DIMMessageContent contentWithContent:content];
+        _content = nil; // lazy
     }
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DIMInstantMessage *iMsg = [super copyWithZone:zone];
+    if (iMsg) {
+        iMsg.content = _content;
+    }
+    return iMsg;
+}
+
+- (DIMMessageContent *)content {
+    if (!_content) {
+        id content = [_storeDictionary objectForKey:@"content"];
+        _content = [DIMMessageContent contentWithContent:content];
+    }
+    return _content;
 }
 
 @end

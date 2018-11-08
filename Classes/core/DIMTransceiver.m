@@ -39,7 +39,9 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     
     // 1. make envelope
     DIMEnvelope *env;
-    env = [[DIMEnvelope alloc] initWithSender:sender receiver:receiver];
+    env = [[DIMEnvelope alloc] initWithSender:sender
+                                     receiver:receiver
+                                         time:nil];
     
     // 2. make instant message
     DIMInstantMessage *iMsg;

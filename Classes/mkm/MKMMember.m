@@ -20,6 +20,7 @@
 
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK {
+    //NSAssert(false, @"DON'T call me");
     MKMID *groupID = nil;
     self = [self initWithGroupID:groupID accountID:ID publicKey:PK];
     return self;

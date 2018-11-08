@@ -81,11 +81,11 @@
         _data = [content copy];
         [_storeDictionary setObject:[content base64Encode] forKey:@"data"];
         
+        _encryptedKey = nil;
+        
         // encrypted keys
         _encryptedKeys = [keys copy];
-        [_storeDictionary setObject:keys forKey:@"keys"];
-        
-        _encryptedKey = nil;
+        [_storeDictionary setObject:_encryptedKeys forKey:@"keys"];
     }
     return self;
 }
@@ -93,33 +93,58 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        // content
-        NSString *content = [dict objectForKey:@"data"];
-        NSAssert(content, @"content data cannot be empty");
-        self.data = [content base64Decode];
-        
-        // encrypted key
-        NSString *key = [dict objectForKey:@"key"];
-        if (key) {
-            self.encryptedKey = [key base64Decode];
-        } else {
-            _encryptedKey = nil;
-        }
-        
-        // encrypted keys
-        NSDictionary *keys = [dict objectForKey:@"keys"];
-        if (keys) {
-            DIMEncryptedKeyMap *map;
-            map = [[DIMEncryptedKeyMap alloc] initWithDictionary:keys];
-            _encryptedKeys = map;
-        } else {
-            _encryptedKeys = nil;
-        }
-        
-        NSAssert(key || keys, @"key or keys cannot be empty both");
+        // lazy
+        _data = nil;
+        _encryptedKey = nil;
+        _encryptedKeys = nil;
     }
     
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DIMSecureMessage *sMsg = [super copyWithZone:zone];
+    if (sMsg) {
+        sMsg.data = _data;
+        sMsg.encryptedKey = _encryptedKey;
+        sMsg.encryptedKeys = _encryptedKeys;
+    }
+    return sMsg;
+}
+
+- (NSData *)data {
+    if (!_data) {
+        NSString *content = [_storeDictionary objectForKey:@"data"];
+        NSAssert(content, @"content data cannot be empty");
+        _data = [content base64Decode];
+    }
+    return _data;
+}
+
+- (NSData *)encryptedKey {
+    if (!_encryptedKey) {
+        NSString *key = [_storeDictionary objectForKey:@"key"];
+        if (key) {
+            _encryptedKey = [key base64Decode];
+        } else {
+            MKMID *ID = self.envelope.receiver;
+            NSAssert(ID.type == MKMNetwork_Main, @"error");
+            // get from the key map
+            DIMEncryptedKeyMap *keyMap = self.encryptedKeys;
+            return [keyMap encryptedKeyForID:ID];
+        }
+    }
+    return _encryptedKey;
+}
+
+- (DIMEncryptedKeyMap *)encryptedKeys {
+    if (!_encryptedKeys) {
+        NSDictionary *keys = [_storeDictionary objectForKey:@"keys"];
+        DIMEncryptedKeyMap *map;
+        map = [[DIMEncryptedKeyMap alloc] initWithDictionary:keys];
+        _encryptedKeys = map;
+    }
+    return _encryptedKeys;
 }
 
 @end

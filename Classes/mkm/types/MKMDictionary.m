@@ -47,14 +47,8 @@
 
 /* designated initializer */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    NSMutableDictionary *dict;
-    dict = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
-    if (dict) {
-        if (self = [super init]) {
-            _storeDictionary = dict;
-        }
-    } else {
-        self = nil;
+    if (self = [super init]) {
+        _storeDictionary = [[NSMutableDictionary alloc] initWithCoder:aDecoder];
     }
     return self;
 }
@@ -106,6 +100,26 @@
 
 - (void)setObject:(id)anObject forKey:(const NSString *)aKey {
     [_storeDictionary setObject:anObject forKey:aKey];
+}
+
+@end
+
+@implementation NSDictionary (Binary)
+
+- (BOOL)writeToBinaryFile:(NSString *)path {
+    NSData *data;
+    NSPropertyListFormat fmt = NSPropertyListBinaryFormat_v1_0;
+    NSPropertyListWriteOptions opt = 0;
+    NSError *err = nil;
+    data = [NSPropertyListSerialization dataWithPropertyList:self
+                                                      format:fmt
+                                                     options:opt
+                                                       error:&err];
+    if (err) {
+        NSAssert(false, @"serialize failed: %@", err);
+        return NO;
+    }
+    return [data writeToFile:path atomically:YES];
 }
 
 @end

@@ -31,11 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)envelopeWithEnvelope:(id)env;
 
 - (instancetype)initWithSender:(const MKMID *)from
-                      receiver:(const MKMID *)to;
-
-- (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
-                          time:(const NSDate *)time
+                          time:(nullable const NSDate *)time
 NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict

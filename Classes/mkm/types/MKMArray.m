@@ -45,13 +45,8 @@
 
 /* designated initializer */
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-    NSMutableArray *arr = [[NSMutableArray alloc] initWithCoder:aDecoder];
-    if (arr) {
-        if (self = [super init]) {
-            _storeArray = arr;
-        }
-    } else {
-        self = nil;
+    if (self = [super init]) {
+        _storeArray = [[NSMutableArray alloc] initWithCoder:aDecoder];
     }
     return self;
 }

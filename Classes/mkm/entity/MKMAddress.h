@@ -49,13 +49,16 @@ NS_ASSUME_NONNULL_BEGIN
  *      MKMNetwork_Thing this is reserved for IoT (Internet of Things).
  *
  *  Bits:
- *      0000 0001 - this entity's branch is self-governing (big organization).
- *      0000 0010 - this entity has branch usually (contains other group).
+ *      0000 0001 - this entity's branch is independent (clear division).
+ *      0000 0010 - this entity can contains other group (big organization).
  *      0000 0100 - this entity is top organization.
- *      0000 1000 - (Main) this entity acts like a person.
- *      0001 0000 - (Group) this entity has founder, who create the entity.
- *      0010 0000 - (Group) this entity has owner, which can abdicate.
- *      0100 0000 - (IoT) this entity is a thing.
+ *      0000 1000 - (Main) this entity acts like a human.
+ *
+ *      0001 0000 - this entity contains members (Group)
+ *      0010 0000 - this entity needs other administrators (big organization)
+ *      0100 0000 - (RESERVED)
+ *      1000 0000 - (IoT) this entity is a thing.
+ *
  *      (All above are just some advices to help choosing numbers :P)
  */
 typedef NS_ENUM(UInt8, MKMNetworkID) {
@@ -76,7 +79,7 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
     //MKMNetwork_Department = 0x32, // 0011 0010
     //MKMNetwork_Government = 0x33, // 0011 0011
     
-    //MKMNetwork_Thing      = 0x60, // 0110 0000 (IoT)
+    //MKMNetwork_Thing      = 0x80, // 1000 0000 (IoT)
 };
 typedef UInt8 MKMNetworkType;
 

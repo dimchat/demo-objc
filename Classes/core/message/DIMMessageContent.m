@@ -11,7 +11,14 @@
 
 #import "DIMMessageContent.h"
 
-@interface DIMMessageContent ()
+@interface DIMMessageContent () {
+    
+    DIMMessageType _type;
+    NSUInteger _serialNumber;
+    
+    MKMID *_group;
+    __weak id<DIMMessageContentDelegate> _delegate;
+}
 
 @property (nonatomic) DIMMessageType type;
 @property (nonatomic) NSUInteger serialNumber;
@@ -33,7 +40,6 @@
     }
 }
 
-/* designated initializer */
 - (instancetype)init {
     if (self = [super init]) {
         // randomize a serial number
@@ -45,22 +51,33 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
+        // lazy
+        _type = DIMMessageType_Unknown;
+        _serialNumber = 0;
+        _group = nil;
         
-        // type
-        NSNumber *type = [dict objectForKey:@"type"];
-        _type = [type unsignedIntegerValue];
-        
-        // serial number
-        NSNumber *sn = [dict objectForKey:@"sn"];
-        _serialNumber = [sn unsignedIntegerValue];
-        NSAssert(_serialNumber > 0, @"sn cannot be empty");
-        
-        // group ID
-        MKMID *ID = [dict objectForKey:@"group"];
-        _group = [MKMID IDWithID:ID];
+        _delegate = nil;
     }
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DIMMessageContent *content = [super copyWithZone:zone];
+    if (content) {
+        content.type = _type;
+        content.serialNumber = _serialNumber;
+        content.group = _group;
+        content.delegate = _delegate;
+    }
+    return content;
+}
+
+- (DIMMessageType)type {
+    if (_type == DIMMessageType_Unknown) {
+        NSNumber *type = [_storeDictionary objectForKey:@"type"];
+        _type = [type unsignedIntegerValue];
+    }
+    return _type;
 }
 
 - (void)setType:(DIMMessageType)type {
@@ -68,9 +85,26 @@
     _type = type;
 }
 
+- (NSUInteger)serialNumber {
+    if (_serialNumber == 0) {
+        NSNumber *sn = [_storeDictionary objectForKey:@"sn"];
+        _serialNumber = [sn unsignedIntegerValue];
+        NSAssert(_serialNumber > 0, @"sn cannot be empty");
+    }
+    return _serialNumber;
+}
+
 - (void)setSerialNumber:(NSUInteger)serialNumber {
     [_storeDictionary setObject:@(serialNumber) forKey:@"sn"];
     _serialNumber = serialNumber;
+}
+
+- (MKMID *)group {
+    if (!_group) {
+        MKMID *ID = [_storeDictionary objectForKey:@"group"];
+        _group = [MKMID IDWithID:ID];
+    }
+    return _group;
 }
 
 - (void)setGroup:(MKMID *)group {

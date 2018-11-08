@@ -10,9 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIM_KEYSTORE_CONTACTS_FILENAME @"keystore_contacts.plist"
-#define DIM_KEYSTORE_GROUPS_FILENAME   @"keystore_groups.plist"
-
 @interface DIMKeyStore : NSObject
 
 /**
@@ -28,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
  @return YES when changed, or NO for nothing changed
  */
 - (BOOL)flush;
+
+/**
+ Clear all keys in memory
+ */
+- (void)clearMemory;
 
 #pragma mark - Cipher key to encpryt message for contact
 
