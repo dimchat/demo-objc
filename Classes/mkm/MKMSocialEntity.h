@@ -10,9 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NSMutableArray<const MKMID *> MKMMemberListM;
-typedef NSArray<const MKMID *> MKMMemberList;
-
 @interface MKMSocialEntity : MKMEntity {
     
     // parse the history to update profiles
@@ -20,13 +17,13 @@ typedef NSArray<const MKMID *> MKMMemberList;
     MKMID *_owner;
     
     // parse the history to update members
-    MKMMemberListM *_members;
+    NSMutableArray<const MKMID *> *_members;
 }
 
 @property (readonly, strong, nonatomic) MKMID *founder;
 @property (strong, nonatomic) MKMID *owner;
 
-@property (readonly, strong, nonatomic) MKMMemberList *members;
+@property (readonly, strong, nonatomic) NSArray<const MKMID *> *members;
 
 - (instancetype)initWithID:(const MKMID *)ID
                  founderID:(const MKMID *)founderID

@@ -19,7 +19,7 @@
 #import "MKMHistory.h"
 
 #import "MKMAccountHistoryDelegate.h"
-#import "MKMGroupHistoryDelegate.h"
+#import "MKMChatroomHistoryDelegate.h"
 
 #import "MKMConsensus.h"
 
@@ -45,7 +45,7 @@ static id<MKMEntityHistoryDelegate>history_delegate(const MKMEntity *entity) {
 @interface MKMConsensus () {
     
     MKMAccountHistoryDelegate *_defaultAccountDelegate;
-    MKMGroupHistoryDelegate *_defaultGroupDelegate;
+    MKMChatroomHistoryDelegate *_defaultChatroomDelegate;
 }
 
 @end
@@ -57,7 +57,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         _defaultAccountDelegate = [[MKMAccountHistoryDelegate alloc] init];
-        _defaultGroupDelegate = [[MKMGroupHistoryDelegate alloc] init];
+        _defaultChatroomDelegate = [[MKMChatroomHistoryDelegate alloc] init];
         
         _accountHistoryDelegate = nil;
         _groupHistoryDelegate = nil;
@@ -79,7 +79,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
     if (_groupHistoryDelegate) {
         return _groupHistoryDelegate;
     } else {
-        return _defaultGroupDelegate;
+        return _defaultChatroomDelegate;
     }
 }
 

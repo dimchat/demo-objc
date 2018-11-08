@@ -44,7 +44,7 @@
     
     NSAssert([entity isKindOfClass:[MKMSocialEntity class]], @"error");
     MKMSocialEntity *social = (MKMSocialEntity *)entity;
-    MKMMemberList *members = social.members;
+    NSArray *members = social.members;
     NSAssert(members.count > 0, @"members cannot be empty");
     
     // check member confirms for each transaction

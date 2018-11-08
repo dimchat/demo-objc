@@ -1,5 +1,5 @@
 //
-//  MKMGroupHistoryDelegate.m
+//  MKMChatroomHistoryDelegate.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/10/6.
@@ -7,15 +7,15 @@
 //
 
 #import "MKMID.h"
-#import "MKMGroup.h"
+#import "MKMChatroom.h"
 
 #import "MKMHistoryOperation.h"
 #import "MKMHistoryTransaction.h"
 #import "MKMHistoryBlock.h"
 
-#import "MKMGroupHistoryDelegate.h"
+#import "MKMChatroomHistoryDelegate.h"
 
-@implementation MKMGroupHistoryDelegate
+@implementation MKMChatroomHistoryDelegate
 
 - (BOOL)evolvingEntity:(const MKMEntity *)entity
         canWriteRecord:(const MKMHistoryBlock *)record {
@@ -27,10 +27,10 @@
     MKMID *recorder = [MKMID IDWithID:record.recorder];
     NSAssert([recorder isValid], @"recorder error");
     
-    NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
-    MKMGroup *group = (MKMGroup *)entity;
+    NSAssert([entity isKindOfClass:[MKMChatroom class]], @"error");
+    MKMChatroom *chatroom = (MKMChatroom *)entity;
     
-    BOOL isOwner = [group isOwner:recorder];
+    BOOL isOwner = [chatroom isOwner:recorder];
     if (isOwner) {
         return YES;
     }
@@ -56,13 +56,13 @@
     MKMHistoryOperation *operation = event.operation;
     operation = [MKMHistoryOperation operationWithOperation:operation];
     
-    NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
-    MKMGroup *group = (MKMGroup *)entity;
+    NSAssert([entity isKindOfClass:[MKMChatroom class]], @"error");
+    MKMChatroom *chatroom = (MKMChatroom *)entity;
     
     //BOOL isFounder = [group isFounder:ID];
-    BOOL isOwner = [group isOwner:commander];
-    BOOL isAdmin = [group isAdmin:commander];
-    //BOOL isMember = isOwner || isAdmin || [group isMember:ID];
+    BOOL isOwner = [chatroom isOwner:commander];
+    BOOL isAdmin = [chatroom isAdmin:commander];
+    //BOOL isMember = isOwner || isAdmin || [chatroom isMember:ID];
     
     const NSString *op = operation.command;
     if ([op isEqualToString:@"name"] ||
@@ -113,12 +113,12 @@
     // call super execute
     [super evolvingEntity:entity execute:operation commander:commander];
     
-    NSAssert([entity isKindOfClass:[MKMGroup class]], @"error");
-    MKMGroup *group = (MKMGroup *)entity;
+    NSAssert([entity isKindOfClass:[MKMChatroom class]], @"error");
+    MKMChatroom *chatroom = (MKMChatroom *)entity;
     
     const NSString *op = operation.command;
     if ([op isEqualToString:@"hire"]) {
-        NSAssert([group isOwner:commander], @"permission denied");
+        NSAssert([chatroom isOwner:commander], @"permission denied");
         // hire admin
         MKMID *admin = [operation objectForKey:@"admin"];
         if (!admin) {
@@ -126,10 +126,10 @@
         }
         if (admin) {
             admin = [MKMID IDWithID:admin];
-            [group addAdmin:admin];
+            [chatroom addAdmin:admin];
         }
     } else if ([op isEqualToString:@"fire"]) {
-        NSAssert([group isOwner:commander], @"permission denied");
+        NSAssert([chatroom isOwner:commander], @"permission denied");
         // fire admin
         MKMID *admin = [operation objectForKey:@"admin"];
         if (!admin) {
@@ -137,12 +137,12 @@
         }
         if (admin) {
             admin = [MKMID IDWithID:admin];
-            [group removeAdmin:admin];
+            [chatroom removeAdmin:admin];
         }
     } else if ([op isEqualToString:@"resign"]) {
-        NSAssert([group isAdmin:commander], @"history error");
+        NSAssert([chatroom isAdmin:commander], @"history error");
         // resign admin
-        [group removeAdmin:commander];
+        [chatroom removeAdmin:commander];
     }
 }
 

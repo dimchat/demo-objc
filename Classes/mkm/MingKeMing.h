@@ -45,13 +45,13 @@
 #import "MKMEntityHistoryDelegate.h"
 #import "MKMAccountHistoryDelegate.h"
 #import "MKMSocialEntityHistoryDelegate.h"
-#import "MKMGroupHistoryDelegate.h"
+#import "MKMChatroomHistoryDelegate.h"
 #import "MKMConsensus.h"
 #import "MKMUser+History.h"
 
 // group
 #import "MKMSocialEntity.h"
-#import "MKMGroup.h"
+#import "MKMChatroom.h"
 #import "MKMMember.h"
 
 // user

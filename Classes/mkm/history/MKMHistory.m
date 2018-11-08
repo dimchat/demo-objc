@@ -16,7 +16,7 @@
 #import "MKMEntity.h"
 
 #import "MKMAccount.h"
-#import "MKMGroup.h"
+#import "MKMChatroom.h"
 
 #import "MKMConsensus.h"
 

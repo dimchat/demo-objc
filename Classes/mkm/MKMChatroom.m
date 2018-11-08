@@ -1,20 +1,20 @@
 //
-//  MKMGroup.m
+//  MKMChatroom.m
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/28.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMGroup.h"
+#import "MKMChatroom.h"
 
-@interface MKMGroup ()
+@interface MKMChatroom ()
 
 @property (strong, nonatomic) MKMAdminListM *administrators;
 
 @end
 
-@implementation MKMGroup
+@implementation MKMChatroom
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
@@ -28,11 +28,11 @@
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    MKMGroup *group = [super copyWithZone:zone];
-    if (group) {
-        group.administrators = _administrators;
+    MKMChatroom *chatroom = [super copyWithZone:zone];
+    if (chatroom) {
+        chatroom.administrators = _administrators;
     }
-    return group;
+    return chatroom;
 }
 
 - (void)removeMember:(const MKMID *)ID {

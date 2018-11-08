@@ -23,28 +23,35 @@ NS_ASSUME_NONNULL_BEGIN
  *      MKMNetwork_Main indicates this entity is a person's account.
  *      An account should have a public key, which proved by meta data.
  *
- *      MKMNetwork_Polylogue indicates a virtual (temporary) social network.
- *      It's created to talk with multi-people (but not too much, e.g. < 100).
- *      Any member can invite people in, but only the founder can expel member.
+ *      MKMNetwork_Group indicates this entity is a group of people,
+ *      which should have a founder, and some members.
  *
  *      MKMNetwork_Moments indicates a special personal social network,
  *      where the owner can share informations and interact with its friends.
  *      The owner is the king here, it can do anything and no one can stop it.
  *
+ *      MKMNetwork_Official indicates this entity is an official account.
+ *
  *      MKMNetwork_Social indicates this entity is a social entity.
  *      A social entity should have a founder, an owner, and some members.
  *
- *      MKMNetwork_Group indicates this entity is a persistent group.
- *      A group should have a founder, an owner, some members, and some
- *      administrators if need.
+ *      MKMNetwork_Polylogue indicates a virtual (temporary) social network.
+ *      It's created to talk with multi-people (but not too much, e.g. < 100).
+ *      Any member can invite people in, but only the founder can expel member.
+ *
+ *      MKMNetwork_ChatRoom indicates a massive (persistent) social network.
+ *      It's usually more than 100 people in it, so we need administrators
+ *      to help the owner to manage the group.
+ *
+ *      MKMNetwork_Organization indicates an independent organization.
  *
  *      MKMNetwork_Company indicates this entity is a company.
- *
- *      MKMNetwork_Department indicates this entity is a department.
  *
  *      MKMNetwork_School indicates this entity is a school.
  *
  *      MKMNetwork_Government indicates this entity is a government department.
+ *
+ *      MKMNetwork_Department indicates this entity is a department.
  *
  *      MKMNetwork_Thing this is reserved for IoT (Internet of Things).
  *
@@ -67,19 +74,21 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
     
     MKMNetwork_Main    = 0x08, // 0000 1000 (Person)
     
-    MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)
+    MKMNetwork_Group   = 0x10, // 0001 0000 (Multi-Persons)
+    
     //MKMNetwork_Moments = 0x18, // 0001 1000 (Twitter)
     MKMNetwork_Official  = 0x38, // 0011 1000 (Official Account)
     
-    //MKMNetwork_Social  = 0x30, // 0011 0000
-    MKMNetwork_Group     = 0x34, // 0011 0100 (Multi-Persons Chat, N >= 100)
+    MKMNetwork_Polylogue = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)
+    MKMNetwork_ChatRoom  = 0x30, // 0011 0000 (Multi-Persons Chat, N >= 100)
     
-    //MKMNetwork_Company    = 0x36, // 0011 0110
-    //MKMNetwork_School     = 0x37, // 0011 0111
-    //MKMNetwork_Department = 0x32, // 0011 0010
-    //MKMNetwork_Government = 0x33, // 0011 0011
+    //MKMNetwork_Organization = 0x34, // 0011 0100
+    //MKMNetwork_Company      = 0x36, // 0011 0110
+    //MKMNetwork_School       = 0x37, // 0011 0111
+    //MKMNetwork_Government   = 0x33, // 0011 0011
+    //MKMNetwork_Department   = 0x32, // 0011 0010
     
-    //MKMNetwork_Thing      = 0x80, // 1000 0000 (IoT)
+    //MKMNetwork_Thing = 0x80, // 1000 0000 (IoT)
 };
 typedef UInt8 MKMNetworkType;
 

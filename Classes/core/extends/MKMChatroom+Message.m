@@ -1,5 +1,5 @@
 //
-//  MKMGroup+Message.m
+//  MKMChatroom+Message.m
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -16,9 +16,9 @@
 
 #import "DIMKeyStore.h"
 
-#import "MKMGroup+Message.h"
+#import "MKMChatroom+Message.h"
 
-@implementation MKMGroup (Message)
+@implementation MKMChatroom (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;

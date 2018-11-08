@@ -1,5 +1,5 @@
 //
-//  MKMGroup.h
+//  MKMChatroom.h
 //  MingKeMing
 //
 //  Created by Albert Moky on 2018/9/28.
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NSMutableArray<const MKMID *> MKMAdminListM;
 typedef NSArray<const MKMID *> MKMAdminList;
 
-@interface MKMGroup : MKMSocialEntity {
+@interface MKMChatroom : MKMSocialEntity {
     
     MKMAdminListM *_administrators;
 }
@@ -30,11 +30,11 @@ typedef NSArray<const MKMID *> MKMAdminList;
 
 @end
 
-#pragma mark - Group Delegate
+#pragma mark - Chatroom Delegate
 
-@protocol MKMGroupDelegate <NSObject>
+@protocol MKMChatroomDelegate <NSObject>
 
-- (MKMGroup *)groupWithID:(const MKMID *)ID;
+- (MKMChatroom *)chatroomWithID:(const MKMID *)ID;
 
 @end
 

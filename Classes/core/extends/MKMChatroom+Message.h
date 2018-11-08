@@ -1,5 +1,5 @@
 //
-//  MKMGroup+Message.h
+//  MKMChatroom+Message.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMEncryptedKeyMap;
 
-@interface MKMGroup (Message)
+@interface MKMChatroom (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
 

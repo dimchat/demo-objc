@@ -15,7 +15,7 @@
 #import "DIMMessageContent.h"
 
 #import "MKMContact+Message.h"
-#import "MKMGroup+Message.h"
+#import "MKMChatroom+Message.h"
 
 #import "DIMKeyStore.h"
 

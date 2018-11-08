@@ -17,7 +17,7 @@
 
 @property (strong, nonatomic) MKMID *founder;
 
-@property (strong, nonatomic) MKMMemberListM *members;
+@property (strong, nonatomic) NSMutableArray<const MKMID *> *members;
 
 @end
 
@@ -71,7 +71,7 @@
         return;
     }
     if (!_members) {
-        _members = [[MKMMemberListM alloc] init];
+        _members = [[NSMutableArray alloc] init];
     }
     [_members addObject:ID];
 }

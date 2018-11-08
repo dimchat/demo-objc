@@ -16,7 +16,7 @@
 
 #import "MKMUser.h"
 #import "MKMContact.h"
-#import "MKMGroup.h"
+#import "MKMChatroom.h"
 #import "MKMMember.h"
 
 #import "MKMProfile.h"
@@ -66,23 +66,22 @@ static inline BOOL file_exists(NSString *path) {
     return [fm fileExistsAtPath:path];
 }
 
-typedef NSMutableDictionary<const MKMAddress *, MKMContact *> ContactTableM;
 typedef NSMutableDictionary<const MKMAddress *, MKMUser *> UserTableM;
+typedef NSMutableDictionary<const MKMAddress *, MKMContact *> ContactTableM;
 
-typedef NSMutableDictionary<const MKMAddress *, MKMGroup *> GroupTableM;
+typedef NSMutableDictionary<const MKMAddress *, MKMChatroom *> ChatroomTableM;
 typedef NSMutableDictionary<const MKMAddress *, MKMMember *> MemberTableM;
-typedef NSMutableDictionary<const MKMAddress *, MemberTableM *> GroupMemberTableM;
 
 typedef NSMutableDictionary<const MKMAddress *, MKMMeta *> MetaTableM;
 typedef NSMutableDictionary<const MKMAddress *, MKMProfile *> ProfileTableM;
 
 @interface MKMBarrack () {
     
-    ContactTableM *_contactTable;
     UserTableM *_userTable;
+    ContactTableM *_contactTable;
     
-    GroupTableM *_groupTable;
-    GroupMemberTableM *_memberTables;
+    ChatroomTableM *_chatroomTable;
+    NSMutableDictionary<const MKMAddress *, MemberTableM *> *_memberTables;
     
     MetaTableM *_metaTable;
     ProfileTableM *_profileTable;
@@ -113,8 +112,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         _contactTable = [[ContactTableM alloc] init];
         _userTable = [[UserTableM alloc] init];
         
-        _groupTable = [[GroupTableM alloc] init];
-        _memberTables = [[GroupMemberTableM alloc] init];
+        _chatroomTable = [[ChatroomTableM alloc] init];
+        _memberTables = [[NSMutableDictionary alloc] init];
         
         _metaTable = [[MetaTableM alloc] init];
         _profileTable = [[ProfileTableM alloc] init];
@@ -126,7 +125,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     reduce_table(_contactTable);
     reduce_table(_userTable);
     
-    reduce_table(_groupTable);
+    reduce_table(_chatroomTable);
     reduce_table(_memberTables);
     
     reduce_table(_metaTable);
@@ -149,11 +148,11 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     }
 }
 
-- (void)addGroup:(MKMGroup *)group {
-    MKMAddress *address = group.ID.address;
+- (void)addChatroom:(MKMChatroom *)chatroom {
+    MKMAddress *address = chatroom.ID.address;
     NSAssert(address, @"address error");
     if (address.isValid) {
-        [_groupTable setObject:group forKey:address];
+        [_chatroomTable setObject:chatroom forKey:address];
     }
 }
 
@@ -204,16 +203,16 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     return contact;
 }
 
-#pragma mark MKMGroupDelegate
+#pragma mark MKMChatroomDelegate
 
-- (MKMGroup *)groupWithID:(const MKMID *)ID {
-    MKMGroup *group = [_groupTable objectForKey:ID.address];
-    if (!group) {
-        NSAssert(_groupDelegate, @"group delegate not set");
-        group = [_groupDelegate groupWithID:ID];
-        [self addGroup:group];
+- (MKMChatroom *)chatroomWithID:(const MKMID *)ID {
+    MKMChatroom *chatroom = [_chatroomTable objectForKey:ID.address];
+    if (!chatroom) {
+        NSAssert(_chatroomDelegate, @"chatroom delegate not set");
+        chatroom = [_chatroomDelegate chatroomWithID:ID];
+        [self addChatroom:chatroom];
     }
-    return group;
+    return chatroom;
 }
 
 #pragma mark MKMMemberDelegate

@@ -7,7 +7,7 @@
 //
 
 #import "MKMContact+Message.h"
-#import "MKMGroup+Message.h"
+#import "MKMChatroom+Message.h"
 
 #import "DIMEnvelope.h"
 #import "DIMInstantMessage.h"
@@ -16,7 +16,7 @@
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) MKMEntity *entity; // Contact or Group
+@property (strong, nonatomic) MKMEntity *entity; // Contact or Chatroom
 
 @end
 
@@ -51,9 +51,9 @@
         // "xxx"
         return name;
 //    } else if (self.type == DIMConversationGroup) {
-//        MKMGroup *group = (MKMGroup *)_entity;
-//        NSString *name = group.name;
-//        NSUInteger count = group.members.count;
+//        MKMChatroom *chatroom = (MKMChatroom *)_entity;
+//        NSString *name = chatroom.name;
+//        NSUInteger count = chatroom.members.count;
 //        // "yyy (123)"
 //        return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
     }
