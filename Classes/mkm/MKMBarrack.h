@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define MKMMemberWithID(ID, gID) [MKMFacebook() memberWithID:(ID) groupID:(gID)]
 
 #define MKMMetaForID(ID)         [MKMFacebook() metaForEntityID:(ID)]
-#define MKMPublicKeyForID(ID)    [MKMFacebook() publicKeyForAccountID:(ID)]
+#define MKMPublicKeyForID(ID)    MKMMetaForID(ID).key
 #define MKMProfileForID(ID)      [MKMFacebook() profileForID:(ID)]
 
 /**
@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      1st, get instance here to avoid create same instance,
  *      2nd, if they were updated, we can refresh them immediately here
  */
-@interface MKMBarrack : NSObject <MKMUserDelegate, MKMContactDelegate, MKMGroupDelegate, MKMMemberDelegate, MKMEntityDataSource, MKMAccountDataSource, MKMProfileDataSource>
+@interface MKMBarrack : NSObject <MKMUserDelegate, MKMContactDelegate, MKMGroupDelegate, MKMMemberDelegate, MKMEntityDataSource, MKMProfileDataSource>
 
 @property (weak, nonatomic) id<MKMUserDelegate> userDelegate;
 @property (weak, nonatomic) id<MKMContactDelegate> contactDelegate;
@@ -45,7 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<MKMMemberDelegate> memberDelegate;
 
 @property (weak, nonatomic) id<MKMEntityDataSource> entityDataSource;
-@property (weak, nonatomic) id<MKMAccountDataSource> accountDataSource;
 @property (weak, nonatomic) id<MKMProfileDataSource> profileDataSource;
 
 + (instancetype)sharedInstance;
@@ -57,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addMember:(MKMMember *)member;
 
 - (void)addProfile:(MKMProfile *)profile;
+- (void)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID;
 
 /**
  Call it when receive 'UIApplicationDidReceiveMemoryWarningNotification',

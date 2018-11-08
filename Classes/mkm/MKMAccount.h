@@ -37,12 +37,4 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-#pragma mark - Account Delegate
-
-@protocol MKMAccountDataSource <NSObject>
-
-- (MKMPublicKey *)publicKeyForAccountID:(const MKMID *)ID;
-
-@end
-
 NS_ASSUME_NONNULL_END

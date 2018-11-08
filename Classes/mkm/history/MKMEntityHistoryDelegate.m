@@ -12,6 +12,7 @@
 #import "MKMPublicKey.h"
 
 #import "MKMID.h"
+#import "MKMMeta.h"
 #import "MKMEntity.h"
 
 #import "MKMHistoryOperation.h"

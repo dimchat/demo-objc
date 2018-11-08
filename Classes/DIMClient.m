@@ -78,7 +78,8 @@ static void load_immortal_file(NSString *filename) {
     assert(SK.algorithm);
     [SK saveKeyWithIdentifier:ID.address];
     
-    // 4. save profiles into barrack
+    // 4. save meta & profile into barrack
+    [barrack setMeta:meta forID:ID];
     [barrack addProfile:profile];
 }
 

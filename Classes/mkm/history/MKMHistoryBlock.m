@@ -15,6 +15,7 @@
 #import "MKMPrivateKey.h"
 
 #import "MKMID.h"
+#import "MKMMeta.h"
 #import "MKMHistoryTransaction.h"
 
 #import "MKMBarrack.h"

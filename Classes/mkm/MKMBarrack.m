@@ -180,6 +180,15 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     }
 }
 
+- (void)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID {
+    if (meta) {
+        NSAssert([meta matchID:ID], @"meta error: %@, ID = %@", meta, ID);
+        [_metaTable setObject:meta forKey:ID.address];
+    } else {
+        [_metaTable removeObjectForKey:ID.address];
+    }
+}
+
 #pragma mark - MKMUserDelegate
 
 - (MKMUser *)userWithID:(const MKMID *)ID {
@@ -279,23 +288,28 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     return meta;
 }
 
-#pragma mark MKMAccountDataSource
-
-- (MKMPublicKey *)publicKeyForAccountID:(const MKMID *)ID {
-    // try contacts
-    MKMContact *contact = [_contactTable objectForKey:ID.address];
-    if (contact) {
-        return contact.publicKey;
-    }
-    // try users
-    MKMUser *user = [_userTable objectForKey:ID.address];
-    if (user) {
-        return user.publicKey;
-    }
-    
-    NSAssert(_accountDataSource, @"account data source not set");
-    return [_accountDataSource publicKeyForAccountID:ID];
-}
+//#pragma mark MKMAccountDataSource
+//
+//- (MKMPublicKey *)publicKeyForAccountID:(const MKMID *)ID {
+//    // try contacts
+//    MKMContact *contact = [_contactTable objectForKey:ID.address];
+//    if (contact) {
+//        return contact.publicKey;
+//    }
+//    // try users
+//    MKMUser *user = [_userTable objectForKey:ID.address];
+//    if (user) {
+//        return user.publicKey;
+//    }
+//    // try meta
+//    MKMMeta *meta = [self metaForEntityID:ID];
+//    if (meta) {
+//        return meta.key;
+//    }
+//    // finally, call account data source
+//    NSAssert(_accountDataSource, @"account data source not set");
+//    return [_accountDataSource publicKeyForAccountID:ID];
+//}
 
 #pragma mark - MKMProfileDataSource
 
