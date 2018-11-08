@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "MKMID.h"
+
 #import "MKMChatroom.h"
 
 @interface MKMChatroom ()
@@ -19,6 +21,7 @@
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                  founderID:(const MKMID *)founderID {
+    NSAssert(ID.type == MKMNetwork_Chatroom, @"ID error");
     if (self = [super initWithID:ID founderID:founderID]) {
         // lazy
         _administrators = nil;

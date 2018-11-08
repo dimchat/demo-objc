@@ -50,9 +50,10 @@
 #import "MKMUser+History.h"
 
 // Group
-#import "MKMGroup.h"
-#import "MKMChatroom.h"
 #import "MKMMember.h"
+#import "MKMGroup.h"
+#import "MKMPolylogue.h"
+#import "MKMChatroom.h"
 
 //-
 #import "MKMAccount.h"
