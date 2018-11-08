@@ -22,24 +22,69 @@
 
 #import "MKMBarrack.h"
 
-typedef NSMutableDictionary<const MKMAddress *, MKMContact *> ContactTable;
-typedef NSMutableDictionary<const MKMAddress *, MKMUser *> UserTable;
+static inline NSString *document_directory(void) {
+    NSArray *paths;
+    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                NSUserDomainMask, YES);
+    return paths.firstObject;
+}
 
-typedef NSMutableDictionary<const MKMAddress *, MKMGroup *> GroupTable;
-typedef NSMutableDictionary<const MKMAddress *, MKMMember *> MemberTable;
-typedef NSMutableDictionary<const MKMAddress *, MemberTable *> GroupMemberTable;
+/**
+ Get full filepath to Documents Directory
+ 
+ @param ID - account ID
+ @param filename - "meta.plist"
+ @return "Documents/mkm/{address}/meta.plist"
+ */
+static inline NSString *full_filepath(const MKMID *ID, NSString *filename) {
+    assert(ID.isValid);
+    // base directory: Documents/mkm/{address}
+    NSString *dir = document_directory();
+    dir = [dir stringByAppendingPathComponent:@"mkm"];
+    MKMAddress *addr = ID.address;
+    if (addr) {
+        dir = [dir stringByAppendingPathComponent:addr];
+    }
+    
+    // check base directory exists
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:dir isDirectory:nil]) {
+        NSError *error = nil;
+        // make sure directory exists
+        [fm createDirectoryAtPath:dir withIntermediateDirectories:YES
+                       attributes:nil error:&error];
+        assert(!error);
+    }
+    
+    // build filepath
+    return [dir stringByAppendingPathComponent:filename];
+}
 
-typedef NSMutableDictionary<const MKMAddress *, MKMProfile *> ProfileTable;
+static inline BOOL file_exists(NSString *path) {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    return [fm fileExistsAtPath:path];
+}
+
+typedef NSMutableDictionary<const MKMAddress *, MKMContact *> ContactTableM;
+typedef NSMutableDictionary<const MKMAddress *, MKMUser *> UserTableM;
+
+typedef NSMutableDictionary<const MKMAddress *, MKMGroup *> GroupTableM;
+typedef NSMutableDictionary<const MKMAddress *, MKMMember *> MemberTableM;
+typedef NSMutableDictionary<const MKMAddress *, MemberTableM *> GroupMemberTableM;
+
+typedef NSMutableDictionary<const MKMAddress *, MKMMeta *> MetaTableM;
+typedef NSMutableDictionary<const MKMAddress *, MKMProfile *> ProfileTableM;
 
 @interface MKMBarrack () {
     
-    ContactTable *_contactTable;
-    UserTable *_userTable;
+    ContactTableM *_contactTable;
+    UserTableM *_userTable;
     
-    GroupTable *_groupTable;
-    GroupMemberTable *_memberTables;
+    GroupTableM *_groupTable;
+    GroupMemberTableM *_memberTables;
     
-    ProfileTable *_profileTable;
+    MetaTableM *_metaTable;
+    ProfileTableM *_profileTable;
 }
 
 @end
@@ -64,13 +109,14 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        _contactTable = [[ContactTable alloc] init];
-        _userTable = [[UserTable alloc] init];
+        _contactTable = [[ContactTableM alloc] init];
+        _userTable = [[UserTableM alloc] init];
         
-        _groupTable = [[GroupTable alloc] init];
-        _memberTables = [[GroupMemberTable alloc] init];
+        _groupTable = [[GroupTableM alloc] init];
+        _memberTables = [[GroupMemberTableM alloc] init];
         
-        _profileTable = [[ProfileTable alloc] init];
+        _metaTable = [[MetaTableM alloc] init];
+        _profileTable = [[ProfileTableM alloc] init];
     }
     return self;
 }
@@ -82,6 +128,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     reduce_table(_groupTable);
     reduce_table(_memberTables);
     
+    reduce_table(_metaTable);
     reduce_table(_profileTable);
 }
 
@@ -115,9 +162,9 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     NSAssert(gAddr, @"group address error");
     NSAssert(uAddr, @"address error");
     if (gAddr.isValid && uAddr.isValid) {
-        MemberTable *table = [_memberTables objectForKey:gAddr];
+        MemberTableM *table = [_memberTables objectForKey:gAddr];
         if (!table) {
-            table = [[MemberTable alloc] init];
+            table = [[MemberTableM alloc] init];
             [_memberTables setObject:table forKey:gAddr];
         }
         [table setObject:member forKey:uAddr];
@@ -171,7 +218,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMMemberDelegate
 
 - (MKMMember *)memberWithID:(const MKMID *)ID groupID:(const MKMID *)gID {
-    MemberTable *table = [_memberTables objectForKey:gID.address];
+    MemberTableM *table = [_memberTables objectForKey:gID.address];
     MKMMember *member = [table objectForKey:ID.address];
     if (!member) {
         NSAssert(_memberDelegate, @"member delegate not set");
@@ -183,9 +230,52 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 
 #pragma mark - MKMEntityDataSource
 
+- (MKMMeta *)loadMetaForEntityID:(const MKMID *)ID {
+    MKMMeta *meta = nil;
+    NSString *path = full_filepath(ID, @"meta.plist");
+    if (file_exists(path)) {
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+        meta = [[MKMMeta alloc] initWithDictionary:dict];
+    }
+    return meta;
+}
+
+- (BOOL)saveMeta:(const MKMMeta *)meta forEntityID:(const MKMID *)ID {
+    if (![meta matchID:ID]) {
+        NSAssert(!meta, @"meta error: %@, ID = %@", meta, ID);
+        return NO;
+    }
+    NSString *path = full_filepath(ID, @"meta.plist");
+    NSAssert(!file_exists(path), @"no need to update meta file");
+    return [meta writeToFile:path atomically:YES];
+}
+
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {
+    MKMMeta *meta;
+    
+    // 1. search in memory cache
+    meta = [_metaTable objectForKey:ID.address];
+    if (meta) {
+        return meta;
+    }
+    
+    // 2. search in local database
+    meta = [self loadMetaForEntityID:ID];
+    if (meta) {
+        [_metaTable setObject:meta forKey:ID.address];
+        return meta;
+    }
+    
+    // 3. query from the network
     NSAssert(_entityDataSource, @"entity data source not set");
-    return [_entityDataSource metaForEntityID:ID];
+    meta = [_entityDataSource metaForEntityID:ID];
+    
+    // 4. store in local database
+    if (meta && [self saveMeta:meta forEntityID:ID]) {
+        [_metaTable setObject:meta forKey:ID.address];
+    }
+    
+    return meta;
 }
 
 #pragma mark MKMAccountDataSource

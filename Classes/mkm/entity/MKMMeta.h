@@ -88,8 +88,8 @@ NS_ASSUME_NONNULL_BEGIN
  @return Meta object
  */
 - (instancetype)initWithSeed:(const NSString *)name
-                   publicKey:(const MKMPublicKey *)PK
-                  privateKey:(const MKMPrivateKey *)SK;
+                  privateKey:(const MKMPrivateKey *)SK
+                   publicKey:(nullable const MKMPublicKey *)PK;
 
 #pragma mark - ID & address
 

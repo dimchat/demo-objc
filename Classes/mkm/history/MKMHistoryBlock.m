@@ -116,7 +116,7 @@ static NSMutableArray *json_array(const NSArray *events) {
     
     // recorder
     if (ID) {
-        NSAssert(hash && CT, @"error");
+        NSAssert(!hash || CT, @"error");
         [mDict setObject:ID forKey:@"recorder"];
     }
     

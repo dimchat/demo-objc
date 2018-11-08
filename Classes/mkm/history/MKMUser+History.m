@@ -19,8 +19,15 @@
 #import "MKMHistory.h"
 
 #import "MKMConsensus.h"
+#import "MKMBarrack.h"
 
 #import "MKMUser+History.h"
+
+@interface MKMBarrack (Hacking)
+
+- (BOOL)saveMeta:(const MKMMeta *)meta forEntityID:(const MKMID *)ID;
+
+@end
 
 @implementation MKMUser (History)
 
@@ -36,7 +43,7 @@
     MKMAddress *address;
     MKMMeta *meta;
     // 1.1. generate meta
-    meta = [[MKMMeta alloc] initWithSeed:seed publicKey:PK privateKey:SK];
+    meta = [[MKMMeta alloc] initWithSeed:seed privateKey:SK publicKey:PK];
     NSLog(@"register meta: %@", meta);
     // 1.2. generate address with meta info
     address = [meta buildAddressWithNetworkID:MKMNetwork_Main];
@@ -47,6 +54,8 @@
     user = [[self alloc] initWithID:ID publicKey:meta.key];
     // 1.5. store private key for user in keychain
     user.privateKey = [SK copy];
+    // 1.6. add this user to entity pool
+    [MKMFacebook() addUser:user];
     
     // 2. generate history
     MKMHistory *history;
@@ -63,7 +72,7 @@
     record = [[MKMHistoryBlock alloc] initWithTransactions:@[event]
                                                     merkle:hash
                                                  signature:CT
-                                                  recorder:nil];
+                                                  recorder:ID];
     [record signWithPrivateKey:SK];
     // 2.4. create history with record(s)
     history = [[MKMHistory alloc] initWithID:ID];
@@ -73,8 +82,9 @@
     // 3. running history with delegate to update status
     [[MKMConsensus sharedInstance] runHistory:history forEntity:user];
     
-//    // 4. store meta + history and send out
-//    // 4.1. store in entity manager
+    // 4. store meta + history and send out
+    // 4.1. store in entity manager
+    [MKMFacebook() saveMeta:meta forEntityID:ID];
 //    [eman setMeta:meta forID:ID];
 //    [eman setHistory:history forID:ID];
 //    // 4.2. upload onto the network
@@ -112,7 +122,7 @@
     record = [[MKMHistoryBlock alloc] initWithTransactions:@[ev1, ev2]
                                                     merkle:hash
                                                  signature:CT
-                                                  recorder:nil];
+                                                  recorder:_ID];
     [record signWithPrivateKey:self.privateKey];
     NSLog(@"suicide record: %@", record);
     

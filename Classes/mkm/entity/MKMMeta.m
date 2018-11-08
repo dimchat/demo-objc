@@ -78,9 +78,13 @@
 }
 
 - (instancetype)initWithSeed:(const NSString *)name
-                   publicKey:(const MKMPublicKey *)PK
-                  privateKey:(const MKMPrivateKey *)SK {
-    NSAssert([PK isMatch:SK], @"PK must match SK");
+                  privateKey:(const MKMPrivateKey *)SK
+                   publicKey:(nullable const MKMPublicKey *)PK {
+    if (PK) {
+        NSAssert([PK isMatch:SK], @"PK must match SK");
+    } else {
+        PK = [SK publicKey];
+    }
     NSData *CT = [SK sign:[name data]];
     self = [self initWithSeed:name
                     publicKey:PK

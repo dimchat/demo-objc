@@ -123,6 +123,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 - (NSUInteger)runHistory:(const MKMHistory *)history
                forEntity:(MKMEntity *)entity {
     NSAssert([entity.ID isValid], @"ID error");
+    NSAssert([history.ID isEqual:entity.ID], @"ID not match");
     NSAssert([history count] > 0, @"history cannot be empty");
     NSUInteger pos = 0;
     
@@ -160,7 +161,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
     
     // OK, add new history records now
     MKMHistoryBlock *record, *prev = nil;
-    for (id item in history) {
+    for (id item in history.blocks) {
         record = [MKMHistoryBlock blockWithBlock:item];
         // check the link with previous record
         if (prev && ![record.previousSignature isEqualToData:prev.signature]) {
