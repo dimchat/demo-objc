@@ -26,7 +26,7 @@
 - (void)recvMessage:(const DIMInstantMessage *)iMsg {
     NSLog(@"saving message: %@", iMsg);
     
-    DIMConversation *chatroom = nil;
+    DIMConversation *dialogBox = nil;
     
     DIMEnvelope *env = iMsg.envelope;
     MKMID *sender = env.sender;
@@ -34,14 +34,14 @@
     
     if ([receiver isEqual:self.currentUser.ID]) {
         // personal chat, get chatroom with contact ID
-        chatroom = DIMConversationWithID(sender);
+        dialogBox = DIMConversationWithID(sender);
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chatroom with group ID
-        chatroom = DIMConversationWithID(receiver);
+        dialogBox = DIMConversationWithID(receiver);
     }
-    NSAssert(chatroom, @"chatroom room not found");
+    NSAssert(dialogBox, @"dialogBox not found");
     
-    [chatroom insertMessage:iMsg];
+    [dialogBox insertMessage:iMsg];
 }
 
 @end

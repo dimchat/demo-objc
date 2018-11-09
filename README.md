@@ -66,7 +66,8 @@ SingletonImplementations(AccountDelegate, sharedInstance)
 @end
 ```
 
-* Sample: Register User
+### Samples
+* Register User
 
 ```
 // generate asymmetric keys
@@ -83,30 +84,36 @@ NSLog(@"my new ID: %@", moky.ID);
 1. The private key of the registered user will save into the Keychain automatically.
 2. The meta & history of this user must be saved by the entity delegate after registered.
 
-* Sample: Load User
+* Load User
 
 ```
-// load user from barrack
+// 1. Initialize your delegate first
+[AccountDelegate sharedInstance];
+
+// 2. Load user from barrack
 NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi";  // from your db
 MKMID *ID = [[MKMID alloc] initWithString:str];
 MKMUser *moky = [[MKMBarrack sharedInstance] userWithID:ID]; // from factory
 
-// set current user for the DIM client
+// 3. Set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
 1. Your delegate must load the user data from local storage to create user,
 2. After that it should try to query the newest history & profile from the network.
 
-* Sample: Load Contact
+* Load Contact
 
 ```
-// get contacts from barrack
+// 1. Initialize your delegate first
+[AccountDelegate sharedInstance];
+
+// 2. Get contacts from barrack
 MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
 MKMID *ID2 = [[MKMID alloc] initWithString:MKM_MONKEY_KING_ID];
 MKMContact *hulk = [[MKMBarrack sharedInstance] contactWithID:ID1];
 MKMContact *moki = [[MKMBarrack sharedInstance] contactWithID:ID2];
 
-// add contacts to user
+// 3. Add contacts to the user
 [moky addContact:hulk.ID];
 [moky addContact:moki.ID];
 ```
@@ -138,24 +145,25 @@ MKMContact *moki = [[MKMBarrack sharedInstance] contactWithID:ID2];
 @end
 ```
 
-* Sample: send out message
+### Samples
+* Send message
 
 ```
-// get message content
+// 1. Create message content
 NSString *text = @"Hey boy!"
 DIMMessageContent *content = [[DIMMessageContent alloc] initWithText:text];
 
-// encrypt and sign the message content by transceiver
+// 2. Encrypt and sign the message content by transceiver
 DIMTransceiver *trans = [DIMTransceiver sharedInstance];
 DIMCertifiedMessage *cMsg = [trans encryptAndSignContent:content sender:moky.ID receiver:hulk.ID];
 
-// send out the certified secure message via current connection
-DIMConnection *connection = [DINClient sharedInstance].currentConnection;
+// 3. Send out the certified secure message via current connection
 NSData *data = [cMsg jsonData];
-[connection sendData:data];
+// TODO: compress(optional) and send out
+// ...
 ```
 
-* Sample: receive message
+* Receive message
 
 ```
 // create your message processor
@@ -166,16 +174,16 @@ DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
 clerk.dataSource = _myMessageProcessor;
 clerk.delegate = _myMessageProcessor;
 
-// 1. when current connection received a message data,
-//    it will call the <DIMConnectionDelegate> (DIMClient as default)
-//    to handle it;
-// 2. the DIMClient will try to recognize the message data,
-//    if it's a command, the client will handle it directly;
-// 3. or if it's a certified secure message,
-//    the client will insert it into the chatroom (DIMConversation)
+// 1. when your network connection received a message data, you should
+//    decompress(if need) and call [DIMTransceiver sharedInstance]
+//    to verify and decrypt it to an InstantMessage;
+// 2. after that, you could try to recognize the message type, if it is
+//    a system command, you could run your scripts for it, otherwise
+//    call [DIMClient sharedInstance] to handle the message;
+// 3. the client will insert it into the chat box (DIMConversation)
 //    that the message belongs to;
-// 4. finally, the chatroom will call your message processor for saving it,
-//    the clerk (DIMAmanuensis) will set your processor into each chatroom
+// 4. finally, the chat box will call your message processor to save it,
+//    the clerk (DIMAmanuensis) will set your processor into each chat box
 //    automatically, unless you have already specify them.
 ```
 1. Your message processor should implement saving new message and loading messages partially from local store.
