@@ -111,8 +111,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 
 typedef NS_ENUM(UInt8, DIMConversationID) {
-    DIMConversationPersonal  = MKMNetwork_Main,      // 0000 1000
-    DIMConversationPolylogue = MKMNetwork_Polylogue, // 0001 0000
+    DIMConversationUnknown  = 0x00,
+    DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000
+    DIMConversationGroup    = MKMNetwork_Group, // 0001 0000
 };
 typedef UInt8 DIMConversationType;
 

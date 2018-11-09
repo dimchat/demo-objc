@@ -37,7 +37,12 @@
 }
 
 - (DIMConversationType)type {
-    return _entity.ID.address.network;
+    if (MKMNetwork_IsPerson(_entity.type)) {
+        return DIMConversationPersonal;
+    } else if (MKMNetwork_IsGroup(_entity.type)) {
+        return DIMConversationGroup;
+    }
+    return DIMConversationUnknown;
 }
 
 - (MKMID *)ID {
@@ -45,18 +50,20 @@
 }
 
 - (NSString *)title {
-    if (self.type == DIMConversationPersonal) {
-        MKMContact *contact = (MKMContact *)_entity;
-        NSString *name = contact.name;
+    DIMConversationType type = self.type;
+    if (type == DIMConversationPersonal) {
+        MKMAccount *person = (MKMAccount *)_entity;
+        NSString *name = person.name;
         // "xxx"
         return name;
-//    } else if (self.type == DIMConversationGroup) {
-//        MKMChatroom *chatroom = (MKMChatroom *)_entity;
-//        NSString *name = chatroom.name;
-//        NSUInteger count = chatroom.members.count;
-//        // "yyy (123)"
-//        return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
+    } else if (type == DIMConversationGroup) {
+        MKMGroup *group = (MKMGroup *)_entity;
+        NSString *name = group.name;
+        NSUInteger count = group.members.count;
+        // "yyy (123)"
+        return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
     }
+    NSAssert(false, @"unknown conversation type");
     return @"Conversation";
 }
 
