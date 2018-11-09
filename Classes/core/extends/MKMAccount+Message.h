@@ -1,5 +1,5 @@
 //
-//  MKMContact+Message.h
+//  MKMAccount+Message.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/11/7.
@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMSecureMessage;
 @class DIMCertifiedMessage;
 
-@interface MKMContact (Message)
+@interface MKMAccount (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
 

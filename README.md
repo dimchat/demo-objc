@@ -14,6 +14,8 @@
 @end
 ```
 ```
+#import "NSObject+Singleton.h"
+
 #import "AccountDelegate.h"
 
 @implementation AccountDelegate

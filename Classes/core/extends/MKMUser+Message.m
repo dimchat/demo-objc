@@ -14,7 +14,7 @@
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
-#import "MKMContact+Message.h"
+#import "MKMAccount+Message.h"
 #import "MKMGroup+Message.h"
 
 #import "DIMKeyStore.h"
@@ -96,7 +96,7 @@
         PW = msg.encryptedKey;
         if (!PW) {
             // get passphrase from contact
-            scKey = [store cipherKeyFromContact:sender];
+            scKey = [store cipherKeyFromAccount:sender];
         }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         // get passphrase in group message

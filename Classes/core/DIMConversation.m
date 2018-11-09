@@ -6,7 +6,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMContact+Message.h"
+#import "MKMAccount+Message.h"
 #import "MKMGroup+Message.h"
 
 #import "DIMEnvelope.h"

@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 /**
- Persistent save cipher keys from contacts/group.members if changed
+ Persistent save cipher keys from accounts/group.members if changed
 
  @return YES when changed, or NO for nothing changed
  */
@@ -31,43 +31,43 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)clearMemory;
 
-#pragma mark - Cipher key to encpryt message for contact
+#pragma mark - Cipher key to encpryt message for account(contact)
 
 /**
- Get a cipher key to encrypt message for a friend
+ Get a cipher key to encrypt message for a friend(contact)
 
  @param ID - friend
  @return passphrase
  */
-- (MKMSymmetricKey *)cipherKeyForContact:(const MKMID *)ID;
+- (MKMSymmetricKey *)cipherKeyForAccount:(const MKMID *)ID;
 
 /**
- Save the cipher key for the friend
+ Save the cipher key for the friend(contact)
 
  @param key - passphrase
  @param ID - friend
  */
 - (void)setCipherKey:(MKMSymmetricKey *)key
-          forContact:(const MKMID *)ID;
+          forAccount:(const MKMID *)ID;
 
 #pragma mark - Cipher key from contact to decrypt message
 
 /**
- Get a cipher key from a friend to decrypt message
+ Get a cipher key from a friend(contact) to decrypt message
 
  @param ID - friend
  @return passphrase
  */
-- (MKMSymmetricKey *)cipherKeyFromContact:(const MKMID *)ID;
+- (MKMSymmetricKey *)cipherKeyFromAccount:(const MKMID *)ID;
 
 /**
- Save the cipher key from the friend
+ Save the cipher key from the friend(contact)
 
  @param key - passphrase
  @param ID - friend
  */
 - (void)setCipherKey:(MKMSymmetricKey *)key
-         fromContact:(const MKMID *)ID;
+         fromAccount:(const MKMID *)ID;
 
 #pragma mark - Cipher key to encrypt message for all group members
 

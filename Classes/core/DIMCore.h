@@ -10,7 +10,7 @@
 //#import "MingKeMing.h"
 
 // Extends
-#import "MKMContact+Message.h"
+#import "MKMAccount+Message.h"
 #import "MKMUser+Message.h"
 #import "MKMGroup+Message.h"
 

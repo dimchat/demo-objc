@@ -12,7 +12,7 @@
 
 #import "DIMKeyStore.h"
 
-#define DIM_KEYSTORE_CONTACTS_FILENAME @"keystore_contacts.plist"
+#define DIM_KEYSTORE_ACCOUNTS_FILENAME @"keystore_accounts.plist"
 #define DIM_KEYSTORE_GROUPS_FILENAME   @"keystore_groups.plist"
 
 static inline NSString *caches_directory(void) {
@@ -62,8 +62,8 @@ typedef NSMutableDictionary<const MKMAddress *, KeysTableM *> KeysTablesTableM;
 
 @interface DIMKeyStore () {
     
-    KeysTableM *_keysForContacts;
-    KeysTableM *_keysFromContacts;
+    KeysTableM *_keysForAccounts;
+    KeysTableM *_keysFromAccounts;
     
     KeysTableM *_keysForGroups;
     KeysTablesTableM *_tablesFromGroups;
@@ -84,8 +84,8 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        _keysForContacts = [[KeysTableM alloc] init];
-        _keysFromContacts = [[KeysTableM alloc] init];
+        _keysForAccounts = [[KeysTableM alloc] init];
+        _keysFromAccounts = [[KeysTableM alloc] init];
         
         _keysForGroups = [[KeysTableM alloc] init];
         _tablesFromGroups = [[KeysTablesTableM alloc] init];
@@ -125,7 +125,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     BOOL isDirty = _dirty; // save old flag
     
     // keys from contacts
-    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_CONTACTS_FILENAME);
+    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_ACCOUNTS_FILENAME);
     if (file_exists(path)) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -137,7 +137,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
             // key
             PW = [MKMSymmetricKey keyWithKey:obj];
             // update keys table
-            [self setCipherKey:PW fromContact:cID];
+            [self setCipherKey:PW fromAccount:cID];
         }
         changed = YES;
     }
@@ -185,8 +185,8 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     NSString *path;
     
     // keys from contacts
-    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_CONTACTS_FILENAME);
-    BOOL OK1 = [_keysFromContacts writeToBinaryFile:path];
+    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_ACCOUNTS_FILENAME);
+    BOOL OK1 = [_keysFromAccounts writeToBinaryFile:path];
     
     // keys from group.members
     path = full_filepath(_currentUser.ID, DIM_KEYSTORE_GROUPS_FILENAME);
@@ -201,37 +201,37 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 }
 
 - (void)clearMemory {
-    [_keysForContacts removeAllObjects];
-    [_keysFromContacts removeAllObjects];
+    [_keysForAccounts removeAllObjects];
+    [_keysFromAccounts removeAllObjects];
     
     [_keysForGroups removeAllObjects];
     [_tablesFromGroups removeAllObjects];
 }
 
-#pragma mark - Cipher key to encpryt message for contact
+#pragma mark - Cipher key to encpryt message for account(contact)
 
-- (MKMSymmetricKey *)cipherKeyForContact:(const MKMID *)ID {
+- (MKMSymmetricKey *)cipherKeyForAccount:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
-    return [_keysForContacts objectForKey:ID.address];
+    return [_keysForAccounts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
-          forContact:(const MKMID *)ID {
+          forAccount:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
-    [_keysForContacts setObject:key forKey:ID.address];
+    [_keysForAccounts setObject:key forKey:ID.address];
 }
 
-#pragma mark - Cipher key from contact to decrypt message
+#pragma mark - Cipher key from account(contact) to decrypt message
 
-- (MKMSymmetricKey *)cipherKeyFromContact:(const MKMID *)ID {
+- (MKMSymmetricKey *)cipherKeyFromAccount:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
-    return [_keysFromContacts objectForKey:ID.address];
+    return [_keysFromAccounts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
-         fromContact:(const MKMID *)ID {
+         fromAccount:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
-    [_keysFromContacts setObject:key forKey:ID.address];
+    [_keysFromAccounts setObject:key forKey:ID.address];
     _dirty = YES;
 }
 

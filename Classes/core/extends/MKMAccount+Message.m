@@ -16,9 +16,9 @@
 
 #import "DIMKeyStore.h"
 
-#import "MKMContact+Message.h"
+#import "MKMAccount+Message.h"
 
-@implementation MKMContact (Message)
+@implementation MKMAccount (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
     DIMEnvelope *env = msg.envelope;
@@ -80,11 +80,11 @@
     MKMID *receiver = env.receiver;
     NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);
     
-    MKMSymmetricKey *PW = [store cipherKeyForContact:_ID];
+    MKMSymmetricKey *PW = [store cipherKeyForAccount:_ID];
     if (!PW) {
         // create a new one
         PW = [[MKMSymmetricKey alloc] init];
-        [store setCipherKey:PW forContact:_ID];
+        [store setCipherKey:PW forAccount:_ID];
     }
     return PW;
 }
