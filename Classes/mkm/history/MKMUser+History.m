@@ -32,10 +32,10 @@
 @implementation MKMUser (History)
 
 + (instancetype)registerWithName:(const NSString *)seed
-                       publicKey:(const MKMPublicKey *)PK
-                      privateKey:(const MKMPrivateKey *)SK {
+                      privateKey:(const MKMPrivateKey *)SK
+                       publicKey:(nullable const MKMPublicKey *)PK {
     NSAssert([seed length] > 0, @"seed error");
-    NSAssert([PK isMatch:SK], @"PK must match SK");
+    NSAssert(!PK || [PK isMatch:SK], @"PK must match SK");
     
     // 1. create user
     MKMUser *user;
@@ -56,6 +56,9 @@
     user.privateKey = [SK copy];
     // 1.6. add this user to entity pool
     [MKMFacebook() addUser:user];
+    // 1.7. store meta & private key
+    [MKMFacebook() saveMeta:meta forEntityID:ID];
+    [SK saveKeyWithIdentifier:ID.address];
     
     // 2. generate history
     MKMHistory *history;
@@ -84,7 +87,6 @@
     
     // 4. store meta + history and send out
     // 4.1. store in entity manager
-    [MKMFacebook() saveMeta:meta forEntityID:ID];
 //    [eman setMeta:meta forID:ID];
 //    [eman setHistory:history forID:ID];
 //    // 4.2. upload onto the network

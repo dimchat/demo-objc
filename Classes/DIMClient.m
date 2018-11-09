@@ -110,10 +110,13 @@ SingletonImplementations(DIMClient, sharedInstance)
 - (void)setCurrentUser:(MKMUser *)currentUser {
     if (![_currentUser isEqual:currentUser]) {
         _currentUser = currentUser;
-        // add to list
+        // add to the list of this client
         if (currentUser && ![_users containsObject:currentUser]) {
             [_users addObject:currentUser];
         }
+        
+        // update keystore
+        [DIMKeyStore sharedInstance].currentUser = currentUser;
     }
 }
 

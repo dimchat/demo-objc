@@ -194,8 +194,18 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 - (MKMUser *)userWithID:(const MKMID *)ID {
     MKMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
-        NSAssert(_userDelegate, @"user delegate not set");
-        user = [_userDelegate userWithID:ID];
+        if (_userDelegate) {
+            // create by delegate
+            user = [_userDelegate userWithID:ID];
+        }
+        if (!user) {
+            // create directly if we can find public key
+            MKMPublicKey *PK = MKMPublicKeyForID(ID);
+            if (PK) {
+                user = [[MKMUser alloc] initWithID:ID publicKey:PK];
+            }
+        }
+        NSAssert(user, @"failed to create user: %@", ID);
         [self addUser:user];
     }
     return user;
@@ -206,8 +216,18 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 - (MKMContact *)contactWithID:(const MKMID *)ID {
     MKMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
-        NSAssert(_contactDelegate, @"contact delegate not set");
-        contact = [_contactDelegate contactWithID:ID];
+        if (_contactDelegate) {
+            // create by delegate
+            contact = [_contactDelegate contactWithID:ID];
+        }
+        if (!contact) {
+            // create directly if we can find public key
+            MKMPublicKey *PK = MKMPublicKeyForID(ID);
+            if (PK) {
+                contact = [[MKMContact alloc] initWithID:ID publicKey:PK];
+            }
+        }
+        NSAssert(contact, @"failed to create contact: %@", ID);
         [self addContact:contact];
     }
     return contact;
@@ -218,7 +238,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 - (MKMGroup *)groupWithID:(const MKMID *)ID {
     MKMGroup *group = [_groupTable objectForKey:ID.address];
     if (!group) {
-        NSAssert(_groupDelegate, @"chatroom delegate not set");
+        NSAssert(_groupDelegate, @"group delegate not set");
         group = [_groupDelegate groupWithID:ID];
         [self addGroup:group];
     }
@@ -231,8 +251,20 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     MemberTableM *table = [_groupMemberTable objectForKey:gID.address];
     MKMMember *member = [table objectForKey:ID.address];
     if (!member) {
-        NSAssert(_memberDelegate, @"member delegate not set");
-        member = [_memberDelegate memberWithID:ID groupID:gID];
+        if (_memberDelegate) {
+            // create by delegate
+            member = [_memberDelegate memberWithID:ID groupID:gID];
+        }
+        if (!member) {
+            // create directly if we can find public key
+            MKMPublicKey *PK = MKMPublicKeyForID(ID);
+            if (PK) {
+                member = [[MKMMember alloc] initWithGroupID:gID
+                                                  accountID:ID
+                                                  publicKey:PK];
+            }
+        }
+        NSAssert(member, @"failed to create member: %@ in %@", ID, gID);
         [self addMember:member];
     }
     return member;

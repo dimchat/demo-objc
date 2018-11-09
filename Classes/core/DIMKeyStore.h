@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Current User
  */
-@property (strong, nonatomic) MKMID *currentUser;
+@property (strong, nonatomic) MKMUser *currentUser;
 
 + (instancetype)sharedInstance;
 

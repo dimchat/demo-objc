@@ -95,7 +95,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     return self;
 }
 
-- (void)setCurrentUser:(MKMID *)currentUser {
+- (void)setCurrentUser:(MKMUser *)currentUser {
     if (![_currentUser isEqual:currentUser]) {
         // 1. save key store files for current user
         [self _saveKeyStoreFiles];
@@ -125,7 +125,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     BOOL isDirty = _dirty; // save old flag
     
     // keys from contacts
-    path = full_filepath(_currentUser, DIM_KEYSTORE_CONTACTS_FILENAME);
+    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_CONTACTS_FILENAME);
     if (file_exists(path)) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -147,7 +147,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     KeysTableM *table;
     
     // keys from group.members
-    path = full_filepath(_currentUser, DIM_KEYSTORE_GROUPS_FILENAME);
+    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_GROUPS_FILENAME);
     if (file_exists(path)) {
         // load keys from contact
         dict = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -185,11 +185,11 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     NSString *path;
     
     // keys from contacts
-    path = full_filepath(_currentUser, DIM_KEYSTORE_CONTACTS_FILENAME);
+    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_CONTACTS_FILENAME);
     BOOL OK1 = [_keysFromContacts writeToBinaryFile:path];
     
     // keys from group.members
-    path = full_filepath(_currentUser, DIM_KEYSTORE_GROUPS_FILENAME);
+    path = full_filepath(_currentUser.ID, DIM_KEYSTORE_GROUPS_FILENAME);
     BOOL OK2 = [_tablesFromGroups writeToBinaryFile:path];
     
     _dirty = NO;

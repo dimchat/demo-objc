@@ -18,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
  Create a new account
  
  @param seed - username
- @param PK - public key
  @param SK - private key
- @return Account object
+ @param PK - public key, it will get from SK if empty
+ @return User(Account)
  */
 + (instancetype)registerWithName:(const NSString *)seed
-                       publicKey:(const MKMPublicKey *)PK
-                      privateKey:(const MKMPrivateKey *)SK;
+                      privateKey:(const MKMPrivateKey *)SK
+                       publicKey:(nullable const MKMPublicKey *)PK;
 
 /**
  Delete the account, FOREVER!

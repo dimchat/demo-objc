@@ -2,7 +2,71 @@
 
 ## User & Contacts:
 
-* Samples
+* Implements your entity delegate (.h/.m)
+
+```
+#import "DIMC.h"
+
+@interface AccountDelegate : NSObject <MKMUserDelegate, MKMContactDelegate, MKMEntityDataSource, MKMProfileDataSource>
+
++ (instancetype)sharedInstance;
+
+@end
+```
+```
+#import "AccountDelegate.h"
+
+@implementation AccountDelegate
+
+SingletonImplementations(AccountDelegate, sharedInstance)
+
+- (instancetype)init {
+    if (self = [super init]) {
+        [MKMBarrack sharedInstance].userDelegate = self;
+        [MKMBarrack sharedInstance].contactDelegate = self;
+        
+        [MKMBarrack sharedInstance].entityDataSource = self;
+        [MKMBarrack sharedInstance].profileDataSource = self;
+    }
+    return self;
+}
+
+#pragma mark - MKMUserDelegate
+
+- (MKMUser *)userWithID:(const MKMID *)ID {
+    MKMPublicKey *PK = MKMPublicKeyForID(ID);
+    return [[MKMUser alloc] initWithID:ID publicKey:PK];
+}
+
+#pragma mark MKMContactDelegate
+
+- (MKMContact *)contactWithID:(const MKMID *)ID {
+    MKMPublicKey *PK = MKMPublicKeyForID(ID);
+    return [[MKMContact alloc] initWithID:ID publicKey:PK];
+}
+
+#pragma mark - MKMEntityDataSource
+
+- (MKMMeta *)metaForEntityID:(const MKMID *)ID {
+    // TODO: load meta from local storage or network
+    NSDictionary *dict;
+    // ...
+    return [[MKMMeta alloc] initWithDictionary:dict];;
+}
+
+#pragma mark - MKMProfileDataSource
+
+- (MKMProfile *)profileForID:(const MKMID *)ID {
+    // TODO: load profile from local storage or network
+    NSDictionary *dict;
+    // ...
+    return [[MKMProfile alloc] initWithDictionary:dict];;
+}
+
+@end
+```
+
+* Sample: Register User
 
 ```
 // generate asymmetric keys
@@ -10,7 +74,7 @@ MKMPrivateKey *SK = [[MKMPrivateKey alloc] init];
 MKMPublicKey *PK = SK.publicKey;
 
 // register user
-MKMUser *moky = [MKMUser registerWithName:@"moky" publicKey:PK privateKey:SK];
+MKMUser *moky = [MKMUser registerWithName:@"moky" privateKey:SK publicKey:PK];
 NSLog(@"my new ID: %@", moky.ID);
 
 // set current user for the DIM client
@@ -19,30 +83,34 @@ NSLog(@"my new ID: %@", moky.ID);
 1. The private key of the registered user will save into the Keychain automatically.
 2. The meta & history of this user must be saved by the entity delegate after registered.
 
+* Sample: Load User
+
 ```
-// load user
-NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi"; // from your db
+// load user from barrack
+NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi";  // from your db
 MKMID *ID = [[MKMID alloc] initWithString:str];
-MKMUser *moky = [[DIMBarrack sharedInstance] userForID:ID];
+MKMUser *moky = [[MKMBarrack sharedInstance] userWithID:ID]; // from factory
 
 // set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
-1. The entity delegate must load the user's meta & history & profile from local files for creating a user,
+1. Your delegate must load the user data from local storage to create user,
 2. After that it should try to query the newest history & profile from the network.
+
+* Sample: Load Contact
 
 ```
 // get contacts from barrack
 MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
 MKMID *ID2 = [[MKMID alloc] initWithString:MKM_MONKEY_KING_ID];
-MKMContact *hulk = [[MKMBarrack sharedInstance] contactForID:ID1];
-MKMContact *moki = [[MKMBarrack sharedInstance] contactForID:ID2];
+MKMContact *hulk = [[MKMBarrack sharedInstance] contactWithID:ID1];
+MKMContact *moki = [[MKMBarrack sharedInstance] contactWithID:ID2];
 
 // add contacts to user
-[moky addContact:hulk];
-[moky addContact:moki];
+[moky addContact:hulk.ID];
+[moky addContact:moki.ID];
 ```
-1. The entity delegate must load the contact's meta & history & profile when need.
+1. Your delegate must load the contact data (or query from network) when need.
 2. You need to manage the user's relationship, here just add the contacts to the user in memory, not persistent store.
 
 ## Instant messages:
