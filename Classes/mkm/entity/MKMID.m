@@ -150,10 +150,16 @@ static void parse_id_string(const NSString *string, MKMID *ID) {
 }
 
 - (MKMNetworkType)type {
+    if (!_name && !_address && !_terminal && _valid == NO) {
+        parse_id_string(_storeString, self);
+    }
     return _address.network;
 }
 
 - (UInt32)number {
+    if (!_name && !_address && !_terminal && _valid == NO) {
+        parse_id_string(_storeString, self);
+    }
     return _address.code;
 }
 
