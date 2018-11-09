@@ -18,6 +18,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MKMContactDelegate <NSObject>
 
+/**
+ Contact factory
+
+ @param ID - account ID
+ @return Contact
+ */
 - (MKMContact *)contactWithID:(const MKMID *)ID;
 
 @end

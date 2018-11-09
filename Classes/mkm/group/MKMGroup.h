@@ -59,6 +59,12 @@ NS_DESIGNATED_INITIALIZER;
 
 @protocol MKMGroupDelegate <NSObject>
 
+/**
+ Group factory
+
+ @param ID - group ID
+ @return group
+ */
 - (MKMGroup *)groupWithID:(const MKMID *)ID;
 
 @end

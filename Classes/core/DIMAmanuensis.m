@@ -1,0 +1,107 @@
+//
+//  DIMAmanuensis.m
+//  DIMCore
+//
+//  Created by Albert Moky on 2018/10/21.
+//  Copyright © 2018 DIM Group. All rights reserved.
+//
+
+#import "NSObject+Singleton.h"
+
+#import "DIMConversation.h"
+
+#import "DIMAmanuensis.h"
+
+@interface DIMAmanuensis () {
+    
+    NSMutableDictionary<const MKMAddress *, DIMConversation *> *_conversations;
+}
+
+@end
+
+@implementation DIMAmanuensis
+
+SingletonImplementations(DIMAmanuensis, sharedInstance)
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _conversations = [[NSMutableDictionary alloc] init];
+    }
+    return self;
+}
+
+- (void)setConversationDataSource:(id<DIMConversationDataSource>)dataSource {
+    if (dataSource) {
+        // update exists chat boxes
+        DIMConversation *chatBox;
+        for (id addr in _conversations) {
+            chatBox = [_conversations objectForKey:addr];
+            if (chatBox.dataSource == nil) {
+                chatBox.dataSource = dataSource;
+            }
+        }
+    }
+    _conversationDataSource = dataSource;
+}
+
+- (void)setConversationDelegate:(id<DIMConversationDelegate>)delegate {
+    if (delegate) {
+        // update exists chat boxes
+        DIMConversation *chatBox;
+        for (id addr in _conversations) {
+            chatBox = [_conversations objectForKey:addr];
+            if (chatBox.delegate == nil) {
+                chatBox.delegate = delegate;
+            }
+        }
+    }
+    _conversationDelegate = delegate;
+}
+
+- (DIMConversation *)conversationWithID:(const MKMID *)ID {
+    DIMConversation *chatBox = [_conversations objectForKey:ID.address];
+    if (!chatBox) {
+        if (_conversationDelegate) {
+            // create by delegate
+            chatBox = [_conversationDelegate conversationWithID:ID];
+        }
+        if (!chatBox) {
+            // create directly if we can find the entity
+            // get entity with ID
+            MKMEntity *entity = nil;
+            if (MKMNetwork_IsPerson(ID.type)) {
+                entity = MKMContactWithID(ID);
+            } else if (MKMNetwork_IsGroup(ID.type)) {
+                entity = MKMGroupWithID(ID);
+            }
+            NSAssert(entity, @"ID error");
+            if (entity) {
+                // create new conversation with entity(Account/Group)
+                chatBox = [[DIMConversation alloc] initWithEntity:entity];
+            }
+        }
+        NSAssert(chatBox, @"failed to create conversation: %@", ID);
+        [self addConversation:chatBox];
+    }
+    return chatBox;
+}
+
+- (void)addConversation:(DIMConversation *)chatBox {
+    // check data source
+    if (chatBox.dataSource == nil) {
+        chatBox.dataSource = _conversationDataSource;
+    }
+    // check delegate
+    if (chatBox.delegate == nil) {
+        chatBox.delegate = _conversationDelegate;
+    }
+    MKMID *ID = chatBox.ID;
+    [_conversations setObject:chatBox forKey:ID.address];
+}
+
+- (void)removeConversation:(DIMConversation *)chatBox {
+    MKMID *ID = chatBox.ID;
+    [_conversations removeObjectForKey:ID.address];
+}
+
+@end

@@ -192,6 +192,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark - MKMUserDelegate
 
 - (MKMUser *)userWithID:(const MKMID *)ID {
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"not a person ID: %@", ID);
     MKMUser *user = [_userTable objectForKey:ID.address];
     if (!user) {
         if (_userDelegate) {
@@ -214,6 +215,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMContactDelegate
 
 - (MKMContact *)contactWithID:(const MKMID *)ID {
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"not a person ID: %@", ID);
     MKMContact *contact = [_contactTable objectForKey:ID.address];
     if (!contact) {
         if (_contactDelegate) {
@@ -236,6 +238,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMGroupDelegate
 
 - (MKMGroup *)groupWithID:(const MKMID *)ID {
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"not a group ID: %@", ID);
     MKMGroup *group = [_groupTable objectForKey:ID.address];
     if (!group) {
         NSAssert(_groupDelegate, @"group delegate not set");
@@ -248,6 +251,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMMemberDelegate
 
 - (MKMMember *)memberWithID:(const MKMID *)ID groupID:(const MKMID *)gID {
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"not a person ID: %@", ID);
+    NSAssert(MKMNetwork_IsGroup(gID.type), @"not a group ID: %@", gID);
     MemberTableM *table = [_groupMemberTable objectForKey:gID.address];
     MKMMember *member = [table objectForKey:ID.address];
     if (!member) {

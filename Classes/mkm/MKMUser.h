@@ -38,6 +38,12 @@ typedef NSArray<const MKMID *> MKMContactList;
 
 @protocol MKMUserDelegate <NSObject>
 
+/**
+ User factory
+
+ @param ID - user ID
+ @return user
+ */
 - (MKMUser *)userWithID:(const MKMID *)ID;
 
 @end

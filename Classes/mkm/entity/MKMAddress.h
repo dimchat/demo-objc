@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      0001 0000 - this entity contains members (Group)
  *      0010 0000 - this entity needs other administrators (big organization)
- *      0100 0000 - this is a social entity
+ *      0100 0000 - this is a social entity in reality.
  *      1000 0000 - (IoT) this entity is a 'Thing'.
  *
  *      (All above are just some advices to help choosing numbers :P)

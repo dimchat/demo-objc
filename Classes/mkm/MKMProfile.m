@@ -205,7 +205,7 @@
 
 @end
 
-#pragma mark - Social Entity profile
+#pragma mark - Group profile
 
 @implementation MKMGroupProfile
 

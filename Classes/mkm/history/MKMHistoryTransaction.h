@@ -36,7 +36,7 @@ typedef NSDictionary<const MKMAddress *, NSString *> MKMConfirmTable;
 
 /**
  NOTICE: The history recorder must collect more than 50% confirmations
- from members before packing a HistoryBlock for a social entity.
+ from members before packing a HistoryBlock for a group.
  */
 @property (readonly, strong, nonatomic) MKMConfirmTable *confirmations;
 

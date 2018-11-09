@@ -103,7 +103,7 @@
     
     // 3. others
     if (!isOwner && !isMember) {
-        // if someone want to join the social entity,
+        // if someone want to join the group,
         // he must ask the owner or any member to help
         // to write a record in the history
         return NO;

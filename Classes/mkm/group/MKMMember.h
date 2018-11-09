@@ -105,6 +105,13 @@ NS_DESIGNATED_INITIALIZER;
 
 @protocol MKMMemberDelegate <NSObject>
 
+/**
+ Member factory
+
+ @param ID - account ID
+ @param gID - group ID
+ @return member
+ */
 - (MKMMember *)memberWithID:(const MKMID *)ID groupID:(const MKMID *)gID;
 
 @end

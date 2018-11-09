@@ -35,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MKMEntityDataSource <NSObject>
 
+/**
+ Get meta to create entity
+
+ @param ID - entity ID
+ @return meta data(dictionary)
+ */
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID;
 
 @end

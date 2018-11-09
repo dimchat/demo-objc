@@ -33,6 +33,7 @@
 //-
 #import "DIMTransceiver.h"
 #import "DIMConversation.h"
+#import "DIMAmanuensis.h"
 #import "DIMKeyStore.h"
 
 NS_ASSUME_NONNULL_BEGIN

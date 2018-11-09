@@ -10,9 +10,70 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMConversation;
 @class DIMInstantMessage;
 @class DIMCertifiedMessage;
+
+@protocol DIMConversationDataSource;
+@protocol DIMConversationDelegate;
+
+typedef NS_ENUM(UInt8, DIMConversationID) {
+    DIMConversationUnknown  = 0x00,
+    DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000
+    DIMConversationGroup    = MKMNetwork_Group, // 0001 0000
+};
+typedef UInt8 DIMConversationType;
+
+@interface DIMConversation : NSObject
+
+@property (readonly, nonatomic) DIMConversationType type; // Network ID
+
+@property (readonly, strong, nonatomic) MKMID *ID;
+@property (readonly, strong, nonatomic) NSString *title;
+
+@property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
+@property (weak, nonatomic) id<DIMConversationDelegate> delegate;
+
+- (instancetype)initWithEntity:(const MKMEntity *)entity
+NS_DESIGNATED_INITIALIZER;
+
+#pragma mark - Read
+
+/**
+ Get message count
+
+ @return total count
+ */
+- (NSInteger)numberOfMessage;
+
+/**
+ Get message at index
+
+ @param index - start from 0, latest first
+ @return instant message
+ */
+- (DIMInstantMessage *)messageAtIndex:(NSInteger)index;
+
+#pragma mark - Write
+
+- (void)insertMessage:(const DIMInstantMessage *)iMsg;
+
+/**
+ Delete the message
+
+ @param iMsg - instant message
+ */
+- (void)removeMessage:(const DIMInstantMessage *)iMsg;
+
+/**
+ Try to withdraw the message
+
+ @param iMsg - instant message
+ */
+- (void)withdrawMessage:(const DIMInstantMessage *)iMsg;
+
+@end
+
+#pragma mark - Conversation Delegates
 
 @protocol DIMConversationDataSource <NSObject>
 
@@ -50,6 +111,14 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol DIMConversationDelegate <NSObject>
+
+/**
+ Conversation factory
+
+ @param ID - entity ID
+ @return conversation(chat box)
+ */
+- (DIMConversation *)conversationWithID:(const MKMID *)ID;
 
 /**
  Send a certified secure message onto the network
@@ -105,68 +174,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)conversation:(const DIMConversation *)chatroom
      withdrawMessage:(const DIMInstantMessage *)iMsg;
-
-@end
-
-#pragma mark -
-
-typedef NS_ENUM(UInt8, DIMConversationID) {
-    DIMConversationUnknown  = 0x00,
-    DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000
-    DIMConversationGroup    = MKMNetwork_Group, // 0001 0000
-};
-typedef UInt8 DIMConversationType;
-
-@protocol DIMConversationDataSource;
-@protocol DIMConversationDelegate;
-
-@interface DIMConversation : NSObject
-
-@property (readonly, nonatomic) DIMConversationType type; // Network ID
-
-@property (readonly, strong, nonatomic) MKMID *ID;
-@property (readonly, strong, nonatomic) NSString *title;
-
-@property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
-@property (weak, nonatomic) id<DIMConversationDelegate> delegate;
-
-- (instancetype)initWithEntity:(const MKMEntity *)entity
-NS_DESIGNATED_INITIALIZER;
-
-#pragma mark - Read
-
-/**
- Get message count
-
- @return total count
- */
-- (NSInteger)numberOfMessage;
-
-/**
- Get message at index
-
- @param index - start from 0, latest first
- @return instant message
- */
-- (DIMInstantMessage *)messageAtIndex:(NSInteger)index;
-
-#pragma mark - Write
-
-- (void)insertMessage:(const DIMInstantMessage *)iMsg;
-
-/**
- Delete the message
-
- @param iMsg - instant message
- */
-- (void)removeMessage:(const DIMInstantMessage *)iMsg;
-
-/**
- Try to withdraw the message
-
- @param iMsg - instant message
- */
-- (void)withdrawMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 
