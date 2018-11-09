@@ -13,30 +13,36 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMCertificateAuthority;
 @class DIMStation;
 
-@interface DIMServiceProvider : NSObject {
+@interface DIMServiceProvider : DIMDictionary {
     
     DIMCertificateAuthority *_CA;
     NSString *_name;
     MKMPublicKey *_publicKey;
-    
-    NSMutableArray<DIMStation *> *_stations;
 }
 
-@property (readonly, strong, nonatomic) DIMCertificateAuthority *CA;
+@property (readonly, copy, nonatomic) DIMCertificateAuthority *CA;
 
-@property (readonly, strong, nonatomic) NSString *name;
-@property (readonly, strong, nonatomic) MKMPublicKey *publicKey;
-
-@property (readonly, strong, nonatomic) NSArray<DIMStation *> *stations;
+@property (readonly, strong, nonatomic) NSString *name; // CA.info.subject
+@property (readonly, strong, nonatomic) MKMPublicKey *publicKey; // CA.info
 
 @property (strong, nonatomic) NSURL *home; // home page URL
+
++ (instancetype)providerWithProvider:(id)provider;
 
 - (instancetype)initWithCA:(const DIMCertificateAuthority *)CA;
 
 - (BOOL)verifyStation:(const DIMStation *)station;
 
-- (void)addStation:(DIMStation *)station;
-- (void)removeStation:(DIMStation *)station;
+@end
+
+#pragma mark Service Provider Data Source
+
+@protocol DIMServiceProviderDataSource <NSObject>
+
+- (NSInteger)numberOfStationsInServiceProvider:(const DIMServiceProvider *)SP;
+
+- (DIMStation *)serviceProvider:(const DIMServiceProvider *)SP
+                 stationAtIndex:(NSInteger)index;
 
 @end
 

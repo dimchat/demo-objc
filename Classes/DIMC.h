@@ -18,6 +18,8 @@
 #import "DIMStation.h"
 
 //-
+#import "DIMConversation.h"
+#import "DIMAmanuensis.h"
 #import "DIMClient.h"
 #import "DIMClient+Message.h"
 

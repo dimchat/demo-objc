@@ -10,14 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMServiceProvider;
+@class DIMStation;
 
-@interface DIMClient : NSObject
+@interface DIMClient : NSObject <DIMStationDelegate> {
+    
+    MKMUser *_currentUser;
+    DIMStation *_currentStation;
+}
 
 @property (strong, nonatomic) MKMUser *currentUser;
+@property (readonly, strong, nonatomic) NSArray<MKMUser *> *users;
 
-@property (strong, nonatomic) DIMServiceProvider *serviceProvider;
-
+@property (strong, nonatomic) DIMStation *currentStation;
 @property (readonly, nonatomic) NSString *userAgent;
 
 + (instancetype)sharedInstance;

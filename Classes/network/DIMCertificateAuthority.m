@@ -19,109 +19,101 @@
         return subject;
     } else if ([subject isKindOfClass:[NSDictionary class]]) {
         return [[self alloc] initWithDictionary:subject];
+    } else if ([subject isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:subject];
     } else {
         NSAssert(!subject, @"unexpected subject: %@", subject);
         return nil;
     }
 }
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
-        _country  = [dict objectForKey:@"C"];
-        _state    = [dict objectForKey:@"ST"];
-        _locality = [dict objectForKey:@"L"];
-        
-        _organization     = [dict objectForKey:@"O"];
-        _organizationUnit = [dict objectForKey:@"OU"];
-        _commonName       = [dict objectForKey:@"CN"];
-    }
-    return self;
+#pragma mark 'C' for Country
+
+- (NSString *)country {
+    return [_storeDictionary objectForKey:@"C"];
 }
 
 - (void)setCountry:(NSString *)country {
     if (country) {
-        if (![_country isEqualToString:country]) {
-            [_storeDictionary setObject:country forKey:@"C"];
-            _country = country;
-        }
+        [_storeDictionary setObject:country forKey:@"C"];
     } else {
         [_storeDictionary removeObjectForKey:@"C"];
-        _country = nil;
     }
+}
+
+#pragma mark 'ST' for State/Province
+
+- (NSString *)state {
+    return [_storeDictionary objectForKey:@"ST"];
 }
 
 - (void)setState:(NSString *)state {
     if (state) {
-        if (![_state isEqualToString:state]) {
-            [_storeDictionary setObject:state forKey:@"ST"];
-            _state = state;
-        }
+        [_storeDictionary setObject:state forKey:@"ST"];
     } else {
         [_storeDictionary removeObjectForKey:@"ST"];
-        _state = nil;
     }
+}
+
+#pragma mark 'L' for Locality
+
+- (NSString *)locality {
+    return [_storeDictionary objectForKey:@"L"];
 }
 
 - (void)setLocality:(NSString *)locality {
     if (locality) {
-        if (![_locality isEqualToString:locality]) {
-            [_storeDictionary setObject:locality forKey:@"L"];
-            _locality = locality;
-        }
+        [_storeDictionary setObject:locality forKey:@"L"];
     } else {
         [_storeDictionary removeObjectForKey:@"L"];
-        _locality = nil;
     }
+}
+
+#pragma mark 'O' for Organization
+
+- (NSString *)organization {
+    return [_storeDictionary objectForKey:@"O"];
 }
 
 - (void)setOrganization:(NSString *)organization {
     if (organization) {
-        if (![_organization isEqualToString:organization]) {
-            [_storeDictionary setObject:organization forKey:@"O"];
-            _organization = organization;
-        }
+        [_storeDictionary setObject:organization forKey:@"O"];
     } else {
         [_storeDictionary removeObjectForKey:@"O"];
-        _organization = nil;
     }
+}
+
+#pragma mark 'OU' for Organization Unit
+
+- (NSString *)organizationUnit {
+    return [_storeDictionary objectForKey:@"OU"];
 }
 
 - (void)setOrganizationUnit:(NSString *)organizationUnit {
     if (organizationUnit) {
-        if (![_organizationUnit isEqualToString:organizationUnit]) {
-            [_storeDictionary setObject:organizationUnit forKey:@"OU"];
-            _organizationUnit = organizationUnit;
-        }
+        [_storeDictionary setObject:organizationUnit forKey:@"OU"];
     } else {
         [_storeDictionary removeObjectForKey:@"OU"];
-        _organizationUnit = nil;
     }
+}
+
+#pragma mark 'CN' for Common Name
+
+- (NSString *)commonName {
+    return [_storeDictionary objectForKey:@"CN"];
 }
 
 - (void)setCommonName:(NSString *)commonName {
     if (commonName) {
-        if (![_commonName isEqualToString:commonName]) {
-            [_storeDictionary setObject:commonName forKey:@"CN"];
-            _commonName = commonName;
-        }
+        [_storeDictionary setObject:commonName forKey:@"CN"];
     } else {
         [_storeDictionary removeObjectForKey:@"CN"];
-        _commonName = nil;
     }
 }
 
 @end
 
 #pragma mark -
-
-@interface DIMCAValidity ()
-
-@property (strong, nonatomic) NSDate *notBefore;
-@property (strong, nonatomic) NSDate *notAfter;
-
-@end
 
 @implementation DIMCAValidity
 
@@ -130,23 +122,12 @@
         return validity;
     } else if ([validity isKindOfClass:[NSDictionary class]]) {
         return [[self alloc] initWithDictionary:validity];
+    } else if ([validity isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:validity];
     } else {
         NSAssert(!validity, @"unexpected validity: %@", validity);
         return nil;
     }
-}
-
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        NSNumber *NB = [dict objectForKey:@"NotBefore"];
-        NSTimeInterval from = [NB doubleValue];
-        _notBefore = [[NSDate alloc] initWithTimeIntervalSince1970:from];
-        
-        NSNumber *NA = [dict objectForKey:@"NotAfter"];
-        NSTimeInterval to = [NA doubleValue];
-        _notAfter = [[NSDate alloc] initWithTimeIntervalSince1970:to];
-    }
-    return self;
 }
 
 - (instancetype)initWithNotBefore:(const NSDate *)from
@@ -161,33 +142,110 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    DIMCAValidity *validity = [super copyWithZone:zone];
+    if (validity) {
+        validity.notBefore = _notBefore;
+        validity.notAfter = _notAfter;
+    }
+    return validity;
+}
+
+- (NSDate *)notBefore {
+    if (!_notBefore) {
+        NSNumber *num = [_storeDictionary objectForKey:@"NotBefore"];
+        NSTimeInterval ti = [num doubleValue];
+        _notBefore = [[NSDate alloc] initWithTimeIntervalSince1970:ti];
+    }
+    return _notBefore;
+}
+
+- (NSDate *)notAfter {
+    if (!_notAfter) {
+        NSNumber *num = [_storeDictionary objectForKey:@"NotAfter"];
+        NSTimeInterval ti = [num doubleValue];
+        _notAfter = [[NSDate alloc] initWithTimeIntervalSince1970:ti];
+    }
+    return _notAfter;
+}
+
 @end
 
 #pragma mark -
 
 @implementation DIMCAData
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
-        // Issuer
-        id issuer = [dict objectForKey:@"Issuer"];
-        _issuer = [DIMCASubject subjectWithSubject:issuer];
-        
-        // Validity
-        id validity = [dict objectForKey:@"Validity"];
-        _validity = [DIMCAValidity validityWithValidity:validity];
-        
-        // Subject
-        id subject = [dict objectForKey:@"Subject"];
-        _subject = [DIMCASubject subjectWithSubject:subject];
-        
-        // Public Key
-        id publicKey = [dict objectForKey:@"PublicKey"];
-        _publicKey = [MKMPublicKey keyWithKey:publicKey];
++ (instancetype)dataWithData:(id)data {
+    if ([data isKindOfClass:[DIMCAData class]]) {
+        return data;
+    } else if ([data isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:data];
+    } else if ([data isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:data];
+    } else {
+        NSAssert(!data, @"unexpected data: %@", data);
+        return nil;
     }
-    return self;
+}
+
+#pragma mark Issuer
+
+- (DIMCASubject *)issuer {
+    DIMCASubject *sub = [_storeDictionary objectForKey:@"Issuer"];
+    return [DIMCASubject subjectWithSubject:sub];
+}
+
+- (void)setIssuer:(DIMCASubject *)issuer {
+    if (issuer) {
+        [_storeDictionary setObject:issuer forKey:@"Issuer"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"Issuer"];
+    }
+}
+
+#pragma mark Validity
+
+- (DIMCAValidity *)validity {
+    DIMCAValidity *val = [_storeDictionary objectForKey:@"Validity"];
+    return [DIMCAValidity validityWithValidity:val];
+}
+
+- (void)setValidity:(DIMCAValidity *)validity {
+    if (validity) {
+        [_storeDictionary setObject:validity forKey:@"Validity"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"Validity"];
+    }
+}
+
+#pragma mark Subject
+
+- (DIMCASubject *)subject {
+    DIMCASubject *sub = [_storeDictionary objectForKey:@"Subject"];
+    return [DIMCASubject subjectWithSubject:sub];
+}
+
+- (void)setSubject:(DIMCASubject *)subject {
+    if (subject) {
+        [_storeDictionary setObject:subject forKey:@"Subject"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"Subject"];
+    }
+}
+
+#pragma mark PublicKey
+
+- (MKMPublicKey *)publicKey {
+    MKMPublicKey *PK = [_storeDictionary objectForKey:@"PublicKey"];
+    return [MKMPublicKey keyWithKey:PK];
+}
+
+- (void)setPublicKey:(MKMPublicKey *)publicKey {
+    if (publicKey) {
+        [_storeDictionary setObject:publicKey forKey:@"PublicKey"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"PublicKey"];
+    }
 }
 
 @end
@@ -196,95 +254,97 @@
 
 @implementation DIMCertificateAuthority
 
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
-        // Version
-        NSNumber *version = [dict objectForKey:@"Version"];
-        _version = [version unsignedIntegerValue];
-        
-        // Serial Number
-        _serialNumber = [dict objectForKey:@"SerialNumber"];
-        
-        // CA Data Info
-        id info = [dict objectForKey:@"Info"];
-        if ([info isKindOfClass:[DIMCAData class]]) {
-            _info = info;
-        } else if ([info isKindOfClass:[NSDictionary class]]) {
-            _info = [[DIMCAData alloc] initWithDictionary:info];
-        } else if ([info isKindOfClass:[NSString class]]) {
-            _info = [[DIMCAData alloc] initWithJSONString:info];
-        }
-        
-        // Signature
-        id CT = [dict objectForKey:@"Signature"];
-        if ([CT isKindOfClass:[NSData class]]) {
-            _signature = CT;
-        } else if ([CT isKindOfClass:[NSString class]]) {
-            self.signature = [CT base64Decode];
-        }
-        
-        // Extensions
-        _extensions = [dict objectForKey:@"Extensions"];
++ (instancetype)caWithCA:(id)ca {
+    if ([ca isKindOfClass:[DIMCertificateAuthority class]]) {
+        return ca;
+    } else if ([ca isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:ca];
+    } else if ([ca isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:ca];
+    } else {
+        NSAssert(!ca, @"unexpected CA: %@", ca);
+        return nil;
     }
-    return self;
+}
+
+#pragma mark Version
+
+- (NSUInteger)version {
+    NSNumber *num = [_storeDictionary objectForKey:@"Version"];
+    return [num unsignedIntegerValue];
 }
 
 - (void)setVersion:(NSUInteger)version {
-    if (_version != version) {
-        [_storeDictionary setObject:@(version) forKey:@"Version"];
-        _version = version;
-    }
+    [_storeDictionary setObject:@(version) forKey:@"Version"];
+}
+
+#pragma mark SerialNumber
+
+- (NSString *)serialNumber {
+    return [_storeDictionary objectForKey:@"SerialNumber"];
 }
 
 - (void)setSerialNumber:(NSString *)serialNumber {
     if (serialNumber) {
-        if (![_serialNumber isEqualToString:serialNumber]) {
-            [_storeDictionary setObject:serialNumber forKey:@"SerialNumber"];
-            _serialNumber = serialNumber;
-        }
+        [_storeDictionary setObject:serialNumber forKey:@"SerialNumber"];
     } else {
         [_storeDictionary removeObjectForKey:@"SerialNumber"];
-        _serialNumber = nil;
     }
+}
+
+#pragma mark Info (CAData)
+
+- (DIMCAData *)info {
+    NSString *json = [_storeDictionary objectForKey:@"Info"];
+    return [DIMCAData dataWithData:json];
 }
 
 - (void)setInfo:(DIMCAData *)info {
     if (info) {
-        if (![_info isEqualToDictionary:info]) {
-            [_storeDictionary setObject:info forKey:@"Info"];
-            _info = info;
-        }
+        NSString *json = [info jsonString];
+        [_storeDictionary setObject:json forKey:@"Info"];
     } else {
         [_storeDictionary removeObjectForKey:@"Info"];
-        _info = nil;
     }
+}
+
+#pragma mark Signature
+
+- (NSData *)signature {
+    NSString *encode = [_storeDictionary objectForKey:@"Signature"];
+    return [encode base64Decode];
 }
 
 - (void)setSignature:(NSData *)signature {
     if (signature) {
-        if (![_signature isEqualToData:signature]) {
-            [_storeDictionary setObject:[signature base64Encode]
-                                 forKey:@"Signature"];
-            self.signature = signature;
-        }
+        NSString *encode = [signature base64Encode];
+        [_storeDictionary setObject:encode forKey:@"Signature"];
     } else {
         [_storeDictionary removeObjectForKey:@"Signature"];
-        _signature = nil;
     }
 }
 
-- (void)setExtensions:(NSMutableDictionary *)extensions {
-    if (extensions) {
-        if (![_extensions isEqualToDictionary:extensions]) {
-            [_storeDictionary setObject:extensions forKey:@"Extensions"];
-            _extensions = extensions;
-        }
-    } else {
-        [_storeDictionary removeObjectForKey:@"Extensions"];
-        _extensions = nil;
+#pragma mark Extensions
+
+- (NSMutableDictionary *)extensions {
+    return [_storeDictionary objectForKey:@"Extensions"];
+}
+
+- (void)setExtraValue:(id)value forKey:(const NSString *)key {
+    NSMutableDictionary *ext = [_storeDictionary objectForKey:@"Extensions"];
+    if (!ext) {
+        ext = [[NSMutableDictionary alloc] init];
+        [_storeDictionary setObject:ext forKey:@"Extensions"];
     }
+    [ext setObject:value forKey:key];
+}
+
+#pragma mark - Verify
+
+- (BOOL)verifyWithPublicKey:(const MKMPublicKey *)PK {
+    NSString *json = [_storeDictionary objectForKey:@"Info"];
+    NSData *hash = [[json data] sha256d];
+    return [PK verify:hash withSignature:self.signature];
 }
 
 @end

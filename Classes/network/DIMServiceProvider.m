@@ -7,61 +7,84 @@
 //
 
 #import "NSObject+JsON.h"
+#import "NSData+Crypto.h"
 
 #import "DIMCertificateAuthority.h"
 #import "DIMStation.h"
 
 #import "DIMServiceProvider.h"
 
+@interface DIMServiceProvider ()
+
+@property (copy, nonatomic) DIMCertificateAuthority *CA;
+
+@end
+
 @implementation DIMServiceProvider
 
++ (instancetype)providerWithProvider:(id)provider {
+    if ([provider isKindOfClass:[DIMServiceProvider class]]) {
+        return provider;
+    } else if ([provider isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:provider];
+    } else if ([provider isKindOfClass:[NSString class]]) {
+        return [[self alloc] initWithJSONString:provider];
+    } else {
+        NSAssert(!provider, @"unexpected provider: %@", provider);
+        return nil;
+    }
+}
+
+- (instancetype)init {
+    NSAssert(false, @"DON'T call me");
+    self = [super init];
+    return self;
+}
+
 - (instancetype)initWithCA:(const DIMCertificateAuthority *)CA {
-    if (self = [self init]) {
+    NSDictionary *dict = @{@"CA":CA};
+    if (self = [self initWithDictionary:dict]) {
         // CA
         _CA = [CA copy];
-        
-        // name
-        if (_CA.info.subject.commonName) {
-            _name = _CA.info.subject.commonName;
-        } else {
-            _name = _CA.info.subject.organization;
-        }
-        
-        // public key
-        _publicKey = _CA.info.publicKey;
-        
-        // stations
-        _stations = [[NSMutableArray alloc] init];
     }
     return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    DIMServiceProvider *SP = [super copyWithZone:zone];
+    if (SP) {
+        SP.CA = _CA;
+        SP.home = _home;
+    }
+    return SP;
+}
+
+- (DIMCertificateAuthority *)CA {
+    if (!_CA) {
+        NSDictionary *dict = [_storeDictionary objectForKey:@"CA"];
+        _CA = [DIMCertificateAuthority caWithCA:dict];
+    }
+    return _CA;
+}
+
+- (NSString *)name {
+    DIMCASubject *subject = self.CA.info.subject;
+    if (subject.commonName) {
+        return subject.commonName;
+    } else {
+        return subject.organization;
+    }
+}
+
+- (MKMPublicKey *)publicKey {
+    return self.CA.info.publicKey;
 }
 
 #pragma mark Station
 
 - (BOOL)verifyStation:(const DIMStation *)station {
-    // CA.info -> data
     DIMCertificateAuthority *CA = station.CA;
-    NSString *json = [CA.info jsonString];
-    NSData *data = [json data];
-    // verify the signature
-    return [_publicKey verify:data withSignature:CA.signature];
-}
-
-- (void)addStation:(DIMStation *)station {
-    if ([_stations containsObject:station]) {
-        return ;
-    }
-    if ([self verifyStation:station]) {
-        // signature correct
-        [_stations addObject:station];
-        return ;
-    }
-    NSAssert(false, @"add station failed");
-}
-
-- (void)removeStation:(DIMStation *)station {
-    NSAssert([_stations containsObject:station], @"not found");
-    [_stations removeObject:station];
+    return [CA verifyWithPublicKey:self.publicKey];
 }
 
 @end

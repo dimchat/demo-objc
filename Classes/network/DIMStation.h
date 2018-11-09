@@ -10,20 +10,48 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMStation : NSObject
+@class DIMServiceProvider;
+
+@protocol DIMStationDelegate;
+
+@interface DIMStation : DIMDictionary {
+    
+    NSString *_host;
+    NSUInteger _port;
+    
+    DIMServiceProvider *_SP;
+    DIMCertificateAuthority *_CA;
+    
+    __weak id<DIMStationDelegate> _delegate;
+}
 
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
 @property (readonly, nonatomic) NSUInteger port;        // default: 9527
 
-@property (strong, nonatomic) DIMCertificateAuthority *CA;
+@property (copy, nonatomic) DIMServiceProvider *SP;
+@property (copy, nonatomic) DIMCertificateAuthority *CA;
 
-@property (readonly, nonatomic) NSString *name;
-@property (readonly, nonatomic) MKMPublicKey *publicKey;
+@property (readonly, strong, nonatomic) NSString *name; // CA.info.subject
+@property (readonly, strong, nonatomic) MKMPublicKey *publicKey; // CA.info
 
-- (instancetype)initWithHost:(const NSString *)host;
+@property (readonly, strong, nonatomic) NSURL *home; // SP.home
 
-- (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port
-NS_DESIGNATED_INITIALIZER;
+@property (weak, nonatomic) id<DIMStationDelegate> delegate;
+
++ (instancetype)stationWithStation:(id)station;
+
+- (instancetype)initWithHost:(const NSString *)host; // port=9527
+- (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port;
+
+- (BOOL)sendData:(const NSData *)msg;
+
+@end
+
+#pragma mark - Delegate
+
+@protocol DIMStationDelegate <NSObject>
+
+- (void)station:(const DIMStation *)station didReceiveData:(const NSData *)data;
 
 @end
 

@@ -10,6 +10,7 @@
 
 #import "DIMStation.h"
 
+#import "DIMConversation.h"
 #import "DIMAmanuensis.h"
 
 #import "DIMClient+Message.h"
@@ -18,15 +19,17 @@
 
 - (BOOL)sendMessage:(const DIMCertifiedMessage *)cMsg {
     NSAssert(cMsg.signature, @"signature cannot be empty");
-    // TODO:
+    NSData *data = [cMsg jsonData];
+    // TODO: zip before sending the data if need
     
-    return YES;
+    NSAssert(_currentStation, @"set station first");
+    return [_currentStation sendData:data];
 }
 
 - (void)recvMessage:(const DIMInstantMessage *)iMsg {
     NSLog(@"saving message: %@", iMsg);
     
-    DIMConversation *dialogBox = nil;
+    DIMConversation *chatBox = nil;
     
     DIMEnvelope *env = iMsg.envelope;
     MKMID *sender = env.sender;
@@ -34,14 +37,14 @@
     
     if ([receiver isEqual:self.currentUser.ID]) {
         // personal chat, get chatroom with contact ID
-        dialogBox = DIMConversationWithID(sender);
+        chatBox = DIMConversationWithID(sender);
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chatroom with group ID
-        dialogBox = DIMConversationWithID(receiver);
+        chatBox = DIMConversationWithID(receiver);
     }
-    NSAssert(dialogBox, @"dialogBox not found");
+    NSAssert(chatBox, @"conversation not found");
     
-    [dialogBox insertMessage:iMsg];
+    [chatBox insertMessage:iMsg];
 }
 
 @end

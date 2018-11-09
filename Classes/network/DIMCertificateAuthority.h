@@ -28,8 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMCAValidity : DIMDictionary
 
-@property (readonly, strong, nonatomic) NSDate *notBefore;
-@property (readonly, strong, nonatomic) NSDate *notAfter;
+@property (copy, nonatomic) NSDate *notBefore;
+@property (copy, nonatomic) NSDate *notAfter;
 
 + (instancetype)validityWithValidity:(id)validity;
 
@@ -52,9 +52,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) DIMCASubject *subject; // the CA owner
 @property (strong, nonatomic) MKMPublicKey *publicKey; // owner's PK
 
++ (instancetype)dataWithData:(id)data;
+
 @end
 
-#pragma mark -
+#pragma mark - Certificate Authority
 
 /**
  Certificate Authority
@@ -64,11 +66,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSUInteger version;
 @property (strong, nonatomic) NSString *serialNumber;
 
-@property (strong, nonatomic) DIMCAData *info; // JsON String
+@property (copy, nonatomic) DIMCAData *info; // JsON String
 
-@property (strong, nonatomic) NSData *signature; // signed by Issuer
+@property (copy, nonatomic) NSData *signature; // signed by Issuer
 
-@property (strong, nonatomic) NSMutableDictionary *extensions;
+@property (readonly, strong, nonatomic) NSMutableDictionary *extensions;
+
++ (instancetype)caWithCA:(id)ca;
+
+- (BOOL)verifyWithPublicKey:(const MKMPublicKey *)PK;
+
+- (void)setExtraValue:(id)value forKey:(const NSString *)key;
 
 @end
 

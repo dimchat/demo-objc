@@ -9,18 +9,14 @@
 #import "NSObject+Singleton.h"
 #import "NSObject+JsON.h"
 
-#import "DIMEnvelope.h"
-#import "DIMCertifiedMessage.h"
-
 #import "DIMStation.h"
-
 #import "DIMClient+Message.h"
+
 #import "DIMClient.h"
 
-@interface DIMClient () {
-    
-    NSMutableArray<MKMUser *> *_users;
-}
+@interface DIMClient ()
+
+@property (strong, nonatomic) NSMutableArray<MKMUser *> *users;
 
 @end
 
@@ -29,13 +25,13 @@
  
  @param filename - immortal account data file
  */
-static void load_immortal_file(NSString *filename) {
+static MKMUser *load_immortal_file(NSString *filename) {
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path = [bundle pathForResource:filename ofType:@"plist"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:path]) {
         NSLog(@"file not exists: %@", path);
-        return ;
+        return nil;
     }
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
     
@@ -81,6 +77,8 @@ static void load_immortal_file(NSString *filename) {
     // 4. save meta & profile into barrack
     [barrack setMeta:meta forID:ID];
     [barrack addProfile:profile];
+    
+    return user;
 }
 
 @implementation DIMClient
@@ -94,11 +92,39 @@ SingletonImplementations(DIMClient, sharedInstance)
         
 #if DEBUG
         // Immortals
-        load_immortal_file(@"mkm_hulk");
-        load_immortal_file(@"mkm_moki");
+        MKMUser *user;
+        user = load_immortal_file(@"mkm_hulk");
+        [self addUser:user];
+        user = load_immortal_file(@"mkm_moki");
+        [self addUser:user];
 #endif
     }
     return self;
+}
+
+#pragma mark - Station
+
+- (void)setCurrentStation:(DIMStation *)currentStation {
+    if (![_currentStation isEqual:currentStation]) {
+        _currentStation = currentStation;
+        // delegate
+        if (_currentStation.delegate == nil) {
+            _currentStation.delegate = self;
+        }
+    }
+}
+
+- (void)station:(const DIMStation *)station didReceiveData:(const NSData *)data {
+    // TODO: unzip the received data if need
+    NSString *json = [data UTF8String];
+    
+    DIMCertifiedMessage *cMsg;
+    cMsg = [[DIMCertifiedMessage alloc] initWithJSONString:json];
+    
+    DIMInstantMessage *iMsg;
+    iMsg = [[DIMTransceiver sharedInstance] verifyAndDecryptMessage:cMsg];
+    
+    [self recvMessage:iMsg];
 }
 
 - (NSString *)userAgent {
