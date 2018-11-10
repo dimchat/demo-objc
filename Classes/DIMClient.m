@@ -16,67 +16,6 @@
 
 @end
 
-/**
- Load built-in accounts for test
- 
- @param filename - immortal account data file
- */
-static inline MKMUser *load_immortal_file(NSString *filename) {
-    NSBundle *bundle = [NSBundle mainBundle];
-    NSString *path = [bundle pathForResource:filename ofType:@"plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if (![fm fileExistsAtPath:path]) {
-        NSLog(@"file not exists: %@", path);
-        return nil;
-    }
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    
-    // ID
-    MKMID *ID = [dict objectForKey:@"ID"];
-    ID = [MKMID IDWithID:ID];
-    assert(ID.isValid);
-    
-    // meta
-    MKMMeta *meta = [dict objectForKey:@"meta"];
-    meta = [MKMMeta metaWithMeta:meta];
-    assert([meta matchID:ID]);
-    
-    // profile
-    id profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        NSMutableDictionary *mDict = [[NSMutableDictionary alloc] init];
-        [mDict setObject:ID forKey:@"ID"];
-        [mDict addEntriesFromDictionary:profile];
-        profile = mDict;
-    }
-    profile = [MKMAccountProfile profileWithProfile:profile];
-    assert(profile);
-    
-    MKMBarrack *barrack = [MKMBarrack sharedInstance];
-    
-    // 1. create contact & user
-    MKMUser *user = [[MKMUser alloc] initWithID:ID
-                                      publicKey:meta.key];
-    MKMContact *contact = [[MKMContact alloc] initWithID:ID
-                                               publicKey:meta.key];
-    
-    // 2. save entities into barrack
-    [barrack addUser:user];
-    [barrack addContact:contact];
-    
-    // 3. store private key into keychain
-    MKMPrivateKey *SK = [dict objectForKey:@"privateKey"];
-    SK = [MKMPrivateKey keyWithKey:SK];
-    assert(SK.algorithm);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    // 4. save meta & profile into barrack
-    [barrack setMeta:meta forID:ID];
-    [barrack addProfile:profile];
-    
-    return user;
-}
-
 @implementation DIMClient
 
 SingletonImplementations(DIMClient, sharedInstance)
@@ -85,15 +24,6 @@ SingletonImplementations(DIMClient, sharedInstance)
     if (self = [super init]) {
         _users = [[NSMutableArray alloc] init];
         _currentUser = nil;
-        
-#if DEBUG
-        // Immortals
-        MKMUser *user;
-        user = load_immortal_file(@"mkm_hulk");
-        [self addUser:user];
-        user = load_immortal_file(@"mkm_moki");
-        [self addUser:user];
-#endif
     }
     return self;
 }

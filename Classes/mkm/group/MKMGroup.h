@@ -52,8 +52,10 @@ NS_DESIGNATED_INITIALIZER;
 
 - (MKMID *)founderForGroupID:(const MKMID *)ID;
 
-@optional
 - (MKMID *)ownerForGroupID:(const MKMID *)ID;
+
+- (NSInteger)numberOfMembersInGroup:(const MKMGroup *)grp;
+- (MKMID *)group:(const MKMGroup *)grp memberAtIndex:(NSInteger)index;
 
 @end
 

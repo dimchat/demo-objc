@@ -20,14 +20,9 @@
 
 #import "MKMConsensus.h"
 #import "MKMBarrack.h"
+#import "MKMBarrack+LocalStorage.h"
 
 #import "MKMUser+History.h"
-
-@interface MKMBarrack (Hacking)
-
-- (BOOL)saveMeta:(const MKMMeta *)meta forEntityID:(const MKMID *)ID;
-
-@end
 
 @implementation MKMUser (History)
 

@@ -36,11 +36,22 @@ NS_ASSUME_NONNULL_BEGIN
  *      1st, get instance here to avoid create same instance,
  *      2nd, if they were updated, we can refresh them immediately here
  */
-@interface MKMBarrack : NSObject <MKMUserDelegate, MKMContactDelegate, MKMGroupDelegate, MKMMemberDelegate, MKMEntityDataSource, MKMProfileDataSource>
+@interface MKMBarrack : NSObject <MKMUserDataSource,
+                                  MKMUserDelegate,
+                                  MKMContactDelegate,
+                                  //-
+                                  MKMGroupDataSource,
+                                  MKMGroupDelegate,
+                                  MKMMemberDelegate,
+                                  //-
+                                  MKMEntityDataSource,
+                                  MKMProfileDataSource>
 
+@property (weak, nonatomic) id<MKMUserDataSource> userDataSource;
 @property (weak, nonatomic) id<MKMUserDelegate> userDelegate;
 @property (weak, nonatomic) id<MKMContactDelegate> contactDelegate;
 
+@property (weak, nonatomic) id<MKMGroupDataSource> groupDataSource;
 @property (weak, nonatomic) id<MKMGroupDelegate> groupDelegate;
 @property (weak, nonatomic) id<MKMMemberDelegate> memberDelegate;
 
@@ -55,7 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addGroup:(MKMGroup *)group;
 - (void)addMember:(MKMMember *)member;
 
-- (void)addProfile:(MKMProfile *)profile;
 - (void)setMeta:(MKMMeta *)meta forID:(const MKMID *)ID;
 
 /**

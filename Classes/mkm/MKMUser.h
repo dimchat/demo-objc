@@ -36,6 +36,13 @@ typedef NSArray<const MKMID *> MKMContactList;
 
 #pragma mark - User Delegate
 
+@protocol MKMUserDataSource <NSObject>
+
+- (NSInteger)numberOfContactsInUser:(const MKMUser *)usr;
+- (MKMID *)user:(const MKMUser *)usr contactAtIndex:(NSInteger)index;
+
+@end
+
 @protocol MKMUserDelegate <NSObject>
 
 /**
