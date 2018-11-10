@@ -95,7 +95,7 @@ typedef NSMutableDictionary<const MKMAddress *, MKMProfile *> ProfileTableM;
  
  @param mDict - mutable dictionary
  */
-static void reduce_table(NSMutableDictionary *mDict) {
+static inline void reduce_table(NSMutableDictionary *mDict) {
     NSArray *keys = [mDict allKeys];
     MKMAddress *addr;
     for (NSUInteger index = 0; index < keys.count; index += 2) {

@@ -22,7 +22,7 @@
 
 #import "MKMHistoryBlock.h"
 
-static NSMutableArray *json_array(const NSArray *events) {
+static inline NSMutableArray *json_array(const NSArray *events) {
     NSMutableArray *mArray;
     mArray = [[NSMutableArray alloc] initWithCapacity:[events count]];
     

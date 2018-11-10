@@ -55,21 +55,26 @@ NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Write
 
-- (void)insertMessage:(const DIMInstantMessage *)iMsg;
+/**
+ Insert a new message
+
+ @param iMsg - instant message
+ */
+- (BOOL)insertMessage:(const DIMInstantMessage *)iMsg;
 
 /**
  Delete the message
 
  @param iMsg - instant message
  */
-- (void)removeMessage:(const DIMInstantMessage *)iMsg;
+- (BOOL)removeMessage:(const DIMInstantMessage *)iMsg;
 
 /**
  Try to withdraw the message
 
  @param iMsg - instant message
  */
-- (void)withdrawMessage:(const DIMInstantMessage *)iMsg;
+- (BOOL)withdrawMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 
@@ -80,33 +85,20 @@ NS_DESIGNATED_INITIALIZER;
 /**
  Get message count in this conversation for an entity
  
- @param chatroom - conversation instance
+ @param chatBox - conversation instance
  @return total count
  */
-- (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatroom;
+- (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatBox;
 
 /**
  Get message at index of this conversation
  
- @param chatroom - conversation instance
+ @param chatBox - conversation instance
  @param index - start from 0, latest first
  @return instant message
  */
-- (DIMInstantMessage *)conversation:(const DIMConversation *)chatroom
+- (DIMInstantMessage *)conversation:(const DIMConversation *)chatBox
                      messageAtIndex:(NSInteger)index;
-
-@optional
-/**
- Get messages before a time
- 
- @param chatroom - conversation instance
- @param time - looking back from that time (excludes)
- @param count - max count (default is 10)
- @return messages
- */
-- (NSArray *)conversation:(const DIMConversation *)chatroom
-           messagesBefore:(const NSDate *)time
-                 maxCount:(NSUInteger)count;
 
 @end
 
@@ -121,58 +113,32 @@ NS_DESIGNATED_INITIALIZER;
 - (DIMConversation *)conversationWithID:(const MKMID *)ID;
 
 /**
- Send a certified secure message onto the network
+ Save the new message to local storage
  
- @param chatroom - conversation instance
- @param cMsg - certified secure message
- */
-- (void)conversation:(const DIMConversation *)chatroom
-         sendMessage:(const DIMCertifiedMessage *)cMsg;
-
-/**
- Save the new message
- 
- @param chatroom - conversation instance
+ @param chatBox - conversation instance
  @param iMsg - instant message
  */
-- (void)conversation:(const DIMConversation *)chatroom
-   didReceiveMessage:(const DIMInstantMessage *)iMsg;
+- (BOOL)conversation:(const DIMConversation *)chatBox
+       insertMessage:(const DIMInstantMessage *)iMsg;
 
 @optional
 
 /**
- Send message success
- 
- @param chatroom - conversation instance
- @param cMsg - certified secure message
- */
-- (void)conversation:(const DIMConversation *)chatroom
-      didSendMessage:(const DIMCertifiedMessage *)cMsg;
-
-/**
- Failed to send message
- 
- @param chatroom - conversation instance
- @param error - reason
- */
-- (void)conversation:(const DIMConversation *)chatroom
-    didFailWithError:(const NSError *)error;
-
-/**
  Delete the message
  
- @param chatroom - conversation instance
+ @param chatBox - conversation instance
  @param iMsg - instant message
  */
-- (void)conversation:(const DIMConversation *)chatroom
+- (BOOL)conversation:(const DIMConversation *)chatBox
        removeMessage:(const DIMInstantMessage *)iMsg;
+
 /**
  Try to withdraw the message, maybe won't success
  
- @param chatroom - conversation instance
+ @param chatBox - conversation instance
  @param iMsg - instant message
  */
-- (void)conversation:(const DIMConversation *)chatroom
+- (BOOL)conversation:(const DIMConversation *)chatBox
      withdrawMessage:(const DIMInstantMessage *)iMsg;
 
 @end

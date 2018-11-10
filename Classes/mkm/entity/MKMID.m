@@ -19,7 +19,7 @@
 
 @end
 
-static void parse_id_string(const NSString *string, MKMID *ID) {
+static inline void parse_id_string(const NSString *string, MKMID *ID) {
     // get terminal
     NSArray *pair = [string componentsSeparatedByString:@"/"];
     if (pair.count == 2) {

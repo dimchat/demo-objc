@@ -8,6 +8,10 @@
 
 #import "NSObject+Singleton.h"
 
+#import "DIMEnvelope.h"
+#import "DIMMessageContent.h"
+#import "DIMInstantMessage.h"
+
 #import "DIMConversation.h"
 
 #import "DIMAmanuensis.h"
@@ -102,6 +106,34 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 - (void)removeConversation:(DIMConversation *)chatBox {
     MKMID *ID = chatBox.ID;
     [_conversations removeObjectForKey:ID.address];
+}
+
+@end
+
+@implementation DIMAmanuensis (Message)
+
+- (void)recvMessage:(const DIMInstantMessage *)iMsg {
+    NSLog(@"saving message: %@", iMsg);
+    
+    DIMConversation *chatBox = nil;
+    
+    DIMEnvelope *env = iMsg.envelope;
+    MKMID *sender = env.sender;
+    MKMID *receiver = env.receiver;
+    DIMMessageContent *content = iMsg.content;
+    
+    if (MKMNetwork_IsGroup(receiver.type)) {
+        // group chat, get chat box with group ID
+        chatBox = [self conversationWithID:receiver];
+    } else if (content.group) {
+        // group chat, get chat box with group ID
+        chatBox = [self conversationWithID:content.group];
+    } else {
+        // personal chat, get chat box with contact ID
+        chatBox = [self conversationWithID:sender];
+    }
+    
+    [chatBox insertMessage:iMsg];
 }
 
 @end

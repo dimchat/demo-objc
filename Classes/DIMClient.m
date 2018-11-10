@@ -7,10 +7,6 @@
 //
 
 #import "NSObject+Singleton.h"
-#import "NSObject+JsON.h"
-
-#import "DIMStation.h"
-#import "DIMClient+Message.h"
 
 #import "DIMClient.h"
 
@@ -25,7 +21,7 @@
  
  @param filename - immortal account data file
  */
-static MKMUser *load_immortal_file(NSString *filename) {
+static inline MKMUser *load_immortal_file(NSString *filename) {
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *path = [bundle pathForResource:filename ofType:@"plist"];
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -100,31 +96,6 @@ SingletonImplementations(DIMClient, sharedInstance)
 #endif
     }
     return self;
-}
-
-#pragma mark - Station
-
-- (void)setCurrentStation:(DIMStation *)currentStation {
-    if (![_currentStation isEqual:currentStation]) {
-        _currentStation = currentStation;
-        // delegate
-        if (_currentStation.delegate == nil) {
-            _currentStation.delegate = self;
-        }
-    }
-}
-
-- (void)station:(const DIMStation *)station didReceiveData:(const NSData *)data {
-    // TODO: unzip the received data if need
-    NSString *json = [data UTF8String];
-    
-    DIMCertifiedMessage *cMsg;
-    cMsg = [[DIMCertifiedMessage alloc] initWithJSONString:json];
-    
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMTransceiver sharedInstance] verifyAndDecryptMessage:cMsg];
-    
-    [self recvMessage:iMsg];
 }
 
 - (NSString *)userAgent {

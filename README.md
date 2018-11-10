@@ -89,15 +89,15 @@ NSLog(@"my new ID: %@", moky.ID);
 * Load User
 
 ```
-// 1. Initialize your delegate first
+// 1. initialize your delegate first
 [AccountDelegate sharedInstance];
 
-// 2. Load user from barrack
+// 2. load user from barrack
 NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi";  // from your db
 MKMID *ID = [[MKMID alloc] initWithString:str];
 MKMUser *moky = [[MKMBarrack sharedInstance] userWithID:ID]; // from factory
 
-// 3. Set current user for the DIM client
+// 3. set current user for the DIM client
 [[DIMClient sharedInstance] setCurrentUser:moky];
 ```
 1. Your delegate must load the user data from local storage to create user,
@@ -106,16 +106,16 @@ MKMUser *moky = [[MKMBarrack sharedInstance] userWithID:ID]; // from factory
 * Load Contact
 
 ```
-// 1. Initialize your delegate first
+// 1. initialize your delegate first
 [AccountDelegate sharedInstance];
 
-// 2. Get contacts from barrack
+// 2. get contacts from barrack
 MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
 MKMID *ID2 = [[MKMID alloc] initWithString:MKM_MONKEY_KING_ID];
 MKMContact *hulk = [[MKMBarrack sharedInstance] contactWithID:ID1];
 MKMContact *moki = [[MKMBarrack sharedInstance] contactWithID:ID2];
 
-// 3. Add contacts to the user
+// 3. add contacts to the user
 [moky addContact:hulk.ID];
 [moky addContact:moki.ID];
 ```
@@ -124,45 +124,127 @@ MKMContact *moki = [[MKMBarrack sharedInstance] contactWithID:ID2];
 
 ## Instant messages:
 
-* Implements the conversation(chatroom) data source & delegate
+* Implements a Station instance for network transferring
+
+```
+#import "DIMC.h"
+
+@interface Station : DIMStation <DIMStationDelegate>
+
+@end
+```
+```
+#import "Station.h"
+
+@implementation Station
+
+- (BOOL)sendPackage:(const NSData *)data
+  completionHandler:(DIMTransceiverCompletionHandler _Nullable)handler {
+    // TODO: send the data package onto the network,
+    //       after that, call the completion handler with error message
+    
+    NSError *error;
+    !handler ?: handler(error);
+    
+    return NO;
+}
+
+#pragma mark DIMStationDelegate
+
+- (void)station:(const DIMStation *)station didReceiveData:(const NSData *)data {
+    // 1. call Transceiver to get instant message from received data
+    DIMInstantMessage *iMsg;
+    iMsg = [[DIMTransceiver sharedInstance] messageFromReceivedPackage:data];
+    
+    // 2. process system command
+    DIMMessageContent *content;
+    content = iMsg.content;
+    if (content.type == DIMMessageType_Command) {
+        // TODO: execute the system command
+        
+        return;
+    }
+    
+    // 3. call Amanuensis to save the instant message
+    [[DIMAmanuensis sharedInstance] recvMessage:iMsg];
+}
+
+@end
+```
+1. You should maintain a long TCP connection to the station.
+2. If connection lost, you should try ASAP to reconnect (or send data via HTTP connection).
+
+* Implements the conversation data source & delegate
 
 ```
 #import "DIMC.h"
 
 @interface MessageProcessor : NSObject <DIMConversationDataSource, DIMConversationDelegate>
 
+@end
+```
+```
+#import "MessageProcessor.h"
+
+@implementation MessageProcessor
+
 #pragma mark DIMConversationDataSource
 
-// get message count in the conversation
-- (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatroom;
+- (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatBox {
+    // TODO: get message count in the conversation
+    return 0;
+}
 
-// get message at index of the conversation
-- (DIMInstantMessage *)conversation:(const DIMConversation *)chatroom messageAtIndex:(NSInteger)index;
+- (DIMInstantMessage *)conversation:(const DIMConversation *)chatBox messageAtIndex:(NSInteger)index {
+    // TODO: get message at index of the conversation
+    return nil;
+}
 
 #pragma mark DIMConversationDelegate
 
-// save new message to local db
-- (void)conversation:(const DIMConversation *)chatroom didReceiveMessage:(const DIMInstantMessage *)iMsg;
+- (DIMConversation *)conversationWithID:(const MKMID *)ID {
+    // TODO: Conversation factory
+    return nil;
+}
+
+- (BOOL)conversation:(const DIMConversation *)chatBox insertMessage:(const DIMInstantMessage *)iMsg {
+    // TODO: save the new message to local storage
+    return YES;
+}
 
 @end
 ```
+1. Your message processor should implement saving new message and loading messages from local store.
 
 ### Samples
 * Send message
 
 ```
-// 1. Create message content
+DIMClient *client = [DIMClient sharedInstance];
+DIMTransceiver *trans = [DIMTransceiver sharedInstance];
+
+// 1. connect to a Station
+Station *server = [[Station alloc] initWithHost:@"127.0.0.1" port:9527];
+client.currentStation = server;
+trans.delegate        = server;
+
+// 2. create message content
 NSString *text = @"Hey boy!"
 DIMMessageContent *content = [[DIMMessageContent alloc] initWithText:text];
+MKMID *sender = client.currentUser.ID;
+MKMID *receiver = hulk.ID;
 
-// 2. Encrypt and sign the message content by transceiver
-DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-DIMCertifiedMessage *cMsg = [trans encryptAndSignContent:content sender:moky.ID receiver:hulk.ID];
-
-// 3. Send out the certified secure message via current connection
-NSData *data = [cMsg jsonData];
-// TODO: compress(optional) and send out
-// ...
+// 3. call transceiver to send out message content
+[trans sendMessageContent:content 
+                     from:sender
+                       to:receiver
+                 callback:^(const DIMCertifiedMessage *cMsg, const NSError * _Nullable error) {
+                     if (error) {
+                         // TODO: 3.1 process error callback
+                     } else {
+                         // TODO: 3.2 process success callback
+                     }
+                 }];
 ```
 
 * Receive message
@@ -174,21 +256,20 @@ _myMessageProcessor = [[MessageProcessor alloc] init];
 // set to the conversation manager
 DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
 clerk.dataSource = _myMessageProcessor;
-clerk.delegate = _myMessageProcessor;
+clerk.delegate   = _myMessageProcessor;
 
-// 1. when your network connection received a message data, you should
-//    decompress(if need) and call [DIMTransceiver sharedInstance]
-//    to verify and decrypt it to an InstantMessage;
+// 1. when your network connection received a message data from station,
+//    you should decompress(if need) and call the Transceiver to verify
+//    and decrypt it to an instant message;
 // 2. after that, you could try to recognize the message type, if it is
 //    a system command, you could run your scripts for it, otherwise
-//    call [DIMClient sharedInstance] to handle the message;
-// 3. the client will insert it into the chat box (DIMConversation)
+//    call the Amanuensis to handle the message;
+// 3. the Amanuensis will insert it into the chat box (Conversation)
 //    that the message belongs to;
 // 4. finally, the chat box will call your message processor to save it,
-//    the clerk (DIMAmanuensis) will set your processor into each chat box
+//    the Amanuensis will set your message processor into each chat box
 //    automatically, unless you have already specify them.
 ```
-1. Your message processor should implement saving new message and loading messages partially from local store.
 
 ---
 Written by [Albert Moky](http://moky.github.com/) @2018

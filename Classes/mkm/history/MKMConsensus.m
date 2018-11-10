@@ -23,7 +23,7 @@
 
 #import "MKMConsensus.h"
 
-static id<MKMEntityHistoryDelegate>history_delegate(const MKMEntity *entity) {
+static inline id history_delegate(const MKMEntity *entity) {
     MKMNetworkType network = entity.ID.address.network;
     MKMEntityHistoryDelegate *delegate = nil;
     if (MKMNetwork_IsPerson(network)) {

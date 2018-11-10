@@ -11,15 +11,15 @@
 
 #import "MKMHistoryOperation.h"
 
-static NSDate * now(void) {
+static inline NSDate * now(void) {
     return [[NSDate alloc] init];
 }
 
-static NSTimeInterval timestamp(const NSDate *time) {
+static inline NSTimeInterval timestamp(const NSDate *time) {
     return [time timeIntervalSince1970];
 }
 
-static NSDate *date(NSTimeInterval time) {
+static inline NSDate *date(NSTimeInterval time) {
     return [[NSDate alloc] initWithTimeIntervalSince1970:time];
 }
 

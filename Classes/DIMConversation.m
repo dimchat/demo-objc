@@ -16,7 +16,7 @@
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) MKMEntity *entity; // Contact or Chatroom
+@property (strong, nonatomic) MKMEntity *entity; // Account or Group
 
 @end
 
@@ -67,7 +67,7 @@
     return @"Conversation";
 }
 
-#pragma mark - Read
+#pragma mark - Read from data source
 
 - (NSInteger)numberOfMessage {
     NSAssert(_dataSource, @"set data source handler first");
@@ -79,25 +79,31 @@
     return [_dataSource conversation:self messageAtIndex:index];
 }
 
-#pragma mark - Write
+#pragma mark - Write via delegate
 
-- (void)insertMessage:(const DIMInstantMessage *)iMsg {
+- (BOOL)insertMessage:(const DIMInstantMessage *)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    [_delegate conversation:self didReceiveMessage:iMsg];
+    return [_delegate conversation:self insertMessage:iMsg];
 }
 
-- (void)removeMessage:(const DIMInstantMessage *)iMsg {
+- (BOOL)removeMessage:(const DIMInstantMessage *)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    if ([_delegate respondsToSelector:@selector(conversation:removeMessage:)]) {
-        [_delegate conversation:self removeMessage:iMsg];
+    SEL selector = @selector(conversation:removeMessage:);
+    if (![_delegate respondsToSelector:selector]) {
+        NSAssert(false, @"delegate error");
+        return NO;
     }
+    return [_delegate conversation:self removeMessage:iMsg];
 }
 
-- (void)withdrawMessage:(const DIMInstantMessage *)iMsg {
+- (BOOL)withdrawMessage:(const DIMInstantMessage *)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    if ([_delegate respondsToSelector:@selector(conversation:withdrawMessage:)]) {
-        [_delegate conversation:self withdrawMessage:iMsg];
+    SEL selector = @selector(conversation:withdrawMessage:);
+    if (![_delegate respondsToSelector:selector]) {
+        NSAssert(false, @"delegate error");
+        return NO;
     }
+    return [_delegate conversation:self withdrawMessage:iMsg];
 }
 
 @end

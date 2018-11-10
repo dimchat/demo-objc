@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMStation;
 
-@interface DIMClient : NSObject <DIMStationDelegate> {
+@interface DIMClient : NSObject {
     
     MKMUser *_currentUser;
     DIMStation *_currentStation;

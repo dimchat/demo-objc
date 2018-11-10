@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+Singleton.h"
+#import "NSObject+JsON.h"
 
 #import "MKMAccount+Message.h"
 #import "MKMUser+Message.h"
@@ -16,10 +17,27 @@
 #import "DIMMessageContent.h"
 #import "DIMMessageContent+Secret.h"
 
+#import "DIMMessage.h"
 #import "DIMInstantMessage.h"
+#import "DIMSecureMessage.h"
 #import "DIMCertifiedMessage.h"
 
 #import "DIMTransceiver.h"
+
+static inline BOOL send_message(id<DIMTransceiverDelegate> delegate,
+                                const DIMCertifiedMessage*cMsg,
+                                DIMTransceiverCallback _Nullable callback) {
+    NSData *data = [cMsg jsonData];
+    assert(data);
+    if (!data) {
+        return NO;
+    }
+    return [delegate sendPackage:data
+               completionHandler:^(const NSError * _Nullable error) {
+                   assert(!error);
+                   !callback ?: callback(cMsg, error);
+               }];
+}
 
 @implementation DIMTransceiver
 
@@ -30,6 +48,35 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     }
     return self;
 }
+
+- (BOOL)sendMessageContent:(const DIMMessageContent *)content
+                      from:(const MKMID *)sender
+                        to:(const MKMID *)receiver
+                  callback:(DIMTransceiverCallback _Nullable)callback {
+    DIMCertifiedMessage *cMsg;
+    cMsg = [self encryptAndSignContent:content
+                                sender:sender
+                              receiver:receiver];
+    NSAssert(_delegate, @"transceiver delegate not set");
+    return send_message(_delegate, cMsg, callback);
+}
+
+- (BOOL)sendMessage:(const DIMInstantMessage *)iMsg
+           callback:(DIMTransceiverCallback _Nullable)callback {
+    DIMCertifiedMessage *cMsg;
+    cMsg = [self encryptAndSignMessage:iMsg];
+    NSAssert(_delegate, @"transceiver delegate not set");
+    return send_message(_delegate, cMsg, callback);
+}
+
+- (DIMInstantMessage *)messageFromReceivedPackage:(const NSData *)data {
+    NSString *json = [data UTF8String];
+    DIMCertifiedMessage *cMsg;
+    cMsg = [[DIMCertifiedMessage alloc] initWithJSONString:json];
+    return [self verifyAndDecryptMessage:cMsg];
+}
+
+#pragma mark -
 
 - (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
                                         sender:(const MKMID *)sender
@@ -47,6 +94,11 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:content envelope:env];
     
+    // let another selector to do the continue jobs
+    return [self encryptAndSignMessage:iMsg];
+}
+
+- (DIMCertifiedMessage *)encryptAndSignMessage:(const DIMInstantMessage *)iMsg {
     // 3. encrypt to secure message
     DIMSecureMessage *sMsg;
     sMsg = [self encryptMessage:iMsg];

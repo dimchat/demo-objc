@@ -26,7 +26,7 @@
  @param data - network + hash(CT)
  @return prefix 4 bytes after sha256*2
  */
-static NSData * check_code(const NSData *data) {
+static inline NSData * check_code(const NSData *data) {
     assert([data length] == 21);
     data = [data sha256d];
     assert([data length] == 32);
@@ -39,7 +39,7 @@ static NSData * check_code(const NSData *data) {
  @param cc - check code
  @return unsigned integer
  */
-static UInt32 user_number(const NSData *cc) {
+static inline UInt32 user_number(const NSData *cc) {
     assert([cc length] == 4);
     UInt32 number;
     memcpy(&number, [cc bytes], 4);
@@ -52,7 +52,7 @@ static UInt32 user_number(const NSData *cc) {
  @param string - BTC address format string
  @param address - MKM address
  */
-static void parse_address(const NSString *string, MKMAddress *address) {
+static inline void parse_address(const NSString *string, MKMAddress *address) {
     NSData *data = [string base58Decode];
     NSUInteger len = [data length];
     if (len == 25) {

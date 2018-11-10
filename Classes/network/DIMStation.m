@@ -148,9 +148,13 @@
     return self.SP.home;
 }
 
-- (BOOL)sendData:(const NSData *)msg {
+#pragma mark - DIMTransceiverDelegate
+
+- (BOOL)sendPackage:(const NSData *)data
+  completionHandler:(DIMTransceiverCompletionHandler _Nullable)handler {
     // TODO: override me
-    return YES;
+    
+    return NO;
 }
 
 @end

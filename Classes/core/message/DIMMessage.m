@@ -10,11 +10,11 @@
 
 #import "DIMMessage.h"
 
-static NSDate *now() {
+static inline NSDate *now() {
     return [[NSDate alloc] init];
 }
 
-static NSDate *number_time(const NSNumber *number) {
+static inline NSDate *number_time(const NSNumber *number) {
     NSTimeInterval ti = [number doubleValue];
     if (ti == 0) {
         return now();

@@ -11,7 +11,7 @@
 
 #import "NSArray+Merkle.h"
 
-static NSData *merge_data(NSData *data1, NSData *data2) {
+static inline NSData *merge_data(NSData *data1, NSData *data2) {
     assert(data1);
     assert(data2);
     NSUInteger len = [data1 length] + [data2 length];

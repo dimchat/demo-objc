@@ -21,7 +21,6 @@
 #import "DIMConversation.h"
 #import "DIMAmanuensis.h"
 #import "DIMClient.h"
-#import "DIMClient+Message.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

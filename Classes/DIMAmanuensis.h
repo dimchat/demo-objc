@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol DIMConversationDelegate;
 
 /**
- *  Conversation pool to manage chatroom instances
+ *  Conversation pool to manage conversation instances
  *
  *      1st, get instance here to avoid create same instance,
  *      2nd, if their history was updated, we can notice them here immediately
@@ -36,6 +36,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addConversation:(DIMConversation *)chatBox;
 - (void)removeConversation:(DIMConversation *)chatBox;
+
+@end
+
+@interface DIMAmanuensis (Message)
+
+/**
+ Save received message
+ 
+ @param iMsg - instant message
+ */
+- (void)recvMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 

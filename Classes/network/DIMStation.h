@@ -6,6 +6,8 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "DIMCore.h"
+
 #import "DIMCertificateAuthority.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMStationDelegate;
 
-@interface DIMStation : DIMDictionary {
+@interface DIMStation : DIMDictionary <DIMTransceiverDelegate> {
     
     NSString *_host;
     NSUInteger _port;
@@ -42,8 +44,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithHost:(const NSString *)host; // port=9527
 - (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port;
-
-- (BOOL)sendData:(const NSData *)msg;
 
 @end
 
