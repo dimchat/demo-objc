@@ -24,8 +24,8 @@
 
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID {
+    NSAssert([ID isValid], @"Invalid ID");
     if (self = [super init]) {
-        NSAssert([ID isValid], @"Invalid ID");
         _ID = [ID copy];
         _name = nil; // lazy
     }

@@ -51,6 +51,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMStationDelegate <NSObject>
 
+/**
+ Received a new data package from the station
+
+ @param station - current station
+ @param data - data package
+ */
 - (void)station:(const DIMStation *)station didReceiveData:(const NSData *)data;
 
 @end

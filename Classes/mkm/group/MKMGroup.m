@@ -32,6 +32,8 @@
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                  founderID:(const MKMID *)founderID {
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsPerson(founderID.type), @"founder error");
     if (self = [super initWithID:ID]) {
         _founder = [founderID copy];
         _owner = nil;

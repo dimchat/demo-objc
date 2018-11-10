@@ -30,6 +30,8 @@
 - (instancetype)initWithGroupID:(const MKMID *)groupID
                       accountID:(const MKMID *)ID
                       publicKey:(const MKMPublicKey *)PK {
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(!groupID || MKMNetwork_IsGroup(groupID.type), @"group error");
     if (self = [super initWithID:ID publicKey:PK]) {
         _groupID = [groupID copy];
         _role = MKMMember_Member;
