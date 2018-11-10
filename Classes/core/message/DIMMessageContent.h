@@ -123,7 +123,8 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 #pragma mark - File message
 
-@property (readonly, strong, nonatomic) NSData *fileData;
+@property (readonly, strong, nonatomic, nullable) NSURL *URL;
+@property (readonly, strong, nonatomic, nullable) NSData *fileData;
 @property (readonly, strong, nonatomic, nullable) NSString *filename;
 
 /**
@@ -141,12 +142,12 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 #pragma mark Image message
 
-@property (readonly, strong, nonatomic) NSData *imageData;
+@property (readonly, strong, nonatomic, nullable) NSData *imageData;
 @property (readonly, strong, nonatomic, nullable) NSData *snapshot;
 
 /**
  *  Image message: {
- *      type: 0x11,
+ *      type: 0x12,
  *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -160,11 +161,11 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 #pragma mark Audio message
 
-@property (readonly, strong, nonatomic) NSData *audioData;
+@property (readonly, strong, nonatomic, nullable) NSData *audioData;
 
 /**
  *  Audio message: {
- *      type: 0x12,
+ *      type: 0x14,
  *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -178,11 +179,11 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 #pragma mark Video message
 
-@property (readonly, strong, nonatomic) NSData *videoData;
+@property (readonly, strong, nonatomic, nullable) NSData *videoData;
 
 /**
  *  Video message: {
- *      type: 0x13,
+ *      type: 0x16,
  *      sn: 123,
  *
  *      url: "https://...", // upload to CDN
@@ -196,8 +197,7 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 #pragma mark - Webpage message
 
-@property (readonly, strong, nonatomic) NSString *URLString;
-@property (readonly, strong, nonatomic) NSString *title;
+@property (readonly, strong, nonatomic, nullable) NSString *title;
 @property (readonly, strong, nonatomic, nullable) NSString *desc;
 @property (readonly, strong, nonatomic, nullable) NSData *icon;
 
@@ -213,7 +213,7 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
  *  }
  */
 - (instancetype)initWithURLString:(const NSString *)url
-                            title:(const NSString *)title
+                            title:(nullable const NSString *)title
                       description:(nullable const NSString *)desc
                              icon:(nullable const NSData *)icon;
 
@@ -228,7 +228,7 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Quote text message: {
- *      type: 0x31,
+ *      type: 0x37,
  *      sn: 123,
  *
  *      text: "...",

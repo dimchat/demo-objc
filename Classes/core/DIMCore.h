@@ -19,6 +19,7 @@
 
 // Message
 #import "DIMMessageContent.h"
+#import "DIMMessageContent+Command.h"
 #import "DIMMessageContent+Secret.h"
 #import "DIMEnvelope.h"
 #import "DIMMessage.h"

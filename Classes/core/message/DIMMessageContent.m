@@ -9,6 +9,8 @@
 #import "NSData+Crypto.h"
 #import "NSString+Crypto.h"
 
+#import "DIMCertifiedMessage.h"
+
 #import "DIMMessageContent.h"
 
 @interface DIMMessageContent () {
@@ -147,7 +149,7 @@
         NSString *url = [_delegate URLStringForFileData:data
                                                filename:name];
         if (url) {
-            [_storeDictionary setObject:url forKey:@"url"];
+            [_storeDictionary setObject:url forKey:@"URL"];
         } else {
             NSString *str = [data base64Encode];
             [_storeDictionary setObject:str forKey:@"data"];
@@ -161,12 +163,20 @@
     return self;
 }
 
+- (NSURL *)URL {
+    NSString *string = [_storeDictionary objectForKey:@"URL"];
+    if (string) {
+        return [NSURL URLWithString:string];
+    }
+    return nil;
+}
+
 - (NSData *)fileData {
     NSString *str = [_storeDictionary objectForKey:@"data"];
     if (str) {
         return [str base64Decode];
     }
-    NSString *url = [_storeDictionary objectForKey:@"url"];
+    NSURL *url = [self URL];
     if (url) {
         // TODO: download file from the URL
     }
@@ -236,7 +246,7 @@
 #pragma mark - Webpage message
 
 - (instancetype)initWithURLString:(const NSString *)url
-                            title:(const NSString *)title
+                            title:(nullable const NSString *)title
                       description:(nullable const NSString *)desc
                              icon:(nullable const NSData *)icon {
     if (self = [self init]) {
@@ -244,28 +254,25 @@
         self.type = DIMMessageType_Page;
         
         // url
-        if (url) {
-            [_storeDictionary setObject:url forKey:@"url"];
+        [_storeDictionary setObject:url forKey:@"URL"];
+        
+        // title
+        if (title) {
+            [_storeDictionary setObject:title forKey:@"title"];
         }
+        
+        // desc
+        if (desc) {
+            [_storeDictionary setObject:desc forKey:@"desc"];
+        }
+        
         // icon
         if (icon) {
             NSString *str = [icon base64Encode];
             [_storeDictionary setObject:str forKey:@"icon"];
         }
-        // title
-        if (title) {
-            [_storeDictionary setObject:title forKey:@"title"];
-        }
-        // desc
-        if (desc) {
-            [_storeDictionary setObject:desc forKey:@"desc"];
-        }
     }
     return self;
-}
-
-- (NSString *)URLString {
-    return [_storeDictionary objectForKey:@"url"];
 }
 
 - (NSString *)title {
@@ -290,6 +297,10 @@
 - (instancetype)initWithText:(const NSString *)text
                        quote:(NSUInteger)sn {
     if (self = [self initWithText:text]) {
+        // type
+        self.type = DIMMessageType_Quote;
+        
+        // quote
         [_storeDictionary setObject:@(sn) forKey:@"quote"];
     }
     return self;

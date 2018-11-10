@@ -158,9 +158,10 @@ MKMContact *moki = [barrack contactWithID:ID2];
     iMsg = [[DIMTransceiver sharedInstance] messageFromReceivedPackage:data];
     
     // 2. process system command
-    DIMMessageContent *content;
-    content = iMsg.content;
+    DIMMessageContent *content = iMsg.content;
     if (content.type == DIMMessageType_Command) {
+        NSString *cmd = content.command;
+        
         // TODO: parse & execute the system command
         
         return;
