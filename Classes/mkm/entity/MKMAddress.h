@@ -115,8 +115,8 @@ typedef UInt8 MKMNetworkType;
  *      algorithm:
  *          CT   = sign(seed, SK);
  *          hash = ripemd160(sha256(CT));
- *          code = sha256(sha256(network+hash)).prefix(4)
- *          addr = base58(network+hash+check)
+ *          code = sha256(sha256(network+hash)).prefix(4); // check code
+ *          addr = base58(network+hash+code);
  */
 @interface MKMAddress : MKMString
 

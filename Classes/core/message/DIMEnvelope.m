@@ -17,7 +17,7 @@ static inline NSNumber *time_number(const NSDate *time) {
         time = now();
     }
     NSTimeInterval ti = [time timeIntervalSince1970];
-    return [[NSNumber alloc] initWithDouble:ti];
+    return [[NSNumber alloc] initWithLong:ti];
 }
 
 static inline NSDate *number_time(const NSNumber *number) {
