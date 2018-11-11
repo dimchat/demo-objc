@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+JsON.h"
+#import "NSData+Crypto.h"
 
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
@@ -53,11 +54,13 @@
     
     NSData *content = msg.data;
     NSAssert(content, @"content cannot be empty");
+    NSData *digest = [content sha256d];
+    
     NSData *CT = msg.signature;
     NSAssert(CT, @"signature cannot be empty");
     
     // 1. use the contact's public key to verify the signature
-    if (![self.publicKey verify:content withSignature:CT]) {
+    if (![self.publicKey verify:digest withSignature:CT]) {
         // signature error
         return nil;
     }

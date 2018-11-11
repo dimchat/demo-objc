@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+JsON.h"
+#import "NSData+Crypto.h"
 
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
@@ -53,9 +54,10 @@
     
     NSData *content = msg.data;
     NSAssert(content, @"content cannot be empty");
+    NSData *digest = [content sha256d];
     
     // 1. use the user's private key to sign the content
-    NSData *CT = [self.privateKey sign:content];
+    NSData *CT = [self.privateKey sign:digest];
     
     // 2. create certified message
     DIMCertifiedMessage *cMsg = nil;
