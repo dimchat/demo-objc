@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param iMsg - instant message
  */
-- (void)recvMessage:(const DIMInstantMessage *)iMsg;
+- (void)saveMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 

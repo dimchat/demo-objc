@@ -112,7 +112,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 @implementation DIMAmanuensis (Message)
 
-- (void)recvMessage:(const DIMInstantMessage *)iMsg {
+- (void)saveMessage:(const DIMInstantMessage *)iMsg {
     NSLog(@"saving message: %@", iMsg);
     
     DIMConversation *chatBox = nil;
@@ -120,14 +120,13 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     DIMEnvelope *env = iMsg.envelope;
     MKMID *sender = env.sender;
     MKMID *receiver = env.receiver;
-    DIMMessageContent *content = iMsg.content;
     
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chat box with group ID
         chatBox = [self conversationWithID:receiver];
-    } else if (content.group) {
+    } else if (iMsg.content.group) {
         // group chat, get chat box with group ID
-        chatBox = [self conversationWithID:content.group];
+        chatBox = [self conversationWithID:iMsg.content.group];
     } else {
         // personal chat, get chat box with contact ID
         chatBox = [self conversationWithID:sender];

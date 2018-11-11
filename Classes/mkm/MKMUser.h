@@ -38,7 +38,21 @@ typedef NSArray<const MKMID *> MKMContactList;
 
 @protocol MKMUserDataSource <NSObject>
 
+/**
+ Get contacts count
+
+ @param usr - user
+ @return count
+ */
 - (NSInteger)numberOfContactsInUser:(const MKMUser *)usr;
+
+/**
+ Get contact ID with index
+
+ @param usr - user
+ @param index - contact index
+ @return contact ID
+ */
 - (MKMID *)user:(const MKMUser *)usr contactAtIndex:(NSInteger)index;
 
 @end

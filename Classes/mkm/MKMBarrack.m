@@ -185,6 +185,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         } else {
             NSAssert(false, @"failed to get PK for user: %@", ID);
         }
+        
         // add contacts
         NSInteger count = [self numberOfContactsInUser:user];
         for (NSInteger index = 0; index < count; ++index) {

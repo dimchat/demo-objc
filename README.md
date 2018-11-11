@@ -7,7 +7,15 @@
 ```
 #import "DIMC.h"
 
-@interface Facebook : NSObject <MKMUserDelegate, MKMContactDelegate, MKMEntityDataSource, MKMProfileDataSource>
+@interface Facebook : NSObject <MKMUserDataSource,
+                                MKMUserDelegate,
+                                MKMContactDelegate,
+                                //-
+                                MKMGroupDataSource,
+                                MKMGroupDelegate,
+                                //-
+                                MKMEntityDataSource,
+                                MKMProfileDataSource>
 
 @end
 ```
@@ -16,40 +24,139 @@
 
 @implementation Facebook
 
+#pragma mark - MKMUserDataSource
+
+// get contacts count
+- (NSInteger)numberOfContactsInUser:(const MKMUser *)usr {
+    // TODO: load data from local storage
+    // ...
+    return 0;
+}
+
+// get contact ID with index
+- (MKMID *)user:(const MKMUser *)usr contactAtIndex:(NSInteger)index {
+    // TODO: load data from local storage
+    // ...
+    return nil;
+}
+
 #pragma mark MKMUserDelegate
 
 // User factory
 - (MKMUser *)userWithID:(const MKMID *)ID {
+    MKMUser *user = nil;
+    
+    // create with ID and public key
     MKMPublicKey *PK = MKMPublicKeyForID(ID);
-    return [[MKMUser alloc] initWithID:ID publicKey:PK];
+    if (PK) {
+        user = [[MKMUser alloc] initWithID:ID publicKey:PK];
+    } else {
+        NSAssert(false, @"failed to get PK for user: %@", ID);
+    }
+    
+    // add contacts
+    NSInteger count = [self numberOfContactsInUser:user];
+    for (NSInteger index = 0; index < count; ++index) {
+        [user addContact:[self user:user contactAtIndex:index]];
+    }
+    
+    return user;
 }
 
 #pragma mark MKMContactDelegate
 
 // Contact factory
 - (MKMContact *)contactWithID:(const MKMID *)ID {
+    MKMContact *contact = nil;
+    
+    // create with ID and public key
     MKMPublicKey *PK = MKMPublicKeyForID(ID);
-    return [[MKMContact alloc] initWithID:ID publicKey:PK];
+    if (PK) {
+        contact = [[MKMContact alloc] initWithID:ID publicKey:PK];
+    } else {
+        NSAssert(false, @"failed to get PK for user: %@", ID);
+    }
+    
+    return contact;
+}
+
+#pragma mark - MKMGroupDataSource
+
+// get group founder
+- (MKMID *)founderForGroupID:(const MKMID *)ID {
+    // TODO: load data from local storage
+    // ...
+    return nil;
+}
+
+// get group owner
+- (MKMID *)ownerForGroupID:(const MKMID *)ID {
+    // TODO: load data from local storage
+    // ...
+    return nil;
+}
+
+// get members count
+- (NSInteger)numberOfMembersInGroup:(const MKMGroup *)grp {
+    // TODO: load data from local storage
+    // ...
+    return 0;
+}
+
+// get member at index
+- (MKMID *)group:(const MKMGroup *)grp memberAtIndex:(NSInteger)index {
+    // TODO: load data from local storage
+    // ...
+    return nil;
+}
+
+#pragma mark MKMGroupDelegate
+
+// Group factory
+- (MKMGroup *)groupWithID:(const MKMID *)ID {
+    MKMGroup *group = nil;
+    
+    // get founder of this group
+    MKMID *founder = [self founderForGroupID:ID];
+    if (!founder) {
+        NSAssert(false, @"founder not found for group: %@", ID);
+        return  nil;
+    }
+    
+    // create it
+    if (ID.type == MKMNetwork_Polylogue) {
+        group = [[MKMPolylogue alloc] initWithID:ID founderID:founder];
+    } else {
+        NSAssert(false, @"group error: %@", ID);
+    }
+    // set owner
+    group.owner = [self ownerForGroupID:ID];
+    // add members
+    NSInteger count = [self numberOfMembersInGroup:group];
+    NSInteger index;
+    for (index = 0; index < count; ++index) {
+        [group addMember:[self group:group memberAtIndex:index]];
+    }
+    
+    return group;
 }
 
 #pragma mark MKMEntityDataSource
 
 // get meta to create entity
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {
-    NSDictionary *dict;
     // TODO: load meta from local storage or network
     // ...
-    return [[MKMMeta alloc] initWithDictionary:dict];;
+    return nil;
 }
 
 #pragma mark MKMProfileDataSource
 
 // get profile for entity
 - (MKMProfile *)profileForID:(const MKMID *)ID {
-    NSDictionary *dict;
     // TODO: load profile from local storage or network
     // ...
-    return [[MKMProfile alloc] initWithDictionary:dict];;
+    return nil;
 }
 
 @end
@@ -157,18 +264,18 @@ MKMContact *moki = [barrack contactWithID:ID2];
     DIMInstantMessage *iMsg;
     iMsg = [[DIMTransceiver sharedInstance] messageFromReceivedPackage:data];
     
-    // 2. process system command
+    // 2. user-defined command
     DIMMessageContent *content = iMsg.content;
     if (content.type == DIMMessageType_Command) {
         NSString *cmd = content.command;
         
-        // TODO: parse & execute the system command
-        
+        // TODO: parse & execute user-defined command
+        // ...
         return;
     }
     
     // 3. call Amanuensis to save the instant message
-    [[DIMAmanuensis sharedInstance] recvMessage:iMsg];
+    [[DIMAmanuensis sharedInstance] saveMessage:iMsg];
 }
 
 @end
@@ -196,8 +303,8 @@ MKMContact *moki = [barrack contactWithID:ID2];
 - (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatBox {
     MKMID *ID = chatBox.ID;
     
-    // TODO:
-    
+    // TODO: load data from local storage
+    // ...
     return 0;
 }
 
@@ -205,8 +312,8 @@ MKMContact *moki = [barrack contactWithID:ID2];
 - (DIMInstantMessage *)conversation:(const DIMConversation *)chatBox messageAtIndex:(NSInteger)index {
     MKMID *ID = chatBox.ID;
     
-    // TODO:
-    
+    // TODO: load data from local storage
+    // ...
     return nil;
 }
 
@@ -220,11 +327,12 @@ MKMContact *moki = [barrack contactWithID:ID2];
     } else if (MKMNetwork_IsGroup(ID.type)) {
         entity = MKMGroupWithID(ID);
     }
-    NSAssert(entity, @"ID error");
+    
     if (entity) {
         // create new conversation with entity (Account/Group)
         return [[DIMConversation alloc] initWithEntity:entity];
     }
+    NSAssert(false, @"failed to create conversation with ID: %@", ID);
     return nil;
 }
 
@@ -232,8 +340,19 @@ MKMContact *moki = [barrack contactWithID:ID2];
 - (BOOL)conversation:(const DIMConversation *)chatBox insertMessage:(const DIMInstantMessage *)iMsg {
     MKMID *ID = chatBox.ID;
     
-    // TODO:
+    // system command
+    DIMMessageContent *content = iMsg.content;
+    if (content.type == DIMMessageType_Command) {
+        NSString *cmd = content.command;
+        
+        // TODO: parse & execute system command
+        // ...
+        return YES;
+    }
     
+    // TODO: save message in local storage,
+    //       if the chat box is visiable, call it to reload data
+    // ...
     return YES;
 }
 
@@ -283,17 +402,18 @@ DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
 clerk.dataSource = _myMessageProcessor;
 clerk.delegate   = _myMessageProcessor;
 
-// 1. when your network connection received a message data from station,
-//    you should decompress(if need) and call the Transceiver to verify
-//    and decrypt it to an instant message;
-// 2. after that, you could try to recognize the message type, if it is
-//    a system command, you could run your scripts for it, otherwise
-//    call the Amanuensis to handle the message;
-// 3. the Amanuensis will insert it into the chat box (Conversation)
-//    that the message belongs to;
-// 4. finally, the chat box will call your message processor to save it,
-//    the Amanuensis will set your message processor into each chat box
-//    automatically, unless you have already specify them.
+// NOTICE:
+//     1. when your network connection received a message data from station,
+//        you should decompress(if need) and call the Transceiver to verify
+//        and decrypt it to an instant message;
+//     2. after that, you could try to recognize the message type, if it is
+//        a system command, you could run your scripts for it, otherwise
+//        call the Amanuensis to handle the message;
+//     3. the Amanuensis will insert it into the chat box (Conversation)
+//        that the message belongs to;
+//     4. finally, the chat box will call your message processor to save it,
+//        the Amanuensis will set your message processor into each chat box
+//        automatically, unless you have already specify them.
 ```
 
 ---

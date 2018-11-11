@@ -50,11 +50,37 @@ NS_DESIGNATED_INITIALIZER;
 
 @protocol MKMGroupDataSource <NSObject>
 
+/**
+ Get group founder
+
+ @param ID - group ID
+ @return founderID
+ */
 - (MKMID *)founderForGroupID:(const MKMID *)ID;
 
+/**
+ Get group owner
+
+ @param ID - group ID
+ @return ownerID
+ */
 - (MKMID *)ownerForGroupID:(const MKMID *)ID;
 
+/**
+ Get members count
+
+ @param grp - group
+ @return count
+ */
 - (NSInteger)numberOfMembersInGroup:(const MKMGroup *)grp;
+
+/**
+ Get member at index
+
+ @param grp - group
+ @param index - index
+ @return memberID
+ */
 - (MKMID *)group:(const MKMGroup *)grp memberAtIndex:(NSInteger)index;
 
 @end

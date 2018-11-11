@@ -34,7 +34,21 @@ typedef NSArray<const MKMID *> MKMAdminList;
 
 @protocol MKMChatroomDataSource <NSObject>
 
+/**
+ Get admins count
+
+ @param grp - chatroom
+ @return count
+ */
 - (NSInteger)numberOfAdminsInChatroom:(const MKMChatroom *)grp;
+
+/**
+ Get admin at index
+
+ @param grp - chatroom
+ @param index - index
+ @return adminID
+ */
 - (MKMID *)chatroom:(const MKMChatroom *)grp adminAtIndex:(NSInteger)index;
 
 @end
