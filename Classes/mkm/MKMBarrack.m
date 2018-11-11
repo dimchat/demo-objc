@@ -172,6 +172,11 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         } else {
             NSAssert(false, @"failed to get PK for user: %@", ID);
         }
+        // add contacts
+        NSInteger count = [self numberOfContactsInUser:user];
+        for (NSInteger index = 0; index < count; ++index) {
+            [user addContact:[self user:user contactAtIndex:index]];
+        }
         
         [self addUser:user];
         break;
@@ -271,6 +276,13 @@ SingletonImplementations(MKMBarrack, sharedInstance)
             group = [[MKMChatroom alloc] initWithID:ID founderID:founder];
         } else {
             NSAssert(false, @"group error: %@", ID);
+        }
+        // set owner
+        group.owner = [self ownerForGroupID:ID];
+        // add members
+        NSInteger count = [self numberOfMembersInGroup:group];
+        for (NSInteger index = 0; index < count; ++index) {
+            [group addMember:[self group:group memberAtIndex:index]];
         }
         
         [self addGroup:group];
