@@ -6,29 +6,28 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMClient.h"
 
 #import "DIMImmortals.h"
 
 @interface DIMImmortals () {
     
-    NSMutableDictionary<const MKMAddress *, MKMMeta *> *_metaTable;
-    NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
-    
     NSMutableDictionary<const MKMAddress *, MKMUser *> *_userTable;
     NSMutableDictionary<const MKMAddress *, MKMContact *> *_contactTable;
+    
+    NSMutableDictionary<const MKMAddress *, MKMMeta *> *_metaTable;
+    NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
 }
 
 @end
 
 @implementation DIMImmortals
 
-SingletonImplementations(DIMImmortals, sharedInstance)
-
 - (instancetype)init {
     if (self = [super init]) {
+        _userTable    = [[NSMutableDictionary alloc] initWithCapacity:2];
+        _contactTable = [[NSMutableDictionary alloc] initWithCapacity:2];
+        
         _metaTable    = [[NSMutableDictionary alloc] initWithCapacity:2];
         _profileTable = [[NSMutableDictionary alloc] initWithCapacity:2];
         
@@ -104,27 +103,49 @@ SingletonImplementations(DIMImmortals, sharedInstance)
 
 - (MKMUser *)userWithID:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"not user ID");
-    MKMMeta *meta = [self metaForEntityID:ID];
-    MKMPublicKey *PK = meta.key;
-    NSAssert(PK, @"failed to get PK for creating immortal user");
-    return [[MKMUser alloc] initWithID:ID publicKey:PK];
+    MKMUser *user = [_userTable objectForKey:ID.address];
+    if (!user) {
+        // meta
+        MKMMeta *meta = [self metaForEntityID:ID];
+        if (meta) {
+            user = [[MKMUser alloc] initWithID:ID publicKey:meta.key];
+            // profile.name
+            MKMProfile *profile = [self profileForID:ID];
+            NSAssert(profile.name, @"profile.name not found");
+            user.name = profile.name;
+            // store in memory cache
+            [_userTable setObject:user forKey:ID.address];
+        }
+    }
+    return user;
 }
 
 - (MKMContact *)contactWithID:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
-    MKMMeta *meta = [self metaForEntityID:ID];
-    MKMPublicKey *PK = meta.key;
-    NSAssert(PK, @"failed to get PK for creating immortal user");
-    return [[MKMContact alloc] initWithID:ID publicKey:PK];
+    MKMContact *contact = [_contactTable objectForKey:ID.address];
+    if (!contact) {
+        // meta
+        MKMMeta *meta = [self metaForEntityID:ID];
+        if (meta) {
+            contact = [[MKMContact alloc] initWithID:ID publicKey:meta.key];
+            // profile.name
+            MKMProfile *profile = [self profileForID:ID];
+            NSAssert(profile.name, @"profile.name not found");
+            contact.name = profile.name;
+            // store in memory cache
+            [_contactTable setObject:contact forKey:ID.address];
+        }
+    }
+    return contact;
 }
 
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {
-    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
     return [_metaTable objectForKey:ID.address];
 }
 
 - (MKMProfile *)profileForID:(const MKMID *)ID {
-    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
     return [_profileTable objectForKey:ID.address];
 }
 

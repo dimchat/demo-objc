@@ -52,6 +52,7 @@
     // 1.6. add this user to entity pool
     [MKMFacebook() addUser:user];
     // 1.7. store meta & private key
+    [MKMFacebook() setMeta:meta forID:ID];
     [MKMFacebook() saveMeta:meta forEntityID:ID];
     [SK saveKeyWithIdentifier:ID.address];
     

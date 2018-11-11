@@ -370,21 +370,18 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         return meta;
     }
     
-    // 2. search in local database
-    meta = [self loadMetaForEntityID:ID];
-    if (meta) {
-        [_metaTable setObject:meta forKey:ID.address];
-        return meta;
+    // 2. check data source
+    if (_entityDataSource) {
+        // 2.1. query from the network
+        meta = [_entityDataSource metaForEntityID:ID];
+    } else {
+        // 2.2. load from local storage
+        meta = [self loadMetaForEntityID:ID];
     }
+    NSAssert(meta, @"failed to get meta for ID: %@", ID);
     
-    // 3. query from the network
-    NSAssert(_entityDataSource, @"entity data source not set");
-    meta = [_entityDataSource metaForEntityID:ID];
-    
-    // 4. store in local database
-    if (meta && [self saveMeta:meta forEntityID:ID]) {
-        [_metaTable setObject:meta forKey:ID.address];
-    }
+    // 3. store in memory cache
+    [self setMeta:meta forID:ID];
     
     return meta;
 }
@@ -393,7 +390,9 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 
 - (MKMProfile *)profileForID:(const MKMID *)ID {
     //NSAssert(_profileDataSource, @"profile data source not set");
-    return [_profileDataSource profileForID:ID];
+    MKMProfile *profile = [_profileDataSource profileForID:ID];
+    //NSAssert(profile, @"failed to get profile for ID: %@", ID);
+    return profile;
 }
 
 @end

@@ -16,9 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
  *      1. Immortal Hulk
  *      2. Monkey King
  */
-@interface DIMImmortals : NSObject <MKMUserDelegate, MKMContactDelegate, MKMEntityDataSource, MKMProfileDataSource>
-
-+ (instancetype)sharedInstance;
+@interface DIMImmortals : NSObject <MKMUserDelegate,
+                                    MKMContactDelegate,
+                                    MKMEntityDataSource,
+                                    MKMProfileDataSource>
 
 @end
 
