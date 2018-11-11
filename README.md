@@ -141,16 +141,21 @@
     return group;
 }
 
-#pragma mark MKMEntityDataSource
+#pragma mark - MKMEntityDataSource
 
 // get meta to create entity
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {
-    // TODO: load meta from local storage or network
+    MKMMeta *meta = [MKMFacebook() loadMetaForEntityID:ID];
+    if (meta) {
+        return meta;
+    }
+    
+    // TODO: query meta from network
     // ...
-    return nil;
+    return meta;
 }
 
-#pragma mark MKMProfileDataSource
+#pragma mark - MKMProfileDataSource
 
 // get profile for entity
 - (MKMProfile *)profileForID:(const MKMID *)ID {
