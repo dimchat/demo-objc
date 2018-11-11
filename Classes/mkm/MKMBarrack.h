@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
                                   MKMGroupDataSource,
                                   MKMGroupDelegate,
                                   MKMMemberDelegate,
+                                  MKMChatroomDataSource,
                                   //-
                                   MKMEntityDataSource,
                                   MKMProfileDataSource>
@@ -54,6 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<MKMGroupDataSource> groupDataSource;
 @property (weak, nonatomic) id<MKMGroupDelegate> groupDelegate;
 @property (weak, nonatomic) id<MKMMemberDelegate> memberDelegate;
+@property (weak, nonatomic) id<MKMChatroomDataSource> chatroomDataSource;
 
 @property (weak, nonatomic) id<MKMEntityDataSource> entityDataSource;
 @property (weak, nonatomic) id<MKMProfileDataSource> profileDataSource;

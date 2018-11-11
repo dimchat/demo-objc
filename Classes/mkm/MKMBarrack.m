@@ -75,6 +75,19 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         _groupMemberTable = [[GroupMemberTableM alloc] init];
         
         _metaTable = [[MetaTableM alloc] init];
+        
+        // delegates
+        _userDataSource = nil;
+        _userDelegate = nil;
+        _contactDelegate = nil;
+        
+        _groupDataSource = nil;
+        _groupDelegate = nil;
+        _memberDelegate = nil;
+        _chatroomDataSource = nil;
+        
+        _entityDataSource = nil;
+        _profileDataSource = nil;
     }
     return self;
 }
@@ -281,8 +294,17 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         group.owner = [self ownerForGroupID:ID];
         // add members
         NSInteger count = [self numberOfMembersInGroup:group];
-        for (NSInteger index = 0; index < count; ++index) {
+        NSInteger index;
+        for (index = 0; index < count; ++index) {
             [group addMember:[self group:group memberAtIndex:index]];
+        }
+        // add admins
+        if (ID.type == MKMNetwork_Chatroom) {
+            MKMChatroom *chatroom = (MKMChatroom *)group;
+            count = [self numberOfAdminsInChatroom:chatroom];
+            for (index = 0; index < count; ++index) {
+                [chatroom addAdmin:[self chatroom:chatroom adminAtIndex:index]];
+            }
         }
         
         [self addGroup:group];
@@ -321,6 +343,20 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         break;
     }
     return member;
+}
+                     
+#pragma mark MKMChatroomDataSource
+
+- (NSInteger)numberOfAdminsInChatroom:(const MKMChatroom *)grp {
+    NSAssert(grp.ID.type == MKMNetwork_Chatroom, @"not a chatroom: %@", grp);
+    NSAssert(_chatroomDataSource, @"chatroom data source not set");
+    return [_chatroomDataSource numberOfAdminsInChatroom:grp];
+}
+
+- (MKMID *)chatroom:(const MKMChatroom *)grp adminAtIndex:(NSInteger)index {
+    NSAssert(grp.ID.type == MKMNetwork_Chatroom, @"not a chatroom: %@", grp);
+    NSAssert(_chatroomDataSource, @"chatroom data source not set");
+    return [_chatroomDataSource chatroom:grp adminAtIndex:index];
 }
 
 #pragma mark - MKMEntityDataSource

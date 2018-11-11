@@ -74,8 +74,9 @@
     if ([_administrators containsObject:ID]) {
         NSAssert([self isMember:ID], @"should be a member too");
         return YES;
+    } else {
+        return NO;
     }
-    return NO;
 }
 
 @end

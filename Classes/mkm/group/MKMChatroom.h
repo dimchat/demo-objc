@@ -30,4 +30,13 @@ typedef NSArray<const MKMID *> MKMAdminList;
 
 @end
 
+#pragma mark - Chatroom Delegate
+
+@protocol MKMChatroomDataSource <NSObject>
+
+- (NSInteger)numberOfAdminsInChatroom:(const MKMChatroom *)grp;
+- (MKMID *)chatroom:(const MKMChatroom *)grp adminAtIndex:(NSInteger)index;
+
+@end
+
 NS_ASSUME_NONNULL_END
