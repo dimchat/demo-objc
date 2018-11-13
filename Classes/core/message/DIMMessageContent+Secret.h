@@ -19,10 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Top-Secret message: {
- *      type: 0xFF,
- *      sn: 123,
+ *      type : 0xFF,
+ *      sn   : 123,
  *
- *      forward: {...}  // certified secure message
+ *      forward : {...}  // certified secure message
  *  }
  */
 - (instancetype)initWithForwardMessage:(const DIMCertifiedMessage *)cMsg;

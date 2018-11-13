@@ -113,10 +113,10 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Text message: {
- *      type: 0x01,
- *      sn: 123,
+ *      type : 0x01,
+ *      sn   : 123,
  *
- *      text: "..."
+ *      text : "..."
  *  }
  */
 - (instancetype)initWithText:(const NSString *)text;
@@ -129,12 +129,12 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  File message: {
- *      type: 0x10,
- *      sn: 123,
+ *      type : 0x10,
+ *      sn   : 123,
  *
- *      url: "https://...", // upload to CDN
- *      data: "...",        // if (!url) base64(fileContent)
- *      filename: "..."
+ *      URL      : "https://...", // upload to CDN
+ *      data     : "...",         // if (!URL) base64(fileContent)
+ *      filename : "..."
  *  }
  */
 - (instancetype)initWithFileData:(const NSData *)data
@@ -147,13 +147,13 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Image message: {
- *      type: 0x12,
- *      sn: 123,
+ *      type : 0x12,
+ *      sn   : 123,
  *
- *      url: "https://...", // upload to CDN
- *      data: "...",        // if (!url) base64(image)
- *      snapshot: "...",    // base64(smallImage)
- *      filename: "..."
+ *      URL      : "https://...", // upload to CDN
+ *      data     : "...",         // if (!URL) base64(image)
+ *      snapshot : "...",         // base64(smallImage)
+ *      filename : "..."
  *  }
  */
 - (instancetype)initWithImageData:(const NSData *)data
@@ -165,13 +165,13 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Audio message: {
- *      type: 0x14,
- *      sn: 123,
+ *      type : 0x14,
+ *      sn   : 123,
  *
- *      url: "https://...", // upload to CDN
- *      data: "...",        // if (!url) base64(audio)
- *      text: "...",        // Automatic Speech Recognition
- *      filename: "..."
+ *      URL      : "https://...", // upload to CDN
+ *      data     : "...",         // if (!URL) base64(audio)
+ *      text     : "...",         // Automatic Speech Recognition
+ *      filename : "..."
  *  }
  */
 - (instancetype)initWithAudioData:(const NSData *)data
@@ -183,13 +183,13 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Video message: {
- *      type: 0x16,
- *      sn: 123,
+ *      type : 0x16,
+ *      sn   : 123,
  *
- *      url: "https://...", // upload to CDN
- *      data: "...",        // if (!url) base64(video)
- *      snapshot: "...",    // base64(smallImage)
- *      filename: "..."
+ *      URL      : "https://...", // upload to CDN
+ *      data     : "...",         // if (!URL) base64(video)
+ *      snapshot : "...",         // base64(smallImage)
+ *      filename : "..."
  *  }
  */
 - (instancetype)initWithVideoData:(const NSData *)data
@@ -203,13 +203,13 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Web Page message: {
- *      type: 0x20,
- *      sn: 123,
+ *      type : 0x20,
+ *      sn   : 123,
  *
- *      url: "https://...", // Page URL
- *      icon: "...",        // base64(icon)
- *      title: "...",
- *      desc: "..."
+ *      URL   : "https://...", // Page URL
+ *      icon  : "...",         // base64(icon)
+ *      title : "...",
+ *      desc  : "..."
  *  }
  */
 - (instancetype)initWithURLString:(const NSString *)url
@@ -228,11 +228,11 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 
 /**
  *  Quote text message: {
- *      type: 0x37,
- *      sn: 123,
+ *      type : 0x37,
+ *      sn   : 123,
  *
- *      text: "...",
- *      quote: 123   // referenced serial number of previous message
+ *      text  : "...",
+ *      quote : 123   // referenced serial number of previous message
  *  }
  */
 - (instancetype)initWithText:(const NSString *)text quote:(NSUInteger)sn;

@@ -16,11 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Command message: {
- *      type: 0x88,
- *      sn: 123,
+ *      type : 0x88,
+ *      sn   : 123,
  *
- *      command: "...",
- *      extra: info
+ *      command : "...",
+ *      extra   : info
  *  }
  */
 - (instancetype)initWithCommand:(const NSString *)cmd;
