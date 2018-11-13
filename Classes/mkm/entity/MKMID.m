@@ -22,7 +22,8 @@
 static inline void parse_id_string(const NSString *string, MKMID *ID) {
     // get terminal
     NSArray *pair = [string componentsSeparatedByString:@"/"];
-    if (pair.count == 2) {
+    if (pair.count > 1) {
+        assert(pair.count == 2);
         string = pair.firstObject; // drop the tail
         ID.terminal = pair.lastObject;
     }
