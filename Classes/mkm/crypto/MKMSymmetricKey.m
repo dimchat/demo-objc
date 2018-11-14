@@ -10,6 +10,12 @@
 
 #import "MKMSymmetricKey.h"
 
+@interface MKMSymmetricKey ()
+
+@property (strong, nonatomic) NSString *passphrase;
+
+@end
+
 @implementation MKMSymmetricKey
 
 - (instancetype)init {
@@ -29,27 +35,53 @@
             NSAssert(self, @"algorithm not support: %@", algorithm);
         }
     } else if (self = [super initWithDictionary:keyInfo]) {
-        keyInfo = _storeDictionary;
-        
-        // passphrase
-        NSString *PW = [keyInfo objectForKey:@"passphrase"];
-        if (!PW) {
-            PW = [keyInfo objectForKey:@"password"];
-            if (!PW) {
-                // random password
-                uint32_t n1 = arc4random();
-                uint32_t n2 = arc4random();
-                uint32_t n3 = arc4random();
-                PW = [[NSString alloc] initWithFormat:@"%010u-%010u-%010u",
-                      n1, n2, n3];
-                [_storeDictionary setObject:PW forKey:@"passphrase"];
-            }
-        }
-        _passphrase = PW;
+        // lazy
+        _passphrase = nil;
     }
     
     return self;
 }
+
+- (id)copyWithZone:(NSZone *)zone {
+    MKMSymmetricKey *key = [super copyWithZone:zone];
+    if (key) {
+        key.passphrase = _passphrase;
+    }
+    return key;
+}
+
+- (NSString *)passphrase {
+    while (!_passphrase) {
+        NSString *PW;
+        
+        // passphrase
+        PW = [_storeDictionary objectForKey:@"passphrase"];
+        if (PW) {
+            _passphrase = PW;
+            break;
+        }
+        
+        // password
+        PW = [_storeDictionary objectForKey:@"password"];
+        if (PW) {
+            _passphrase = PW;
+            break;
+        }
+        
+        // random password
+        uint32_t n1 = arc4random();
+        uint32_t n2 = arc4random();
+        uint32_t n3 = arc4random();
+        PW = [[NSString alloc] initWithFormat:@"%010u-%010u-%010u", n1, n2, n3];
+        [_storeDictionary setObject:PW forKey:@"passphrase"];
+        
+        _passphrase = PW;
+        break;
+    }
+    return _passphrase;
+}
+
+#pragma mark - Protocol
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
     // implements in subclass

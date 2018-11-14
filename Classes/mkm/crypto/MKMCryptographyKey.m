@@ -63,11 +63,8 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
-        keyInfo = _storeDictionary;
-        
-        // algorithm
-        _algorithm = [keyInfo objectForKey:@"algorithm"];
-        NSAssert(_algorithm, @"key info error: %@", keyInfo);
+        // lazy
+        _algorithm = nil;
     }
     return self;
 }
@@ -84,8 +81,24 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+    MKMCryptographyKey *key = [super copyWithZone:zone];
+    if (key) {
+        key.algorithm = _algorithm;
+    }
+    return key;
+}
+
 - (BOOL)isEqual:(const MKMCryptographyKey *)aKey {
     return [aKey isEqualToDictionary:_storeDictionary];
+}
+
+- (NSString *)algorithm {
+    if (!_algorithm) {
+        _algorithm = [_storeDictionary objectForKey:@"algorithm"];
+        NSAssert(_algorithm, @"key info error: %@", _storeDictionary);
+    }
+    return _algorithm;
 }
 
 @end

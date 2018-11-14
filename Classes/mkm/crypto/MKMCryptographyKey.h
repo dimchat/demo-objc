@@ -18,10 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          ...
  *      }
  */
-@interface MKMCryptographyKey : MKMDictionary {
-    
-    NSString *_algorithm;
-}
+@interface MKMCryptographyKey : MKMDictionary
 
 @property (readonly, strong, nonatomic) NSString *algorithm;
 

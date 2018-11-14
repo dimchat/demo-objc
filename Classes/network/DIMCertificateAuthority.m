@@ -9,6 +9,7 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 #import "NSString+Crypto.h"
+#import "NSDate+Timestamp.h"
 
 #import "DIMCertificateAuthority.h"
 
@@ -132,8 +133,8 @@
 
 - (instancetype)initWithNotBefore:(const NSDate *)from
                          notAfter:(const NSDate *)to {
-    NSDictionary *dict = @{@"NotBefore":@([from timeIntervalSince1970]),
-                           @"NotAfter" :@([to timeIntervalSince1970]),
+    NSDictionary *dict = @{@"NotBefore":NSNumberFromDate(from),
+                           @"NotAfter" :NSNumberFromDate(to),
                            };
     if (self = [super initWithDictionary:dict]) {
         _notBefore = [from copy];
@@ -153,18 +154,16 @@
 
 - (NSDate *)notBefore {
     if (!_notBefore) {
-        NSNumber *num = [_storeDictionary objectForKey:@"NotBefore"];
-        NSTimeInterval ti = [num doubleValue];
-        _notBefore = [[NSDate alloc] initWithTimeIntervalSince1970:ti];
+        NSNumber *timestamp = [_storeDictionary objectForKey:@"NotBefore"];
+        _notBefore = NSDateFromNumber(timestamp);
     }
     return _notBefore;
 }
 
 - (NSDate *)notAfter {
     if (!_notAfter) {
-        NSNumber *num = [_storeDictionary objectForKey:@"NotAfter"];
-        NSTimeInterval ti = [num doubleValue];
-        _notAfter = [[NSDate alloc] initWithTimeIntervalSince1970:ti];
+        NSNumber *timestamp = [_storeDictionary objectForKey:@"NotAfter"];
+        _notAfter = NSDateFromNumber(timestamp);
     }
     return _notAfter;
 }

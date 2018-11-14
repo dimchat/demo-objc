@@ -8,22 +8,9 @@
 
 #import "NSData+Crypto.h"
 #import "NSString+Crypto.h"
+#import "NSDate+Timestamp.h"
 
 #import "MKMHistoryOperation.h"
-
-static inline NSDate * now(void) {
-    return [[NSDate alloc] init];
-}
-
-static inline NSTimeInterval timestamp(const NSDate *time) {
-    return [time timeIntervalSince1970];
-}
-
-static inline NSDate *date(NSTimeInterval time) {
-    return [[NSDate alloc] initWithTimeIntervalSince1970:time];
-}
-
-#pragma mark -
 
 @interface MKMHistoryOperation ()
 
@@ -58,11 +45,8 @@ static inline NSDate *date(NSTimeInterval time) {
 
 - (instancetype)initWithCommand:(const NSString *)op
                            time:(nullable const NSDate *)time {
-    if (!time) {
-        time = now();
-    }
     NSDictionary *dict = @{@"command":op,
-                           @"time"   :@(timestamp(time))
+                           @"time"   :NSNumberFromDate(time)
                            };
     if (self = [super initWithDictionary:dict]) {
         _command = [op copy];
@@ -89,9 +73,9 @@ static inline NSDate *date(NSTimeInterval time) {
 
 - (NSDate *)time {
     if (!_time) {
-        NSNumber *time = [_storeDictionary objectForKey:@"time"];
-        if (time) {
-            _time = date([time unsignedIntegerValue]);
+        NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
+        if (timestamp) {
+            _time = NSDateFromNumber(timestamp);
         }
     }
     return _time;

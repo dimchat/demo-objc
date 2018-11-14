@@ -35,12 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
  *          passphrase: "....." // password
  *      }
  */
-@interface MKMSymmetricKey : MKMCryptographyKey <MKMSymmetricKey> {
-    
-    const NSString *_passphrase;
-}
+@interface MKMSymmetricKey : MKMCryptographyKey <MKMSymmetricKey>
 
-@property (readonly, strong, nonatomic) const NSString *passphrase;
+@property (readonly, strong, nonatomic) NSString *passphrase;
 
 @end
 

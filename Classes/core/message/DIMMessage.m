@@ -6,21 +6,11 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSDate+Timestamp.h"
+
 #import "DIMEnvelope.h"
 
 #import "DIMMessage.h"
-
-static inline NSDate *now() {
-    return [[NSDate alloc] init];
-}
-
-static inline NSDate *number_time(const NSNumber *number) {
-    NSTimeInterval ti = [number doubleValue];
-    if (ti == 0) {
-        return now();
-    }
-    return [[NSDate alloc] initWithTimeIntervalSince1970:ti];
-}
 
 @interface DIMMessage ()
 
@@ -91,7 +81,7 @@ static inline NSDate *number_time(const NSNumber *number) {
         to = [MKMID IDWithID:to];
         // time
         NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
-        NSDate *time = number_time(timestamp);
+        NSDate *time = NSDateFromNumber(timestamp);
         
         DIMEnvelope *env;
         env = [[DIMEnvelope alloc] initWithSender:from
