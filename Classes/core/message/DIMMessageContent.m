@@ -66,9 +66,9 @@
 - (id)copyWithZone:(NSZone *)zone {
     DIMMessageContent *content = [super copyWithZone:zone];
     if (content) {
-        content.type = _type;
-        content.serialNumber = _serialNumber;
-        content.group = _group;
+        //content.type = _type;
+        //content.serialNumber = _serialNumber;
+        //content.group = _group;
         content.delegate = _delegate;
     }
     return content;

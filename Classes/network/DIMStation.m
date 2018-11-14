@@ -66,8 +66,8 @@
     if (station) {
         station.host = _host;
         station.port = _port;
-        station.SP = _SP;
-        station.CA = _CA;
+        //station.SP = _SP;
+        //station.CA = _CA;
         station.delegate = _delegate;
     }
     return station;

@@ -82,9 +82,8 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        NSString *CT = [dict objectForKey:@"signature"];
-        NSAssert(CT, @"signature cannot be empty");
-        self.signature = [CT base64Decode];
+        // lazy
+        _signature = nil;
     }
     return self;
 }
@@ -95,6 +94,15 @@
         cMsg.signature = _signature;
     }
     return cMsg;
+}
+
+- (NSData *)signature {
+    if (!_signature) {
+        NSString *CT = [_storeDictionary objectForKey:@"signature"];
+        NSAssert(CT, @"signature cannot be empty");
+        _signature = [CT base64Decode];
+    }
+    return _signature;
 }
 
 @end

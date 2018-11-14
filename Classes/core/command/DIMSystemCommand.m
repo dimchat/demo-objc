@@ -53,11 +53,8 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
-        dict = _storeDictionary;
-        
-        // command
-        id cmd = [dict objectForKey:@"command"];
-        _command = [DIMCommandContent commandWithCommand:cmd];
+        // lazy
+        _command = nil;
     }
     return self;
 }
@@ -68,6 +65,15 @@
         cmd.command = _command;
     }
     return cmd;
+}
+
+- (DIMCommandContent *)command {
+    if (!_command) {
+        id cmd = [_storeDictionary objectForKey:@"command"];
+        NSAssert(cmd, @"command cannot be empty");
+        _command = [DIMCommandContent commandWithCommand:cmd];
+    }
+    return _command;
 }
 
 @end
