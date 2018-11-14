@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
-@property (readonly, nonatomic) NSUInteger port;        // default: 9527
+@property (readonly, nonatomic) NSUInteger port;        // default: 9394
 
 @property (copy, nonatomic) DIMServiceProvider *SP;
 @property (copy, nonatomic) DIMCertificateAuthority *CA;
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)stationWithStation:(id)station;
 
-- (instancetype)initWithHost:(const NSString *)host; // port=9527
+- (instancetype)initWithHost:(const NSString *)host; // port=9394
 - (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port;
 
 @end

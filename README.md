@@ -373,7 +373,7 @@ DIMClient *client = [DIMClient sharedInstance];
 DIMTransceiver *trans = [DIMTransceiver sharedInstance];
 
 // 1. connect to a Station
-Station *server = [[Station alloc] initWithHost:@"127.0.0.1" port:9527];
+Station *server = [[Station alloc] initWithHost:@"127.0.0.1" port:9394];
 client.currentStation = server;
 trans.delegate        = server;
 

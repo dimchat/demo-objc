@@ -45,7 +45,7 @@
 }
 
 - (instancetype)initWithHost:(const NSString *)host {
-    self = [self initWithHost:host port:9527];
+    self = [self initWithHost:host port:9394];
     return self;
 }
 
