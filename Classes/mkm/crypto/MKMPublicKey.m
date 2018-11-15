@@ -52,13 +52,14 @@
     return [self verify:data withSignature:signature];
 }
 
+#pragma mark - Protocol
+
 - (NSData *)encrypt:(const NSData *)plaintext {
     // implements in subclass
     return nil;
 }
 
-- (BOOL)verify:(const NSData *)plaintext
- withSignature:(const NSData *)ciphertext {
+- (BOOL)verify:(const NSData *)data withSignature:(const NSData *)signature {
     // implements in subclass
     return NO;
 }

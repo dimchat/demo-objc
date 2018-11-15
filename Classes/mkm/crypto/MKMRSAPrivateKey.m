@@ -232,16 +232,16 @@
     return plaintext;
 }
 
-- (NSData *)sign:(const NSData *)plaintext {
-    NSAssert([plaintext length] > 0, @"plaintext cannot be empty");
-    NSAssert([plaintext length] <= (self.keySizeInBits/8 - 11), @"plaintext too long");
+- (NSData *)sign:(const NSData *)data {
+    NSAssert([data length] > 0, @"data cannot be empty");
+    //NSAssert([data length] <= (self.keySizeInBits/8 - 11), @"data too long");
     NSAssert(self.privateKeyRef != NULL, @"private key cannot be empty");
-    NSData *ciphertext = nil;
+    NSData *signature = nil;
     
-    if (plaintext.length > (self.keySizeInBits/8 - 11)) {
-        // only sign the digest of plaintext
-        // actually you should do it before calling sign/verify
-        plaintext = [plaintext sha256d];
+    if (data.length > (self.keySizeInBits/8 - 11)) {
+        // if data too long, only sign the digest of plaintext
+        // actually you can do it before calling sign/verify
+        data = [data sha256d];
     }
     
     // buffer
@@ -252,19 +252,19 @@
     // sign with the private key
     OSStatus status = SecKeyRawSign(self.privateKeyRef,
                                 kSecPaddingPKCS1,
-                                [plaintext bytes],
-                                [plaintext length],
+                                [data bytes],
+                                [data length],
                                 buffer,
                                 &bufferSize
                                 );
     NSAssert(status == noErr, @"Error, OSStatus: %d.", status);
     
     // buid up signature
-    ciphertext = [[NSData alloc] initWithBytesNoCopy:buffer
-                                              length:bufferSize
-                                        freeWhenDone:YES];
+    signature = [[NSData alloc] initWithBytesNoCopy:buffer
+                                             length:bufferSize
+                                       freeWhenDone:YES];
     
-    return ciphertext;
+    return signature;
 }
 
 @end

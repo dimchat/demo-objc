@@ -56,8 +56,7 @@
     return ciphertext;
 }
 
-- (BOOL)verify:(const NSData *)plaintext
- withSignature:(const NSData *)ciphertext {
+- (BOOL)verify:(const NSData *)data withSignature:(const NSData *)signature {
     BOOL match = NO;
     
     // TODO: ECC verify

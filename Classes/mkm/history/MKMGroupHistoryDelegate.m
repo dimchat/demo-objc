@@ -49,9 +49,8 @@
     
     // check member confirms for each transaction
     // it must be confirmed by more than 50% members to write history record
-    NSData *hash = [record.signature sha256d];
     for (id tx in record.transactions) {
-        NSInteger confirms = 1; // include the recorder as default
+        NSInteger confirm_count = 1; // include the recorder as default
         MKMHistoryTransaction *event;
         event = [MKMHistoryTransaction transactionWithTransaction:tx];
         for (MKMAddress *addr in event.confirmations) {
@@ -65,10 +64,10 @@
                 MKMID *mid = [MKMID IDWithID:m];
                 if ([mid.address isEqualToString:addr]) {
                     // address match a member
-                    NSData *CT = [event confirmationForID:mid];
+                    NSData *confirm = [event confirmationForID:mid];
                     MKMPublicKey *PK = MKMPublicKeyForID(mid);
-                    if ([PK verify:hash withSignature:CT]) {
-                        ++confirms;
+                    if ([PK verify:record.signature withSignature:confirm]) {
+                        ++confirm_count;
                     } else {
                         NSAssert(false, @"confirmation error");
                     }
@@ -79,7 +78,7 @@
             // go next confirmation
         }
         // must more than 50%, include the recorder
-        if (confirms * 2 <= members.count) {
+        if (confirm_count * 2 <= members.count) {
             NSAssert(false, @"confirmations not enough for %@", tx);
             return NO;
         }

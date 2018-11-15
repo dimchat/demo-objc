@@ -68,12 +68,12 @@
     return plaintext;
 }
 
-- (NSData *)sign:(const NSData *)plaintext {
-    NSData *ciphertext = nil;
+- (NSData *)sign:(const NSData *)data {
+    NSData *signature = nil;
     
     // TODO: ECC sign
     
-    return ciphertext;
+    return signature;
 }
 
 @end

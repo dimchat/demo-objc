@@ -210,29 +210,28 @@ NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
     return ciphertext;
 }
 
-- (BOOL)verify:(const NSData *)plaintext
- withSignature:(const NSData *)ciphertext {
-    NSAssert([plaintext length] > 0, @"plaintext cannot be empty");
-    NSAssert([plaintext length] <= (self.keySizeInBits/8 - 11), @"plaintext too long");
-    NSAssert([ciphertext length] > 0, @"signature cannot be empty");
-    NSAssert([ciphertext length] <= (self.keySizeInBits/8), @"signature too long");
+- (BOOL)verify:(const NSData *)data withSignature:(const NSData *)signature {
+    NSAssert([data length] > 0, @"data cannot be empty");
+    //NSAssert([data length] <= (self.keySizeInBits/8 - 11), @"data too long");
+    NSAssert([signature length] > 0, @"signature cannot be empty");
+    NSAssert([signature length] <= (self.keySizeInBits/8), @"signature too long");
     NSAssert(_publicKeyRef != NULL, @"public key cannot be empty");
     BOOL match = NO;
     
-    if (plaintext.length > (self.keySizeInBits/8 - 11)) {
-        // only sign the digest of plaintext
-        // actually you should do it before calling sign/verify
-        plaintext = [plaintext sha256d];
+    if (data.length > (self.keySizeInBits/8 - 11)) {
+        // if data too long, only sign the digest of plaintext
+        // actually you can do it before calling sign/verify
+        data = [data sha256d];
     }
     
     // RSA verify
     OSStatus sanityCheck = noErr;
     sanityCheck = SecKeyRawVerify(_publicKeyRef,
                                   kSecPaddingPKCS1,
-                                  [plaintext bytes],
-                                  [plaintext length],
-                                  [ciphertext bytes],
-                                  [ciphertext length]
+                                  [data bytes],
+                                  [data length],
+                                  [signature bytes],
+                                  [signature length]
                                   );
     
     match = (sanityCheck == errSecSuccess);
