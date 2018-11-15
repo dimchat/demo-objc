@@ -35,7 +35,7 @@
 
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
-                          time:(const NSDate *)time {
+                          time:(nullable const NSDate *)time {
     DIMEnvelope *env = [[DIMEnvelope alloc] initWithSender:from
                                                   receiver:to
                                                       time:time];

@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
-                          time:(const NSDate *)time;
+                          time:(nullable const NSDate *)time;
 
 - (instancetype)initWithEnvelope:(const DIMEnvelope *)env
 NS_DESIGNATED_INITIALIZER;

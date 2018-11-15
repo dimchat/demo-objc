@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithContent:(const DIMMessageContent *)content
                          sender:(const MKMID *)from
                        receiver:(const MKMID *)to
-                           time:(const NSDate *)time;
+                           time:(nullable const NSDate *)time;
 
 - (instancetype)initWithContent:(const DIMMessageContent *)content
                        envelope:(const DIMEnvelope *)env

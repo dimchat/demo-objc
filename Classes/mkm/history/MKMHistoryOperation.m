@@ -88,7 +88,7 @@
 @implementation MKMHistoryOperation (Link)
 
 - (instancetype)initWithPreviousSignature:(const NSData *)prevSign
-                                     time:(const NSDate *)time {
+                                     time:(nullable const NSDate *)time {
     NSString *command = @"link";
     if (self = [self initWithCommand:command time:time]) {
         // previous signature
