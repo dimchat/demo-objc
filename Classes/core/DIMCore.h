@@ -27,10 +27,6 @@
 #import "DIMSecureMessage.h"
 #import "DIMCertifiedMessage.h"
 
-// System Command
-#import "DIMCommandContent.h"
-#import "DIMSystemCommand.h"
-
 //-
 #import "DIMTransceiver.h"
 #import "DIMKeyStore.h"
