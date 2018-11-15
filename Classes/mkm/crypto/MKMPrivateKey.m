@@ -32,10 +32,10 @@
     if ([self isMemberOfClass:[MKMPrivateKey class]]) {
         // create instance by subclass with algorithm
         NSString *algorithm = [keyInfo objectForKey:@"algorithm"];
-        if ([algorithm isEqualToString:ACAlgorithmECC]) {
-            self = [[MKMECCPrivateKey alloc] initWithDictionary:keyInfo];
-        } else if ([algorithm isEqualToString:ACAlgorithmRSA]) {
+        if ([algorithm isEqualToString:ACAlgorithmRSA]) {
             self = [[MKMRSAPrivateKey alloc] initWithDictionary:keyInfo];
+        } else if ([algorithm isEqualToString:ACAlgorithmECC]) {
+            self = [[MKMECCPrivateKey alloc] initWithDictionary:keyInfo];
         } else {
             self = nil;
             NSAssert(self, @"algorithm not support: %@", algorithm);
@@ -78,14 +78,14 @@
 + (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
     MKMPrivateKey *SK = nil;
     
-    // try ECC private key
-    SK = [MKMECCPrivateKey loadKeyWithIdentifier:identifier];
+    // try RSA private key
+    SK = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];
     if (SK) {
         return SK;
     }
     
-    // try RSA private key
-    SK = [MKMRSAPrivateKey loadKeyWithIdentifier:identifier];
+    // try ECC private key
+    SK = [MKMECCPrivateKey loadKeyWithIdentifier:identifier];
     if (SK) {
         return SK;
     }
