@@ -33,7 +33,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIM_CORE_VERSION 0x00010100
+#define DIM_CORE_VERSION 0x00000100
 
 // free functions
 NSString * dimCoreVersion(void);

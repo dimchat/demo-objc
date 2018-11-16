@@ -25,7 +25,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMC_VERSION 0x00010100
+#define DIMC_VERSION 0x00000100
 
 // free functions
 NSString * dimcVersion(void);

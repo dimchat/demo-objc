@@ -1,10 +1,15 @@
 # Decentralized Instant Messaging Client (Objective-C)
 
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/moky/dimc-objc/blob/master/LICENSE)
+[![Version](https://img.shields.io/badge/alpha-0.1.0-red.svg)](https://github.com/moky/dimc-objc/archive/master.zip)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/moky/dimc-objc/pulls)
+[![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20OSX-brightgreen.svg)](https://github.com/moky/dimc-objc/wiki)
+
 ## User & Contacts:
 
 * Implements your entity delegate (.h/.m)
 
-```
+```objc
 #import "DIMC.h"
 
 @interface Facebook : NSObject <MKMUserDataSource,
@@ -19,7 +24,7 @@
 
 @end
 ```
-```
+```objc
 #import "Facebook.h"
 
 @implementation Facebook
@@ -170,7 +175,7 @@
 ### Samples
 * Register User
 
-```
+```objc
 // generate asymmetric keys
 MKMPrivateKey *SK = [[MKMPrivateKey alloc] init];
 MKMPublicKey *PK = SK.publicKey;
@@ -187,7 +192,7 @@ NSLog(@"my new ID: %@", moky.ID);
 
 * Load User
 
-```
+```objc
 MKMBarrack *barrack = [MKMBarrack sharedInstance];
 DIMClient  *client  = [DIMClient sharedInstance];
 
@@ -211,7 +216,7 @@ client.currentUser = moky;
 
 * Load Contact
 
-```
+```objc
 MKMBarrack *barrack = [MKMBarrack sharedInstance];
 
 // 1. get contacts (IDs) from local storage
@@ -233,14 +238,14 @@ MKMContact *moki = [barrack contactWithID:ID2];
 
 * Implements a Station instance (.h/.m) for network transferring
 
-```
+```objc
 #import "DIMC.h"
 
 @interface Station : DIMStation <DIMStationDelegate>
 
 @end
 ```
-```
+```objc
 #import "Station.h"
 
 @implementation Station
@@ -290,14 +295,14 @@ MKMContact *moki = [barrack contactWithID:ID2];
 
 * Implements the conversation data source & delegate (.h/.m)
 
-```
+```objc
 #import "DIMC.h"
 
 @interface MessageProcessor : NSObject <DIMConversationDataSource, DIMConversationDelegate>
 
 @end
 ```
-```
+```objc
 #import "MessageProcessor.h"
 
 @implementation MessageProcessor
@@ -368,7 +373,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 ### Samples
 * Send message
 
-```
+```objc
 DIMClient *client = [DIMClient sharedInstance];
 DIMTransceiver *trans = [DIMTransceiver sharedInstance];
 
@@ -398,7 +403,7 @@ MKMID *receiver = hulk.ID;
 
 * Receive message
 
-```
+```objc
 // create your message processor
 _myMessageProcessor = [[MessageProcessor alloc] init];
 
