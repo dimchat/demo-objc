@@ -254,7 +254,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 
 // send out a data package onto network
 - (BOOL)sendPackage:(const NSData *)data
-  completionHandler:(DIMTransceiverCompletionHandler _Nullable)handler {
+  completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
     // TODO: compress (if need) before sending out
     //       after that, call the completion handler with error message
     

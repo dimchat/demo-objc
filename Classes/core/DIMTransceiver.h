@@ -28,7 +28,7 @@ typedef void (^DIMTransceiverCompletionHandler)(const NSError * _Nullable error)
  @return NO on data/delegate error
  */
 - (BOOL)sendPackage:(const NSData *)data
-  completionHandler:(DIMTransceiverCompletionHandler _Nullable)handler;
+  completionHandler:(nullable DIMTransceiverCompletionHandler)handler;
 
 @end
 
@@ -50,7 +50,8 @@ typedef void (^DIMTransceiverCompletionHandler)(const NSError * _Nullable error)
 - (BOOL)sendMessageContent:(const DIMMessageContent *)content
                       from:(const MKMID *)sender
                         to:(const MKMID *)receiver
-                  callback:(DIMTransceiverCallback _Nullable)callback;
+                      time:(nullable const NSDate *)time
+                  callback:(nullable DIMTransceiverCallback)callback;
 
 /**
  Send message (secured + certified) to target station
@@ -60,7 +61,7 @@ typedef void (^DIMTransceiverCompletionHandler)(const NSError * _Nullable error)
  @return NO on data/delegate error
  */
 - (BOOL)sendMessage:(const DIMInstantMessage *)iMsg
-           callback:(DIMTransceiverCallback _Nullable)callback;
+           callback:(nullable DIMTransceiverCallback)callback;
 
 /**
  Retrieve message from the received package
@@ -82,7 +83,8 @@ typedef void (^DIMTransceiverCompletionHandler)(const NSError * _Nullable error)
  */
 - (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
                                         sender:(const MKMID *)sender
-                                      receiver:(const MKMID *)receiver;
+                                      receiver:(const MKMID *)receiver
+                                          time:(nullable const NSDate *)time;
 
 /**
  Pack instant message to deliver it

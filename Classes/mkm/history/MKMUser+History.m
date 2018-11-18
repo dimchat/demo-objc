@@ -35,23 +35,20 @@
     // 1. create user
     MKMUser *user;
     MKMID *ID;
-    MKMAddress *address;
     MKMMeta *meta;
     // 1.1. generate meta
     meta = [[MKMMeta alloc] initWithSeed:seed privateKey:SK publicKey:PK];
     NSLog(@"register meta: %@", meta);
-    // 1.2. generate address with meta info
-    address = [meta buildAddressWithNetworkID:MKMNetwork_Main];
-    // 1.3. generate ID
-    ID = [[MKMID alloc] initWithName:seed address:address];
+    // 1.2. generate ID
+    ID = [meta buildIDWithNetworkID:MKMNetwork_Main];
     NSLog(@"register ID: %@", ID);
-    // 1.4. create user with ID & meta
+    // 1.3. create user with ID & meta
     user = [[self alloc] initWithID:ID publicKey:meta.key];
-    // 1.5. store private key for user in keychain
+    // 1.4. store private key for user in keychain
     user.privateKey = [SK copy];
-    // 1.6. add this user to entity pool
+    // 1.5. add this user to entity pool
     [MKMFacebook() addUser:user];
-    // 1.7. store meta & private key
+    // 1.6. store meta & private key
     [MKMFacebook() setMeta:meta forID:ID];
     [MKMFacebook() saveMeta:meta forEntityID:ID];
     [SK saveKeyWithIdentifier:ID.address];
