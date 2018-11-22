@@ -204,7 +204,7 @@ barrack.entityDataSource  = _facebook;
 barrack.profileDataSource = _facebook;
 
 // 2. load user from barrack
-NSString *str = @"moki@4LrJHfGgDD6Ui3rWbPtftFabmN8damzRsi";  // from your db
+NSString *str = @"moki@4HaXeu62Q41eemWcL1X5m56Y5JwKK2JJUU";  // from your db
 MKMID *ID = [[MKMID alloc] initWithString:str];
 MKMUser *moky = [barrack userWithID:ID];
 
