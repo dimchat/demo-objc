@@ -32,7 +32,6 @@
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
-    NSAssert([MKMMetaForID(ID).key isEqual:PK], @"PK not match");
     if (self = [super initWithID:ID]) {
         // public key
         _publicKey = [PK copy];

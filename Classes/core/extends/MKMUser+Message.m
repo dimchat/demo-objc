@@ -111,6 +111,7 @@
     
     if (PW) {
         PW = [self.privateKey decrypt:PW];
+        NSAssert(PW, @"decrypt key failed");
         scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
     }
     return scKey;

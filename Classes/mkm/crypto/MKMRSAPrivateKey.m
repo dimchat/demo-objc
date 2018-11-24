@@ -204,65 +204,51 @@
 #pragma mark - Protocol
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
-    NSAssert([ciphertext length] > 0, @"ciphertext cannot be empty");
-    NSAssert([ciphertext length] <= (self.keySizeInBits/8), @"ciphertext too long");
-    NSAssert(_privateKeyRef != NULL, @"private key cannot be empty");
+    NSAssert(self.privateKeyRef != NULL, @"private key cannot be empty");
+    NSAssert(ciphertext.length == (self.keySizeInBits/8), @"data error");
     NSData *plaintext = nil;
     
-    // buffer
-    size_t bufferSize = SecKeyGetBlockSize(_privateKeyRef);
-    uint8_t *buffer = malloc(bufferSize * sizeof(uint8_t));
-    memset(buffer, 0x0, bufferSize * sizeof(uint8_t));
-    
-    // decrypt using the private key
-    OSStatus status = SecKeyDecrypt(_privateKeyRef,
-                                    kSecPaddingPKCS1,
-                                    [ciphertext bytes],
-                                    [ciphertext length],
-                                    buffer,
-                                    &bufferSize
-                                    );
-    NSAssert(status == noErr, @"Error, OSStatus: %d.", status);
-    
-    // build up plaintext
-    plaintext = [[NSData alloc] initWithBytesNoCopy:buffer
-                                             length:bufferSize
-                                       freeWhenDone:YES];
+    CFErrorRef error = NULL;
+    CFDataRef CT;
+    CT = SecKeyCreateDecryptedData(self.privateKeyRef,
+                                   kSecKeyAlgorithmRSAEncryptionPKCS1,
+                                   (__bridge CFDataRef)ciphertext,
+                                   &error);
+    if (error) {
+        NSAssert(false, @"error: %@", error);
+    } else {
+        NSAssert(CT, @"decrypted data should not be empty");
+        plaintext = [[NSData alloc] initWithData:(__bridge NSData *)CT];
+    }
+    CFRelease(CT);
     
     return plaintext;
 }
 
 - (NSData *)sign:(const NSData *)data {
-    NSAssert([data length] > 0, @"data cannot be empty");
-    //NSAssert([data length] <= (self.keySizeInBits/8 - 11), @"data too long");
     NSAssert(self.privateKeyRef != NULL, @"private key cannot be empty");
-    NSData *signature = nil;
-    
+    NSAssert(data.length > 0, @"data cannot be empty");
     if (data.length > (self.keySizeInBits/8 - 11)) {
+        NSAssert(false, @"data too long");
         // if data too long, only sign the digest of plaintext
         // actually you can do it before calling sign/verify
         data = [data sha256d];
     }
+    NSData *signature = nil;
     
-    // buffer
-    size_t bufferSize = SecKeyGetBlockSize(self.privateKeyRef);
-    uint8_t *buffer = malloc(bufferSize * sizeof(uint8_t));
-    memset(buffer, 0x0, bufferSize * sizeof(uint8_t));
-    
-    // sign with the private key
-    OSStatus status = SecKeyRawSign(self.privateKeyRef,
-                                kSecPaddingPKCS1,
-                                [data bytes],
-                                [data length],
-                                buffer,
-                                &bufferSize
-                                );
-    NSAssert(status == noErr, @"Error, OSStatus: %d.", status);
-    
-    // buid up signature
-    signature = [[NSData alloc] initWithBytesNoCopy:buffer
-                                             length:bufferSize
-                                       freeWhenDone:YES];
+    CFErrorRef error = NULL;
+    CFDataRef CT;
+    CT = SecKeyCreateSignature(self.privateKeyRef,
+                               kSecKeyAlgorithmRSASignatureDigestPKCS1v15Raw,
+                               (__bridge CFDataRef)data,
+                               &error);
+    if (error) {
+        NSAssert(false, @"error: %@", error);
+    } else {
+        NSAssert(CT, @"signature should not be empty");
+        signature = [[NSData alloc] initWithData:(__bridge NSData *)CT];
+    }
+    CFRelease(CT);
     
     return signature;
 }
