@@ -111,6 +111,8 @@
     MKMAESKey *PW = nil;
     
     // TODO: load AES key from persistent store
+    // ...
+    NSAssert(false, @"implement me");
     
     // key not found
     return PW;
