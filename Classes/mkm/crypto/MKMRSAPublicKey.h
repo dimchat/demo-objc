@@ -10,11 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-SecKeyRef SecKeyRefFromNSData(const NSData *data, BOOL isPublic);
+SecKeyRef SecKeyRefFromPublicData(const NSData *data);
+SecKeyRef SecKeyRefFromPrivateData(const NSData *data);
+
 NSData *NSDataFromSecKeyRef(SecKeyRef keyRef);
 
-NSString *RSAPublicKeyDataFromNSString(const NSString *content);
-NSString *RSAPrivateKeyDataFromNSString(const NSString *content);
+NSString *RSAPublicKeyContentFromNSString(const NSString *content);
+NSString *RSAPrivateKeyContentFromNSString(const NSString *content);
 
 /**
  *  RSA Public Key

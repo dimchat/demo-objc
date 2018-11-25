@@ -16,6 +16,8 @@
 
 @interface MKMRSAPrivateKey () {
     
+    SecKeyRef _privateKeyRef;
+    
     MKMRSAPublicKey *_publicKey;
 }
 
@@ -61,10 +63,7 @@
     if (key) {
         key.keySizeInBits = _keySizeInBits;
         key.privateContent = _privateContent;
-        if (_privateKeyRef) {
-            CFRetain(_privateKeyRef);
-            key.privateKeyRef = _privateKeyRef;
-        }
+        key.privateKeyRef = _privateKeyRef;
     }
     return key;
 }
@@ -102,62 +101,68 @@
             data = [_storeDictionary objectForKey:@"content"];
         }
         if (data) {
-            _privateContent = RSAPrivateKeyDataFromNSString(data);
+            _privateContent = RSAPrivateKeyContentFromNSString(data);
         }
     }
     return _privateContent;
 }
 
-- (BOOL)generateKeys {
-    // key size
-    NSUInteger keySizeInBits = self.keySizeInBits;
-    if (keySizeInBits == 0) {
-        keySizeInBits = 1024;
-    }
-    
-    SecKeyRef publicKeyRef;
-    SecKeyRef privateKeyRef;
-    NSDictionary *params;
-    params = @{(id)kSecAttrKeyType      :(id)kSecAttrKeyTypeRSA,
-               (id)kSecAttrKeySizeInBits:@(keySizeInBits),
-               (id)kSecPrivateKeyAttrs  :@{(id)kSecAttrIsPermanent:@YES},
-               (id)kSecPublicKeyAttrs   :@{(id)kSecAttrIsPermanent:@YES},
-               };
-    OSStatus status;
-    // generate
-    status = SecKeyGeneratePair((CFDictionaryRef)params,
-                                &publicKeyRef, &privateKeyRef);
-    if (status != noErr || publicKeyRef == NULL || privateKeyRef == NULL) {
-        NSAssert(false, @"failed to generate keys");
-        return NO;
-    }
-    
-    // private key data
-    NSData *privateKeyData = NSDataFromSecKeyRef(privateKeyRef);
-    if (privateKeyData) {
+- (void)setPrivateKeyRef:(SecKeyRef)privateKeyRef {
+    if (_privateKeyRef != privateKeyRef) {
+        if (privateKeyRef) CFRetain(privateKeyRef);
+        if (_privateKeyRef) CFRelease(_privateKeyRef);
         _privateKeyRef = privateKeyRef;
-        _privateContent = [privateKeyData base64Encode];
-        _publicKey = nil;
-        [_storeDictionary setObject:_privateContent forKey:@"data"];
-        [_storeDictionary setObject:@(keySizeInBits) forKey:@"keySize"];
-        return YES;
     }
-    
-    NSAssert(false, @"error");
-    return NO;
 }
 
 - (SecKeyRef)privateKeyRef {
-    if (!_privateKeyRef) {
+    while (!_privateKeyRef) {
+        // 1. get private key from data content
         NSString *privateContent = self.privateContent;
         if (privateContent) {
             // key from data
             NSData *data = [privateContent base64Decode];
-            _privateKeyRef = SecKeyRefFromNSData(data, NO);
-        } else {
-            // Generate key pairs
-            [self generateKeys];
+            _privateKeyRef = SecKeyRefFromPrivateData(data);
+            break;
         }
+        
+        // 2. generate key pairs
+        //[self generateKeys];
+        NSAssert(!_publicKey, @"error");
+        
+        // 2.1. key size
+        NSUInteger keySizeInBits = self.keySizeInBits;
+        if (keySizeInBits == 0) {
+            keySizeInBits = 1024;
+        }
+        // 2.2. prepare parameters
+        NSDictionary *params;
+        params = @{(id)kSecAttrKeyType      :(id)kSecAttrKeyTypeRSA,
+                   (id)kSecAttrKeySizeInBits:@(keySizeInBits),
+                   //(id)kSecAttrIsPermanent:@YES,
+                   };
+        // 2.3. generate
+        CFErrorRef error = NULL;
+        _privateKeyRef = SecKeyCreateRandomKey((CFDictionaryRef)params,
+                                               &error);
+        if (error) {
+            NSAssert(!_privateKeyRef, @"error");
+            NSAssert(false, @"failed to generate key: %@", error);
+            break;
+        }
+        NSAssert(_privateKeyRef, @"error");
+        
+        // 2.4. key to data
+        NSData *skData = NSDataFromSecKeyRef(_privateKeyRef);
+        if (skData) {
+            _privateContent = [skData base64Encode];
+            [_storeDictionary setObject:_privateContent forKey:@"data"];
+            [_storeDictionary setObject:@(keySizeInBits) forKey:@"keySize"];
+        } else {
+            NSAssert(false, @"error");
+        }
+        
+        break;
     }
     return _privateKeyRef;
 }
@@ -173,7 +178,7 @@
         NSRange range = [data rangeOfString:@"PUBLIC KEY"];
         if (range.location != NSNotFound) {
             // get public key from data string
-            return RSAPublicKeyDataFromNSString(data);
+            return RSAPublicKeyContentFromNSString(data);
         }
     }
     
@@ -185,6 +190,7 @@
         return [publicKeyData base64Encode];
     }
     
+    NSAssert(false, @"failed to get public content");
     return nil;
 }
 
@@ -212,16 +218,17 @@
     CFDataRef CT;
     CT = SecKeyCreateDecryptedData(self.privateKeyRef,
                                    kSecKeyAlgorithmRSAEncryptionPKCS1,
-                                   (__bridge CFDataRef)ciphertext,
+                                   (CFDataRef)ciphertext,
                                    &error);
     if (error) {
+        NSAssert(!CT, @"error");
         NSAssert(false, @"error: %@", error);
     } else {
         NSAssert(CT, @"decrypted data should not be empty");
-        plaintext = [[NSData alloc] initWithData:(__bridge NSData *)CT];
+        plaintext = (__bridge_transfer NSData *)CT;
     }
-    CFRelease(CT);
     
+    NSAssert(plaintext, @"decrypt failed");
     return plaintext;
 }
 
@@ -240,16 +247,17 @@
     CFDataRef CT;
     CT = SecKeyCreateSignature(self.privateKeyRef,
                                kSecKeyAlgorithmRSASignatureDigestPKCS1v15Raw,
-                               (__bridge CFDataRef)data,
+                               (CFDataRef)data,
                                &error);
     if (error) {
+        NSAssert(!CT, @"error");
         NSAssert(false, @"error: %@", error);
     } else {
         NSAssert(CT, @"signature should not be empty");
-        signature = [[NSData alloc] initWithData:(__bridge NSData *)CT];
+        signature = (__bridge_transfer NSData *)CT;
     }
-    CFRelease(CT);
     
+    NSAssert(signature, @"sign failed");
     return signature;
 }
 

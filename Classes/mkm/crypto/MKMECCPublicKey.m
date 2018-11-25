@@ -23,7 +23,7 @@
     if (self = [super initWithDictionary:keyInfo]) {
         NSAssert([self.algorithm isEqualToString:ACAlgorithmECC], @"algorithm error");
         
-        // TODO: ECC variables
+        // lazy
         _curve = nil;
     }
     return self;
@@ -52,6 +52,7 @@
     
     // TODO: ECC encrypt
     // ...
+    NSAssert(false, @"implement me");
     
     return ciphertext;
 }
@@ -61,6 +62,7 @@
     
     // TODO: ECC verify
     // ...
+    NSAssert(false, @"implement me");
     
     return match;
 }
@@ -73,7 +75,6 @@
     MKMECCPublicKey *PK = nil;
     
     // TODO: load ECC public key from persistent store
-    // ...
     
     // finally, try by private key
     if (!PK) {

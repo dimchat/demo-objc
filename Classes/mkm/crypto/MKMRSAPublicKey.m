@@ -14,13 +14,14 @@
 
 #import "MKMRSAPublicKey.h"
 
-SecKeyRef SecKeyRefFromNSData(const NSData *data, BOOL isPublic) {
+#pragma mark SecKeyRef
+
+static inline SecKeyRef SecKeyRefFromNSData(const NSData *data,
+                                            const NSString *keyClass) {
     // Set the private key query dictionary.
-    CFStringRef keyClass;
-    keyClass = isPublic ? kSecAttrKeyClassPublic : kSecAttrKeyClassPrivate;
     NSDictionary * dict;
     dict = @{(id)kSecAttrKeyType :(id)kSecAttrKeyTypeRSA,
-             (id)kSecAttrKeyClass:(__bridge id)keyClass,
+             (id)kSecAttrKeyClass:keyClass,
              };
     CFErrorRef error = NULL;
     SecKeyRef keyRef = SecKeyCreateWithData((CFDataRef)data,
@@ -30,18 +31,28 @@ SecKeyRef SecKeyRefFromNSData(const NSData *data, BOOL isPublic) {
     return keyRef;
 }
 
+SecKeyRef KeySecRefFromPublicData(const NSData *data) {
+    return SecKeyRefFromNSData(data, (__bridge id)kSecAttrKeyClassPublic);
+}
+
+SecKeyRef SecKeyRefFromPrivateData(const NSData *data) {
+    return SecKeyRefFromNSData(data, (__bridge id)kSecAttrKeyClassPrivate);
+}
+
 NSData *NSDataFromSecKeyRef(SecKeyRef keyRef) {
     CFErrorRef error = NULL;
     CFDataRef dataRef = SecKeyCopyExternalRepresentation(keyRef, &error);
     assert(error == NULL);
-    return (__bridge NSData *)(dataRef);
+    return (__bridge_transfer NSData *)dataRef;
 }
 
-NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
+#pragma mark RSA Key Content
+
+static inline NSString *RSAKeyContentFromNSString(const NSString *content,
+                                                  const NSString *tag) {
     NSString *sTag, *eTag;
     NSRange spos, epos;
     NSString *key = [content copy];
-    NSString *tag = isPublic ? @"PUBLIC" : @"PRIVATE";
     
     sTag = [NSString stringWithFormat:@"-----BEGIN RSA %@ KEY-----", tag];
     eTag = [NSString stringWithFormat:@"-----END RSA %@ KEY-----", tag];
@@ -70,15 +81,18 @@ NSString *RSAKeyDataFromNSString(const NSString *content, BOOL isPublic) {
     return key;
 }
 
-NSString *RSAPublicKeyDataFromNSString(const NSString *content) {
-    return RSAKeyDataFromNSString(content, YES);
+NSString *RSAPublicKeyContentFromNSString(const NSString *content) {
+    return RSAKeyContentFromNSString(content, @"PUBLIC");
 }
 
-NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
-    return RSAKeyDataFromNSString(content, NO);
+NSString *RSAPrivateKeyContentFromNSString(const NSString *content) {
+    return RSAKeyContentFromNSString(content, @"PRIVATE");
 }
 
-@interface MKMRSAPublicKey ()
+@interface MKMRSAPublicKey () {
+    
+    SecKeyRef _publicKeyRef;
+}
 
 @property (nonatomic) NSUInteger keySizeInBits;
 
@@ -120,10 +134,7 @@ NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
     if (key) {
         key.keySizeInBits = _keySizeInBits;
         key.publicContent = _publicContent;
-        if (_publicKeyRef) {
-            CFRetain(_publicKeyRef);
-            key.publicKeyRef = _publicKeyRef;
-        }
+        key.publicKeyRef = _publicKeyRef;
     }
     return key;
 }
@@ -161,10 +172,18 @@ NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
             data = [_storeDictionary objectForKey:@"content"];
         }
         if (data) {
-            _publicContent = RSAPublicKeyDataFromNSString(data);
+            _publicContent = RSAPublicKeyContentFromNSString(data);
         }
     }
     return _publicContent;
+}
+
+- (void)setPublicKeyRef:(SecKeyRef)publicKeyRef {
+    if (_publicKeyRef != publicKeyRef) {
+        if (publicKeyRef) CFRetain(publicKeyRef);
+        if (_publicKeyRef) CFRelease(_publicKeyRef);
+        _publicKeyRef = publicKeyRef;
+    }
 }
 
 - (SecKeyRef)publicKeyRef {
@@ -173,7 +192,7 @@ NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
         if (publicContent) {
             // key from data
             NSData *data = [publicContent base64Decode];
-            _publicKeyRef = SecKeyRefFromNSData(data, YES);
+            _publicKeyRef = KeySecRefFromPublicData(data);
         }
     }
     return _publicKeyRef;
@@ -191,16 +210,17 @@ NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
     CFDataRef CT;
     CT = SecKeyCreateEncryptedData(self.publicKeyRef,
                                    kSecKeyAlgorithmRSAEncryptionPKCS1,
-                                   (__bridge CFDataRef)plaintext,
+                                   (CFDataRef)plaintext,
                                    &error);
     if (error) {
+        NSAssert(!CT, @"error");
         NSAssert(false, @"error: %@", error);
     } else {
         NSAssert(CT, @"encrypted should not be empty");
-        ciphertext = [[NSData alloc] initWithData:(__bridge NSData *)CT];
+        ciphertext = (__bridge_transfer NSData *)CT;
     }
-    CFRelease(CT);
     
+    NSAssert(ciphertext, @"encrypt failed");
     return ciphertext;
 }
 
@@ -219,12 +239,12 @@ NSString *RSAPrivateKeyDataFromNSString(const NSString *content) {
     CFErrorRef error = NULL;
     OK = SecKeyVerifySignature(self.publicKeyRef,
                                kSecKeyAlgorithmRSASignatureDigestPKCS1v15Raw,
-                               (__bridge CFDataRef)data,
-                               (__bridge CFDataRef)signature,
+                               (CFDataRef)data,
+                               (CFDataRef)signature,
                                &error);
     if (error) {
-        NSAssert(!OK, @"verify error");
-        NSAssert(false, @"error: %@", error);
+        NSAssert(!OK, @"error");
+        //NSAssert(false, @"verify error: %@", error);
     }
     
     return OK;
