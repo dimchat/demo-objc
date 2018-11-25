@@ -8,9 +8,10 @@
 
 #import "DIMCore.h"
 
+#import "DIMCertificateAuthority.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMCertificateAuthority;
 @class DIMStation;
 
 @interface DIMServiceProvider : DIMDictionary {

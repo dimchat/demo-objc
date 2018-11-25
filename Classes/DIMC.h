@@ -12,8 +12,13 @@
 // Core
 //#import "DIMCore.h"
 
-// Network
+// CA
+#import "DIMCASubject.h"
+#import "DIMCAValidity.h"
+#import "DIMCAData.h"
 #import "DIMCertificateAuthority.h"
+
+// Network
 #import "DIMServiceProvider.h"
 #import "DIMStation.h"
 
