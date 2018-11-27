@@ -59,7 +59,7 @@
     } else if (type == DIMConversationGroup) {
         MKMGroup *group = (MKMGroup *)_entity;
         NSString *name = group.name;
-        NSUInteger count = group.members.count;
+        unsigned long count = group.members.count;
         // "yyy (123)"
         return [[NSString alloc] initWithFormat:@"%@ (%lu)", name, count];
     }

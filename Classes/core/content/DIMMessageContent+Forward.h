@@ -1,5 +1,5 @@
 //
-//  DIMMessageContent+Secret.h
+//  DIMMessageContent+Forward.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/10/23.
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Top-Secret message: {
  *      type : 0xFF,
- *      sn   : 123,
+ *      sn   : 456,
  *
  *      forward : {...}  // certified secure message
  *  }

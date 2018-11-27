@@ -8,21 +8,12 @@
 
 #import "DIMCertifiedMessage.h"
 
-#import "DIMMessageContent+Secret.h"
-
-@interface DIMMessageContent (Hacking)
-
-@property (nonatomic) DIMMessageType type;
-
-@end
+#import "DIMMessageContent+Forward.h"
 
 @implementation DIMMessageContent (TopSecret)
 
 - (instancetype)initWithForwardMessage:(const DIMCertifiedMessage *)cMsg {
-    if (self = [self init]) {
-        // type
-        self.type = DIMMessageType_Forward;
-        
+    if (self = [self initWithType:DIMMessageType_Forward]) {
         // top-secret message
         [_storeDictionary setObject:cMsg forKey:@"forward"];
     }

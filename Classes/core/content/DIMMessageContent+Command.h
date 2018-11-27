@@ -19,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
  *      type : 0x88,
  *      sn   : 123,
  *
- *      command : "...",
- *      extra   : info
+ *      command : "...", // command name
+ *      extra   : info   // command parameters
  *  }
  */
 - (instancetype)initWithCommand:(const NSString *)cmd;

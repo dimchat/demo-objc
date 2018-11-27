@@ -18,14 +18,23 @@
 //#import "DIMDictionary.h"
 
 // Message
-#import "DIMMessageContent.h"
-#import "DIMMessageContent+Command.h"
-#import "DIMMessageContent+Secret.h"
 #import "DIMEnvelope.h"
 #import "DIMMessage.h"
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
 #import "DIMCertifiedMessage.h"
+
+// Content
+#import "DIMMessageContent.h"
+#import "DIMMessageContent+Text.h"
+#import "DIMMessageContent+File.h"
+#import "DIMMessageContent+Image.h"
+#import "DIMMessageContent+Audio.h"
+#import "DIMMessageContent+Video.h"
+#import "DIMMessageContent+Webpage.h"
+#import "DIMMessageContent+Quote.h"
+#import "DIMMessageContent+Command.h"
+#import "DIMMessageContent+Forward.h"
 
 //-
 #import "DIMTransceiver.h"
