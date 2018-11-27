@@ -10,6 +10,22 @@
 
 #import "DIMEnvelope.h"
 
+static inline NSDate *increased_time(void) {
+    // last time
+    static NSDate *lastTime = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        lastTime = [[NSDate alloc] init];
+    });
+    // compare with current time
+    if ([lastTime timeIntervalSinceNow] < -1) {
+        lastTime = [[NSDate alloc] init];
+    } else {
+        lastTime = [lastTime dateByAddingTimeInterval:1];
+    }
+    return lastTime;
+}
+
 @interface DIMEnvelope ()
 
 @property (strong, nonatomic) MKMID *sender;
@@ -38,6 +54,10 @@
 - (instancetype)initWithSender:(const MKMID *)from
                       receiver:(const MKMID *)to
                           time:(nullable const NSDate *)time {
+    if (!time) {
+        // now, but increased
+        time = increased_time();
+    }
     NSDictionary *dict = @{@"sender"  :from,
                            @"receiver":to,
                            @"time"    :NSNumberFromDate(time),
@@ -90,6 +110,7 @@
 - (NSDate *)time {
     if (!_time) {
         NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
+        NSAssert(timestamp, @"error: %@", _storeDictionary);
         _time = NSDateFromNumber(timestamp);
     }
     return _time;

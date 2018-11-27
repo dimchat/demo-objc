@@ -49,6 +49,7 @@
 - (NSDate *)notBefore {
     if (!_notBefore) {
         NSNumber *timestamp = [_storeDictionary objectForKey:@"NotBefore"];
+        NSAssert(timestamp, @"error: %@", _storeDictionary);
         _notBefore = NSDateFromNumber(timestamp);
     }
     return _notBefore;
@@ -57,6 +58,7 @@
 - (NSDate *)notAfter {
     if (!_notAfter) {
         NSNumber *timestamp = [_storeDictionary objectForKey:@"NotAfter"];
+        NSAssert(timestamp, @"error: %@", _storeDictionary);
         _notAfter = NSDateFromNumber(timestamp);
     }
     return _notAfter;

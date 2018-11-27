@@ -9,22 +9,13 @@
 #import "NSDate+Timestamp.h"
 
 NSNumber *NSNumberFromDate(const NSDate *date) {
-    if (!date) {
-        // today
-        date = [[NSDate alloc] init];
-    }
+    assert(date);
     NSTimeInterval ti = [date timeIntervalSince1970];
     return [[NSNumber alloc] initWithLong:ti];
 }
 
 NSDate *NSDateFromNumber(const NSNumber *timestamp) {
-    if (!timestamp) {
-        // today
-        return [[NSDate alloc] init];
-    }
     NSTimeInterval ti = [timestamp doubleValue];
-    if (ti < 1) {
-        return [[NSDate alloc] init];
-    }
+    assert(ti > 1);
     return [[NSDate alloc] initWithTimeIntervalSince1970:ti];
 }

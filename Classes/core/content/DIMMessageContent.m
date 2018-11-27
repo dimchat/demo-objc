@@ -124,6 +124,7 @@ static inline NSUInteger serial_number(void) {
 }
 
 - (void)setSerialNumber:(NSUInteger)serialNumber {
+    NSAssert(serialNumber != 0, @"serian number error");
     [_storeDictionary setObject:@(serialNumber) forKey:@"sn"];
     _serialNumber = serialNumber;
 }

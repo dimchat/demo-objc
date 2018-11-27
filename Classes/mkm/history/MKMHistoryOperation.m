@@ -45,6 +45,10 @@
 
 - (instancetype)initWithCommand:(const NSString *)op
                            time:(nullable const NSDate *)time {
+    if (!time) {
+        // now
+        time = [[NSDate alloc] init];
+    }
     NSDictionary *dict = @{@"command":op,
                            @"time"   :NSNumberFromDate(time)
                            };
@@ -74,9 +78,8 @@
 - (NSDate *)time {
     if (!_time) {
         NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
-        if (timestamp) {
-            _time = NSDateFromNumber(timestamp);
-        }
+        NSAssert(timestamp, @"error: %@", _storeDictionary);
+        _time = NSDateFromNumber(timestamp);
     }
     return _time;
 }

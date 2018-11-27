@@ -81,6 +81,7 @@
         to = [MKMID IDWithID:to];
         // time
         NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
+        NSAssert(timestamp, @"error: %@", _storeDictionary);
         NSDate *time = NSDateFromNumber(timestamp);
         
         DIMEnvelope *env;
