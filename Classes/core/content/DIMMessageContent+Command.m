@@ -13,6 +13,7 @@
 - (instancetype)initWithCommand:(const NSString *)cmd {
     if (self = [self initWithType:DIMMessageType_Command]) {
         // command
+        NSAssert(cmd, @"command name cannot be empty");
         [_storeDictionary setObject:cmd forKey:@"command"];
     }
     return self;

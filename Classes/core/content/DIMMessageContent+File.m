@@ -17,13 +17,14 @@
                         filename:(nullable const NSString *)name {
     if (self = [self initWithType:DIMMessageType_File]) {
         // url or data
-        NSString *url = [self.delegate URLStringForFileData:data
-                                                   filename:name];
+        NSAssert(self.delegate, @"message content delegate not set");
+        NSURL *url = [self.delegate URLForFileData:data filename:name];
         if (url) {
             [_storeDictionary setObject:url forKey:@"URL"];
         } else {
-            NSString *str = [data base64Encode];
-            [_storeDictionary setObject:str forKey:@"data"];
+            NSString *content = [data base64Encode];
+            NSAssert(content, @"file data cannot be empty");
+            [_storeDictionary setObject:content forKey:@"data"];
         }
         
         // filename
@@ -35,23 +36,32 @@
 }
 
 - (NSURL *)URL {
-    NSString *string = [_storeDictionary objectForKey:@"URL"];
-    if (string) {
-        return [NSURL URLWithString:string];
+    id url = [_storeDictionary objectForKey:@"URL"];
+    if ([url isKindOfClass:[NSURL class]]) {
+        return url;
+    } else if ([url isKindOfClass:[NSString class]]) {
+        return [NSURL URLWithString:url];
+    } else {
+        NSAssert(!url, @"URL error: %@", url);
+        return nil;
     }
-    return nil;
 }
 
 - (NSData *)fileData {
-    NSString *str = [_storeDictionary objectForKey:@"data"];
-    if (str) {
-        return [str base64Decode];
+    NSData *data = nil;
+    NSString *content = [_storeDictionary objectForKey:@"data"];
+    if (content) {
+        // decode file data
+        data = [content base64Decode];
+    } else {
+        // get file data from URL
+        NSURL *url = [self URL];
+        NSAssert(url, @"URL not found");
+        NSAssert(self.delegate, @"message content delegate not set");
+        data = [self.delegate dataWithContentsOfURL:url];
     }
-    NSURL *url = [self URL];
-    if (url) {
-        // TODO: download file from the URL
-    }
-    return nil;
+    NSAssert(data, @"failed to get file data");
+    return data;
 }
 
 - (NSString *)filename {

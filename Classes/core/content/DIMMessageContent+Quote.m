@@ -25,6 +25,7 @@
         self.type = DIMMessageType_Quote;
         
         // quote
+        NSAssert(sn != 0, @"serial number cannot be ZERO");
         [_storeDictionary setObject:@(sn) forKey:@"quote"];
     }
     return self;

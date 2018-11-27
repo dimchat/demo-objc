@@ -15,6 +15,7 @@
 - (instancetype)initWithForwardMessage:(const DIMCertifiedMessage *)cMsg {
     if (self = [self initWithType:DIMMessageType_Forward]) {
         // top-secret message
+        NSAssert(cMsg, @"forward message cannot be empty");
         [_storeDictionary setObject:cMsg forKey:@"forward"];
     }
     return self;

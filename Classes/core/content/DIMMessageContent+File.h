@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMMessageContent (File)
 
 @property (readonly, strong, nonatomic, nullable) NSURL *URL;
-@property (readonly, strong, nonatomic, nullable) NSData *fileData;
+
+@property (readonly, strong, nonatomic) NSData *fileData;
 @property (readonly, strong, nonatomic, nullable) NSString *filename;
 
 /**

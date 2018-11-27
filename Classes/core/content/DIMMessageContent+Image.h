@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageContent (Image)
 
-@property (readonly, strong, nonatomic, nullable) NSData *imageData;
+@property (readonly, strong, nonatomic) NSData *imageData;
 @property (readonly, strong, nonatomic, nullable) NSData *snapshot;
 
 /**

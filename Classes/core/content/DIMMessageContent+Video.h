@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageContent (Video)
 
-@property (readonly, strong, nonatomic, nullable) NSData *videoData;
+@property (readonly, strong, nonatomic) NSData *videoData;
 
 /**
  *  Video message: {

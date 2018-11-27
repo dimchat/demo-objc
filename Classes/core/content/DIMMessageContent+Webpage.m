@@ -13,12 +13,13 @@
 
 @implementation DIMMessageContent (Webpage)
 
-- (instancetype)initWithURLString:(const NSString *)url
-                            title:(nullable const NSString *)title
-                      description:(nullable const NSString *)desc
-                             icon:(nullable const NSData *)icon {
+- (instancetype)initWithURL:(const NSURL *)url
+                      title:(nullable const NSString *)title
+                description:(nullable const NSString *)desc
+                       icon:(nullable const NSData *)icon {
     if (self = [self initWithType:DIMMessageType_Page]) {
         // url
+        NSAssert(url, @"URL cannot be empty");
         [_storeDictionary setObject:url forKey:@"URL"];
         
         // title

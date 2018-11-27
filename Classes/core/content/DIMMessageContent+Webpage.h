@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageContent (Webpage)
 
+//@property (readonly, strong, nonatomic) NSURL *URL;
 @property (readonly, strong, nonatomic, nullable) NSString *title;
 @property (readonly, strong, nonatomic, nullable) NSString *desc;
 @property (readonly, strong, nonatomic, nullable) NSData *icon;
@@ -27,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
  *      desc  : "..."
  *  }
  */
-- (instancetype)initWithURLString:(const NSString *)url
-                            title:(nullable const NSString *)title
-                      description:(nullable const NSString *)desc
-                             icon:(nullable const NSData *)icon;
+- (instancetype)initWithURL:(const NSURL *)url
+                      title:(nullable const NSString *)title
+                description:(nullable const NSString *)desc
+                       icon:(nullable const NSData *)icon;
 
 @end
 

@@ -77,19 +77,7 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
     DIMMessageType_Forward = 0xFF  // 1111 1111
 };
 
-@protocol DIMMessageContentDelegate <NSObject>
-
-/**
- Upload the file data and return the CDN URL
-
- @param data - file data
- @param name - filename
- @return URL to the online resource
- */
-- (NSString *)URLStringForFileData:(const NSData *)data
-                          filename:(const NSString *)name;
-
-@end
+@protocol DIMMessageContentDelegate;
 
 @interface DIMMessageContent : DIMDictionary
 
@@ -103,7 +91,7 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 @property (strong, nonatomic, nullable) MKMID *group;
 
 // delegate to upload file data
-@property (weak, nonatomic) id<DIMMessageContentDelegate> delegate;
+@property (weak, nonatomic, nullable) id<DIMMessageContentDelegate> delegate;
 
 + (instancetype)contentWithContent:(id)content;
 
@@ -112,6 +100,30 @@ NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithType:(DIMMessageType)type
 NS_DESIGNATED_INITIALIZER;
+
+@end
+
+#pragma mark - Delegate
+
+@protocol DIMMessageContentDelegate <NSObject>
+
+/**
+ Upload the file data and return the CDN URL
+ 
+ @param data - file data
+ @param name - filename
+ @return URL to the online resource
+ */
+- (NSURL *)URLForFileData:(const NSData *)data
+                 filename:(nullable const NSString *)name;
+
+/**
+ Download the file data from a CDN URL
+ 
+ @param URL - URL to the online resource
+ @return file data
+ */
+- (NSData *)dataWithContentsOfURL:(NSURL *)URL;
 
 @end
 

@@ -13,6 +13,7 @@
 - (instancetype)initWithText:(const NSString *)text {
     if (self = [self initWithType:DIMMessageType_Text]) {
         // text
+        NSAssert(text, @"text cannot be empty");
         [_storeDictionary setObject:text forKey:@"text"];
     }
     return self;

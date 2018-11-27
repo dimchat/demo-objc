@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageContent (Audio)
 
-@property (readonly, strong, nonatomic, nullable) NSData *audioData;
+@property (readonly, strong, nonatomic) NSData *audioData;
 
 /**
  *  Audio message: {
