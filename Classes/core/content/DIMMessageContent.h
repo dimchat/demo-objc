@@ -90,7 +90,7 @@ typedef NS_ENUM(UInt8, DIMMessageType) {
 // Group ID for group message
 @property (strong, nonatomic, nullable) MKMID *group;
 
-// delegate to upload file data
+// delegate to upload/download file data
 @property (weak, nonatomic, nullable) id<DIMMessageContentDelegate> delegate;
 
 + (instancetype)contentWithContent:(id)content;
@@ -118,7 +118,7 @@ NS_DESIGNATED_INITIALIZER;
                  filename:(nullable const NSString *)name;
 
 /**
- Download the file data from a CDN URL
+ Download file data from the CDN URL
  
  @param URL - URL to the online resource
  @return file data

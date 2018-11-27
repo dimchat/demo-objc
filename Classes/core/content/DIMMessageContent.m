@@ -10,6 +10,22 @@
 
 #import "DIMMessageContent.h"
 
+static inline NSUInteger serial_number(void) {
+//    NSUInteger sn = 0;
+//    while (sn == 0) {
+//        // make sure the serial number is not ZERO
+//        sn = arc4random();
+//    }
+//    return sn;
+    static NSUInteger serialNumber = 0;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSDate *now = [[NSDate alloc] init];
+        serialNumber = [now timeIntervalSince1970];
+    });
+    return ++serialNumber;
+}
+
 @interface DIMMessageContent () {
     
     DIMMessageType _type;
@@ -60,11 +76,7 @@
 
 /* designated initializer */
 - (instancetype)initWithType:(DIMMessageType)type {
-    NSUInteger sn = 0;
-    while (sn == 0) {
-        // make sure the serial number is not ZERO
-        sn = arc4random();
-    }
+    NSUInteger sn = serial_number();
     NSDictionary *dict = @{@"type":@(type),
                            @"sn"  :@(sn),
                            };

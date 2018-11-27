@@ -33,7 +33,7 @@
 
 - (NSUInteger)quoteNumber {
     NSNumber *sn = [_storeDictionary objectForKey:@"quote"];
-    return sn.unsignedIntegerValue;
+    return [sn unsignedIntegerValue];
 }
 
 @end

@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageContent (File)
 
+// URL for download the file data from CDN
 @property (readonly, strong, nonatomic, nullable) NSURL *URL;
 
 @property (readonly, strong, nonatomic) NSData *fileData;
