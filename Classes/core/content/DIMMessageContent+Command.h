@@ -27,4 +27,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#pragma mark - System Command
+
+// network
+#define DIMSystemCommand_Handshake @"handshake"
+#define DIMSystemCommand_Broadcast @"broadcast"
+
+// message
+#define DIMSystemCommand_Receipt   @"receipt"
+
+// account
+#define DIMSystemCommand_Register  @"register"
+#define DIMSystemCommand_Suicide   @"suicide"
+
+#pragma mark Group Command
+
+// group: founder/owner
+#define DIMGroupCommand_Found      @"found"
+#define DIMGroupCommand_Abdicate   @"abdicate"
+// group: member
+#define DIMGroupCommand_Invite     @"invite"
+#define DIMGroupCommand_Expel      @"expel"
+#define DIMGroupCommand_Join       @"join"
+#define DIMGroupCommand_Quit       @"quit"
+// group: administrator/assistant
+#define DIMGroupCommand_Hire       @"hire"
+#define DIMGroupCommand_Fire       @"fire"
+#define DIMGroupCommand_Resign     @"resign"
+
 NS_ASSUME_NONNULL_END
