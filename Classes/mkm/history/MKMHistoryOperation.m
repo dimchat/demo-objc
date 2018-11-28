@@ -46,7 +46,7 @@
 - (instancetype)initWithCommand:(const NSString *)op
                            time:(nullable const NSDate *)time {
     if (!time) {
-        // now
+        // now()
         time = [[NSDate alloc] init];
     }
     NSDictionary *dict = @{@"command":op,
