@@ -235,18 +235,12 @@
 - (NSData *)sign:(const NSData *)data {
     NSAssert(self.privateKeyRef != NULL, @"private key cannot be empty");
     NSAssert(data.length > 0, @"data cannot be empty");
-    if (data.length > (self.keySizeInBits/8 - 11)) {
-        NSAssert(false, @"data too long");
-        // if data too long, only sign the digest of plaintext
-        // actually you can do it before calling sign/verify
-        data = [data sha256d];
-    }
     NSData *signature = nil;
     
     CFErrorRef error = NULL;
     CFDataRef CT;
     CT = SecKeyCreateSignature(self.privateKeyRef,
-                               kSecKeyAlgorithmRSASignatureDigestPKCS1v15Raw,
+                               kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256,
                                (CFDataRef)data,
                                &error);
     if (error) {

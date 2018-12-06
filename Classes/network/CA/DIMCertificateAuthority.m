@@ -105,8 +105,7 @@
 
 - (BOOL)verifyWithPublicKey:(const MKMPublicKey *)PK {
     NSString *json = [_storeDictionary objectForKey:@"Info"];
-    NSData *hash = [[json data] sha256d];
-    return [PK verify:hash withSignature:self.signature];
+    return [PK verify:[json data] withSignature:self.signature];
 }
 
 @end

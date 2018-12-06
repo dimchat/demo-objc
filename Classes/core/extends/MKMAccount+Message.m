@@ -22,15 +22,11 @@
 @implementation MKMAccount (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
-    DIMEnvelope *env = msg.envelope;
-    MKMID *to = env.receiver;
-    NSAssert([to isEqual:_ID], @"recipient error");
-    
-    DIMMessageContent *content = msg.content;
-    NSAssert(content, @"content cannot be empty");
+    NSAssert([msg.envelope.receiver isEqual:_ID], @"recipient error");
+    NSAssert(msg.content, @"content cannot be empty");
     
     // 1. JsON
-    NSData *json = [content jsonData];
+    NSData *json = [msg.content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
     MKMSymmetricKey *scKey = [self keyForEncryptMessage:msg];
@@ -44,34 +40,25 @@
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
                                      encryptedKey:PW
-                                         envelope:env];
+                                         envelope:msg.envelope];
 }
 
 - (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg {
-    DIMEnvelope *env = msg.envelope;
-    MKMID *from = env.sender;
-    NSAssert([from isEqual:_ID], @"sender error");
-    
-    NSData *content = msg.data;
-    NSAssert(content, @"content cannot be empty");
-    NSData *digest = [content sha256d];
-    
-    NSData *CT = msg.signature;
-    NSAssert(CT, @"signature cannot be empty");
+    NSAssert([msg.envelope.sender isEqual:_ID], @"sender error");
+    NSAssert(msg.data, @"content data cannot be empty");
+    NSAssert(msg.signature, @"signature cannot be empty");
+    NSAssert(msg.encryptedKey, @"encrypted key cannot be empty");
     
     // 1. use the contact's public key to verify the signature
-    if (![self.publicKey verify:digest withSignature:CT]) {
+    if (![self.publicKey verify:msg.data withSignature:msg.signature]) {
         // signature error
         return nil;
     }
     
-    NSData *PW = msg.encryptedKey;
-    NSAssert(PW, @"encrypted key cannot be empty");
-    
     // 2. create secure message
-    return [[DIMSecureMessage alloc] initWithData:content
-                                     encryptedKey:PW
-                                         envelope:env];
+    return [[DIMSecureMessage alloc] initWithData:msg.data
+                                     encryptedKey:msg.encryptedKey
+                                         envelope:msg.envelope];
 }
 
 #pragma mark - Passphrase

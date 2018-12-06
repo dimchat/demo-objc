@@ -25,58 +25,46 @@
 @implementation MKMUser (Message)
 
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
-    DIMEnvelope *env = msg.envelope;
-    NSAssert([env.receiver isEqual:_ID], @"recipient error");
+    NSAssert([msg.envelope.receiver isEqual:_ID], @"recipient error");
     
-    // 1. use the user's private key to decrypt the symmetric key
-    NSData *PW = msg.encryptedKey;
-    NSAssert(PW, @"encrypted key cannot be empty");
-    PW = [self.privateKey decrypt:PW];
-    
-    // 2. use the symmetric key to decrypt the content
+    // 1. use symmetric key to decrypt the content
     MKMSymmetricKey *scKey = [self keyForDecrpytMessage:msg];
     NSData *data = [scKey decrypt:msg.data];
     NSAssert(data, @"decrypt content failed");
     
-    // 3. JsON
+    // 2. JsON
     NSString *json = [data UTF8String];
     DIMMessageContent *content;
     content = [[DIMMessageContent alloc] initWithJSONString:json];
     
-    // 4. create instant message
+    // 3. create instant message
     return [[DIMInstantMessage alloc] initWithContent:content
-                                             envelope:env];
+                                             envelope:msg.envelope];
 }
 
 - (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)msg {
-    DIMEnvelope *env = msg.envelope;
-    NSAssert([env.sender isEqual:_ID], @"sender error");
-    
-    NSData *content = msg.data;
-    NSAssert(content, @"content cannot be empty");
-    NSData *digest = [content sha256d];
+    NSAssert([msg.envelope.sender isEqual:_ID], @"sender error");
+    NSAssert(msg.data, @"content data cannot be empty");
     
     // 1. use the user's private key to sign the content
-    NSData *CT = [self.privateKey sign:digest];
+    NSData *CT = [self.privateKey sign:msg.data];
     
     // 2. create certified message
     DIMCertifiedMessage *cMsg = nil;
-    if (MKMNetwork_IsPerson(env.receiver.type)) {
+    if (MKMNetwork_IsPerson(msg.envelope.receiver.type)) {
         // Personal Message
-        NSData *key = msg.encryptedKey;
-        NSAssert(key, @"encrypted key not found");
-        cMsg = [[DIMCertifiedMessage alloc] initWithData:content
+        cMsg = [[DIMCertifiedMessage alloc] initWithData:msg.data
                                                signature:CT
-                                            encryptedKey:key
-                                                envelope:env];
-    } else if (MKMNetwork_IsGroup(env.receiver.type)) {
+                                            encryptedKey:msg.encryptedKey
+                                                envelope:msg.envelope];
+    } else if (MKMNetwork_IsGroup(msg.envelope.receiver.type)) {
         // Group Message
-        DIMEncryptedKeyMap *keys = msg.encryptedKeys;
-        NSAssert(keys, @"encrypted keys not found");
-        cMsg = [[DIMCertifiedMessage alloc] initWithData:content
+        cMsg = [[DIMCertifiedMessage alloc] initWithData:msg.data
                                                signature:CT
-                                           encryptedKeys:keys
-                                                envelope:env];
+                                           encryptedKeys:msg.encryptedKeys
+                                                envelope:msg.envelope];
+    } else {
+        NSAssert(false, @"error");
     }
     return cMsg;
 }
@@ -107,6 +95,8 @@
             // get passphrase from group.member
             scKey = [store cipherKeyFromMember:sender inGroup:receiver];
         }
+    } else {
+        NSAssert(false, @"error");
     }
     
     if (PW) {
@@ -114,6 +104,8 @@
         NSAssert(PW, @"decrypt key failed");
         scKey = [[MKMSymmetricKey alloc] initWithJSONString:[PW UTF8String]];
     }
+    
+    NSAssert(scKey, @"key not found");
     return scKey;
 }
 

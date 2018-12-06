@@ -70,15 +70,13 @@
         NSAssert(false, @"operation error");
         data = [op jsonData];
     }
-    NSData *hash = [data sha256d];
     
     // signature
-    NSData *CT = event.signature;
-    NSAssert(CT, @"signature error");
+    NSAssert(event.signature, @"signature error");
     
     // check signature for this event
     MKMPublicKey *PK = MKMPublicKeyForID(event.commander);
-    if (![PK verify:hash withSignature:CT]) {
+    if (![PK verify:data withSignature:event.signature]) {
         NSAssert(false, @"signature error");
         return NO;
     }

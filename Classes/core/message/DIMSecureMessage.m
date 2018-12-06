@@ -58,14 +58,17 @@
 - (instancetype)initWithData:(const NSData *)content
                 encryptedKey:(const NSData *)key
                     envelope:(const DIMEnvelope *)env {
+    NSAssert(content, @"content cannot be empty");
     if (self = [super initWithEnvelope:env]) {
         // content data
         _data = [content copy];
         [_storeDictionary setObject:[content base64Encode] forKey:@"data"];
         
         // encrypted key
-        _encryptedKey = [key copy];
-        [_storeDictionary setObject:[key base64Encode] forKey:@"key"];
+        if (key) {
+            _encryptedKey = [key copy];
+            [_storeDictionary setObject:[key base64Encode] forKey:@"key"];
+        }
         
         _encryptedKeys = nil;
     }
@@ -76,6 +79,7 @@
 - (instancetype)initWithData:(const NSData *)content
                encryptedKeys:(const DIMEncryptedKeyMap *)keys
                     envelope:(const DIMEnvelope *)env {
+    NSAssert(content, @"content cannot be empty");
     if (self = [super initWithEnvelope:env]) {
         // content data
         _data = [content copy];
@@ -84,8 +88,10 @@
         _encryptedKey = nil;
         
         // encrypted keys
-        _encryptedKeys = [keys copy];
-        [_storeDictionary setObject:_encryptedKeys forKey:@"keys"];
+        if (keys.count > 0) {
+            _encryptedKeys = [keys copy];
+            [_storeDictionary setObject:_encryptedKeys forKey:@"keys"];
+        }
     }
     return self;
 }

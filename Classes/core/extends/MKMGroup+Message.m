@@ -21,15 +21,11 @@
 @implementation MKMGroup (Message)
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
-    DIMEnvelope *env = msg.envelope;
-    MKMID *to = env.receiver;
-    NSAssert([to isEqual:_ID], @"recipient error");
-    
-    DIMMessageContent *content = msg.content;
-    NSAssert(content, @"content cannot be empty");
+    NSAssert([msg.envelope.receiver isEqual:_ID], @"recipient error");
+    NSAssert(msg.content, @"content cannot be empty");
     
     // 1. JsON
-    NSData *json = [content jsonData];
+    NSData *json = [msg.content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
     MKMSymmetricKey *scKey = [self keyForEncryptMessage:msg];
@@ -42,7 +38,7 @@
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
                                     encryptedKeys:keys
-                                         envelope:env];
+                                         envelope:msg.envelope];
 }
 
 #pragma mark - Passphrase

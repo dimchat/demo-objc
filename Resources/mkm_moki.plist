@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ID</key>
-	<string>moki@4HaXeu62Q41eemWcL1X5m56Y5JwKK2JJUU</string>
+	<string>moki@4WDfe3zZ4T7opFSi3iDAKiuTnUHjxmXekk</string>
 	<key>meta</key>
 	<dict>
 		<key>version</key>
@@ -14,48 +14,21 @@
 			<string>RSA</string>
 			<key>data</key>
 			<string>-----BEGIN PUBLIC KEY-----
-MIGJAoGBAJuAkuTQGsoAyL1vYmYwjLbvaRhFdKFMfJmvAu7YmTcC1qJG/KHjsZDE
-eWGKg1gBBhTfBeWipFtrE33KnIVNDssGoqjM/mWNClnV+70CoPOhA4aWQccyayZy
-Yjp+P4pFV/sEvy5nr4c1FR5fxQNL35VPE/5eQC6rTyKS/XMYtD1PAgMBAAE=
+MIGJAoGBALQOcgxhhV0XiHELKYdG587Tup261qQ3ahAGPuifZvxHXTq+GgulEyXiovwrVjpz7rKXn+16HgspLHpp5agv0WsSn6k2MnQGk5RFXuilbFr/C1rEX2X7uXlUXDMpsriKFndoB1lz9P3E8FkM5ycG84hejcHB+R5yzDa4KbGeOc0tAgMBAAE=
 -----END PUBLIC KEY-----</string>
 		</dict>
 		<key>seed</key>
 		<string>moki</string>
 		<key>fingerprint</key>
-		<string>aC/FElJG4TYtyB18qYgG5bdkSGIGqpjN6by8eR9/fJALXWt+If6a8IYAChsbnjXObVJ0pe9aSZiorgVIPYZsiNRjD+AJD4oEr8qu+4L/QN/vuL392qJF2wfR5WEl4YvMqhySZfFps7FBu8ZKol/K6WIa+HdKQr5KI1iMAx+yvZQ=</string>
+		<string>ld68TnzYqzFQMxeJ6N+aZa2jRf9d4zVx4BUiBlmur67ne8YZF08plhCiIhfyYDIwwW7KLaAHvK8gJbp0pPIzLR4bhzu6zRpDLzUQsq6bXgMp+WAiZtFm6IHWNUwUEYcr3iSvTn5L1HunRt7kBglEjv8RKtbNcK0t1Xto375kMlo=</string>
 	</dict>
-	<key>history</key>
-	<array>
-		<dict>
-			<key>events</key>
-			<array>
-				<string>{&quot;operation&quot;:{&quot;operate&quot;:&quot;register&quot;,&quot;time&quot;:1538927542}}</string>
-			</array>
-			<key>merkle</key>
-			<string>TpLBrxN1E51Ux+wiefMUSPj25qcM7+9G3fZ+IijvkmM=</string>
-			<key>signature</key>
-			<string>G62I9pSNZrBF0XZO3fqzdssnX3Hk+FZ+pXnAZrqsnH1RJx/nd+C9BllN7tWF23eKnE/tj0Vozt//dKS0vBHmiKou+BE/YYCq2k869sDI4pgPcW7f2QlkLnwypnDpj9Ih7ZzSWb+UfBkGoynPaACLXW+NWV1QNb1N5rzmzoIjgu0=</string>
-		</dict>
-	</array>
 	<key>privateKey</key>
 	<dict>
 		<key>algorithm</key>
 		<string>RSA</string>
 		<key>data</key>
 		<string>-----BEGIN RSA PRIVATE KEY-----
-MIICXAIBAAKBgQCbgJLk0BrKAMi9b2JmMIy272kYRXShTHyZrwLu2Jk3AtaiRvyh
-47GQxHlhioNYAQYU3wXloqRbaxN9ypyFTQ7LBqKozP5ljQpZ1fu9AqDzoQOGlkHH
-MmsmcmI6fj+KRVf7BL8uZ6+HNRUeX8UDS9+VTxP+XkAuq08ikv1zGLQ9TwIDAQAB
-AoGAAklybqhT5uJkL3/ZU3//3+ZGwoQ1VRKnMFdrkL1wgQ1Bk2o2FNDVb6FPYGM2
-VyvA6zOo76jcgCr6M8JlADCiOL6D5oqqTu66s+qHyqecoTUCgNQQ7dQxtGW+HbSA
-ANCQLHgM9W0mGS+xkWScK+tArgt7v0ID/rFKuw/63n63/GkCQQDTE/mbLenG11rP
-loFFglbLmCaQcgiTvzucndoEE0lIyvg3rgWjdql5Ztsu/rUZ0YztEHx9EiL9xQsj
-XRArlSSTAkEAvJizK0bJRm3KN1xXSUEUnA/4dLaCJz2AVQN5C+XQr8r/pdyxJsek
-trcNKYQHQlEPGs7ETEcvIXt/kayCcKhV1QJANVAhRnGlT2TLeg0wn4bZN1k5vFgh
-FHhDrT4td8QLSYiCg0XABNaO3av+BnOs+FV2O9ZjKw/uqJwhQRBbajakYwJBALZV
-p3tin3vA761gUF9ZVVSguCQWw3SuqCEJD4FqOb2LtGgmGvuULvIbvdTyeZYrCkBv
-wSbB95YWcTpkn2PNy9UCQCPu9P/aBbc6HIaTaV3lC08CooXR2EZc+Gdk1Z4yVuEn
-Qrd52RezZ5e1OJfyYp4P1J6JHegllcA89iKOwy6hLws=
+MIICXQIBAAKBgQC0DnIMYYVdF4hxCymHRufO07qdutakN2oQBj7on2b8R106vhoLpRMl4qL8K1Y6c+6yl5/teh4LKSx6aeWoL9FrEp+pNjJ0BpOURV7opWxa/wtaxF9l+7l5VFwzKbK4ihZ3aAdZc/T9xPBZDOcnBvOIXo3Bwfkecsw2uCmxnjnNLQIDAQABAoGADi5wFaENsbgTh0HHjs/LHKto8JjhZHQ33pS7WjOJ1zdgtKp53y5sfGimCSH5q+drJrZSApCCcsMWrXqPO8iuX/QPak72yzTuq9MEn4tusO/5w8/g/csq+RUhlLHLdOrPfVciMBXgouT8BB6UMa0e/g8K/7JBV8v1v59ZUccSSwkCQQD67yI6uSlgy1/NWqMENpGc9tDDoZPR2zjfrXquJaUcih2dDzEbhbzHxjoScGaVcTOx/Aiu00dAutoN+Jpovpq1AkEAt7EBRCarVdo4YKKNnW3cZQ7u0taPgvc/eJrXaWES9+MpC/NZLnQNF/NZlU9/H2607/d+Xaac6wtxkIQ7O61bmQJBAOUTMThSmIeYoZiiSXcrKbsVRneRJZTKgB0SDZC1JQnsvCQJHld1u2TUfWcf3UZH1V2CK5sNnVpmOXHPpYZBmpECQBp1hJkseMGFDVneEEf86yIjZIM6JLHYq2vT4fNr6C+MqPzvsIjgboJkqyK2sLj2WVm3bJxQw4mXvGP0qBOQhQECQQCOepIyFl/a/KmjVZ5dvmU2lcHXkqrvjcAbpyO1Dw6p2OFCBTTQf3QRmCoys5/dyBGLDhRzV5Obtg6Fll/caLXs
 -----END RSA PRIVATE KEY-----</string>
 	</dict>
 	<key>profile</key>
