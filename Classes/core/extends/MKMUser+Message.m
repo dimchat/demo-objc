@@ -11,7 +11,7 @@
 
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
-#import "DIMCertifiedMessage.h"
+#import "DIMReliableMessage.h"
 #import "DIMEnvelope.h"
 #import "DIMMessageContent.h"
 
@@ -24,12 +24,12 @@
 
 @implementation MKMUser (Message)
 
-- (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)msg {
-    NSAssert([msg.envelope.receiver isEqual:_ID], @"recipient error");
+- (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)sMsg {
+    NSAssert([sMsg.envelope.receiver isEqual:_ID], @"recipient error");
     
     // 1. use symmetric key to decrypt the content
-    MKMSymmetricKey *scKey = [self keyForDecrpytMessage:msg];
-    NSData *data = [scKey decrypt:msg.data];
+    MKMSymmetricKey *scKey = [self keyForDecrpytMessage:sMsg];
+    NSData *data = [scKey decrypt:sMsg.data];
     NSAssert(data, @"decrypt content failed");
     
     // 2. JsON
@@ -39,58 +39,57 @@
     
     // 3. create instant message
     return [[DIMInstantMessage alloc] initWithContent:content
-                                             envelope:msg.envelope];
+                                             envelope:sMsg.envelope];
 }
 
-- (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)msg {
-    NSAssert([msg.envelope.sender isEqual:_ID], @"sender error");
-    NSAssert(msg.data, @"content data cannot be empty");
+- (DIMReliableMessage *)signMessage:(const DIMSecureMessage *)sMsg {
+    NSAssert([sMsg.envelope.sender isEqual:_ID], @"sender error");
+    NSAssert(sMsg.data, @"content data cannot be empty");
     
     // 1. use the user's private key to sign the content
-    NSData *CT = [self.privateKey sign:msg.data];
+    NSData *CT = [self.privateKey sign:sMsg.data];
     
-    // 2. create certified message
-    DIMCertifiedMessage *cMsg = nil;
-    if (MKMNetwork_IsPerson(msg.envelope.receiver.type)) {
+    // 2. create reliable message
+    DIMReliableMessage *rMsg = nil;
+    if (MKMNetwork_IsPerson(sMsg.envelope.receiver.type)) {
         // Personal Message
-        cMsg = [[DIMCertifiedMessage alloc] initWithData:msg.data
-                                               signature:CT
-                                            encryptedKey:msg.encryptedKey
-                                                envelope:msg.envelope];
-    } else if (MKMNetwork_IsGroup(msg.envelope.receiver.type)) {
+        rMsg = [[DIMReliableMessage alloc] initWithData:sMsg.data
+                                              signature:CT
+                                           encryptedKey:sMsg.encryptedKey
+                                               envelope:sMsg.envelope];
+    } else if (MKMNetwork_IsGroup(sMsg.envelope.receiver.type)) {
         // Group Message
-        cMsg = [[DIMCertifiedMessage alloc] initWithData:msg.data
-                                               signature:CT
-                                           encryptedKeys:msg.encryptedKeys
-                                                envelope:msg.envelope];
+        rMsg = [[DIMReliableMessage alloc] initWithData:sMsg.data
+                                              signature:CT
+                                          encryptedKeys:sMsg.encryptedKeys
+                                               envelope:sMsg.envelope];
     } else {
         NSAssert(false, @"error");
     }
-    return cMsg;
+    return rMsg;
 }
 
 #pragma mark - Passphrase
 
-- (MKMSymmetricKey *)keyForDecrpytMessage:(const DIMSecureMessage *)msg {
+- (MKMSymmetricKey *)keyForDecrpytMessage:(const DIMSecureMessage *)sMsg {
     MKMSymmetricKey *scKey = nil;
     NSData *PW = nil;
     
     DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    DIMEnvelope *env = msg.envelope;
-    MKMID *sender = env.sender;
-    MKMID *receiver = env.receiver;
+    MKMID *sender = sMsg.envelope.sender;
+    MKMID *receiver = sMsg.envelope.receiver;
     
     if (MKMNetwork_IsPerson(receiver.type)) {
         NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);
         // get passphrase in personal message
-        PW = msg.encryptedKey;
+        PW = sMsg.encryptedKey;
         if (!PW) {
             // get passphrase from contact
             scKey = [store cipherKeyFromAccount:sender];
         }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         // get passphrase in group message
-        PW = [msg.encryptedKeys encryptedKeyForID:_ID];
+        PW = [sMsg.encryptedKeys encryptedKeyForID:_ID];
         if (!PW) {
             // get passphrase from group.member
             scKey = [store cipherKeyFromMember:sender inGroup:receiver];

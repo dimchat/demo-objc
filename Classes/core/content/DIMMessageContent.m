@@ -6,8 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMCertifiedMessage.h"
-
 #import "DIMMessageContent.h"
 
 static inline NSUInteger serial_number(void) {

@@ -13,7 +13,7 @@
 #import "DIMMessageContent.h"
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
-#import "DIMCertifiedMessage.h"
+#import "DIMReliableMessage.h"
 
 #import "DIMKeyStore.h"
 
@@ -21,15 +21,15 @@
 
 @implementation MKMAccount (Message)
 
-- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg {
-    NSAssert([msg.envelope.receiver isEqual:_ID], @"recipient error");
-    NSAssert(msg.content, @"content cannot be empty");
+- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)iMsg {
+    NSAssert([iMsg.envelope.receiver isEqual:_ID], @"recipient error");
+    NSAssert(iMsg.content, @"content cannot be empty");
     
     // 1. JsON
-    NSData *json = [msg.content jsonData];
+    NSData *json = [iMsg.content jsonData];
     
     // 2. use a random symmetric key to encrypt the content
-    MKMSymmetricKey *scKey = [self keyForEncryptMessage:msg];
+    MKMSymmetricKey *scKey = [self keyForEncryptMessage:iMsg];
     NSAssert(scKey, @"passphrase cannot be empty");
     NSData *CT = [scKey encrypt:json];
     
@@ -40,32 +40,32 @@
     // 4. create secure message
     return [[DIMSecureMessage alloc] initWithData:CT
                                      encryptedKey:PW
-                                         envelope:msg.envelope];
+                                         envelope:iMsg.envelope];
 }
 
-- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg {
-    NSAssert([msg.envelope.sender isEqual:_ID], @"sender error");
-    NSAssert(msg.data, @"content data cannot be empty");
-    NSAssert(msg.signature, @"signature cannot be empty");
-    NSAssert(msg.encryptedKey, @"encrypted key cannot be empty");
+- (DIMSecureMessage *)verifyMessage:(const DIMReliableMessage *)rMsg {
+    NSAssert([rMsg.envelope.sender isEqual:_ID], @"sender error");
+    NSAssert(rMsg.data, @"content data cannot be empty");
+    NSAssert(rMsg.signature, @"signature cannot be empty");
+    NSAssert(rMsg.encryptedKey, @"encrypted key cannot be empty");
     
     // 1. use the contact's public key to verify the signature
-    if (![self.publicKey verify:msg.data withSignature:msg.signature]) {
+    if (![self.publicKey verify:rMsg.data withSignature:rMsg.signature]) {
         // signature error
         return nil;
     }
     
     // 2. create secure message
-    return [[DIMSecureMessage alloc] initWithData:msg.data
-                                     encryptedKey:msg.encryptedKey
-                                         envelope:msg.envelope];
+    return [[DIMSecureMessage alloc] initWithData:rMsg.data
+                                     encryptedKey:rMsg.encryptedKey
+                                         envelope:rMsg.envelope];
 }
 
 #pragma mark - Passphrase
 
-- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)msg {
+- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)iMsg {
     DIMKeyStore *store = [DIMKeyStore sharedInstance];
-    DIMEnvelope *env = msg.envelope;
+    DIMEnvelope *env = iMsg.envelope;
     //MKMID *sender = env.sender;
     MKMID *receiver = env.receiver;
     NSAssert([receiver isEqual:_ID], @"receiver error: %@", receiver);

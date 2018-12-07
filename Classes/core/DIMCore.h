@@ -22,7 +22,7 @@
 #import "DIMMessage.h"
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
-#import "DIMCertifiedMessage.h"
+#import "DIMReliableMessage.h"
 
 // Content
 #import "DIMMessageContent.h"

@@ -12,16 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMInstantMessage;
 @class DIMSecureMessage;
-@class DIMCertifiedMessage;
+@class DIMReliableMessage;
 
 @interface MKMAccount (Message)
 
-- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)msg;
+- (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)iMsg;
 
-- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)msg;
+- (DIMSecureMessage *)verifyMessage:(const DIMReliableMessage *)rMsg;
 
 // passphrase
-- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)msg;
+- (MKMSymmetricKey *)keyForEncryptMessage:(const DIMInstantMessage *)iMsg;
 
 @end
 

@@ -11,7 +11,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class DIMInstantMessage;
-@class DIMCertifiedMessage;
 
 @protocol DIMConversationDataSource;
 @protocol DIMConversationDelegate;

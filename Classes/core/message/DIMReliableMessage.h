@@ -1,5 +1,5 @@
 //
-//  DIMCertifiedMessage.h
+//  DIMReliableMessage.h
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  *          signature: "..."   // Base64
  *      }
  */
-@interface DIMCertifiedMessage : DIMSecureMessage
+@interface DIMReliableMessage : DIMSecureMessage
 
 @property (readonly, strong, nonatomic) NSData *signature;
 

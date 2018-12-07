@@ -6,10 +6,6 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMAccount+Message.h"
-#import "MKMGroup+Message.h"
-
-#import "DIMEnvelope.h"
 #import "DIMInstantMessage.h"
 
 #import "DIMConversation.h"

@@ -6,31 +6,31 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMCertifiedMessage.h"
+#import "DIMReliableMessage.h"
 
 #import "DIMMessageContent+Forward.h"
 
 @implementation DIMMessageContent (TopSecret)
 
-- (instancetype)initWithForwardMessage:(const DIMCertifiedMessage *)cMsg {
+- (instancetype)initWithForwardMessage:(const DIMReliableMessage *)rMsg {
     if (self = [self initWithType:DIMMessageType_Forward]) {
         // top-secret message
-        NSAssert(cMsg, @"forward message cannot be empty");
-        [_storeDictionary setObject:cMsg forKey:@"forward"];
+        NSAssert(rMsg, @"forward message cannot be empty");
+        [_storeDictionary setObject:rMsg forKey:@"forward"];
     }
     return self;
 }
 
-- (DIMCertifiedMessage *)forwardMessage {
-    NSDictionary *message = [_storeDictionary objectForKey:@"forward"];
-    if (!message) {
-        message = [_storeDictionary objectForKey:@"secret"];
-        if (!message) {
-            message = [_storeDictionary objectForKey:@"message"];
+- (DIMReliableMessage *)forwardMessage {
+    NSDictionary *msg = [_storeDictionary objectForKey:@"forward"];
+    if (!msg) {
+        msg = [_storeDictionary objectForKey:@"secret"];
+        if (!msg) {
+            msg = [_storeDictionary objectForKey:@"message"];
         }
     }
-    NSAssert(message, @"data error: %@", _storeDictionary);
-    return [DIMCertifiedMessage messageWithMessage:message];
+    NSAssert(msg, @"data error: %@", _storeDictionary);
+    return [DIMReliableMessage messageWithMessage:msg];
 }
 
 @end

@@ -20,7 +20,7 @@
 #import "DIMMessage.h"
 #import "DIMInstantMessage.h"
 #import "DIMSecureMessage.h"
-#import "DIMCertifiedMessage.h"
+#import "DIMReliableMessage.h"
 
 #import "DIMTransceiver.h"
 
@@ -51,14 +51,14 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
 
 - (BOOL)sendMessage:(const DIMInstantMessage *)iMsg
            callback:(nullable DIMTransceiverCallback)callback {
-    DIMCertifiedMessage *cMsg = [self encryptAndSignMessage:iMsg];
-    NSData *data = [cMsg jsonData];
+    DIMReliableMessage *rMsg = [self encryptAndSignMessage:iMsg];
+    NSData *data = [rMsg jsonData];
     if (data) {
         NSAssert(_delegate, @"transceiver delegate not set");
         return [_delegate sendPackage:data
                     completionHandler:^(const NSError * _Nullable error) {
                         assert(!error);
-                        !callback ?: callback(cMsg, error);
+                        !callback ?: callback(rMsg, error);
                     }];
     } else {
         NSAssert(false, @"message data error: %@", iMsg);
@@ -68,17 +68,17 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
 
 - (DIMInstantMessage *)messageFromReceivedPackage:(const NSData *)data {
     NSString *json = [data UTF8String];
-    DIMCertifiedMessage *cMsg;
-    cMsg = [[DIMCertifiedMessage alloc] initWithJSONString:json];
-    return [self verifyAndDecryptMessage:cMsg];
+    DIMReliableMessage *rMsg;
+    rMsg = [[DIMReliableMessage alloc] initWithJSONString:json];
+    return [self verifyAndDecryptMessage:rMsg];
 }
 
 #pragma mark -
 
-- (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
-                                        sender:(const MKMID *)sender
-                                      receiver:(const MKMID *)receiver
-                                          time:(nullable const NSDate *)time {
+- (DIMReliableMessage *)encryptAndSignContent:(const DIMMessageContent *)content
+                                       sender:(const MKMID *)sender
+                                     receiver:(const MKMID *)receiver
+                                         time:(nullable const NSDate *)time {
     NSAssert(MKMNetwork_IsPerson(sender.type), @"sender error");
     NSAssert(receiver.isValid, @"receiver error");
     
@@ -93,26 +93,26 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     return [self encryptAndSignMessage:iMsg];
 }
 
-- (DIMCertifiedMessage *)encryptAndSignMessage:(const DIMInstantMessage *)iMsg {
+- (DIMReliableMessage *)encryptAndSignMessage:(const DIMInstantMessage *)iMsg {
     // 1. encrypt to secure message
     DIMSecureMessage *sMsg;
     sMsg = [self encryptMessage:iMsg];
     
-    // 2. sign to certified message
-    DIMCertifiedMessage *cMsg;
-    cMsg = [self signMessage:sMsg];
+    // 2. sign to reliable message
+    DIMReliableMessage *rMsg;
+    rMsg = [self signMessage:sMsg];
     
     // OK
-    NSAssert(cMsg.signature, @"signature cannot be empty");
-    return cMsg;
+    NSAssert(rMsg.signature, @"signature cannot be empty");
+    return rMsg;
 }
 
-- (DIMInstantMessage *)verifyAndDecryptMessage:(const DIMCertifiedMessage *)cMsg {
-    NSAssert(cMsg.signature, @"signature cannot be empty");
+- (DIMInstantMessage *)verifyAndDecryptMessage:(const DIMReliableMessage *)rMsg {
+    NSAssert(rMsg.signature, @"signature cannot be empty");
     
     // 1. verify to secure message
     DIMSecureMessage *sMsg;
-    sMsg = [self verifyMessage:cMsg];
+    sMsg = [self verifyMessage:rMsg];
     
     // 2. decrypt to instant message
     DIMInstantMessage *iMsg;
@@ -122,8 +122,8 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     if (iMsg.content.type == DIMMessageType_Forward) {
         // do it again to drop the wrapper,
         // the secret inside the content is the real message
-        cMsg = iMsg.content.forwardMessage;
-        return [self verifyAndDecryptMessage:cMsg];
+        rMsg = iMsg.content.forwardMessage;
+        return [self verifyAndDecryptMessage:rMsg];
     }
     
     // OK
@@ -166,28 +166,28 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     return iMsg;
 }
 
-- (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)sMsg {
-    DIMCertifiedMessage *cMsg = nil;
+- (DIMReliableMessage *)signMessage:(const DIMSecureMessage *)sMsg {
+    DIMReliableMessage *rMsg = nil;
     
-    // sign to certified message by sender
+    // sign to reliable message by sender
     MKMID *sender = sMsg.envelope.sender;
     if (MKMNetwork_IsPerson(sender.type)) {
         MKMUser *user = MKMUserWithID(sender);
-        cMsg = [user signMessage:sMsg];;
+        rMsg = [user signMessage:sMsg];;
     }
     
-    NSAssert(cMsg.signature, @"sign failed");
-    return cMsg;
+    NSAssert(rMsg.signature, @"sign failed");
+    return rMsg;
 }
 
-- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)cMsg {
+- (DIMSecureMessage *)verifyMessage:(const DIMReliableMessage *)rMsg {
     DIMSecureMessage *sMsg = nil;
     
     // verify to secure message by sender
-    MKMID *sender = cMsg.envelope.sender;
+    MKMID *sender = rMsg.envelope.sender;
     if (MKMNetwork_IsPerson(sender.type)) {
         MKMContact *contact = MKMContactWithID(sender);
-        sMsg = [contact verifyMessage:cMsg];
+        sMsg = [contact verifyMessage:rMsg];
     }
     
     NSAssert(sMsg.data, @"verify failed");

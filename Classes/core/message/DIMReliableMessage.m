@@ -1,5 +1,5 @@
 //
-//  DIMCertifiedMessage.m
+//  DIMReliableMessage.m
 //  DIMCore
 //
 //  Created by Albert Moky on 2018/9/30.
@@ -9,15 +9,15 @@
 #import "NSData+Crypto.h"
 #import "NSString+Crypto.h"
 
-#import "DIMCertifiedMessage.h"
+#import "DIMReliableMessage.h"
 
-@interface DIMCertifiedMessage ()
+@interface DIMReliableMessage ()
 
 @property (strong, nonatomic) NSData *signature;
 
 @end
 
-@implementation DIMCertifiedMessage
+@implementation DIMReliableMessage
 
 - (instancetype)initWithData:(const NSData *)content
                 encryptedKey:(const NSData *)key
@@ -89,11 +89,11 @@
 }
 
 - (id)copyWithZone:(NSZone *)zone {
-    DIMCertifiedMessage *cMsg = [super copyWithZone:zone];
-    if (cMsg) {
-        cMsg.signature = _signature;
+    DIMReliableMessage *rMsg = [super copyWithZone:zone];
+    if (rMsg) {
+        rMsg.signature = _signature;
     }
-    return cMsg;
+    return rMsg;
 }
 
 - (NSData *)signature {

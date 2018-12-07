@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class DIMMessageContent;
 @class DIMInstantMessage;
 @class DIMSecureMessage;
-@class DIMCertifiedMessage;
+@class DIMReliableMessage;
 
-typedef void (^DIMTransceiverCallback)(const DIMCertifiedMessage *cMsg, const NSError * _Nullable error);
+typedef void (^DIMTransceiverCallback)(const DIMReliableMessage *rMsg, const NSError * _Nullable error);
 typedef void (^DIMTransceiverCompletionHandler)(const NSError * _Nullable error);
 
 @protocol DIMTransceiverDelegate <NSObject>
@@ -79,36 +79,36 @@ typedef void (^DIMTransceiverCompletionHandler)(const NSError * _Nullable error)
  @param content - message content
  @param sender - sender ID
  @param receiver - receiver ID
- @return CertifiedMessage Object
+ @return ReliableMessage Object
  */
-- (DIMCertifiedMessage *)encryptAndSignContent:(const DIMMessageContent *)content
-                                        sender:(const MKMID *)sender
-                                      receiver:(const MKMID *)receiver
-                                          time:(nullable const NSDate *)time;
+- (DIMReliableMessage *)encryptAndSignContent:(const DIMMessageContent *)content
+                                       sender:(const MKMID *)sender
+                                     receiver:(const MKMID *)receiver
+                                         time:(nullable const NSDate *)time;
 
 /**
  Pack instant message to deliver it
 
  @param iMsg - instant message
- @return CertifiedMessage Object
+ @return ReliableMessage Object
  */
-- (DIMCertifiedMessage *)encryptAndSignMessage:(const DIMInstantMessage *)iMsg;
+- (DIMReliableMessage *)encryptAndSignMessage:(const DIMInstantMessage *)iMsg;
 
 /**
- Extract instant message from a certified message
+ Extract instant message from a reliable message
 
- @param cMsg - certified message
+ @param rMsg - reliable message
  @return InstantMessage object
  */
-- (DIMInstantMessage *)verifyAndDecryptMessage:(const DIMCertifiedMessage *)cMsg;
+- (DIMInstantMessage *)verifyAndDecryptMessage:(const DIMReliableMessage *)rMsg;
 
 #pragma mark -
 
 - (DIMSecureMessage *)encryptMessage:(const DIMInstantMessage *)iMsg;
 - (DIMInstantMessage *)decryptMessage:(const DIMSecureMessage *)sMsg;
 
-- (DIMCertifiedMessage *)signMessage:(const DIMSecureMessage *)sMsg;
-- (DIMSecureMessage *)verifyMessage:(const DIMCertifiedMessage *)cMsg;
+- (DIMReliableMessage *)signMessage:(const DIMSecureMessage *)sMsg;
+- (DIMSecureMessage *)verifyMessage:(const DIMReliableMessage *)rMsg;
 
 @end
 

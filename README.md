@@ -392,7 +392,7 @@ MKMID *receiver = hulk.ID;
 [trans sendMessageContent:content 
                      from:sender
                        to:receiver
-                 callback:^(const DIMCertifiedMessage *cMsg, const NSError * _Nullable error) {
+                 callback:^(const DIMReliableMessage *rMsg, const NSError * _Nullable error) {
                      if (error) {
                          // TODO: 3.1 process error callback
                      } else {
