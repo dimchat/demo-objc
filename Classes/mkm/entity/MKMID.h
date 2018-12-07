@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  Initialize an ID with username & address
 
  @param seed - username
- @param addr - hash(signature)
+ @param addr - hash(fingerprint)
  @return ID object
  */
 - (instancetype)initWithName:(const NSString *)seed
@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  Initialize an ID with username, address & terminal
 
  @param seed - username
- @param addr - hash(signature)
+ @param addr - hash(fingerprint)
  @param res - resource point where the user logged in
  @return ID object
  */

@@ -1,16 +1,25 @@
 //
-//  DIMImmortals.m
-//  DIMC
+//  MKMImmortals.m
+//  MingKeMing
 //
 //  Created by Albert Moky on 2018/11/11.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMClient.h"
+#import "MKMPrivateKey.h"
+#import "MKMPublicKey.h"
 
-#import "DIMImmortals.h"
+#import "MKMID.h"
+#import "MKMMeta.h"
+#import "MKMBarrack.h"
 
-@interface DIMImmortals () {
+//#if DEBUG
+//#import "DIMClient.h"
+//#endif
+
+#import "MKMImmortals.h"
+
+@interface MKMImmortals () {
     
     NSMutableDictionary<const MKMAddress *, MKMMeta *> *_metaTable;
     NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
@@ -18,7 +27,7 @@
 
 @end
 
-@implementation DIMImmortals
+@implementation MKMImmortals
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -78,9 +87,9 @@
     // create
     MKMUser *user = [[MKMUser alloc] initWithID:ID publicKey:meta.key];
     [MKMFacebook() addUser:user];
-#if DEBUG
-    [[DIMClient sharedInstance] addUser:user];
-#endif
+//#if DEBUG
+//    [[DIMClient sharedInstance] addUser:user];
+//#endif
     return user;
 }
 

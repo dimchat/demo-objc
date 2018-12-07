@@ -61,7 +61,7 @@
     }
     NSAssert([event.commander isValid], @"commander error");
     
-    // hash(operation)
+    // operation
     id op = event.operation;
     NSData *data;
     if ([op isKindOfClass:[NSString class]]) {
