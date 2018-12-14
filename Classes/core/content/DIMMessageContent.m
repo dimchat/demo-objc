@@ -9,22 +9,26 @@
 #import "DIMMessageContent.h"
 
 static inline NSUInteger serial_number(void) {
-    // last serial number
-    static NSUInteger serialNumber = 0;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSDate *now = [[NSDate alloc] init];
-        serialNumber = [now timeIntervalSince1970] - 1;
-    });
-    // get new serial number with current timestamp
-    NSDate *now = [[NSDate alloc] init];
-    NSUInteger timestamp = [now timeIntervalSince1970];
-    if (serialNumber < timestamp) {
-        serialNumber = timestamp;
-    } else {
-        ++serialNumber;
-    }
-    return serialNumber;
+    // because we must make sure all messages in a same chat box won't have
+    // same serial numbers, so we can't use time-related numbers, therefore
+    // the best choice is a totally random number, maybe.
+    return arc4random();
+//    // last serial number
+//    static NSUInteger serialNumber = 0;
+//    static dispatch_once_t onceToken;
+//    dispatch_once(&onceToken, ^{
+//        NSDate *now = [[NSDate alloc] init];
+//        serialNumber = [now timeIntervalSince1970] - 1;
+//    });
+//    // get new serial number with current timestamp
+//    NSDate *now = [[NSDate alloc] init];
+//    NSUInteger timestamp = [now timeIntervalSince1970];
+//    if (serialNumber < timestamp) {
+//        serialNumber = timestamp;
+//    } else {
+//        ++serialNumber;
+//    }
+//    return serialNumber;
 }
 
 @interface DIMMessageContent () {
