@@ -32,12 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      keyInfo format: {
  *          algorithm: "AES",
- *          passphrase: "....." // password
+ *          passphrase: "....." // base64(password)
  *      }
  */
 @interface MKMSymmetricKey : MKMCryptographyKey <MKMSymmetricKey>
 
-@property (readonly, strong, nonatomic) NSString *passphrase;
+@property (readonly, strong, nonatomic) NSData *passphrase;
 
 @end
 

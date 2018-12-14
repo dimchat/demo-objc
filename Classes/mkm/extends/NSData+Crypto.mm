@@ -111,13 +111,14 @@
 
 @implementation NSData (AES)
 
-- (NSData *)AES256EncryptWithKey:(const NSString *)key {
+- (NSData *)AES256EncryptWithKey:(const NSData *)key {
     // 'key' should be 32 bytes for AES256, will be null-padded otherwise
     char keyPtr[kCCKeySizeAES256+1]; // room for terminator (unused)
     bzero(keyPtr, sizeof(keyPtr)); // fill with zeroes (for padding)
     
     // fetch key data
-    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    [key getBytes:keyPtr length:sizeof(keyPtr)];
+//    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
     
     NSUInteger dataLength = [self length];
     
@@ -143,13 +144,14 @@
     return [[NSData alloc] initWithBytesNoCopy:buffer length:numBytesEncrypted];
 }
 
-- (NSData *)AES256DecryptWithKey:(const NSString *)key {
+- (NSData *)AES256DecryptWithKey:(const NSData *)key {
     // 'key' should be 32 bytes for AES256, will be null-padded otherwise
     char keyPtr[kCCKeySizeAES256+1]; // room for terminator (unused)
     bzero(keyPtr, sizeof(keyPtr)); // fill with zeroes (for padding)
     
     // fetch key data
-    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    [key getBytes:keyPtr length:sizeof(keyPtr)];
+//    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
     
     NSUInteger dataLength = [self length];
     

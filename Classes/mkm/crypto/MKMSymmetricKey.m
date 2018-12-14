@@ -6,13 +6,16 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "NSData+Crypto.h"
+#import "NSString+Crypto.h"
+
 #import "MKMAESKey.h"
 
 #import "MKMSymmetricKey.h"
 
 @interface MKMSymmetricKey ()
 
-@property (strong, nonatomic) NSString *passphrase;
+@property (strong, nonatomic) NSData *passphrase;
 
 @end
 
@@ -50,32 +53,30 @@
     return key;
 }
 
-- (NSString *)passphrase {
+- (NSData *)passphrase {
     while (!_passphrase) {
         NSString *PW;
         
         // passphrase
         PW = [_storeDictionary objectForKey:@"passphrase"];
         if (PW) {
-            _passphrase = PW;
+            _passphrase = [PW base64Decode];
             break;
         }
         
         // password
         PW = [_storeDictionary objectForKey:@"password"];
         if (PW) {
-            _passphrase = PW;
+            _passphrase = [PW base64Decode];
             break;
         }
         
         // random password
-        uint32_t n1 = arc4random();
-        uint32_t n2 = arc4random();
-        uint32_t n3 = arc4random();
-        PW = [[NSString alloc] initWithFormat:@"%010u-%010u-%010u", n1, n2, n3];
+        unsigned char buf[32];
+        arc4random_buf(buf, sizeof(buf));
+        _passphrase = [[NSData alloc] initWithBytes:buf length:sizeof(buf)];
+        PW = [_passphrase base64Encode];
         [_storeDictionary setObject:PW forKey:@"passphrase"];
-        
-        _passphrase = PW;
         break;
     }
     return _passphrase;
