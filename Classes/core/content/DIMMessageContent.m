@@ -12,7 +12,11 @@ static inline NSUInteger serial_number(void) {
     // because we must make sure all messages in a same chat box won't have
     // same serial numbers, so we can't use time-related numbers, therefore
     // the best choice is a totally random number, maybe.
-    return arc4random();
+    uint32_t sn = 0;
+    while (sn == 0) {
+        sn = arc4random();
+    }
+    return sn;
 //    // last serial number
 //    static NSUInteger serialNumber = 0;
 //    static dispatch_once_t onceToken;
