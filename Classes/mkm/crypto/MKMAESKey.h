@@ -15,7 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      keyInfo format: {
  *          algorithm: "AES",
- *          passphrase: "....." // base64(password)
+ *          keySize  : 32,   // optional
+ *          data     : "..." // base64_encode(password)
  *      }
  */
 @interface MKMAESKey : MKMSymmetricKey

@@ -73,18 +73,15 @@
             break;
         }
         
-        NSNumber *keySize;
-        keySize = [_storeDictionary objectForKey:@"keySize"];
-        if (keySize) {
-            _keySizeInBits = keySize.unsignedIntegerValue;
-            break;
-        }
-        keySize = [_storeDictionary objectForKey:@"size"];
-        if (keySize) {
-            _keySizeInBits = keySize.unsignedIntegerValue;
+        NSNumber *size;
+        size = [_storeDictionary objectForKey:@"keySizeInBits"];
+        if (size) {
+            _keySizeInBits = size.unsignedIntegerValue;
             break;
         }
         
+        _keySizeInBits = 1024;
+        [_storeDictionary setObject:@(_keySizeInBits) forKey:@"keySizeInBits"];
         break;
     }
     return _keySizeInBits;
@@ -133,9 +130,10 @@
     NSData *ciphertext = nil;
     
     CFErrorRef error = NULL;
+    SecKeyAlgorithm alg = kSecKeyAlgorithmRSAEncryptionPKCS1;
     CFDataRef CT;
     CT = SecKeyCreateEncryptedData(self.publicKeyRef,
-                                   kSecKeyAlgorithmRSAEncryptionPKCS1,
+                                   alg,
                                    (CFDataRef)plaintext,
                                    &error);
     if (error) {
@@ -157,8 +155,9 @@
     BOOL OK = NO;
     
     CFErrorRef error = NULL;
+    SecKeyAlgorithm alg = kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256;
     OK = SecKeyVerifySignature(self.publicKeyRef,
-                               kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256,
+                               alg,
                                (CFDataRef)data,
                                (CFDataRef)signature,
                                &error);

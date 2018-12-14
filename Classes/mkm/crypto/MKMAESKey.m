@@ -9,13 +9,16 @@
 #import <CommonCrypto/CommonCryptor.h>
 
 #import "NSData+Crypto.h"
+#import "NSString+Crypto.h"
 
 #import "MKMAESKey.h"
 
 @interface MKMAESKey ()
 
-@property (nonatomic) NSUInteger keySizeInBits;
-@property (strong, nonatomic) NSString *initializeVector;
+@property (strong, nonatomic) NSData *data;
+
+@property (nonatomic) NSUInteger keySize;
+//@property (strong, nonatomic) NSString *initializeVector;
 
 @end
 
@@ -28,8 +31,10 @@
                  @"algorithm error: %@", keyInfo);
         
         // lazy
-        _keySizeInBits = 0;
-        _initializeVector = nil;
+        _data = nil;
+        
+        _keySize = 0;
+        //_initializeVector = nil;
     }
     
     return self;
@@ -38,53 +43,81 @@
 - (id)copyWithZone:(NSZone *)zone {
     MKMAESKey *key = [super copyWithZone:zone];
     if (key) {
-        key.keySizeInBits = _keySizeInBits;
-        key.initializeVector = _initializeVector;
+        key.data = _data;
+        key.keySize = _keySize;
+        //key.initializeVector = _initializeVector;
     }
     return key;
 }
 
-- (NSUInteger)keySizeInBits {
-    if (_keySizeInBits == 0) {
-        NSNumber *keySize = [_storeDictionary objectForKey:@"keySize"];
-        if (!keySize) {
-            keySize = [_storeDictionary objectForKey:@"size"];
+- (NSData *)data {
+    while (!_data) {
+        NSString *PW;
+        
+        // data
+        PW = [_storeDictionary objectForKey:@"data"];
+        if (PW) {
+            _data = [PW base64Decode];
+            break;
         }
-        if (keySize) {
-            _keySizeInBits = [keySize unsignedIntegerValue];
-        } else {
-            _keySizeInBits = kCCKeySizeAES256; // 32
-            [_storeDictionary setObject:@(_keySizeInBits) forKey:@"keySize"];
-        }
+        
+        // random password
+        unsigned char buf[32];
+        arc4random_buf(buf, sizeof(buf));
+        _data = [[NSData alloc] initWithBytes:buf length:sizeof(buf)];
+        
+        PW = [_data base64Encode];
+        [_storeDictionary setObject:PW forKey:@"data"];
+        break;
     }
-    return _keySizeInBits;
+    return _data;
 }
 
-- (NSString *)initializeVector {
-    if (!_initializeVector) {
-        NSString *iv = [_storeDictionary objectForKey:@"initializeVector"];
-        if (!iv) {
-            iv = [_storeDictionary objectForKey:@"initVector"];
-            if (!iv) {
-                iv = [_storeDictionary objectForKey:@"iv"];
-                //NSAssert(iv, @"iv error: %@", _storeDictionary);
-            }
+- (NSUInteger)keySize {
+    while (_keySize == 0) {
+        if (self.data) {
+            _keySize = self.data.length;
+            break;
         }
-        _initializeVector = iv;
+        
+        NSNumber *size = [_storeDictionary objectForKey:@"keySize"];
+        if (size) {
+            _keySize = size.unsignedIntegerValue;
+            break;
+        }
+        
+        _keySize = kCCKeySizeAES256; // 32
+        [_storeDictionary setObject:@(_keySize) forKey:@"keySize"];
+        break;
     }
-    return _initializeVector;
+    return _keySize;
 }
+
+//- (NSString *)initializeVector {
+//    if (!_initializeVector) {
+//        NSString *iv = [_storeDictionary objectForKey:@"initializeVector"];
+//        if (!iv) {
+//            iv = [_storeDictionary objectForKey:@"initVector"];
+//            if (!iv) {
+//                iv = [_storeDictionary objectForKey:@"iv"];
+//                //NSAssert(iv, @"iv error: %@", _storeDictionary);
+//            }
+//        }
+//        _initializeVector = iv;
+//    }
+//    return _initializeVector;
+//}
 
 #pragma mark - Protocol
 
 - (NSData *)encrypt:(const NSData *)plaintext {
     NSData *ciphertext = nil;
-    NSAssert(self.keySizeInBits == kCCKeySizeAES256, @"only support AES-256 now");
-    NSAssert(!self.initializeVector, @"do not support init vector now");
+    NSAssert(self.keySize == kCCKeySizeAES256, @"only support AES-256 now");
+    //NSAssert(!self.initializeVector, @"do not support init vector now");
     
     // AES encrypt algorithm
-    if (self.keySizeInBits == kCCKeySizeAES256) {
-        ciphertext = [plaintext AES256EncryptWithKey:self.passphrase];
+    if (self.keySize == kCCKeySizeAES256) {
+        ciphertext = [plaintext AES256EncryptWithKey:self.data];
     }
     
     return ciphertext;
@@ -92,12 +125,12 @@
 
 - (NSData *)decrypt:(const NSData *)ciphertext {
     NSData *plaintext = nil;
-    NSAssert(self.keySizeInBits == kCCKeySizeAES256, @"only support AES-256 now");
-    NSAssert(!self.initializeVector, @"do not support init vector now");
+    NSAssert(self.keySize == kCCKeySizeAES256, @"only support AES-256 now");
+    //NSAssert(!self.initializeVector, @"do not support init vector now");
     
     // AES decrypt algorithm
-    if (self.keySizeInBits == kCCKeySizeAES256) {
-        plaintext = [ciphertext AES256DecryptWithKey:self.passphrase];
+    if (self.keySize == kCCKeySizeAES256) {
+        plaintext = [ciphertext AES256DecryptWithKey:self.data];
     }
     
     return plaintext;

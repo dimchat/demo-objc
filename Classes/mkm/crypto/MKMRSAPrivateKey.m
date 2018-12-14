@@ -76,18 +76,15 @@
             break;
         }
         
-        NSNumber *keySize;
-        keySize = [_storeDictionary objectForKey:@"keySize"];
-        if (keySize) {
-            _keySizeInBits = keySize.unsignedIntegerValue;
-            break;
-        }
-        keySize = [_storeDictionary objectForKey:@"size"];
-        if (keySize) {
-            _keySizeInBits = keySize.unsignedIntegerValue;
+        NSNumber *size;
+        size = [_storeDictionary objectForKey:@"keySizeInBits"];
+        if (size) {
+            _keySizeInBits = size.unsignedIntegerValue;
             break;
         }
         
+        _keySizeInBits = 1024;
+        [_storeDictionary setObject:@(_keySizeInBits) forKey:@"keySizeInBits"];
         break;
     }
     return _keySizeInBits;
@@ -132,9 +129,6 @@
         
         // 2.1. key size
         NSUInteger keySizeInBits = self.keySizeInBits;
-        if (keySizeInBits == 0) {
-            keySizeInBits = 1024;
-        }
         // 2.2. prepare parameters
         NSDictionary *params;
         params = @{(id)kSecAttrKeyType      :(id)kSecAttrKeyTypeRSA,
@@ -157,7 +151,6 @@
         if (privateKeyData) {
             _privateContent = [privateKeyData base64Encode];
             [_storeDictionary setObject:_privateContent forKey:@"data"];
-            [_storeDictionary setObject:@(keySizeInBits) forKey:@"keySize"];
         } else {
             NSAssert(false, @"error");
         }
@@ -215,9 +208,10 @@
     NSData *plaintext = nil;
     
     CFErrorRef error = NULL;
+    SecKeyAlgorithm alg = kSecKeyAlgorithmRSAEncryptionPKCS1;
     CFDataRef CT;
     CT = SecKeyCreateDecryptedData(self.privateKeyRef,
-                                   kSecKeyAlgorithmRSAEncryptionPKCS1,
+                                   alg,
                                    (CFDataRef)ciphertext,
                                    &error);
     if (error) {
@@ -238,9 +232,10 @@
     NSData *signature = nil;
     
     CFErrorRef error = NULL;
+    SecKeyAlgorithm alg = kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256;
     CFDataRef CT;
     CT = SecKeyCreateSignature(self.privateKeyRef,
-                               kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256,
+                               alg,
                                (CFDataRef)data,
                                &error);
     if (error) {

@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      sn   : 123,
  *
  *      URL      : "http://", // upload to CDN
- *      data     : "...",     // if (!URL) base64(fileContent)
+ *      data     : "...",     // if (!URL) base64_encode(fileContent)
  *      filename : "..."
  *  }
  */

@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
  *  RSA Private Key
  *
  *      keyInfo format: {
- *          algorithm: "RSA",
- *          size: 1024,       // size in bits (optional)
- *          data: "..."       // base64
+ *          algorithm    : "RSA",
+ *          keySizeInBits: 1024, // optional
+ *          data         : "..." // base64_encode()
  *      }
  */
 @interface MKMRSAPrivateKey : MKMPrivateKey

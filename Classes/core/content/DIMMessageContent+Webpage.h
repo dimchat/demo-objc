@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      sn   : 123,
  *
  *      URL   : "https://github.com/moky/dimp", // Page URL
- *      icon  : "...",                          // base64(icon)
+ *      icon  : "...",                          // base64_encode(icon)
  *      title : "...",
  *      desc  : "..."
  *  }

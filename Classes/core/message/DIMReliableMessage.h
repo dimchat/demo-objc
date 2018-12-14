@@ -19,11 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
  *          receiver : "hulk@yyy",
  *          time     : 123,
  *          //-- content data & key/keys
- *          data     : "...",  // Base64(symmetric)
- *          key      : "...",  // Base64(asymmetric)
+ *          data     : "...",  // base64_encode(symmetric)
+ *          key      : "...",  // base64_encode(asymmetric)
  *          keys     : [],
  *          //-- signature
- *          signature: "..."   // Base64
+ *          signature: "..."   // base64_encode()
  *      }
  */
 @interface DIMReliableMessage : DIMSecureMessage

@@ -6,18 +6,9 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "NSData+Crypto.h"
-#import "NSString+Crypto.h"
-
 #import "MKMAESKey.h"
 
 #import "MKMSymmetricKey.h"
-
-@interface MKMSymmetricKey ()
-
-@property (strong, nonatomic) NSData *passphrase;
-
-@end
 
 @implementation MKMSymmetricKey
 
@@ -38,48 +29,9 @@
             NSAssert(self, @"algorithm not support: %@", algorithm);
         }
     } else if (self = [super initWithDictionary:keyInfo]) {
-        // lazy
-        _passphrase = nil;
+        //
     }
-    
     return self;
-}
-
-- (id)copyWithZone:(NSZone *)zone {
-    MKMSymmetricKey *key = [super copyWithZone:zone];
-    if (key) {
-        key.passphrase = _passphrase;
-    }
-    return key;
-}
-
-- (NSData *)passphrase {
-    while (!_passphrase) {
-        NSString *PW;
-        
-        // passphrase
-        PW = [_storeDictionary objectForKey:@"passphrase"];
-        if (PW) {
-            _passphrase = [PW base64Decode];
-            break;
-        }
-        
-        // password
-        PW = [_storeDictionary objectForKey:@"password"];
-        if (PW) {
-            _passphrase = [PW base64Decode];
-            break;
-        }
-        
-        // random password
-        unsigned char buf[32];
-        arc4random_buf(buf, sizeof(buf));
-        _passphrase = [[NSData alloc] initWithBytes:buf length:sizeof(buf)];
-        PW = [_passphrase base64Encode];
-        [_storeDictionary setObject:PW forKey:@"passphrase"];
-        break;
-    }
-    return _passphrase;
 }
 
 #pragma mark - Protocol
