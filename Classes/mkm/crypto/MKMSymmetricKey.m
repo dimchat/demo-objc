@@ -34,18 +34,6 @@
     return self;
 }
 
-#pragma mark - Protocol
-
-- (NSData *)decrypt:(const NSData *)ciphertext {
-    // implements in subclass
-    return nil;
-}
-
-- (NSData *)encrypt:(const NSData *)plaintext {
-    // implements in subclass
-    return nil;
-}
-
 @end
 
 @implementation MKMSymmetricKey (PersistentStore)

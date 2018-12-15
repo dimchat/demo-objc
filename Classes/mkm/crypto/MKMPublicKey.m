@@ -46,22 +46,10 @@
         return YES;
     }
     // 2. try to verify the SK's signature
-    NSString *promise = @"Moky loves May Lee forever!";
+    static const NSString *promise = @"Moky loves May Lee forever!";
     NSData *data = [promise dataUsingEncoding:NSUTF8StringEncoding];
     NSData *signature = [SK sign:data];
     return [self verify:data withSignature:signature];
-}
-
-#pragma mark - Protocol
-
-- (NSData *)encrypt:(const NSData *)plaintext {
-    // implements in subclass
-    return nil;
-}
-
-- (BOOL)verify:(const NSData *)data withSignature:(const NSData *)signature {
-    // implements in subclass
-    return NO;
 }
 
 @end

@@ -61,18 +61,6 @@
     return nil;
 }
 
-#pragma mark - Protocol
-
-- (NSData *)decrypt:(const NSData *)ciphertext {
-    // implements in subclass
-    return nil;;
-}
-
-- (NSData *)sign:(const NSData *)data {
-    // implements in subclass
-    return nil;;
-}
-
 @end
 
 @implementation MKMPrivateKey (PersistentStore)

@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 #define SCAlgorithmDES @"DES"
 
 @protocol MKMSymmetricKey <NSObject>
+@optional
 
 /**
  *  CT = encrypt(text, PW)
