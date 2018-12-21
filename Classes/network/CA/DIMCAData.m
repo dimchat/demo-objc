@@ -73,12 +73,12 @@
 
 #pragma mark PublicKey
 
-- (MKMPublicKey *)publicKey {
-    MKMPublicKey *PK = [_storeDictionary objectForKey:@"PublicKey"];
-    return [MKMPublicKey keyWithKey:PK];
+- (DIMPublicKey *)publicKey {
+    DIMPublicKey *PK = [_storeDictionary objectForKey:@"PublicKey"];
+    return [DIMPublicKey keyWithKey:PK];
 }
 
-- (void)setPublicKey:(MKMPublicKey *)publicKey {
+- (void)setPublicKey:(DIMPublicKey *)publicKey {
     if (publicKey) {
         [_storeDictionary setObject:publicKey forKey:@"PublicKey"];
     } else {

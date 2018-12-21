@@ -16,7 +16,7 @@
 
 @interface DIMAmanuensis () {
     
-    NSMutableDictionary<const MKMAddress *, DIMConversation *> *_conversations;
+    NSMutableDictionary<const DIMAddress *, DIMConversation *> *_conversations;
 }
 
 @end
@@ -60,7 +60,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     _conversationDelegate = delegate;
 }
 
-- (DIMConversation *)conversationWithID:(const MKMID *)ID {
+- (DIMConversation *)conversationWithID:(const DIMID *)ID {
     DIMConversation *chatBox = [_conversations objectForKey:ID.address];
     if (!chatBox) {
         if (_conversationDelegate) {
@@ -70,7 +70,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         if (!chatBox) {
             // create directly if we can find the entity
             // get entity with ID
-            MKMEntity *entity = nil;
+            DIMEntity *entity = nil;
             if (MKMNetwork_IsPerson(ID.type)) {
                 entity = MKMContactWithID(ID);
             } else if (MKMNetwork_IsGroup(ID.type)) {
@@ -97,12 +97,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     if (chatBox.delegate == nil) {
         chatBox.delegate = _conversationDelegate;
     }
-    MKMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     [_conversations setObject:chatBox forKey:ID.address];
 }
 
 - (void)removeConversation:(DIMConversation *)chatBox {
-    MKMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     [_conversations removeObjectForKey:ID.address];
 }
 
@@ -116,8 +116,8 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     DIMConversation *chatBox = nil;
     
     DIMEnvelope *env = iMsg.envelope;
-    MKMID *sender = env.sender;
-    MKMID *receiver = env.receiver;
+    DIMID *sender = env.sender;
+    DIMID *receiver = env.receiver;
     
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chat box with group ID

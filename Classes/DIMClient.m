@@ -12,7 +12,7 @@
 
 @interface DIMClient ()
 
-@property (strong, nonatomic) NSMutableArray<MKMUser *> *users;
+@property (strong, nonatomic) NSMutableArray<DIMUser *> *users;
 
 @end
 
@@ -34,7 +34,7 @@ SingletonImplementations(DIMClient, sharedInstance)
 
 #pragma mark - Users
 
-- (void)setCurrentUser:(MKMUser *)currentUser {
+- (void)setCurrentUser:(DIMUser *)currentUser {
     if (![_currentUser isEqual:currentUser]) {
         _currentUser = currentUser;
         // add to the list of this client
@@ -47,7 +47,7 @@ SingletonImplementations(DIMClient, sharedInstance)
     }
 }
 
-- (void)addUser:(MKMUser *)user {
+- (void)addUser:(DIMUser *)user {
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
     }
@@ -57,7 +57,7 @@ SingletonImplementations(DIMClient, sharedInstance)
     }
 }
 
-- (void)removeUser:(MKMUser *)user {
+- (void)removeUser:(DIMUser *)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }

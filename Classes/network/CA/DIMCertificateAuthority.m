@@ -103,7 +103,7 @@
 
 #pragma mark - Verify
 
-- (BOOL)verifyWithPublicKey:(const MKMPublicKey *)PK {
+- (BOOL)verifyWithPublicKey:(const DIMPublicKey *)PK {
     NSString *json = [_storeDictionary objectForKey:@"Info"];
     return [PK verify:[json data] withSignature:self.signature];
 }

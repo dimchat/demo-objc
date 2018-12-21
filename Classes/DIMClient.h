@@ -14,20 +14,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMClient : NSObject {
     
-    MKMUser *_currentUser;
+    DIMUser *_currentUser;
     DIMStation *_currentStation;
 }
 
-@property (strong, nonatomic) MKMUser *currentUser;
-@property (readonly, strong, nonatomic) NSArray<MKMUser *> *users;
+@property (strong, nonatomic) DIMUser *currentUser;
+@property (readonly, strong, nonatomic) NSArray<DIMUser *> *users;
 
 @property (strong, nonatomic) DIMStation *currentStation;
 @property (readonly, nonatomic) NSString *userAgent;
 
 + (instancetype)sharedInstance;
 
-- (void)addUser:(MKMUser *)user;
-- (void)removeUser:(MKMUser *)user;
+- (void)addUser:(DIMUser *)user;
+- (void)removeUser:(DIMUser *)user;
 
 @end
 

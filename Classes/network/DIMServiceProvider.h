@@ -18,13 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
     
     DIMCertificateAuthority *_CA;
     NSString *_name;
-    MKMPublicKey *_publicKey;
+    DIMPublicKey *_publicKey;
 }
 
 @property (readonly, copy, nonatomic) DIMCertificateAuthority *CA;
 
 @property (readonly, strong, nonatomic) NSString *name; // CA.info.subject
-@property (readonly, strong, nonatomic) MKMPublicKey *publicKey; // CA.info
+@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info
 
 @property (strong, nonatomic) NSURL *home; // home page URL
 

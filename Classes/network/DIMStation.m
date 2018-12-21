@@ -140,7 +140,7 @@
     }
 }
 
-- (MKMPublicKey *)publicKey {
+- (DIMPublicKey *)publicKey {
     return self.CA.info.publicKey;
 }
 

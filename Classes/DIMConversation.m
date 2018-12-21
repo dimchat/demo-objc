@@ -12,7 +12,7 @@
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) MKMEntity *entity; // Account or Group
+@property (strong, nonatomic) DIMEntity *entity; // Account or Group
 
 @end
 
@@ -20,12 +20,12 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    MKMEntity *entity = nil;
+    DIMEntity *entity = nil;
     self = [self initWithEntity:entity];
     return self;
 }
 
-- (instancetype)initWithEntity:(const MKMEntity *)entity {
+- (instancetype)initWithEntity:(const DIMEntity *)entity {
     if (self = [super init]) {
         _entity = [entity copy];
     }
@@ -41,19 +41,19 @@
     return DIMConversationUnknown;
 }
 
-- (MKMID *)ID {
+- (DIMID *)ID {
     return _entity.ID;
 }
 
 - (NSString *)title {
     DIMConversationType type = self.type;
     if (type == DIMConversationPersonal) {
-        MKMAccount *person = (MKMAccount *)_entity;
+        DIMAccount *person = (DIMAccount *)_entity;
         NSString *name = person.name;
         // "xxx"
         return name;
     } else if (type == DIMConversationGroup) {
-        MKMGroup *group = (MKMGroup *)_entity;
+        DIMGroup *group = (DIMGroup *)_entity;
         NSString *name = group.name;
         unsigned long count = group.members.count;
         // "yyy (123)"

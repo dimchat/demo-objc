@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) DIMCAValidity *validity;
 
 @property (strong, nonatomic) DIMCASubject *subject; // the CA owner
-@property (strong, nonatomic) MKMPublicKey *publicKey; // owner's PK
+@property (strong, nonatomic) DIMPublicKey *publicKey; // owner's PK
 
 + (instancetype)dataWithData:(id)data;
 

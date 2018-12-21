@@ -26,13 +26,13 @@ typedef UInt8 DIMConversationType;
 
 @property (readonly, nonatomic) DIMConversationType type; // Network ID
 
-@property (readonly, strong, nonatomic) MKMID *ID;
+@property (readonly, strong, nonatomic) DIMID *ID;
 @property (readonly, strong, nonatomic) NSString *title;
 
 @property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;
 
-- (instancetype)initWithEntity:(const MKMEntity *)entity
+- (instancetype)initWithEntity:(const DIMEntity *)entity
 NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Read
@@ -109,7 +109,7 @@ NS_DESIGNATED_INITIALIZER;
  @param ID - entity ID
  @return conversation(chat box)
  */
-- (DIMConversation *)conversationWithID:(const MKMID *)ID;
+- (DIMConversation *)conversationWithID:(const DIMID *)ID;
 
 /**
  Save the new message to local storage

@@ -10,17 +10,17 @@
 * Implements your entity delegate (.h/.m)
 
 ```objc
-#import "DIMC.h"
+#import "DIMCore.h"
 
-@interface Facebook : NSObject <MKMUserDataSource,
-                                MKMUserDelegate,
-                                MKMContactDelegate,
+@interface Facebook : NSObject <DIMUserDataSource,
+                                DIMUserDelegate,
+                                DIMContactDelegate,
                                 //-
-                                MKMGroupDataSource,
-                                MKMGroupDelegate,
+                                DIMGroupDataSource,
+                                DIMGroupDelegate,
                                 //-
-                                MKMEntityDataSource,
-                                MKMProfileDataSource>
+                                DIMEntityDataSource,
+                                DIMProfileDataSource>
 
 @end
 ```
@@ -29,32 +29,32 @@
 
 @implementation Facebook
 
-#pragma mark - MKMUserDataSource
+#pragma mark - DIMUserDataSource
 
 // get contacts count
-- (NSInteger)numberOfContactsInUser:(const MKMUser *)usr {
+- (NSInteger)numberOfContactsInUser:(const DIMUser *)usr {
     // TODO: load data from local storage
     // ...
     return 0;
 }
 
 // get contact ID with index
-- (MKMID *)user:(const MKMUser *)usr contactAtIndex:(NSInteger)index {
+- (DIMID *)user:(const DIMUser *)usr contactAtIndex:(NSInteger)index {
     // TODO: load data from local storage
     // ...
     return nil;
 }
 
-#pragma mark MKMUserDelegate
+#pragma mark DIMUserDelegate
 
 // User factory
-- (MKMUser *)userWithID:(const MKMID *)ID {
-    MKMUser *user = nil;
+- (DIMUser *)userWithID:(const DIMID *)ID {
+    DIMUser *user = nil;
     
     // create with ID and public key
-    MKMPublicKey *PK = MKMPublicKeyForID(ID);
+    DIMPublicKey *PK = MKMPublicKeyForID(ID);
     if (PK) {
-        user = [[MKMUser alloc] initWithID:ID publicKey:PK];
+        user = [[DIMUser alloc] initWithID:ID publicKey:PK];
     } else {
         NSAssert(false, @"failed to get PK for user: %@", ID);
     }
@@ -68,16 +68,16 @@
     return user;
 }
 
-#pragma mark MKMContactDelegate
+#pragma mark DIMContactDelegate
 
 // Contact factory
-- (MKMContact *)contactWithID:(const MKMID *)ID {
-    MKMContact *contact = nil;
+- (DIMContact *)contactWithID:(const DIMID *)ID {
+    DIMContact *contact = nil;
     
     // create with ID and public key
-    MKMPublicKey *PK = MKMPublicKeyForID(ID);
+    DIMPublicKey *PK = MKMPublicKeyForID(ID);
     if (PK) {
-        contact = [[MKMContact alloc] initWithID:ID publicKey:PK];
+        contact = [[DIMContact alloc] initWithID:ID publicKey:PK];
     } else {
         NSAssert(false, @"failed to get PK for user: %@", ID);
     }
@@ -85,44 +85,44 @@
     return contact;
 }
 
-#pragma mark - MKMGroupDataSource
+#pragma mark - DIMGroupDataSource
 
 // get group founder
-- (MKMID *)founderForGroupID:(const MKMID *)ID {
+- (DIMID *)founderForGroupID:(const DIMID *)ID {
     // TODO: load data from local storage
     // ...
     return nil;
 }
 
 // get group owner
-- (MKMID *)ownerForGroupID:(const MKMID *)ID {
+- (DIMID *)ownerForGroupID:(const DIMID *)ID {
     // TODO: load data from local storage
     // ...
     return nil;
 }
 
 // get members count
-- (NSInteger)numberOfMembersInGroup:(const MKMGroup *)grp {
+- (NSInteger)numberOfMembersInGroup:(const DIMGroup *)grp {
     // TODO: load data from local storage
     // ...
     return 0;
 }
 
 // get member at index
-- (MKMID *)group:(const MKMGroup *)grp memberAtIndex:(NSInteger)index {
+- (DIMID *)group:(const DIMGroup *)grp memberAtIndex:(NSInteger)index {
     // TODO: load data from local storage
     // ...
     return nil;
 }
 
-#pragma mark MKMGroupDelegate
+#pragma mark DIMGroupDelegate
 
 // Group factory
-- (MKMGroup *)groupWithID:(const MKMID *)ID {
-    MKMGroup *group = nil;
+- (DIMGroup *)groupWithID:(const DIMID *)ID {
+    DIMGroup *group = nil;
     
     // get founder of this group
-    MKMID *founder = [self founderForGroupID:ID];
+    DIMID *founder = [self founderForGroupID:ID];
     if (!founder) {
         NSAssert(false, @"founder not found for group: %@", ID);
         return  nil;
@@ -130,7 +130,7 @@
     
     // create it
     if (ID.type == MKMNetwork_Polylogue) {
-        group = [[MKMPolylogue alloc] initWithID:ID founderID:founder];
+        group = [[DIMPolylogue alloc] initWithID:ID founderID:founder];
     } else {
         NSAssert(false, @"group error: %@", ID);
     }
@@ -146,11 +146,11 @@
     return group;
 }
 
-#pragma mark - MKMEntityDataSource
+#pragma mark - DIMEntityDataSource
 
 // get meta to create entity
-- (MKMMeta *)metaForEntityID:(const MKMID *)ID {
-    MKMMeta *meta = [MKMFacebook() loadMetaForEntityID:ID];
+- (DIMMeta *)metaForEntityID:(const DIMID *)ID {
+    DIMMeta *meta = [MKMFacebook() loadMetaForEntityID:ID];
     if (meta) {
         return meta;
     }
@@ -160,10 +160,10 @@
     return meta;
 }
 
-#pragma mark - MKMProfileDataSource
+#pragma mark - DIMProfileDataSource
 
 // get profile for entity
-- (MKMProfile *)profileForID:(const MKMID *)ID {
+- (DIMProfile *)profileForID:(const DIMID *)ID {
     // TODO: load profile from local storage or network
     // ...
     return nil;
@@ -177,11 +177,11 @@
 
 ```objc
 // generate asymmetric keys
-MKMPrivateKey *SK = [[MKMPrivateKey alloc] init];
-MKMPublicKey *PK = SK.publicKey;
+DIMPrivateKey *SK = [[DIMPrivateKey alloc] init];
+DIMPublicKey *PK = SK.publicKey;
 
 // register user
-MKMUser *moky = [MKMUser registerWithName:@"moky" privateKey:SK publicKey:PK];
+DIMUser *moky = [DIMUser registerWithName:@"moky" privateKey:SK publicKey:PK];
 NSLog(@"my new ID: %@", moky.ID);
 
 // set current user for the DIM client
@@ -193,7 +193,7 @@ NSLog(@"my new ID: %@", moky.ID);
 * Load User
 
 ```objc
-MKMBarrack *barrack = [MKMBarrack sharedInstance];
+DIMBarrack *barrack = [DIMBarrack sharedInstance];
 DIMClient  *client  = [DIMClient sharedInstance];
 
 // 1. initialize your delegate first
@@ -205,8 +205,8 @@ barrack.profileDataSource = _facebook;
 
 // 2. load user from barrack
 NSString *str = @"moki@4WDfe3zZ4T7opFSi3iDAKiuTnUHjxmXekk";  // from your db
-MKMID *ID = [[MKMID alloc] initWithString:str];
-MKMUser *moky = [barrack userWithID:ID];
+DIMID *ID = [[DIMID alloc] initWithString:str];
+DIMUser *moky = [barrack userWithID:ID];
 
 // 3. set current user for the DIM client
 client.currentUser = moky;
@@ -217,15 +217,15 @@ client.currentUser = moky;
 * Load Contact
 
 ```objc
-MKMBarrack *barrack = [MKMBarrack sharedInstance];
+DIMBarrack *barrack = [DIMBarrack sharedInstance];
 
 // 1. get contacts (IDs) from local storage
-MKMID *ID1 = [[MKMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
-MKMID *ID2 = [[MKMID alloc] initWithString:MKM_MONKEY_KING_ID];
+DIMID *ID1 = [[DIMID alloc] initWithString:MKM_IMMORTAL_HULK_ID];
+DIMID *ID2 = [[DIMID alloc] initWithString:MKM_MONKEY_KING_ID];
 
 // 2. create contacts from barrack
-MKMContact *hulk = [barrack contactWithID:ID1];
-MKMContact *moki = [barrack contactWithID:ID2];
+DIMContact *hulk = [barrack contactWithID:ID1];
+DIMContact *moki = [barrack contactWithID:ID2];
 
 // 3. add contacts (IDs) to the user
 [moky addContact:hulk.ID];
@@ -239,7 +239,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 * Implements a Station instance (.h/.m) for network transferring
 
 ```objc
-#import "DIMC.h"
+#import "DIMCore.h"
 
 @interface Station : DIMStation <DIMStationDelegate>
 
@@ -296,7 +296,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 * Implements the conversation data source & delegate (.h/.m)
 
 ```objc
-#import "DIMC.h"
+#import "DIMCore.h"
 
 @interface MessageProcessor : NSObject <DIMConversationDataSource, DIMConversationDelegate>
 
@@ -311,7 +311,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 
 // get message count in the conversation
 - (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatBox {
-    MKMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     
     // TODO: load data from local storage
     // ...
@@ -320,7 +320,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 
 // get message at index of the conversation
 - (DIMInstantMessage *)conversation:(const DIMConversation *)chatBox messageAtIndex:(NSInteger)index {
-    MKMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     
     // TODO: load data from local storage
     // ...
@@ -330,8 +330,8 @@ MKMContact *moki = [barrack contactWithID:ID2];
 #pragma mark DIMConversationDelegate
 
 // Conversation factory
-- (DIMConversation *)conversationWithID:(const MKMID *)ID {
-    MKMEntity *entity = nil;
+- (DIMConversation *)conversationWithID:(const DIMID *)ID {
+    DIMEntity *entity = nil;
     if (MKMNetwork_IsPerson(ID.type)) {
         entity = MKMContactWithID(ID);
     } else if (MKMNetwork_IsGroup(ID.type)) {
@@ -348,7 +348,7 @@ MKMContact *moki = [barrack contactWithID:ID2];
 
 // save the new message to local storage
 - (BOOL)conversation:(const DIMConversation *)chatBox insertMessage:(const DIMInstantMessage *)iMsg {
-    MKMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     
     // system command
     DIMMessageContent *content = iMsg.content;
@@ -385,8 +385,8 @@ trans.delegate        = server;
 // 2. create message content
 NSString *text = @"Hey boy!"
 DIMMessageContent *content = [[DIMMessageContent alloc] initWithText:text];
-MKMID *sender = client.currentUser.ID;
-MKMID *receiver = hulk.ID;
+DIMID *sender = client.currentUser.ID;
+DIMID *receiver = hulk.ID;
 
 // 3. call transceiver to send out message content
 [trans sendMessageContent:content 
