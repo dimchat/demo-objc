@@ -1,12 +1,12 @@
 //
 //  DIMCAValidity.h
-//  DIMC
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/11/25.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMDictionary.h"
+#import "dimMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

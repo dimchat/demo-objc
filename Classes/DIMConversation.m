@@ -1,12 +1,12 @@
 //
 //  DIMConversation.m
-//  DIMC
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/9.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "DIMInstantMessage.h"
+#import "DaoKeDao.h"
 
 #import "DIMConversation.h"
 

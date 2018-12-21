@@ -1,16 +1,14 @@
 //
 //  DIMAmanuensis.m
-//  DIMC
+//  DIMCore
 //
 //  Created by Albert Moky on 2018/10/21.
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
+#import "dimMacros.h"
 
-#import "DIMEnvelope.h"
-#import "DIMMessageContent.h"
-#import "DIMInstantMessage.h"
+#import "NSObject+Singleton.h"
 
 #import "DIMConversation.h"
 
