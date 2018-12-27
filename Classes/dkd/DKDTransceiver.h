@@ -102,14 +102,6 @@ typedef void (^DKDTransceiverCompletionHandler)(const NSError * _Nullable error)
  */
 - (DKDInstantMessage *)verifyAndDecryptMessage:(const DKDReliableMessage *)rMsg;
 
-#pragma mark -
-
-- (DKDSecureMessage *)encryptMessage:(const DKDInstantMessage *)iMsg;
-- (DKDInstantMessage *)decryptMessage:(const DKDSecureMessage *)sMsg;
-
-- (DKDReliableMessage *)signMessage:(const DKDSecureMessage *)sMsg;
-- (DKDSecureMessage *)verifyMessage:(const DKDReliableMessage *)rMsg;
-
 @end
 
 NS_ASSUME_NONNULL_END

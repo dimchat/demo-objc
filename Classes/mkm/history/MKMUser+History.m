@@ -26,74 +26,62 @@
 
 @implementation MKMUser (History)
 
-+ (instancetype)registerWithName:(const NSString *)seed
-                      privateKey:(const MKMPrivateKey *)SK
-                       publicKey:(nullable const MKMPublicKey *)PK {
++ (MKMRegisterInfo *)registerWithName:(const NSString *)seed
+                           privateKey:(const MKMPrivateKey *)SK
+                            publicKey:(nullable const MKMPublicKey *)PK {
     NSAssert([seed length] > 0, @"seed error");
     NSAssert(!PK || [PK isMatch:SK], @"PK must match SK");
     
-    // 1. create user
-    MKMUser *user;
-    MKMID *ID;
-    MKMMeta *meta;
-    // 1.1. generate meta
-    meta = [[MKMMeta alloc] initWithSeed:seed privateKey:SK publicKey:PK];
-    NSLog(@"register meta: %@", meta);
-    // 1.2. generate ID
-    ID = [meta buildIDWithNetworkID:MKMNetwork_Main];
-    NSLog(@"register ID: %@", ID);
-    // 1.3. create user with ID & meta
-    user = [[self alloc] initWithID:ID publicKey:meta.key];
-    // 1.4. store private key for user in keychain
-    user.privateKey = [SK copy];
-    // 1.5. add this user to entity pool
-    [MKMFacebook() addUser:user];
-    // 1.6. store meta & private key
-    [MKMFacebook() setMeta:meta forID:ID];
-    [MKMFacebook() saveMeta:meta forEntityID:ID];
-    [SK saveKeyWithIdentifier:ID.address];
+    MKMRegisterInfo *info = [[MKMRegisterInfo alloc] init];
+    info.privateKey = [SK copy];
+    info.publicKey = [PK copy];
     
-    // 2. generate history
-    MKMHistory *history;
+    // create meta
+    info.meta = [[MKMMeta alloc] initWithSeed:seed
+                                   privateKey:info.privateKey
+                                    publicKey:info.publicKey];
+    
+    // build ID
+    info.ID = [info.meta buildIDWithNetworkID:MKMNetwork_Main];
+    
+    // create user with ID & meta
+    info.user = [[self alloc] initWithID:info.ID
+                               publicKey:info.meta.key];
+    info.user.privateKey = info.privateKey;
+    
+    return info;
+}
+
+- (MKMHistoryBlock *)registerWithMessage:(nullable const NSString *)hello {
+    NSAssert(self.privateKey, @"private key not set");
+    
     MKMHistoryBlock *record;
     MKMHistoryTransaction *event;
     MKMHistoryOperation *op;
-    // 2.1. create operation with command: "register"
+    
+    // create operation with command: "register"
     op = [[MKMHistoryOperation alloc] initWithCommand:@"register" time:nil];
-    // 2.2 create event(Transaction) with operation
+    if (hello.length > 0) {
+        [op setObject:hello forKey:@"message"];
+    }
+    
+    // create event(Transaction) with operation
     event = [[MKMHistoryTransaction alloc] initWithOperation:op];
-    // 2.3. create record(Block) with events
+    
+    // create record(Block) with events
     NSData *hash = nil;
     NSData *CT = nil;
     record = [[MKMHistoryBlock alloc] initWithTransactions:@[event]
                                                     merkle:hash
                                                  signature:CT
-                                                  recorder:ID];
-    [record signWithPrivateKey:SK];
-    // 2.4. create history with record(s)
-    history = [[MKMHistory alloc] initWithID:ID];
-    [history addBlock:record];
-    NSLog(@"register history: %@", history);
+                                                  recorder:self.ID];
+    [record signWithPrivateKey:self.privateKey];
     
-    // 3. running history with delegate to update status
-    [[MKMConsensus sharedInstance] runHistory:history forEntity:user];
-    
-    // 4. store meta + history and send out
-    // 4.1. store in entity manager
-//    [eman setMeta:meta forID:ID];
-//    [eman setHistory:history forID:ID];
-//    // 4.2. upload onto the network
-//    [eman.delegate entityID:ID sendMeta:meta];
-//    [eman.delegate entityID:ID sendHistory:history];
-    
-    // Mission Accomplished!
-    NSLog(@"user account(%@) registered!", ID);
-    return user;
+    return record;
 }
 
-- (MKMHistoryBlock *)suicideWithMessage:(const NSString *)lastWords
-                             privateKey:(const MKMPrivateKey *)SK {
-    NSAssert([_publicKey isMatch:SK], @"not your SK");
+- (MKMHistoryBlock *)suicideWithMessage:(nullable const NSString *)lastWords {
+    NSAssert(self.privateKey, @"private key not set");
     
     MKMHistory *history = MKMHistoryForID(_ID);
     MKMHistoryBlock *lastBlock = history.blocks.lastObject;
@@ -101,17 +89,22 @@
     NSData *CT = lastBlock.signature;
     NSAssert(CT, @"last block error");
     
-    // 1. generate history record
     MKMHistoryBlock *record;
     MKMHistoryTransaction *ev1, *ev2;
     MKMHistoryOperation *op1, *op2;
-    // 1.1. create event1(Transaction) with operation: "link"
+    
+    // create event1(Transaction) with operation: "link"
     op1 = [[MKMHistoryOperation alloc] initWithPreviousSignature:CT time:nil];
     ev1 = [[MKMHistoryTransaction alloc] initWithOperation:op1];
-    // 1.2. create event2(Transaction) with operation: "suicide"
+    
+    // create event2(Transaction) with operation: "suicide"
     op2 = [[MKMHistoryOperation alloc] initWithCommand:@"suicide" time:nil];
+    if (lastWords.length > 0) {
+        [op2 setObject:lastWords forKey:@"message"];
+    }
     ev2 = [[MKMHistoryTransaction alloc] initWithOperation:op2];
-    // 1.3. create record(Block) with events
+    
+    // create record(Block) with events
     NSData *hash = nil;
     CT = nil;
     record = [[MKMHistoryBlock alloc] initWithTransactions:@[ev1, ev2]
@@ -119,20 +112,66 @@
                                                  signature:CT
                                                   recorder:_ID];
     [record signWithPrivateKey:self.privateKey];
-    NSLog(@"suicide record: %@", record);
     
-    // 2. run history to update status
-    [[MKMConsensus sharedInstance] runHistoryBlock:record forEntity:self];
-    
-//    // 3. store and send the history record out
-//    // 3.1. store the history in entity manager
-//    [eman setHistory:_history forID:_ID];
-//    // 3.2. upload the new history record onto the network
-//    [eman.delegate entityID:_ID sendHistoryRecord:record];
-    
-    // Mission Accomplished!
-    NSLog(@"user account(%@) dead!", _ID);
     return record;
+}
+
+@end
+
+#pragma mark -
+
+@implementation MKMRegisterInfo
+
+- (MKMPrivateKey *)privateKey {
+    MKMPrivateKey *SK = [_storeDictionary objectForKey:@"privateKey"];
+    return [MKMPrivateKey keyWithKey:SK];
+}
+
+- (void)setPrivateKey:(MKMPrivateKey *)privateKey {
+    if (privateKey) {
+        [_storeDictionary setObject:privateKey forKey:@"privateKey"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"privateKey"];
+    }
+}
+
+- (MKMPublicKey *)publicKey {
+    MKMPublicKey *PK = [_storeDictionary objectForKey:@"publicKey"];
+    return [MKMPublicKey keyWithKey:PK];
+}
+
+- (void)setPublicKey:(MKMPublicKey *)publicKey {
+    if (publicKey) {
+        [_storeDictionary setObject:publicKey forKey:@"publicKey"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"publicKey"];
+    }
+}
+
+- (MKMMeta *)meta {
+    MKMMeta *info = [_storeDictionary objectForKey:@"meta"];
+    return [MKMMeta metaWithMeta:info];
+}
+
+- (void)setMeta:(MKMMeta *)meta {
+    if (meta) {
+        [_storeDictionary setObject:meta forKey:@"meta"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"meta"];
+    }
+}
+
+- (MKMID *)ID {
+    MKMID *identity = [_storeDictionary objectForKey:@"ID"];
+    return [MKMID IDWithID:identity];
+}
+
+- (void)setID:(MKMID *)ID {
+    if (ID) {
+        [_storeDictionary setObject:ID forKey:@"ID"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"ID"];
+    }
 }
 
 @end

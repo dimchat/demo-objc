@@ -130,6 +130,7 @@ typedef NSMutableDictionary<const MKMAddress *, NSString *> MKMConfirmTableM;
 }
 
 - (void)setConfirmation:(const NSData *)CT forID:(const MKMID *)ID {
+    NSAssert(CT, @"confirmation cannot be empty");
     if (!_confirmations) {
         MKMConfirmTableM *table;
         table = [_storeDictionary objectForKey:@"confirmations"];
@@ -139,8 +140,10 @@ typedef NSMutableDictionary<const MKMAddress *, NSString *> MKMConfirmTableM;
         }
         _confirmations = table;
     }
-    NSString *signature = [CT base64Encode];
-    [_confirmations setObject:signature forKey:ID.address];
+    if (CT) {
+        NSString *signature = [CT base64Encode];
+        [_confirmations setObject:signature forKey:ID.address];
+    }
 }
 
 - (NSData *)confirmationForID:(const MKMID *)ID {

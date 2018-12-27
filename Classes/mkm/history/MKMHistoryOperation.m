@@ -92,11 +92,14 @@
 
 - (instancetype)initWithPreviousSignature:(const NSData *)prevSign
                                      time:(nullable const NSDate *)time {
+    NSAssert(prevSign, @"previous signature cannot be empty");
     NSString *command = @"link";
     if (self = [self initWithCommand:command time:time]) {
         // previous signature
-        NSString *CT = [prevSign base64Encode];
-        [_storeDictionary setObject:CT forKey:@"prevSign"];
+        if (prevSign) {
+            NSString *CT = [prevSign base64Encode];
+            [_storeDictionary setObject:CT forKey:@"prevSign"];
+        }
     }
     return self;
 }

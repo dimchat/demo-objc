@@ -13,10 +13,12 @@
 @implementation DKDMessageContent (TopSecret)
 
 - (instancetype)initWithForwardMessage:(const DKDReliableMessage *)rMsg {
+    NSAssert(rMsg, @"forward message cannot be empty");
     if (self = [self initWithType:DKDMessageType_Forward]) {
         // top-secret message
-        NSAssert(rMsg, @"forward message cannot be empty");
-        [_storeDictionary setObject:rMsg forKey:@"forward"];
+        if (rMsg) {
+            [_storeDictionary setObject:rMsg forKey:@"forward"];
+        }
     }
     return self;
 }

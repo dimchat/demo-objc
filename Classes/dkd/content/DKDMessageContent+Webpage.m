@@ -17,10 +17,12 @@
                       title:(nullable const NSString *)title
                 description:(nullable const NSString *)desc
                        icon:(nullable const NSData *)icon {
+    NSAssert(url, @"URL cannot be empty");
     if (self = [self initWithType:DKDMessageType_Page]) {
         // url
-        NSAssert(url, @"URL cannot be empty");
-        [_storeDictionary setObject:url forKey:@"URL"];
+        if (url) {
+            [_storeDictionary setObject:url forKey:@"URL"];
+        }
         
         // title
         if (title) {

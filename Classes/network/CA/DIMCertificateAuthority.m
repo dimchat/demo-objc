@@ -93,12 +93,15 @@
 }
 
 - (void)setExtraValue:(id)value forKey:(const NSString *)key {
+    NSAssert(value, @"extra value cannot be empty");
     NSMutableDictionary *ext = [_storeDictionary objectForKey:@"Extensions"];
     if (!ext) {
         ext = [[NSMutableDictionary alloc] init];
         [_storeDictionary setObject:ext forKey:@"Extensions"];
     }
-    [ext setObject:value forKey:key];
+    if (value) {
+        [ext setObject:value forKey:key];
+    }
 }
 
 #pragma mark - Verify

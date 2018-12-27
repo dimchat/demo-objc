@@ -11,10 +11,12 @@
 @implementation DKDMessageContent (Command)
 
 - (instancetype)initWithCommand:(const NSString *)cmd {
+    NSAssert(cmd, @"command name cannot be empty");
     if (self = [self initWithType:DKDMessageType_Command]) {
         // command
-        NSAssert(cmd, @"command name cannot be empty");
-        [_storeDictionary setObject:cmd forKey:@"command"];
+        if (cmd) {
+            [_storeDictionary setObject:cmd forKey:@"command"];
+        }
     }
     return self;
 }

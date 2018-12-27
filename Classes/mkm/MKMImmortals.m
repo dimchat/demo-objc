@@ -14,7 +14,7 @@
 #import "MKMBarrack.h"
 
 //#if DEBUG
-//#import "DIMClient.h"
+//#import "DKDClient.h"
 //#endif
 
 #import "MKMImmortals.h"
@@ -23,6 +23,9 @@
     
     NSMutableDictionary<const MKMAddress *, MKMMeta *> *_metaTable;
     NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
+    
+    NSMutableDictionary<const MKMAddress *, MKMUser *> *_userTable;
+    NSMutableDictionary<const MKMAddress *, MKMContact *> *_contactTable;
 }
 
 @end
@@ -34,14 +37,17 @@
         _metaTable    = [[NSMutableDictionary alloc] initWithCapacity:2];
         _profileTable = [[NSMutableDictionary alloc] initWithCapacity:2];
         
+        _userTable    = [[NSMutableDictionary alloc] initWithCapacity:2];
+        _contactTable = [[NSMutableDictionary alloc] initWithCapacity:2];
+        
         [self _loadBuiltInAccount:@"mkm_hulk"];
         [self _loadBuiltInAccount:@"mkm_moki"];
     }
     return self;
 }
 
-- (MKMUser *)_loadBuiltInAccount:(NSString *)filename {
-    NSBundle *bundle = [NSBundle mainBundle];
+- (MKMRegisterInfo *)_loadBuiltInAccount:(NSString *)filename {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];//[NSBundle mainBundle];
     NSString *path = [bundle pathForResource:filename ofType:@"plist"];
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:path]) {
@@ -79,26 +85,42 @@
     SK = [MKMPrivateKey keyWithKey:SK];
     if ([meta matchID:ID] && [meta.key isMatch:SK]) {
         // store private key into keychain
-        [SK saveKeyWithIdentifier:ID.address];
+        //[SK saveKeyWithIdentifier:ID.address];
     } else {
         NSAssert(false, @"keys not match");
+        SK = nil;
     }
     
-    // create
+    // create contact & user
+    MKMContact *contact = [[MKMContact alloc] initWithID:ID publicKey:meta.key];
+    [_contactTable setObject:contact forKey:ID.address];
+    
     MKMUser *user = [[MKMUser alloc] initWithID:ID publicKey:meta.key];
-    [MKMFacebook() addUser:user];
+    user.privateKey = SK;
+    [_userTable setObject:user forKey:ID.address];
+    
 //#if DEBUG
-//    [[DIMClient sharedInstance] addUser:user];
+//    [[DKDClient sharedInstance] addUser:user];
 //#endif
-    return user;
+    
+    MKMRegisterInfo *info = [[MKMRegisterInfo alloc] init];
+    info.privateKey = SK;
+    info.publicKey = SK.publicKey;
+    info.meta = meta;
+    info.ID = ID;
+    info.user = user;
+    return info;
 }
 
 #pragma mark - Delegates
 
 - (MKMUser *)userWithID:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"not user ID");
-    MKMUser *user = nil;
-    // meta
+    MKMUser *user = [_userTable objectForKey:ID.address];
+    if (user) {
+        return user;
+    }
+    // create with meta.key
     MKMMeta *meta = [self metaForEntityID:ID];
     if (meta) {
         user = [[MKMUser alloc] initWithID:ID publicKey:meta.key];
@@ -112,8 +134,11 @@
 
 - (MKMContact *)contactWithID:(const MKMID *)ID {
     NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
-    MKMContact *contact = nil;
-    // meta
+    MKMContact *contact = [_contactTable objectForKey:ID.address];
+    if (contact) {
+        return contact;
+    }
+    // create with meta.key
     MKMMeta *meta = [self metaForEntityID:ID];
     if (meta) {
         contact = [[MKMContact alloc] initWithID:ID publicKey:meta.key];

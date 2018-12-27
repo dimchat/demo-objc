@@ -56,6 +56,8 @@
         if (CT) {
             [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];
             _signature = [CT copy];
+        } else {
+            _signature = nil;
         }
     }
     return self;
@@ -74,6 +76,8 @@
         if (CT) {
             [_storeDictionary setObject:[CT base64Encode] forKey:@"signature"];
             _signature = [CT copy];
+        } else {
+            _signature = nil;
         }
     }
     return self;

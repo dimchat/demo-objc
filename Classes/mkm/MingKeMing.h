@@ -6,6 +6,19 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
+//! Project version number for MingKeMing.
+FOUNDATION_EXPORT double MingKeMingVersionNumber;
+
+//! Project version string for MingKeMing.
+FOUNDATION_EXPORT const unsigned char MingKeMingVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <MingKeMing/PublicHeader.h>
+
+#if !defined(__MING_KE_MING__)
+#define __MING_KE_MING__ 1
+
 // Extends
 //#import "NSObject+Singleton.h"
 //#import "NSObject+JsON.h"
@@ -17,7 +30,6 @@
 
 // Types
 //#import "MKMString.h"
-//#import "MKMArray.h"
 //#import "MKMDictionary.h"
 
 // Cryptography
@@ -73,11 +85,4 @@
 #import "MKMBarrack+LocalStorage.h"
 //#import "MKMImmortals.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-#define MKM_VERSION 0x00000100
-
-// free functions
-NSString * mkmVersion(void);
-
-NS_ASSUME_NONNULL_END
+#endif /* ! __MING_KE_MING__ */

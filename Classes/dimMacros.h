@@ -24,6 +24,7 @@
 #define DIMEntityDataSource             MKMEntityDataSource
 
 // History
+#define DIMRegisterInfo                 MKMRegisterInfo
 
 // Group
 #define DIMGroup                        MKMGroup

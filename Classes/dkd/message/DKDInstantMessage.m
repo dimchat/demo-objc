@@ -44,8 +44,12 @@
     NSAssert(env, @"envelope cannot be empty");
     if (self = [super initWithEnvelope:env]) {
         // content
-        _content = [content copy];
-        [_storeDictionary setObject:_content forKey:@"content"];
+        if (content) {
+            _content = [content copy];
+            [_storeDictionary setObject:_content forKey:@"content"];
+        } else {
+            _content = nil;
+        }
     }
     return self;
 }

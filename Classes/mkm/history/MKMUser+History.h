@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MKMRegisterInfo;
 @class MKMHistoryBlock;
 
 @interface MKMUser (History)
@@ -20,20 +21,41 @@ NS_ASSUME_NONNULL_BEGIN
  @param seed - username
  @param SK - private key
  @param PK - public key, it will get from SK if empty
- @return User(Account)
+ @return RegisterInfo
  */
-+ (instancetype)registerWithName:(const NSString *)seed
-                      privateKey:(const MKMPrivateKey *)SK
-                       publicKey:(nullable const MKMPublicKey *)PK;
++ (MKMRegisterInfo *)registerWithName:(const NSString *)seed
+                           privateKey:(const MKMPrivateKey *)SK
+                            publicKey:(nullable const MKMPublicKey *)PK;
+
+/**
+ Create register record for the account
+
+ @param hello - say hello to the world
+ @return HistoryBlock
+ */
+- (MKMHistoryBlock *)registerWithMessage:(nullable const NSString *)hello;
 
 /**
  Delete the account, FOREVER!
  
- @param lastWords - a message to the world
- @param SK - private key
+ @param lastWords - last message to the world
+ @return HistoryBlock
  */
-- (MKMHistoryBlock *)suicideWithMessage:(const NSString *)lastWords
-                             privateKey:(const MKMPrivateKey *)SK;
+- (MKMHistoryBlock *)suicideWithMessage:(nullable const NSString *)lastWords;
+
+@end
+
+#pragma mark -
+
+@interface MKMRegisterInfo : MKMDictionary
+
+@property (strong, nonatomic) MKMPrivateKey *privateKey;
+@property (strong, nonatomic) MKMPublicKey *publicKey;
+
+@property (strong, nonatomic) MKMMeta *meta;
+@property (strong, nonatomic) MKMID *ID;
+
+@property (strong, nonatomic) MKMUser *user;
 
 @end
 

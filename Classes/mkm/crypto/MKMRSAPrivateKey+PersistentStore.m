@@ -21,7 +21,7 @@
 
 @implementation MKMRSAPrivateKey (PersistentStore)
 
-static const NSString *s_application_tag = @"net.mingkeming.rsa.private";
+static const NSString *s_application_tag = @"chat.dim.rsa.private";
 
 + (instancetype)loadKeyWithIdentifier:(const NSString *)identifier {
     MKMRSAPrivateKey *SK = nil;

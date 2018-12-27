@@ -10,16 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DKDEncryptedKeyMap : DKDDictionary
-
-- (NSData *)encryptedKeyForID:(const MKMID *)ID;
-
-- (void)setEncryptedKey:(NSData *)key forID:(const MKMID *)ID;
-
-@end
-
-#pragma mark -
-
+@class DKDEncryptedKeyMap;
 @class DKDInstantMessage;
 
 /**
@@ -33,7 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
  *          //-- content data & key/keys
  *          data     : "...",  // base64_encode(symmetric)
  *          key      : "...",  // base64_encode(asymmetric)
- *          keys     : []
+ *          keys     : {
+ *              "ID1": "key1", // base64_encode(asymmetric)
+ *          }
  *      }
  */
 @interface DKDSecureMessage : DKDMessage
@@ -77,6 +70,25 @@ NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict
 NS_DESIGNATED_INITIALIZER;
+
+@end
+
+#pragma mark -
+
+/**
+ *  Encrypted Key Map for Group Message
+ *
+ *      data format: {
+ *          "ID1": "{key1}", // base64_encode(asymmetric)
+ *      }
+ */
+@interface DKDEncryptedKeyMap : DKDDictionary
+
++ (instancetype)mapWithMap:(id)map;
+
+- (NSData *)encryptedKeyForID:(const MKMID *)ID;
+
+- (void)setEncryptedKey:(NSData *)key forID:(const MKMID *)ID;
 
 @end
 

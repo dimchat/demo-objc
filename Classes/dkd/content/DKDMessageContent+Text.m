@@ -11,10 +11,12 @@
 @implementation DKDMessageContent (Text)
 
 - (instancetype)initWithText:(const NSString *)text {
+    NSAssert(text, @"text cannot be empty");
     if (self = [self initWithType:DKDMessageType_Text]) {
         // text
-        NSAssert(text, @"text cannot be empty");
-        [_storeDictionary setObject:text forKey:@"text"];
+        if (text) {
+            [_storeDictionary setObject:text forKey:@"text"];
+        }
     }
     return self;
 }

@@ -17,10 +17,10 @@ FOUNDATION_EXPORT const unsigned char DIMCoreVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <DIMCore/PublicHeader.h>
 
 // MKM
-//#import <MingKeMing/MingKeMing.h>
+//#import "MingKeMing.h"
 
 // DKD
-//#import <DaoKeDao/DaoKeDao.h>
+//#import "DaoKeDao.h"
 
 #if !defined(__DIM_CORE__)
 #define __DIM_CORE__ 1

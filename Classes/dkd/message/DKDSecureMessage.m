@@ -14,27 +14,6 @@
 
 #import "DKDSecureMessage.h"
 
-@implementation DKDEncryptedKeyMap
-
-- (void) setObject:(id)anObject forKey:(const NSString *)aKey {
-    NSAssert(false, @"DON'T call me");
-    //[super setObject:anObject forKey:aKey];
-}
-
-- (NSData *)encryptedKeyForID:(const MKMID *)ID {
-    NSString *encode = [_storeDictionary objectForKey:ID.address];
-    return [encode base64Decode];
-}
-
-- (void)setEncryptedKey:(NSData *)key forID:(const MKMID *)ID {
-    NSString *encode = [key base64Encode];
-    [_storeDictionary setObject:encode forKey:ID.address];
-}
-
-@end
-
-#pragma mark -
-
 @interface DKDSecureMessage ()
 
 @property (strong, nonatomic) NSData *data;
@@ -61,13 +40,19 @@
     NSAssert(content, @"content cannot be empty");
     if (self = [super initWithEnvelope:env]) {
         // content data
-        _data = [content copy];
-        [_storeDictionary setObject:[content base64Encode] forKey:@"data"];
+        if (content) {
+            _data = [content copy];
+            [_storeDictionary setObject:[content base64Encode] forKey:@"data"];
+        } else {
+            _data = nil;
+        }
         
         // encrypted key
         if (key) {
             _encryptedKey = [key copy];
             [_storeDictionary setObject:[key base64Encode] forKey:@"key"];
+        } else {
+            _encryptedKey = nil;
         }
         
         _encryptedKeys = nil;
@@ -82,8 +67,12 @@
     NSAssert(content, @"content cannot be empty");
     if (self = [super initWithEnvelope:env]) {
         // content data
-        _data = [content copy];
-        [_storeDictionary setObject:[content base64Encode] forKey:@"data"];
+        if (content) {
+            _data = [content copy];
+            [_storeDictionary setObject:[content base64Encode] forKey:@"data"];
+        } else {
+            _data = nil;
+        }
         
         _encryptedKey = nil;
         
@@ -91,6 +80,8 @@
         if (keys.count > 0) {
             _encryptedKeys = [keys copy];
             [_storeDictionary setObject:_encryptedKeys forKey:@"keys"];
+        } else {
+            _encryptedKeys = nil;
         }
     }
     return self;
@@ -145,12 +136,46 @@
 
 - (DKDEncryptedKeyMap *)encryptedKeys {
     if (!_encryptedKeys) {
-        NSDictionary *keys = [_storeDictionary objectForKey:@"keys"];
-        DKDEncryptedKeyMap *map;
-        map = [[DKDEncryptedKeyMap alloc] initWithDictionary:keys];
-        _encryptedKeys = map;
+        id keys = [_storeDictionary objectForKey:@"keys"];
+        _encryptedKeys = [DKDEncryptedKeyMap mapWithMap:keys];
     }
     return _encryptedKeys;
+}
+
+@end
+
+#pragma mark -
+
+@implementation DKDEncryptedKeyMap
+
++ (instancetype)mapWithMap:(id)map {
+    if ([map isKindOfClass:[DKDEncryptedKeyMap class]]) {
+        return map;
+    } else if ([map isKindOfClass:[NSDictionary class]]) {
+        return [[self alloc] initWithDictionary:map];
+    } else {
+        NSAssert(!map, @"unexpected key map: %@", map);
+        return nil;
+    }
+}
+
+- (void) setObject:(id)anObject forKey:(const NSString *)aKey {
+    NSAssert(false, @"DON'T call me");
+    //[super setObject:anObject forKey:aKey];
+}
+
+- (NSData *)encryptedKeyForID:(const MKMID *)ID {
+    NSString *encode = [_storeDictionary objectForKey:ID];
+    return [encode base64Decode];
+}
+
+- (void)setEncryptedKey:(NSData *)key forID:(const MKMID *)ID {
+    if (key) {
+        NSString *encode = [key base64Encode];
+        [_storeDictionary setObject:encode forKey:ID];
+    } else {
+        [_storeDictionary removeObjectForKey:ID];
+    }
 }
 
 @end

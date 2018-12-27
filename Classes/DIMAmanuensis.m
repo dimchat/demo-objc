@@ -89,6 +89,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (void)addConversation:(DIMConversation *)chatBox {
+    NSAssert([chatBox.ID isValid], @"conversation invalid");
     // check data source
     if (chatBox.dataSource == nil) {
         chatBox.dataSource = _conversationDataSource;

@@ -9,10 +9,6 @@
 #import "NSObject+Singleton.h"
 #import "NSObject+JsON.h"
 
-#import "MKMAccount+Message.h"
-#import "MKMUser+Message.h"
-#import "MKMGroup+Message.h"
-
 #import "DKDEnvelope.h"
 #import "DKDMessageContent.h"
 #import "DKDMessageContent+Forward.h"
@@ -21,6 +17,10 @@
 #import "DKDInstantMessage.h"
 #import "DKDSecureMessage.h"
 #import "DKDReliableMessage.h"
+
+#import "DKDInstantMessage+Transform.h"
+#import "DKDSecureMessage+Transform.h"
+#import "DKDReliableMessage+Transform.h"
 
 #import "DKDTransceiver.h"
 
@@ -94,29 +94,30 @@ SingletonImplementations(DKDTransceiver, sharedInstance)
 }
 
 - (DKDReliableMessage *)encryptAndSignMessage:(const DKDInstantMessage *)iMsg {
-    // 1. encrypt to secure message
-    DKDSecureMessage *sMsg;
-    sMsg = [self encryptMessage:iMsg];
+    NSAssert(iMsg.content, @"content cannot be empty");
     
-    // 2. sign to reliable message
-    DKDReliableMessage *rMsg;
-    rMsg = [self signMessage:sMsg];
+    // 1. encrypt 'content' to 'data'
+    DKDSecureMessage *sMsg = [iMsg encrypt];
+    NSAssert(sMsg.data, @"data cannot be empty");
+    
+    // 2. sign 'data'
+    DKDReliableMessage *rMsg = [sMsg sign];
+    NSAssert(rMsg.signature, @"signature cannot be empty");
     
     // OK
-    NSAssert(rMsg.signature, @"signature cannot be empty");
     return rMsg;
 }
 
 - (DKDInstantMessage *)verifyAndDecryptMessage:(const DKDReliableMessage *)rMsg {
     NSAssert(rMsg.signature, @"signature cannot be empty");
     
-    // 1. verify to secure message
-    DKDSecureMessage *sMsg;
-    sMsg = [self verifyMessage:rMsg];
+    // 1. verify 'data' witn 'signature'
+    DKDSecureMessage *sMsg = [rMsg verify];
+    NSAssert(sMsg.data, @"data cannot be empty");
     
-    // 2. decrypt to instant message
-    DKDInstantMessage *iMsg;
-    iMsg = [self decryptMessage:sMsg];
+    // 2. decrypt 'data' to 'content'
+    DKDInstantMessage *iMsg = [sMsg decrypt];
+    NSAssert(iMsg.content, @"content cannot be empty");
     
     // 3. check: top-secret message
     if (iMsg.content.type == DKDMessageType_Forward) {
@@ -127,71 +128,7 @@ SingletonImplementations(DKDTransceiver, sharedInstance)
     }
     
     // OK
-    NSAssert(iMsg.content, @"content cannot be empty");
     return iMsg;
-}
-
-#pragma mark -
-
-- (DKDSecureMessage *)encryptMessage:(const DKDInstantMessage *)iMsg {
-    DKDSecureMessage *sMsg = nil;
-    
-    // encrypt to secure message by receiver
-    MKMID *receiver = iMsg.envelope.receiver;
-    if (MKMNetwork_IsPerson(receiver.type)) {
-        // receiver is a contact
-        MKMContact *contact = MKMContactWithID(receiver);
-        sMsg = [contact encryptMessage:iMsg];
-    } else if (MKMNetwork_IsGroup(receiver.type)) {
-        // receiver is a group
-        MKMGroup *group = MKMGroupWithID(receiver);
-        sMsg = [group encryptMessage:iMsg];
-    }
-    
-    NSAssert(sMsg.data, @"encrypt failed");
-    return sMsg;
-}
-
-- (DKDInstantMessage *)decryptMessage:(const DKDSecureMessage *)sMsg {
-    DKDInstantMessage *iMsg = nil;
-    
-    // decrypt to instant message by receiver
-    MKMID *receiver = sMsg.envelope.receiver;
-    if (MKMNetwork_IsPerson(receiver.type)) {
-        MKMUser *user = MKMUserWithID(receiver);
-        iMsg = [user decryptMessage:sMsg];
-    }
-    
-    NSAssert(iMsg.content, @"decrypt failed");
-    return iMsg;
-}
-
-- (DKDReliableMessage *)signMessage:(const DKDSecureMessage *)sMsg {
-    DKDReliableMessage *rMsg = nil;
-    
-    // sign to reliable message by sender
-    MKMID *sender = sMsg.envelope.sender;
-    if (MKMNetwork_IsPerson(sender.type)) {
-        MKMUser *user = MKMUserWithID(sender);
-        rMsg = [user signMessage:sMsg];;
-    }
-    
-    NSAssert(rMsg.signature, @"sign failed");
-    return rMsg;
-}
-
-- (DKDSecureMessage *)verifyMessage:(const DKDReliableMessage *)rMsg {
-    DKDSecureMessage *sMsg = nil;
-    
-    // verify to secure message by sender
-    MKMID *sender = rMsg.envelope.sender;
-    if (MKMNetwork_IsPerson(sender.type)) {
-        MKMContact *contact = MKMContactWithID(sender);
-        sMsg = [contact verifyMessage:rMsg];
-    }
-    
-    NSAssert(sMsg.data, @"verify failed");
-    return sMsg;
 }
 
 @end

@@ -6,9 +6,10 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMUser.h"
-#import "MKMContact.h"
-#import "MKMProfile.h"
+//#import "MKMUser.h"
+//#import "MKMContact.h"
+//#import "MKMProfile.h"
+#import "MingKeMing.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

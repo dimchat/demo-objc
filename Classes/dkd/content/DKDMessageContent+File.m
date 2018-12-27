@@ -15,15 +15,15 @@
 
 - (instancetype)initWithFileData:(const NSData *)data
                         filename:(nullable const NSString *)name {
+    NSAssert(data, @"file data cannot be empty");
     if (self = [self initWithType:DKDMessageType_File]) {
         // url or data
         NSAssert(self.delegate, @"message content delegate not set");
         NSURL *url = [self.delegate URLForFileData:data filename:name];
         if (url) {
             [_storeDictionary setObject:url forKey:@"URL"];
-        } else {
+        } else if (data) {
             NSString *content = [data base64Encode];
-            NSAssert(content, @"file data cannot be empty");
             [_storeDictionary setObject:content forKey:@"data"];
         }
         
