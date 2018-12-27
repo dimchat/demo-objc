@@ -40,7 +40,7 @@ static inline MKMSymmetricKey *get_encrypt_key(const MKMID *receiver) {
 }
 
 static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
-                                            const MKMSymmetricKey *key) {
+                                            const NSData *json) {
     DKDEncryptedKeyMap *map;
     map = [[DKDEncryptedKeyMap alloc] initWithCapacity:[group.members count]];
     
@@ -49,7 +49,7 @@ static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
     for (MKMID *ID in group.members) {
         member = MKMMemberWithID(ID, group.ID);
         assert(member.publicKey);
-        data = [member.publicKey encrypt:[key jsonData]];
+        data = [member.publicKey encrypt:json];
         assert(data);
         [map setEncryptedKey:data forID:ID];
     }
@@ -67,19 +67,31 @@ static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
     // 2. encrypt 'content' to 'data'
     NSData *json = [self.content jsonData];
     NSData *CT = [scKey encrypt:json];
+    if (!CT) {
+        NSAssert(false, @"failed to encrypt data: %@", self);
+        return nil;
+    }
     
     // 3. encrypt 'key'
     NSData *key = [scKey jsonData];
     DKDSecureMessage *sMsg = nil;
     if (MKMNetwork_IsPerson(receiver.type)) {
         MKMContact *contact = MKMContactWithID(receiver);
-        key = [contact.publicKey encrypt:key];
+        key = [contact.publicKey encrypt:key]; // pack_key(contact, key);
+        if (!key) {
+            NSAssert(false, @"failed to encrypt key: %@", self);
+            return nil;
+        }
         sMsg = [[DKDSecureMessage alloc] initWithData:CT
                                          encryptedKey:key
                                              envelope:self.envelope];
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         MKMGroup *group = MKMGroupWithID(receiver);
-        DKDEncryptedKeyMap *keys = pack_keys(group, scKey);
+        DKDEncryptedKeyMap *keys = pack_keys(group, key);
+        if (!keys) {
+            NSAssert(false, @"failed to pack keys: %@", self);
+            return nil;
+        }
         sMsg = [[DKDSecureMessage alloc] initWithData:CT
                                         encryptedKeys:keys
                                              envelope:self.envelope];

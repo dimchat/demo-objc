@@ -99,6 +99,10 @@ static inline MKMSymmetricKey *get_decrypt_key(const MKMUser *user,
     
     // 1. sign the content data with user's private key
     NSData *CT = [user.privateKey sign:self.data];
+    if (!CT) {
+        NSAssert(false, @"failed to sign data: %@", self);
+        return nil;
+    }
     
     // 2. create reliable message
     DKDReliableMessage *rMsg = nil;

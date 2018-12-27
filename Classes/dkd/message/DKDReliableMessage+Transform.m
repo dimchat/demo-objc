@@ -30,12 +30,12 @@
         }
     }
     if (![PK verify:self.data withSignature:self.signature]) {
-        // signature error
+        //NSAssert(false, @"signature error: %@", self);
         return nil;
     }
     
     // 2. create secure message
-    DKDSecureMessage *sMsg;
+    DKDSecureMessage *sMsg = nil;
     if (MKMNetwork_IsPerson(receiver.type)) {
         sMsg = [[DKDSecureMessage alloc] initWithData:self.data
                                          encryptedKey:self.encryptedKey
