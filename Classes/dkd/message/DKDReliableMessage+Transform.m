@@ -8,6 +8,7 @@
 
 #import "DKDEnvelope.h"
 
+#import "DKDSecureMessage+Packing.h"
 #import "DKDReliableMessage+Meta.h"
 
 #import "DKDReliableMessage+Transform.h"
@@ -40,6 +41,10 @@
         sMsg = [[DKDSecureMessage alloc] initWithData:self.data
                                          encryptedKey:self.encryptedKey
                                              envelope:self.envelope];
+        MKMID *group = self.group;
+        if (sMsg && group) {
+            sMsg.group = group; // copy group
+        }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         sMsg = [[DKDSecureMessage alloc] initWithData:self.data
                                         encryptedKeys:self.encryptedKeys

@@ -18,8 +18,8 @@
 
 @property (strong, nonatomic) NSData *data;
 
-@property (strong, nonatomic) NSData *encryptedKey;
-@property (strong, nonatomic) DKDEncryptedKeyMap *encryptedKeys;
+@property (strong, nonatomic, nullable) NSData *encryptedKey;
+@property (strong, nonatomic, nullable) DKDEncryptedKeyMap *encryptedKeys;
 
 @end
 
@@ -35,7 +35,7 @@
 
 /* designated initializer */
 - (instancetype)initWithData:(const NSData *)content
-                encryptedKey:(const NSData *)key
+                encryptedKey:(nullable const NSData *)key
                     envelope:(const DKDEnvelope *)env {
     NSAssert(content, @"content cannot be empty");
     if (self = [super initWithEnvelope:env]) {
@@ -62,7 +62,7 @@
 
 /* designated initializer */
 - (instancetype)initWithData:(const NSData *)content
-               encryptedKeys:(const DKDEncryptedKeyMap *)keys
+               encryptedKeys:(nullable const DKDEncryptedKeyMap *)keys
                     envelope:(const DKDEnvelope *)env {
     NSAssert(content, @"content cannot be empty");
     if (self = [super initWithEnvelope:env]) {

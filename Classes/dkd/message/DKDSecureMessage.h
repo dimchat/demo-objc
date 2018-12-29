@@ -39,8 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
  *   secureMessage.content = symmetricKey.encrypt(instantMessage.content);
  *   encryptedKey = receiver.publicKey.encrypt(symmetricKey);
  */
-@property (readonly, strong, nonatomic) NSData *encryptedKey;
-@property (readonly, strong, nonatomic) DKDEncryptedKeyMap *encryptedKeys;
+@property (readonly, strong, nonatomic, nullable) NSData *encryptedKey;
+@property (readonly, strong, nonatomic, nullable) DKDEncryptedKeyMap *encryptedKeys;
 
 /**
  Secure Message for Personal
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return SecureMessage object
  */
 - (instancetype)initWithData:(const NSData *)content
-                encryptedKey:(const NSData *)key
+                encryptedKey:(nullable const NSData *)key
                     envelope:(const DKDEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 
@@ -64,7 +64,7 @@ NS_DESIGNATED_INITIALIZER;
  @return SecureMessage object
  */
 - (instancetype)initWithData:(const NSData *)content
-               encryptedKeys:(const DKDEncryptedKeyMap *)keys
+               encryptedKeys:(nullable const DKDEncryptedKeyMap *)keys
                     envelope:(const DKDEnvelope *)env
 NS_DESIGNATED_INITIALIZER;
 

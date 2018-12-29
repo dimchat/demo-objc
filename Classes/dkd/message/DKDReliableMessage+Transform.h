@@ -14,6 +14,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DKDReliableMessage (Transform)
 
+/**
+ *  Verify the Reliable Message to Secure Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |
+ *    | data     |      | data     |  1. verify(data, signature, sender.PK)
+ *    | key/keys |      | key/keys |
+ *    | signature|      +----------+
+ *    +----------+
+ *
+ *  @return SecureMessage
+ */
 - (DKDSecureMessage *)verify;
 
 @end

@@ -13,65 +13,50 @@
 #import "DKDInstantMessage.h"
 #import "DKDReliableMessage.h"
 
+#import "DKDSecureMessage+Packing.h"
+
 #import "DKDKeyStore.h"
 
 #import "DKDSecureMessage+Transform.h"
 
-static inline MKMSymmetricKey *_decrypt_key(const NSData *data,
-                                            const MKMPrivateKey *SK) {
-    NSData *key = [SK decrypt:data];
-    NSString *json = [key UTF8String];
-    return [[MKMSymmetricKey alloc] initWithJSONString:json];
-}
-
-static inline MKMSymmetricKey *get_decrypt_key(const MKMUser *user,
-                                               const DKDSecureMessage *sMsg) {
-    DKDKeyStore *store = [DKDKeyStore sharedInstance];
-    DKDEnvelope *env = sMsg.envelope;
-    MKMID *sender = env.sender;
-    MKMID *receiver = env.receiver;
-    
-    MKMSymmetricKey *scKey;
-    NSData *key = nil;
-    if (MKMNetwork_IsPerson(receiver.type)) {
-        assert([user.ID isEqual:receiver]);
-        // check passphrase in personal message
-        key = sMsg.encryptedKey;
-        if (key) {
-            // decrypt & save the key into the Key Store
-            scKey = _decrypt_key(key, user.privateKey);
-            [store setCipherKey:scKey fromAccount:sender];
-        } else {
-            // get passphrase from contact in the Key Store
-            scKey = [store cipherKeyFromAccount:sender];
-        }
-    } else if (MKMNetwork_IsGroup(receiver.type)) {
-        // check passphrase in group message
-        key = [sMsg.encryptedKeys encryptedKeyForID:user.ID];
-        if (key) {
-            // decrypt & save the key into the Key Store
-            scKey = _decrypt_key(key, user.privateKey);
-            [store setCipherKey:scKey fromMember:sender inGroup:receiver];
-        } else {
-            // get passphrase from group.member in the Key Store
-            scKey = [store cipherKeyFromMember:sender inGroup:receiver];
-        }
-    } else {
-        // receiver type not supported
-        assert(false);
-    }
-    return scKey;
-}
-
 @implementation DKDSecureMessage (Transform)
 
 - (DKDInstantMessage *)decrypt {
+    DKDKeyStore *store = [DKDKeyStore sharedInstance];
+    MKMID *sender = self.envelope.sender;
     MKMID *receiver = self.envelope.receiver;
-    NSAssert(MKMNetwork_IsPerson(receiver.type), @"receiver error");
-    MKMUser *user = MKMUserWithID(receiver);
     
     // 1. symmetric key
-    MKMSymmetricKey *scKey = get_decrypt_key(user, self);
+    MKMSymmetricKey *scKey = nil;
+    NSData *key = nil;
+    if (MKMNetwork_IsPerson(receiver.type)) {
+        key = self.encryptedKey;
+        if (key) {
+            // 1.1. decrypt passphrase with user's private key
+            MKMUser *user = MKMUserWithID(receiver);
+            key = [user.privateKey decrypt:key];
+            if (key) {
+                NSString *json = [key UTF8String];
+                scKey = [[MKMSymmetricKey alloc] initWithJSONString:json];
+            } else {
+                NSAssert(false, @"decrypt key failed");
+            }
+        } else {
+            // 1.2. get passphrase from the Key Store
+            MKMID *group = self.group;
+            if (group) {
+                scKey = [store cipherKeyFromMember:sender inGroup:group];
+            } else {
+                scKey = [store cipherKeyFromAccount:sender];
+            }
+        }
+    } else if (MKMNetwork_IsGroup(receiver.type)) {
+        NSAssert(false, @"trim group message for a member first");
+        return nil;
+    } else {
+        NSAssert(false, @"receiver type not supported");
+        return nil;
+    }
     NSAssert(scKey, @"failed to get decrypt key for receiver: %@", receiver);
     
     // 2. decrypt 'data' to 'content'
@@ -84,7 +69,18 @@ static inline MKMSymmetricKey *get_decrypt_key(const MKMUser *user,
     DKDMessageContent *content;
     content = [[DKDMessageContent alloc] initWithJSONString:json];
     
-    // 3. create instant message
+    // 3. update encrypted key for contact/group.member
+    if (key) {
+        MKMID *group = content.group;
+        if (group) {
+            NSAssert(!self.group || [self.group isEqual:group], @"error");
+            [store setCipherKey:scKey fromMember:sender inGroup:receiver];
+        } else {
+            [store setCipherKey:scKey fromAccount:sender];
+        }
+    }
+    
+    // 4. create instant message
     DKDInstantMessage *iMsg;
     iMsg = [[DKDInstantMessage alloc] initWithContent:content
                                              envelope:self.envelope];
@@ -111,6 +107,10 @@ static inline MKMSymmetricKey *get_decrypt_key(const MKMUser *user,
         rMsg = [[DKDReliableMessage alloc] initWithData:self.data
                                               signature:CT
                                            encryptedKey:self.encryptedKey envelope:self.envelope];
+        MKMID *group = self.group;
+        if (rMsg && group) {
+            rMsg.group = group; // copy group
+        }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         // group message
         rMsg = [[DKDReliableMessage alloc] initWithData:self.data

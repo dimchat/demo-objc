@@ -20,7 +20,7 @@
 @implementation DKDReliableMessage
 
 - (instancetype)initWithData:(const NSData *)content
-                encryptedKey:(const NSData *)key
+                encryptedKey:(nullable const NSData *)key
                     envelope:(const DKDEnvelope *)env {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
@@ -32,7 +32,7 @@
 }
 
 - (instancetype)initWithData:(const NSData *)content
-               encryptedKeys:(const DKDEncryptedKeyMap *)keys
+               encryptedKeys:(nullable const DKDEncryptedKeyMap *)keys
                     envelope:(const DKDEnvelope *)env {
     NSAssert(false, @"DON'T call me");
     NSData *CT = nil;
@@ -46,7 +46,7 @@
 /* designated initializer */
 - (instancetype)initWithData:(const NSData *)content
                    signature:(const NSData *)CT
-                encryptedKey:(const NSData *)key
+                encryptedKey:(nullable const NSData *)key
                     envelope:(const DKDEnvelope *)env {
     NSAssert(CT, @"signature cannot be empty");
     if (self = [super initWithData:content
@@ -66,7 +66,7 @@
 /* designated initializer */
 - (instancetype)initWithData:(const NSData *)content
                    signature:(const NSData *)CT
-               encryptedKeys:(const DKDEncryptedKeyMap *)keys
+               encryptedKeys:(nullable const DKDEncryptedKeyMap *)keys
                     envelope:(const DKDEnvelope *)env {
     NSAssert(CT, @"signature cannot be empty");
     if (self = [super initWithData:content

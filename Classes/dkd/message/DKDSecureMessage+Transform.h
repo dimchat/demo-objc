@@ -15,8 +15,37 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DKDSecureMessage (Transform)
 
+/**
+ *  Decrypt the Secure Message to Instant Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |  1. PW      = decrypt(key, receiver.SK)
+ *    | data     |      | content  |  2. content = decrypt(data, PW)
+ *    | key/keys |      +----------+
+ *    +----------+
+ *
+ *  @return InstantMessage
+ */
 - (DKDInstantMessage *)decrypt;
 
+/**
+ *  Sign the Secure Message to Reliable Message
+ *
+ *    +----------+      +----------+
+ *    | sender   |      | sender   |
+ *    | receiver |      | receiver |
+ *    | time     |  ->  | time     |
+ *    |          |      |          |
+ *    | data     |      | data     |
+ *    | key/keys |      | key/keys |
+ *    +----------+      | signature|  1. signature = sign(data, sender.SK)
+ *                      +----------+
+ *
+ *  @return ReliableMessage
+ */
 - (DKDReliableMessage *)sign;
 
 @end
