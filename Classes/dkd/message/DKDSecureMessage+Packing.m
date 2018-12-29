@@ -34,9 +34,10 @@
 - (NSArray<DKDSecureMessage *> *)split {
     NSMutableArray<DKDSecureMessage *> *mArray = nil;
     
-    MKMID *sender = self.envelope.sender;
-    MKMID *receiver = self.envelope.receiver;
-    NSDate *time = self.envelope.time;
+    DKDEnvelope *env = self.envelope;
+    MKMID *sender = env.sender;
+    MKMID *receiver = env.receiver;
+    NSDate *time = env.time;
     NSData *data = self.data;
     
     if (MKMNetwork_IsGroup(receiver.type)) {
@@ -46,7 +47,6 @@
         
         DKDSecureMessage *sMsg;
         NSData *key;
-        DKDEnvelope *env;
         for (MKMID *member in group.members) {
             // 1. rebuild envelope
             env = [[DKDEnvelope alloc] initWithSender:sender
@@ -75,9 +75,10 @@
 - (DKDSecureMessage *)trimForMember:(const MKMID *)member {
     DKDSecureMessage *sMsg = nil;
     
-    MKMID *sender = self.envelope.sender;
-    MKMID *receiver = self.envelope.receiver;
-    NSDate *time = self.envelope.time;
+    DKDEnvelope *env = self.envelope;
+    MKMID *sender = env.sender;
+    MKMID *receiver = env.receiver;
+    NSDate *time = env.time;
     NSData *data = self.data;
     
     if (MKMNetwork_IsPerson(receiver.type)) {
@@ -89,7 +90,6 @@
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         NSAssert([MKMGroupWithID(receiver) isMember:member], @"not a member");
         // 1. rebuild envelope
-        DKDEnvelope *env;
         env = [[DKDEnvelope alloc] initWithSender:sender
                                          receiver:member
                                              time:time];

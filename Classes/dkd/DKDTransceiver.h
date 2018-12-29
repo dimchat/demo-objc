@@ -67,9 +67,11 @@ typedef void (^DKDTransceiverCompletionHandler)(const NSError * _Nullable error)
  Retrieve message from the received package
 
  @param data - received package
+ @param user - current user
  @return InstantMessage
  */
-- (DKDInstantMessage *)messageFromReceivedPackage:(const NSData *)data;
+- (DKDInstantMessage *)messageFromReceivedPackage:(const NSData *)data
+                                          forUser:(const MKMUser *)user;
 
 #pragma mark -
 
@@ -98,9 +100,11 @@ typedef void (^DKDTransceiverCompletionHandler)(const NSError * _Nullable error)
  Extract instant message from a reliable message
 
  @param rMsg - reliable message
+ @param user - current user
  @return InstantMessage object
  */
-- (DKDInstantMessage *)verifyAndDecryptMessage:(const DKDReliableMessage *)rMsg;
+- (DKDInstantMessage *)verifyAndDecryptMessage:(const DKDReliableMessage *)rMsg
+                                       forUser:(const MKMUser *)user;
 
 @end
 

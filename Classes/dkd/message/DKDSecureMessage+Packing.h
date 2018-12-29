@@ -21,8 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, nullable) MKMID *group;
 
 /**
- *  Split the group message to a single person message
- *  (with group ID in the message content)
+ *  Split the group message to single person messages
  *
  *  @return SecureMessage
  */
@@ -30,7 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Trim the group message for a member
- *  (with group ID in the message content)
  *
  * @param member - group member ID
  * @return SecureMessage

@@ -18,6 +18,7 @@
 #import "DKDSecureMessage.h"
 #import "DKDReliableMessage.h"
 
+#import "DKDSecureMessage+Packing.h"
 #import "DKDInstantMessage+Transform.h"
 #import "DKDSecureMessage+Transform.h"
 #import "DKDReliableMessage+Transform.h"
@@ -66,11 +67,12 @@ SingletonImplementations(DKDTransceiver, sharedInstance)
     }
 }
 
-- (DKDInstantMessage *)messageFromReceivedPackage:(const NSData *)data {
+- (DKDInstantMessage *)messageFromReceivedPackage:(const NSData *)data
+                                          forUser:(const MKMUser *)user {
     NSString *json = [data UTF8String];
     DKDReliableMessage *rMsg;
     rMsg = [[DKDReliableMessage alloc] initWithJSONString:json];
-    return [self verifyAndDecryptMessage:rMsg];
+    return [self verifyAndDecryptMessage:rMsg forUser:user];
 }
 
 #pragma mark -
@@ -108,12 +110,37 @@ SingletonImplementations(DKDTransceiver, sharedInstance)
     return rMsg;
 }
 
-- (DKDInstantMessage *)verifyAndDecryptMessage:(const DKDReliableMessage *)rMsg {
+- (DKDInstantMessage *)verifyAndDecryptMessage:(const DKDReliableMessage *)rMsg
+                                       forUser:(const MKMUser *)user {
     NSAssert(rMsg.signature, @"signature cannot be empty");
+    
+    // 0. check with the current user
+    if (user) {
+        MKMID *receiver = rMsg.envelope.receiver;
+        if (MKMNetwork_IsPerson(receiver.type)) {
+            if (![receiver isEqual:user.ID]) {
+                // TODO: You can forward it to the true receiver,
+                //       or just ignore it.
+                NSAssert(false, @"This message is not for you!");
+                return nil;
+            }
+        } else if (MKMNetwork_IsGroup(receiver.type)) {
+            MKMGroup *group = MKMGroupWithID(receiver);
+            if (![group isMember:user.ID]) {
+                // TODO: You can forward it to the true receiver,
+                //       or just ignore it.
+                NSAssert(false, @"This message is not for you!");
+                return nil;
+            }
+        }
+    }
     
     // 1. verify 'data' witn 'signature'
     DKDSecureMessage *sMsg = [rMsg verify];
     NSAssert(sMsg.data, @"data cannot be empty");
+    
+    // 1.1. trim for user
+    sMsg = [sMsg trimForMember:user.ID];
     
     // 2. decrypt 'data' to 'content'
     DKDInstantMessage *iMsg = [sMsg decrypt];
@@ -124,7 +151,7 @@ SingletonImplementations(DKDTransceiver, sharedInstance)
         // do it again to drop the wrapper,
         // the secret inside the content is the real message
         rMsg = iMsg.content.forwardMessage;
-        return [self verifyAndDecryptMessage:rMsg];
+        return [self verifyAndDecryptMessage:rMsg forUser:user];
     }
     
     // OK
