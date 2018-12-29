@@ -69,11 +69,22 @@
     DKDMessageContent *content;
     content = [[DKDMessageContent alloc] initWithJSONString:json];
     
+    // 2.1. Check group
+    // if message.group exists, it must equal to content.group
+    NSAssert(!self.group ||
+             [content.group isEqual:self.group],
+             @"error");
+    // if content.group exists, it should equal to the message.receiver
+    // or the message.receiver must be a member of this group
+    NSAssert(!content.group ||
+             [content.group isEqual:receiver] ||
+             [MKMGroupWithID(content.group) isMember:receiver],
+             @"group error");
+    
     // 3. update encrypted key for contact/group.member
     if (key) {
         MKMID *group = content.group;
         if (group) {
-            NSAssert(!self.group || [self.group isEqual:group], @"error");
             [store setCipherKey:scKey fromMember:sender inGroup:receiver];
         } else {
             [store setCipherKey:scKey fromAccount:sender];

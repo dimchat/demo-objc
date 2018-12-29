@@ -101,8 +101,8 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
 };
 typedef UInt8 MKMNetworkType;
 
-#define MKMNetwork_IsPerson(network) (network) == MKMNetwork_Main
-#define MKMNetwork_IsGroup(network)  (network) & MKMNetwork_Group
+#define MKMNetwork_IsPerson(network) ((network) == MKMNetwork_Main)
+#define MKMNetwork_IsGroup(network)  ((network) & MKMNetwork_Group)
 
 /**
  *  Address like BitCoin

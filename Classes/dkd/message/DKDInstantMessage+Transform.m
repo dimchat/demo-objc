@@ -15,9 +15,17 @@
 
 #import "DKDInstantMessage+Transform.h"
 
-static inline MKMSymmetricKey *get_encrypt_key(const MKMID *receiver) {
+static inline MKMSymmetricKey *encrypt_key(const MKMID *receiver,
+                                           const MKMID * _Nullable group) {
     DKDKeyStore *store = [DKDKeyStore sharedInstance];
     MKMSymmetricKey *scKey = nil;
+    
+    if (group) {
+        assert([group isEqual:receiver] ||
+               [MKMGroupWithID(group) isMember:receiver]);
+        receiver = group;
+    }
+    
     if (MKMNetwork_IsPerson(receiver.type)) {
         scKey = [store cipherKeyForAccount:receiver];
         if (!scKey) {
@@ -60,9 +68,10 @@ static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
 
 - (DKDSecureMessage *)encrypt {
     MKMID *receiver = self.envelope.receiver;
+    MKMID *group = self.content.group;
     
     // 1. symmetric key
-    MKMSymmetricKey *scKey = get_encrypt_key(receiver);
+    MKMSymmetricKey *scKey = encrypt_key(receiver, group);
     
     // 2. encrypt 'content' to 'data'
     NSData *json = [self.content jsonData];
@@ -77,7 +86,7 @@ static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
     DKDSecureMessage *sMsg = nil;
     if (MKMNetwork_IsPerson(receiver.type)) {
         MKMContact *contact = MKMContactWithID(receiver);
-        key = [contact.publicKey encrypt:key]; // pack_key(contact, key);
+        key = [contact.publicKey encrypt:key]; // pack_key()
         if (!key) {
             NSAssert(false, @"failed to encrypt key: %@", self);
             return nil;
@@ -86,8 +95,9 @@ static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
                                          encryptedKey:key
                                              envelope:self.envelope];
     } else if (MKMNetwork_IsGroup(receiver.type)) {
-        MKMGroup *group = MKMGroupWithID(receiver);
-        DKDEncryptedKeyMap *keys = pack_keys(group, key);
+        NSAssert([group isEqual:receiver], @"error");
+        DKDEncryptedKeyMap *keys;
+        keys = pack_keys(MKMGroupWithID(receiver), key); // pack_keys()
         if (!keys) {
             NSAssert(false, @"failed to pack keys: %@", self);
             return nil;

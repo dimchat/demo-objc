@@ -17,12 +17,19 @@
     if (grp) {
         grp = [MKMID IDWithID:grp];
         NSAssert(MKMNetwork_IsGroup(grp.type), @"group ID error");
+        NSAssert([grp isEqual:self.envelope.receiver] ||
+                 [MKMGroupWithID(grp) isMember:self.envelope.receiver],
+                 @"group error");
     }
     return grp;
 }
 
 - (void)setGroup:(MKMID *)group {
     if (group) {
+        NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error");
+        NSAssert([group isEqual:self.envelope.receiver] ||
+                 [MKMGroupWithID(group) isMember:self.envelope.receiver],
+                 @"group error");
         [_storeDictionary setObject:group forKey:@"group"];
     } else {
         [_storeDictionary removeObjectForKey:@"group"];
@@ -88,7 +95,24 @@
             NSAssert(false, @"receiver not match");
         }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
-        NSAssert([MKMGroupWithID(receiver) isMember:member], @"not a member");
+        // 0. check member
+        MKMGroup *group = MKMGroupWithID(receiver);
+        if (member) {
+            if (![group isMember:member]) {
+                NSAssert(false, @"not the group's member");
+                return nil;
+            }
+        } else if (self.encryptedKeys.allKeys.count == 1) {
+            // the only key is for you, maybe
+            member = self.encryptedKeys.allKeys.firstObject;
+        } else if (group.members.count == 1) {
+            // you are the only member of this group
+            member = group.members.firstObject;
+        } else {
+            NSAssert(false, @"who are you?");
+            return nil;
+        }
+        
         // 1. rebuild envelope
         env = [[DKDEnvelope alloc] initWithSender:sender
                                          receiver:member

@@ -17,6 +17,25 @@
 
 @end
 
+static inline BOOL check_group(const MKMID *group, const MKMID *receiver) {
+    if (MKMNetwork_IsPerson(receiver.type)) {
+        if (group) {
+            // if content.group exists,
+            // the envelope.receiver should be a member of the group
+            return [MKMGroupWithID(group) isMember:receiver];
+        } else {
+            return YES;
+        }
+    } else if (MKMNetwork_IsGroup(receiver.type)) {
+        // if envelope.receiver is a group, it must equal to content.group,
+        // and it means that content.group cannot be empty
+        return [group isEqual:receiver];
+    } else {
+        assert(false);
+        return NO;
+    }
+}
+
 @implementation DKDInstantMessage
 
 - (instancetype)initWithEnvelope:(const DKDEnvelope *)env {
@@ -42,6 +61,8 @@
                        envelope:(const DKDEnvelope *)env {
     NSAssert(content, @"content cannot be empty");
     NSAssert(env, @"envelope cannot be empty");
+    NSAssert(check_group(content.group, env.receiver), @"group error");
+    
     if (self = [super initWithEnvelope:env]) {
         // content
         if (content) {
@@ -73,8 +94,10 @@
 
 - (DKDMessageContent *)content {
     if (!_content) {
-        id content = [_storeDictionary objectForKey:@"content"];
-        _content = [DKDMessageContent contentWithContent:content];
+        DKDMessageContent *body = [_storeDictionary objectForKey:@"content"];
+        body = [DKDMessageContent contentWithContent:body];
+        NSAssert(check_group(body.group, self.envelope.receiver), @"error");
+        _content = body;
     }
     return _content;
 }

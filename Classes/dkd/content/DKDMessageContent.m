@@ -142,6 +142,7 @@ static inline NSUInteger serial_number(void) {
     if (!_group) {
         MKMID *ID = [_storeDictionary objectForKey:@"group"];
         _group = [MKMID IDWithID:ID];
+        NSAssert(!_group || MKMNetwork_IsGroup(_group.type), @"error");
     }
     return _group;
 }
@@ -149,6 +150,7 @@ static inline NSUInteger serial_number(void) {
 - (void)setGroup:(MKMID *)group {
     if (![_group isEqual:group]) {
         if (group) {
+            NSAssert(MKMNetwork_IsGroup(group.type), @"error");
             [_storeDictionary setObject:group forKey:@"group"];
         } else {
             [_storeDictionary removeObjectForKey:@"group"];

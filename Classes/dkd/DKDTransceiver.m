@@ -141,6 +141,7 @@ SingletonImplementations(DKDTransceiver, sharedInstance)
     
     // 1.1. trim for user
     sMsg = [sMsg trimForMember:user.ID];
+    NSAssert(MKMNetwork_IsPerson(sMsg.envelope.receiver.type), @"error");
     
     // 2. decrypt 'data' to 'content'
     DKDInstantMessage *iMsg = [sMsg decrypt];
