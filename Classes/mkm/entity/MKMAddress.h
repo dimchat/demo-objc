@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *      0001 0000 - this entity contains members (Group)
  *      0010 0000 - this entity needs other administrators (big organization)
- *      0100 0000 - this is a social entity in reality.
+ *      0100 0000 - this is an entity in reality.
  *      1000 0000 - (IoT) this entity is a 'Thing'.
  *
  *      (All above are just some advices to help choosing numbers :P)
@@ -84,7 +84,7 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
     MKMNetwork_Chatroom  = 0x30, // 0011 0000 (Multi-Persons Chat, N >= 100)
     
     /**
-     *  Social Entities in reality
+     *  Social Entities in Reality
      */
     //MKMNetwork_SocialEntity = 0x50, // 0101 0000
     
@@ -95,14 +95,29 @@ typedef NS_ENUM(UInt8, MKMNetworkID) {
     //MKMNetwork_Department   = 0x52, // 0101 0010
     
     /**
+     *  Network
+     */
+    MKMNetwork_Provider  = 0x76, // 0111 0110 (Service Provider)
+    MKMNetwork_Station   = 0x88, // 1000 1000 (Server Node)
+    
+    /**
      *  Internet of Things
      */
-    //MKMNetwork_Thing = 0x80, // 1000 0000 (IoT)
+    MKMNetwork_Thing   = 0x80, // 1000 0000 (IoT)
+    MKMNetwork_Robot   = 0xC8, // 1100 1000
 };
 typedef UInt8 MKMNetworkType;
 
-#define MKMNetwork_IsPerson(network) ((network) == MKMNetwork_Main)
-#define MKMNetwork_IsGroup(network)  ((network) & MKMNetwork_Group)
+#define MKMNetwork_IsCommunicator(network) ((network) & MKMNetwork_Main)
+
+#define MKMNetwork_IsPerson(network)       ((network) == MKMNetwork_Main)
+#define MKMNetwork_IsGroup(network)        ((network) & MKMNetwork_Group)
+
+#define MKMNetwork_IsStation(network)      ((network) == MKMNetwork_Station)
+#define MKMNetwork_IsProvider(network)     ((network) == MKMNetwork_Provider)
+
+#define MKMNetwork_IsThing(network)        ((network) & MKMNetwork_Thing)
+#define MKMNetwork_IsRobot(network)        ((network) == MKMNetwork_Robot)
 
 /**
  *  Address like BitCoin

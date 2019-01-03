@@ -125,7 +125,7 @@
             _encryptedKey = [key base64Decode];
         } else {
             MKMID *ID = self.envelope.receiver;
-            NSAssert(MKMNetwork_IsPerson(ID.type), @"error");
+            NSAssert(MKMNetwork_IsCommunicator(ID.type), @"error");
             // get from the key map
             DKDEncryptedKeyMap *keyMap = self.encryptedKeys;
             return [keyMap encryptedKeyForID:ID];

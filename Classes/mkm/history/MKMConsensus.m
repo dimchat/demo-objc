@@ -24,11 +24,10 @@
 #import "MKMConsensus.h"
 
 static inline id history_delegate(const MKMEntity *entity) {
-    MKMNetworkType network = entity.ID.address.network;
     MKMEntityHistoryDelegate *delegate = nil;
-    if (MKMNetwork_IsPerson(network)) {
+    if (MKMNetwork_IsPerson(entity.type)) {
         delegate = [MKMConsensus sharedInstance].accountHistoryDelegate;
-    } else if (MKMNetwork_IsGroup(network)) {
+    } else if (MKMNetwork_IsGroup(entity.type)) {
         delegate = [MKMConsensus sharedInstance].groupHistoryDelegate;
     }
     assert(delegate);

@@ -113,7 +113,7 @@
     
     // 2. create reliable message
     DKDReliableMessage *rMsg = nil;
-    if (MKMNetwork_IsPerson(receiver.type)) {
+    if (MKMNetwork_IsCommunicator(receiver.type)) {
         // personal message
         rMsg = [[DKDReliableMessage alloc] initWithData:self.data
                                               signature:CT

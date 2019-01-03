@@ -9,7 +9,6 @@
 #import "MKMEntity.h"
 #import "MKMAccount.h"
 
-#import "MKMContact.h"
 #import "MKMUser.h"
 #import "MKMChatroom.h"
 #import "MKMMember.h"
@@ -20,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define MKMFacebook()            [MKMBarrack sharedInstance]
 
-#define MKMContactWithID(ID)     [MKMFacebook() contactWithID:(ID)]
+#define MKMAccountWithID(ID)     [MKMFacebook() accountWithID:(ID)]
 #define MKMUserWithID(ID)        [MKMFacebook() userWithID:(ID)]
 
 #define MKMGroupWithID(ID)       [MKMFacebook() groupWithID:(ID)]
@@ -36,9 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
  *      1st, get instance here to avoid create same instance,
  *      2nd, if they were updated, we can refresh them immediately here
  */
-@interface MKMBarrack : NSObject <MKMUserDataSource,
+@interface MKMBarrack : NSObject <MKMAccountDelegate,
+                                  MKMUserDataSource,
                                   MKMUserDelegate,
-                                  MKMContactDelegate,
                                   //-
                                   MKMGroupDataSource,
                                   MKMGroupDelegate,
@@ -48,9 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
                                   MKMEntityDataSource,
                                   MKMProfileDataSource>
 
+@property (weak, nonatomic) id<MKMAccountDelegate> accountDelegate;
 @property (weak, nonatomic) id<MKMUserDataSource> userDataSource;
 @property (weak, nonatomic) id<MKMUserDelegate> userDelegate;
-@property (weak, nonatomic) id<MKMContactDelegate> contactDelegate;
 
 @property (weak, nonatomic) id<MKMGroupDataSource> groupDataSource;
 @property (weak, nonatomic) id<MKMGroupDelegate> groupDelegate;
@@ -62,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (void)addContact:(MKMContact *)contact;
+- (void)addAccount:(MKMAccount *)account;
 - (void)addUser:(MKMUser *)user;
 
 - (void)addGroup:(MKMGroup *)group;

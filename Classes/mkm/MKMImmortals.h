@@ -7,7 +7,6 @@
 //
 
 //#import "MKMUser.h"
-//#import "MKMContact.h"
 //#import "MKMProfile.h"
 #import "MingKeMing.h"
 
@@ -19,8 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
  *      1. Immortal Hulk
  *      2. Monkey King
  */
-@interface MKMImmortals : NSObject <MKMUserDelegate,
-                                    MKMContactDelegate,
+@interface MKMImmortals : NSObject <MKMAccountDelegate,
+                                    MKMUserDelegate,
                                     MKMEntityDataSource,
                                     MKMProfileDataSource>
 

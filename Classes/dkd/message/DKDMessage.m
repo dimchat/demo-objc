@@ -74,21 +74,23 @@
 - (DKDEnvelope *)envelope {
     if (!_envelope) {
         // sender
-        id from = [_storeDictionary objectForKey:@"sender"];
-        from = [MKMID IDWithID:from];
+        MKMID *sender = [_storeDictionary objectForKey:@"sender"];
+        sender = [MKMID IDWithID:sender];
+        NSAssert(sender.isValid, @"sender error");
+        
         // receiver
-        id to = [_storeDictionary objectForKey:@"receiver"];
-        to = [MKMID IDWithID:to];
+        MKMID *receier = [_storeDictionary objectForKey:@"receiver"];
+        receier = [MKMID IDWithID:receier];
+        NSAssert(receier.isValid, @"receiver error");
+        
         // time
         NSNumber *timestamp = [_storeDictionary objectForKey:@"time"];
-        NSAssert(timestamp, @"error: %@", _storeDictionary);
+        NSAssert(timestamp.doubleValue > 0, @"time error");
         NSDate *time = NSDateFromNumber(timestamp);
         
-        DKDEnvelope *env;
-        env = [[DKDEnvelope alloc] initWithSender:from
-                                         receiver:to
-                                             time:time];
-        _envelope = env;
+        _envelope = [[DKDEnvelope alloc] initWithSender:sender
+                                               receiver:receier
+                                                   time:time];
     }
     return _envelope;
 }

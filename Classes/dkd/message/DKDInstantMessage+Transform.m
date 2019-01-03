@@ -21,12 +21,11 @@ static inline MKMSymmetricKey *encrypt_key(const MKMID *receiver,
     MKMSymmetricKey *scKey = nil;
     
     if (group) {
-        assert([group isEqual:receiver] ||
-               [MKMGroupWithID(group) isMember:receiver]);
+        assert([group isEqual:receiver] || [MKMGroupWithID(group) isMember:receiver]);
         receiver = group;
     }
     
-    if (MKMNetwork_IsPerson(receiver.type)) {
+    if (MKMNetwork_IsCommunicator(receiver.type)) {
         scKey = [store cipherKeyForAccount:receiver];
         if (!scKey) {
             // create a new key & save it into the Key Store
@@ -84,8 +83,8 @@ static inline DKDEncryptedKeyMap *pack_keys(const MKMGroup *group,
     // 3. encrypt 'key'
     NSData *key = [scKey jsonData];
     DKDSecureMessage *sMsg = nil;
-    if (MKMNetwork_IsPerson(receiver.type)) {
-        MKMContact *contact = MKMContactWithID(receiver);
+    if (MKMNetwork_IsCommunicator(receiver.type)) {
+        MKMAccount *contact = MKMAccountWithID(receiver);
         key = [contact.publicKey encrypt:key]; // pack_key()
         if (!key) {
             NSAssert(false, @"failed to encrypt key: %@", self);

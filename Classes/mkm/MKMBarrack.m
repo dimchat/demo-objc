@@ -14,7 +14,6 @@
 #import "MKMMeta.h"
 
 #import "MKMUser.h"
-#import "MKMContact.h"
 
 #import "MKMPolylogue.h"
 #import "MKMChatroom.h"
@@ -26,8 +25,8 @@
 
 #import "MKMBarrack.h"
 
+typedef NSMutableDictionary<const MKMAddress *, MKMAccount *> AccountTableM;
 typedef NSMutableDictionary<const MKMAddress *, MKMUser *> UserTableM;
-typedef NSMutableDictionary<const MKMAddress *, MKMContact *> ContactTableM;
 
 typedef NSMutableDictionary<const MKMAddress *, MKMGroup *> GroupTableM;
 typedef NSMutableDictionary<const MKMAddress *, MKMMember *> MemberTableM;
@@ -37,8 +36,8 @@ typedef NSMutableDictionary<const MKMAddress *, MKMMeta *> MetaTableM;
 
 @interface MKMBarrack () {
     
+    AccountTableM *_accountTable;
     UserTableM *_userTable;
-    ContactTableM *_contactTable;
     
     GroupTableM *_groupTable;
     GroupMemberTableM *_groupMemberTable;
@@ -68,8 +67,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
+        _accountTable = [[AccountTableM alloc] init];
         _userTable = [[UserTableM alloc] init];
-        _contactTable = [[ContactTableM alloc] init];
         
         _groupTable = [[GroupTableM alloc] init];
         _groupMemberTable = [[GroupMemberTableM alloc] init];
@@ -77,9 +76,9 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         _metaTable = [[MetaTableM alloc] init];
         
         // delegates
+        _accountDelegate = nil;
         _userDataSource = nil;
         _userDelegate = nil;
-        _contactDelegate = nil;
         
         _groupDataSource = nil;
         _groupDelegate = nil;
@@ -93,8 +92,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 }
 
 - (void)reduceMemory {
+    reduce_table(_accountTable);
     reduce_table(_userTable);
-    reduce_table(_contactTable);
     
     reduce_table(_groupTable);
     reduce_table(_groupMemberTable);
@@ -102,19 +101,28 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     reduce_table(_metaTable);
 }
 
+- (void)addAccount:(MKMAccount *)account {
+    if ([account isKindOfClass:[MKMUser class]]) {
+        // add to user table
+        [self addUser:(MKMUser *)account];
+        return;
+    }
+    MKMAddress *address = account.ID.address;
+    NSAssert(address, @"address error");
+    if (address.isValid) {
+        [_accountTable setObject:account forKey:address];
+    }
+}
+
 - (void)addUser:(MKMUser *)user {
     MKMAddress *address = user.ID.address;
     NSAssert(address, @"address error");
     if (address.isValid) {
         [_userTable setObject:user forKey:address];
-    }
-}
-
-- (void)addContact:(MKMContact *)contact {
-    MKMAddress *address = contact.ID.address;
-    NSAssert(address, @"address error");
-    if (address.isValid) {
-        [_contactTable setObject:contact forKey:address];
+        // erase from account table
+        if ([_accountTable objectForKey:address]) {
+            [_accountTable removeObjectForKey:address];
+        }
     }
 }
 
@@ -150,18 +158,55 @@ SingletonImplementations(MKMBarrack, sharedInstance)
     }
 }
 
-#pragma mark - MKMUserDataSource
+#pragma mark - MKMAccountDelegate
 
-- (NSInteger)numberOfContactsInUser:(const MKMUser *)usr {
-    NSAssert(MKMNetwork_IsPerson(usr.ID.type), @"not a user: %@", usr);
-    NSAssert(_userDataSource, @"user data source not set");
-    return [_userDataSource numberOfContactsInUser:usr];
+- (MKMAccount *)accountWithID:(const MKMID *)ID {
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"not an account ID: %@", ID);
+    MKMAccount *account = [_accountTable objectForKey:ID.address];
+    NSAssert(!account || [account.ID isEqual:ID], @"account ID error: %@", ID);
+    
+    while (!account) {
+        // search user table
+        account = [_userTable objectForKey:ID.address];
+        if (account) {
+            break;
+        }
+        
+        // create by delegate
+        NSAssert(_accountDelegate, @"account delegate not set");
+        account = [_accountDelegate accountWithID:ID];
+        if (account) {
+            [self addAccount:account];
+            break;
+        }
+        
+        // create directly if we can find public key
+        MKMPublicKey *PK = MKMPublicKeyForID(ID);
+        if (PK) {
+            account = [[MKMAccount alloc] initWithID:ID publicKey:PK];
+        } else {
+            NSAssert(false, @"PK not found for account: %@", ID);
+            break;
+        }
+        
+        [self addAccount:account];
+        break;
+    }
+    return account;
 }
 
-- (MKMID *)user:(const MKMUser *)usr contactAtIndex:(NSInteger)index {
-    NSAssert(MKMNetwork_IsPerson(usr.ID.type), @"not a user: %@", usr);
+#pragma mark - MKMUserDataSource
+
+- (NSInteger)numberOfContactsInUser:(const MKMUser *)user {
+    NSAssert(MKMNetwork_IsPerson(user.type), @"not a user: %@", user);
     NSAssert(_userDataSource, @"user data source not set");
-    return [_userDataSource user:usr contactAtIndex:index];
+    return [_userDataSource numberOfContactsInUser:user];
+}
+
+- (MKMID *)user:(const MKMUser *)user contactAtIndex:(NSInteger)index {
+    NSAssert(MKMNetwork_IsPerson(user.type), @"not a user: %@", user);
+    NSAssert(_userDataSource, @"user data source not set");
+    return [_userDataSource user:user contactAtIndex:index];
 }
 
 #pragma mark - MKMUserDelegate
@@ -186,6 +231,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
             user = [[MKMUser alloc] initWithID:ID publicKey:PK];
         } else {
             NSAssert(false, @"failed to get PK for user: %@", ID);
+            break;
         }
         
         // add contacts
@@ -198,36 +244,6 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         break;
     }
     return user;
-}
-
-#pragma mark MKMContactDelegate
-
-- (MKMContact *)contactWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not a person ID: %@", ID);
-    MKMContact *contact = [_contactTable objectForKey:ID.address];
-    NSAssert(!contact || [contact.ID isEqual:ID], @"contact ID error: %@", ID);
-    
-    while (!contact) {
-        // create by delegate
-        NSAssert(_contactDelegate, @"contact delegate not set");
-        contact = [_contactDelegate contactWithID:ID];
-        if (contact) {
-            [self addContact:contact];
-            break;
-        }
-        
-        // create directly if we can find public key
-        MKMPublicKey *PK = MKMPublicKeyForID(ID);
-        if (PK) {
-            contact = [[MKMContact alloc] initWithID:ID publicKey:PK];
-        } else {
-            NSAssert(false, @"PK not found for contact: %@", ID);
-        }
-        
-        [self addContact:contact];
-        break;
-    }
-    return contact;
 }
 
 #pragma mark MKMGroupDataSource

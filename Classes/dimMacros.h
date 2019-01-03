@@ -45,9 +45,10 @@
 #define DIMAccount                      MKMAccount
 #define DIMUser                         MKMUser
 #define DIMContact                      MKMContact
+
+#define DIMAccountDelegate              MKMAccountDelegate
 #define DIMUserDataSource               MKMUserDataSource
 #define DIMUserDelegate                 MKMUserDelegate
-#define DIMContactDelegate              MKMContactDelegate
 
 #define DIMProfile                      MKMProfile
 #define DIMAccountProfile               MKMAccountProfile

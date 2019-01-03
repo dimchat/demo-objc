@@ -133,7 +133,7 @@ SingletonImplementations(DKDKeyStore, sharedInstance)
             obj = [dict objectForKey:cKey];
             // ID
             cID = [MKMID IDWithID:cKey];
-            NSAssert(MKMNetwork_IsPerson(cID.type), @"error");
+            NSAssert(MKMNetwork_IsCommunicator(cID.type), @"error");
             // key
             PW = [MKMSymmetricKey keyWithKey:obj];
             // update keys table
@@ -211,14 +211,14 @@ SingletonImplementations(DKDKeyStore, sharedInstance)
 #pragma mark - Cipher key to encpryt message for account(contact)
 
 - (MKMSymmetricKey *)cipherKeyForAccount:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error");
     return [_keysForAccounts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
           forAccount:(const MKMID *)ID {
     NSAssert(key, @"cipher key cannot be empty");
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error");
     if (key) {
         [_keysForAccounts setObject:key forKey:ID.address];
     }
@@ -227,14 +227,14 @@ SingletonImplementations(DKDKeyStore, sharedInstance)
 #pragma mark - Cipher key from account(contact) to decrypt message
 
 - (MKMSymmetricKey *)cipherKeyFromAccount:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error");
     return [_keysFromAccounts objectForKey:ID.address];
 }
 
 - (void)setCipherKey:(MKMSymmetricKey *)key
          fromAccount:(const MKMID *)ID {
     NSAssert(key, @"cipher key cannot be empty");
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error");
     if (key) {
         [_keysFromAccounts setObject:key forKey:ID.address];
         _dirty = YES;

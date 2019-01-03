@@ -41,19 +41,19 @@ typedef NSArray<const MKMID *> MKMContactList;
 /**
  Get contacts count
 
- @param usr - user
+ @param user - user
  @return count
  */
-- (NSInteger)numberOfContactsInUser:(const MKMUser *)usr;
+- (NSInteger)numberOfContactsInUser:(const MKMUser *)user;
 
 /**
  Get contact ID with index
 
- @param usr - user
+ @param user - user
  @param index - contact index
  @return contact ID
  */
-- (MKMID *)user:(const MKMUser *)usr contactAtIndex:(NSInteger)index;
+- (MKMID *)user:(const MKMUser *)user contactAtIndex:(NSInteger)index;
 
 @end
 

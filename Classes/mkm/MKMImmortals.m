@@ -25,7 +25,6 @@
     NSMutableDictionary<const MKMAddress *, MKMProfile *> *_profileTable;
     
     NSMutableDictionary<const MKMAddress *, MKMUser *> *_userTable;
-    NSMutableDictionary<const MKMAddress *, MKMContact *> *_contactTable;
 }
 
 @end
@@ -38,7 +37,6 @@
         _profileTable = [[NSMutableDictionary alloc] initWithCapacity:2];
         
         _userTable    = [[NSMutableDictionary alloc] initWithCapacity:2];
-        _contactTable = [[NSMutableDictionary alloc] initWithCapacity:2];
         
         [self _loadBuiltInAccount:@"mkm_hulk"];
         [self _loadBuiltInAccount:@"mkm_moki"];
@@ -91,10 +89,7 @@
         SK = nil;
     }
     
-    // create contact & user
-    MKMContact *contact = [[MKMContact alloc] initWithID:ID publicKey:meta.key];
-    [_contactTable setObject:contact forKey:ID.address];
-    
+    // create user
     MKMUser *user = [[MKMUser alloc] initWithID:ID publicKey:meta.key];
     user.privateKey = SK;
     [_userTable setObject:user forKey:ID.address];
@@ -114,44 +109,23 @@
 
 #pragma mark - Delegates
 
-- (MKMUser *)userWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not user ID");
-    MKMUser *user = [_userTable objectForKey:ID.address];
-    if (user) {
-        return user;
+- (MKMAccount *)accountWithID:(const MKMID *)ID {
+    if (MKMNetwork_IsPerson(ID.type)) {
+        return [self userWithID:ID];
+    } else {
+        // not a person account
+        NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error: %@", ID);
+        return nil;
     }
-    // create with meta.key
-    MKMMeta *meta = [self metaForEntityID:ID];
-    if (meta) {
-        user = [[MKMUser alloc] initWithID:ID publicKey:meta.key];
-        // profile.name
-        MKMProfile *profile = [self profileForID:ID];
-        NSAssert(profile.name, @"profile.name not found");
-        user.name = profile.name;
-    }
-    return user;
 }
 
-- (MKMContact *)contactWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
-    MKMContact *contact = [_contactTable objectForKey:ID.address];
-    if (contact) {
-        return contact;
-    }
-    // create with meta.key
-    MKMMeta *meta = [self metaForEntityID:ID];
-    if (meta) {
-        contact = [[MKMContact alloc] initWithID:ID publicKey:meta.key];
-        // profile.name
-        MKMProfile *profile = [self profileForID:ID];
-        NSAssert(profile.name, @"profile.name not found");
-        contact.name = profile.name;
-    }
-    return contact;
+- (MKMUser *)userWithID:(const MKMID *)ID {
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"not user ID");
+    return [_userTable objectForKey:ID.address];
 }
 
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"not account ID");
     return [_metaTable objectForKey:ID.address];
 }
 

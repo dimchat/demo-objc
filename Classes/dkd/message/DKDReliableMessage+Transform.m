@@ -18,10 +18,10 @@
 - (DKDSecureMessage *)verify {
     MKMID *sender = self.envelope.sender;
     MKMID *receiver = self.envelope.receiver;
-    NSAssert(MKMNetwork_IsPerson(sender.type), @"sender error");
+    NSAssert(MKMNetwork_IsCommunicator(sender.type), @"sender error");
     
     // 1. verify the signature with public key
-    MKMContact *contact = MKMContactWithID(sender);
+    MKMAccount *contact = MKMAccountWithID(sender);
     MKMPublicKey *PK = contact.publicKey;
     if (!PK) {
         // first contact, try meta in message package
@@ -46,6 +46,7 @@
             sMsg.group = group; // copy group
         }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
+        NSAssert(!self.group || [self.group isEqual:receiver], @"group error");
         sMsg = [[DKDSecureMessage alloc] initWithData:self.data
                                         encryptedKeys:self.encryptedKeys
                                              envelope:self.envelope];

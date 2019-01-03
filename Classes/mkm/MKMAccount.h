@@ -37,4 +37,18 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
+#pragma mark - Account Delegate
+
+@protocol MKMAccountDelegate <NSObject>
+
+/**
+ Account factory
+ 
+ @param ID - account ID
+ @return Account
+ */
+- (MKMAccount *)accountWithID:(const MKMID *)ID;
+
+@end
+
 NS_ASSUME_NONNULL_END

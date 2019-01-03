@@ -31,7 +31,7 @@
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                  publicKey:(const MKMPublicKey *)PK {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error");
     if (self = [super initWithID:ID]) {
         // public key
         _publicKey = [PK copy];
