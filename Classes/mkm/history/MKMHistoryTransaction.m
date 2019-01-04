@@ -69,7 +69,7 @@ typedef NSMutableDictionary<const MKMAddress *, NSString *> MKMConfirmTableM;
 - (instancetype)initWithOperation:(const NSString *)operation
                         commander:(const MKMID *)ID
                         signature:(const NSData *)CT {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"ID error");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"commander error");
     NSAssert(CT, @"signature cannot be empty");
     NSDictionary *dict = @{@"operation":operation,
                            @"commander":ID,

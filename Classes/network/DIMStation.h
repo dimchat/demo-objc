@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMStationDelegate;
 
-@interface DIMStation : DIMDictionary <DIMTransceiverDelegate> {
+@interface DIMStation : DIMAccount <DIMTransceiverDelegate> {
     
     NSString *_host;
     NSUInteger _port;
@@ -30,20 +30,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSString *host; // Domain/IP
 @property (readonly, nonatomic) NSUInteger port;        // default: 9394
 
-@property (copy, nonatomic) DIMServiceProvider *SP;
-@property (copy, nonatomic) DIMCertificateAuthority *CA;
+@property (strong, nonatomic) DIMServiceProvider *SP;
+@property (strong, nonatomic) DIMCertificateAuthority *CA;
 
-@property (readonly, strong, nonatomic) NSString *name; // CA.info.subject
-@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info
+@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info.*
 
 @property (readonly, strong, nonatomic) NSURL *home; // SP.home
 
 @property (weak, nonatomic) id<DIMStationDelegate> delegate;
 
-+ (instancetype)stationWithStation:(id)station;
-
-- (instancetype)initWithHost:(const NSString *)host; // port=9394
-- (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port;
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 @end
 

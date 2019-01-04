@@ -21,9 +21,10 @@ NS_ASSUME_NONNULL_BEGIN
  *  history.records[i]
  *
  *      data format: {
- *          events: [],      // transactions
- *          merkle: "...",   // merkle root of events with SHA256D
- *          signature: "..." // algorithm defined by version
+ *          events   : [],        // transactions
+ *          merkle   : "...",     // merkle root of events with SHA256D
+ *          signature: "...",     // sign(merkle, recorder.SK)
+ *          recorder : "USER_ID", // history recorder
  *      }
  */
 @interface MKMHistoryBlock : MKMDictionary
@@ -31,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic) NSArray *transactions; // events
 @property (readonly, strong, nonatomic) NSData *merkleRoot;
 @property (readonly, strong, nonatomic) NSData *signature;
-@property (readonly, strong, nonatomic) MKMID *recorder;
+@property (readonly, strong, nonatomic, nullable) MKMID *recorder;
 
 + (instancetype)blockWithBlock:(id)record;
 

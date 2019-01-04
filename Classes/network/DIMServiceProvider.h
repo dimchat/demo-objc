@@ -14,23 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DIMStation;
 
-@interface DIMServiceProvider : DIMDictionary {
-    
-    DIMCertificateAuthority *_CA;
-    NSString *_name;
-    DIMPublicKey *_publicKey;
-}
+@interface DIMServiceProvider : DIMGroup
 
-@property (readonly, copy, nonatomic) DIMCertificateAuthority *CA;
-
-@property (readonly, strong, nonatomic) NSString *name; // CA.info.subject
-@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info
+@property (strong, nonatomic) DIMCertificateAuthority *CA;
+@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info.*
 
 @property (strong, nonatomic) NSURL *home; // home page URL
 
-+ (instancetype)providerWithProvider:(id)provider;
-
-- (instancetype)initWithCA:(const DIMCertificateAuthority *)CA;
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
 - (BOOL)verifyStation:(const DIMStation *)station;
 

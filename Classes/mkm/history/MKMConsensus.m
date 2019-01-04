@@ -79,7 +79,8 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 
 - (BOOL)evolvingEntity:(const MKMEntity *)entity
         canWriteRecord:(const MKMHistoryBlock *)record {
-    NSAssert(MKMNetwork_IsPerson(record.recorder.type), @"recorder error");
+    NSAssert(!record.recorder || MKMNetwork_IsPerson(record.recorder.type),
+             @"recorder error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
     return [delegate evolvingEntity:entity canWriteRecord:record];
 }
@@ -87,6 +88,8 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 - (BOOL)evolvingEntity:(const MKMEntity *)entity
            canRunEvent:(const MKMHistoryTransaction *)event
               recorder:(const MKMID *)recorder {
+    NSAssert(!recorder || MKMNetwork_IsPerson(recorder.type),
+             @"recorder error");
     NSAssert(!event.commander || MKMNetwork_IsPerson(event.commander.type),
              @"commander error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
@@ -96,7 +99,7 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 - (void)evolvingEntity:(MKMEntity *)entity
                execute:(const MKMHistoryOperation *)operation
              commander:(const MKMID *)commander {
-    NSAssert(MKMNetwork_IsPerson(commander.type), @"ID error");
+    NSAssert(MKMNetwork_IsPerson(commander.type), @"commander error");
     id<MKMEntityHistoryDelegate> delegate = history_delegate(entity);
     return [delegate evolvingEntity:entity execute:operation commander:commander];
 }
@@ -175,27 +178,28 @@ SingletonImplementations(MKMConsensus, sharedInstance)
 
 - (BOOL)runHistoryBlock:(const MKMHistoryBlock *)record
               forEntity:(MKMEntity *)entity {
-    // 1. get recorder
-    MKMID *recorder = record.recorder;
-    recorder = [MKMID IDWithID:recorder];
-    if (!recorder) {
-        NSAssert(MKMNetwork_IsPerson(entity.type), @"error");
-        recorder = entity.ID;
+    // 1. check permision for writting history record
+    if (![self evolvingEntity:entity canWriteRecord:record]) {
+        NSAssert(false, @"permission denied");
+        return NO;
     }
     
-    // 2. check permision for this recorder
-    if (![self evolvingEntity:entity canWriteRecord:record]) {
-        NSAssert(false, @"recorder permission denied");
-        return NO;
+    // 2. get recorder
+    MKMID *recorder = record.recorder;
+    if (recorder) {
+        recorder = [MKMID IDWithID:recorder];
+    } else {
+        NSAssert(MKMNetwork_IsPerson(entity.type), @"error");
+        recorder = entity.ID;
     }
     
     // 3. check permission for each commander in all events
     MKMHistoryTransaction *event;
     for (id item in record.transactions) {
-        // 3.1. get commander
+        // 3.1. get history event
         event = [MKMHistoryTransaction transactionWithTransaction:item];
         
-        // 3.2. check permission for this commander
+        // 3.2. check permission for running history event
         if (![self evolvingEntity:entity canRunEvent:event recorder:recorder]) {
             NSAssert(false, @"commander permission denied");
             return NO;
@@ -206,17 +210,17 @@ SingletonImplementations(MKMConsensus, sharedInstance)
     MKMHistoryOperation *op;
     MKMID *commander;
     for (id item in record.transactions) {
-        // event.commander
+        // 4.1. get event.commander
         event = [MKMHistoryTransaction transactionWithTransaction:item];
         commander = event.commander;
         if (!commander) {
             commander = recorder;
         }
         
-        // event.operation
+        // 4.2. get event.operation
         op = [MKMHistoryOperation operationWithOperation:event.operation];
         
-        // execute
+        // 4.3. execute history operation
         [self evolvingEntity:entity execute:op commander:commander];
     }
     

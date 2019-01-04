@@ -114,23 +114,23 @@
         return [self userWithID:ID];
     } else {
         // not a person account
-        NSAssert(MKMNetwork_IsCommunicator(ID.type), @"ID error: %@", ID);
+        NSAssert(MKMNetwork_IsCommunicator(ID.type), @"account ID error");
         return nil;
     }
 }
 
 - (MKMUser *)userWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not user ID");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"user ID error");
     return [_userTable objectForKey:ID.address];
 }
 
 - (MKMMeta *)metaForEntityID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"not account ID");
+    NSAssert([ID isValid], @"entity ID invalid");
     return [_metaTable objectForKey:ID.address];
 }
 
 - (MKMProfile *)profileForID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not account ID");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"account ID error");
     return [_profileTable objectForKey:ID.address];
 }
 

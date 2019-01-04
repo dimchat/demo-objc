@@ -32,8 +32,8 @@
 /* designated initializer */
 - (instancetype)initWithID:(const MKMID *)ID
                  founderID:(const MKMID *)founderID {
-    NSAssert(MKMNetwork_IsGroup(ID.type), @"ID error");
-    NSAssert(MKMNetwork_IsPerson(founderID.type), @"founder error");
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error");
+    NSAssert(MKMNetwork_IsPerson(founderID.type), @"founder ID error");
     if (self = [super initWithID:ID]) {
         _founder = [founderID copy];
         _owner = nil;
@@ -55,19 +55,19 @@
 }
 
 - (BOOL)isFounder:(const MKMID *)ID {
-    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"founder ID error");
     NSAssert(_founder, @"founder not set yet");
     return [_founder isEqual:ID];
 }
 
 - (BOOL)isOwner:(const MKMID *)ID {
-    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"owner ID error");
     NSAssert(_owner, @"owner not set yet");
     return [_owner isEqual:ID];
 }
 
 - (void)addMember:(const MKMID *)ID {
-    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"member ID error");
     if ([self isMember:ID]) {
         // don't add same member twice
         return;
@@ -84,7 +84,7 @@
 }
 
 - (BOOL)isMember:(const MKMID *)ID {
-    NSAssert(ID.isValid, @"Invalid ID");
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"member ID error");
     return [_members containsObject:ID];
 }
 

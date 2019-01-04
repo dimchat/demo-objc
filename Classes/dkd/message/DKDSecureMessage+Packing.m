@@ -10,26 +10,28 @@
 
 #import "DKDSecureMessage+Packing.h"
 
+static inline BOOL check_group(const MKMID *grp, const MKMID *receiver) {
+    assert(MKMNetwork_IsGroup(grp.type));
+    return [grp isEqual:receiver] || [MKMGroupWithID(grp) isMember:receiver];
+}
+
 @implementation DKDSecureMessage (Packing)
 
 - (MKMID *)group {
-    MKMID *grp = [_storeDictionary objectForKey:@"group"];
-    if (grp) {
-        grp = [MKMID IDWithID:grp];
-        NSAssert(MKMNetwork_IsGroup(grp.type), @"group ID error");
-        NSAssert([grp isEqual:self.envelope.receiver] ||
-                 [MKMGroupWithID(grp) isMember:self.envelope.receiver],
-                 @"group error");
+    MKMID *ID = [_storeDictionary objectForKey:@"group"];
+    ID = [MKMID IDWithID:ID];
+    if (MKMNetwork_IsGroup(ID.type)) {
+        NSAssert(check_group(ID, self.envelope.receiver), @"group error");
+        return ID;
+    } else {
+        NSAssert(!ID, @"group ID error");
+        return nil;
     }
-    return grp;
 }
 
 - (void)setGroup:(MKMID *)group {
     if (group) {
-        NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error");
-        NSAssert([group isEqual:self.envelope.receiver] ||
-                 [MKMGroupWithID(group) isMember:self.envelope.receiver],
-                 @"group error");
+        NSAssert(check_group(group, self.envelope.receiver), @"group error");
         [_storeDictionary setObject:group forKey:@"group"];
     } else {
         [_storeDictionary removeObjectForKey:@"group"];

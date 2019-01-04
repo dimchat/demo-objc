@@ -107,45 +107,37 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         [self addUser:(MKMUser *)account];
         return;
     }
-    MKMAddress *address = account.ID.address;
-    NSAssert(address, @"address error");
-    if (address.isValid) {
-        [_accountTable setObject:account forKey:address];
+    if (account.ID.isValid) {
+        [_accountTable setObject:account forKey:account.ID.address];
     }
 }
 
 - (void)addUser:(MKMUser *)user {
-    MKMAddress *address = user.ID.address;
-    NSAssert(address, @"address error");
-    if (address.isValid) {
-        [_userTable setObject:user forKey:address];
+    if (user.ID.isValid) {
+        [_userTable setObject:user forKey:user.ID.address];
         // erase from account table
-        if ([_accountTable objectForKey:address]) {
-            [_accountTable removeObjectForKey:address];
+        if ([_accountTable objectForKey:user.ID.address]) {
+            [_accountTable removeObjectForKey:user.ID.address];
         }
     }
 }
 
 - (void)addGroup:(MKMGroup *)group {
-    MKMAddress *address = group.ID.address;
-    NSAssert(address, @"address error");
-    if (address.isValid) {
-        [_groupTable setObject:group forKey:address];
+    if (group.ID.isValid) {
+        [_groupTable setObject:group forKey:group.ID.address];
     }
 }
 
 - (void)addMember:(MKMMember *)member {
-    MKMAddress *gAddr = member.groupID.address;
-    MKMAddress *uAddr = member.ID.address;
-    NSAssert(gAddr, @"group address error");
-    NSAssert(uAddr, @"address error");
-    if (gAddr.isValid && uAddr.isValid) {
-        MemberTableM *table = [_groupMemberTable objectForKey:gAddr];
+    MKMID *groupID = member.groupID;
+    if (groupID.isValid && member.ID.isValid) {
+        MemberTableM *table;
+        table = [_groupMemberTable objectForKey:groupID.address];
         if (!table) {
             table = [[MemberTableM alloc] init];
-            [_groupMemberTable setObject:table forKey:gAddr];
+            [_groupMemberTable setObject:table forKey:groupID.address];
         }
-        [table setObject:member forKey:uAddr];
+        [table setObject:member forKey:member.ID.address];
     }
 }
 
@@ -161,10 +153,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark - MKMAccountDelegate
 
 - (MKMAccount *)accountWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"not an account ID: %@", ID);
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"account ID error");
     MKMAccount *account = [_accountTable objectForKey:ID.address];
-    NSAssert(!account || [account.ID isEqual:ID], @"account ID error: %@", ID);
-    
     while (!account) {
         // search user table
         account = [_userTable objectForKey:ID.address];
@@ -198,13 +188,13 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark - MKMUserDataSource
 
 - (NSInteger)numberOfContactsInUser:(const MKMUser *)user {
-    NSAssert(MKMNetwork_IsPerson(user.type), @"not a user: %@", user);
+    NSAssert(MKMNetwork_IsPerson(user.type), @"user error: %@", user);
     NSAssert(_userDataSource, @"user data source not set");
     return [_userDataSource numberOfContactsInUser:user];
 }
 
 - (MKMID *)user:(const MKMUser *)user contactAtIndex:(NSInteger)index {
-    NSAssert(MKMNetwork_IsPerson(user.type), @"not a user: %@", user);
+    NSAssert(MKMNetwork_IsPerson(user.type), @"user error: %@", user);
     NSAssert(_userDataSource, @"user data source not set");
     return [_userDataSource user:user contactAtIndex:index];
 }
@@ -212,10 +202,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark - MKMUserDelegate
 
 - (MKMUser *)userWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not a person ID: %@", ID);
+    NSAssert(MKMNetwork_IsPerson(ID.type), @"user ID error");
     MKMUser *user = [_userTable objectForKey:ID.address];
-    NSAssert(!user || [user.ID isEqual:ID], @"user ID error: %@", ID);
-    
     while (!user) {
         // create by delegate
         NSAssert(_userDelegate, @"user delegate not set");
@@ -249,10 +237,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMGroupDataSource
 
 - (MKMID *)founderForGroupID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsGroup(ID.type), @"not a group ID: %@", ID);
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error");
     MKMGroup *group = [_groupTable objectForKey:ID.address];
-    NSAssert(!group || [group.ID isEqual:ID], @"group ID error: %@", ID);
-    
     MKMID *founder = group.founder;
     if (founder) {
         return founder;
@@ -263,10 +249,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 }
 
 - (MKMID *)ownerForGroupID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsGroup(ID.type), @"not a group ID: %@", ID);
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error");
     MKMGroup *group = [_groupTable objectForKey:ID.address];
-    NSAssert(!group || [group.ID isEqual:ID], @"group ID error: %@", ID);
-    
     MKMID *owner = group.owner;
     if (owner) {
         return owner;
@@ -277,13 +261,13 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 }
 
 - (NSInteger)numberOfMembersInGroup:(const MKMGroup *)grp {
-    NSAssert(MKMNetwork_IsGroup(grp.ID.type), @"not a group: %@", grp);
+    NSAssert(MKMNetwork_IsGroup(grp.ID.type), @"group error: %@", grp);
     NSAssert(_groupDataSource, @"group data source not set");
     return [_groupDataSource numberOfMembersInGroup:grp];
 }
 
 - (MKMID *)group:(const MKMGroup *)grp memberAtIndex:(NSInteger)index {
-    NSAssert(MKMNetwork_IsGroup(grp.ID.type), @"not a group: %@", grp);
+    NSAssert(MKMNetwork_IsGroup(grp.ID.type), @"group error: %@", grp);
     NSAssert(_groupDataSource, @"group data source not set");
     return [_groupDataSource group:grp memberAtIndex:index];
 }
@@ -291,10 +275,8 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMGroupDelegate
 
 - (MKMGroup *)groupWithID:(const MKMID *)ID {
-    NSAssert(MKMNetwork_IsGroup(ID.type), @"not a group ID: %@", ID);
+    NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error");
     MKMGroup *group = [_groupTable objectForKey:ID.address];
-    NSAssert(!group || [group.ID isEqual:ID], @"group ID error: %@", ID);
-    
     while (!group) {
         // create by delegate
         NSAssert(_groupDelegate, @"group delegate not set");
@@ -317,7 +299,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         } else if (ID.type == MKMNetwork_Chatroom) {
             group = [[MKMChatroom alloc] initWithID:ID founderID:founder];
         } else {
-            NSAssert(false, @"group error: %@", ID);
+            NSAssert(false, @"group ID type not supported yet");
         }
         // set owner
         group.owner = [self ownerForGroupID:ID];
@@ -345,13 +327,10 @@ SingletonImplementations(MKMBarrack, sharedInstance)
 #pragma mark MKMMemberDelegate
 
 - (MKMMember *)memberWithID:(const MKMID *)ID groupID:(const MKMID *)gID {
-    NSAssert(MKMNetwork_IsPerson(ID.type), @"not a person ID: %@", ID);
-    NSAssert(MKMNetwork_IsGroup(gID.type), @"not a group ID: %@", gID);
+    NSAssert(MKMNetwork_IsCommunicator(ID.type), @"member ID error");
+    NSAssert(MKMNetwork_IsGroup(gID.type), @"group ID error");
     MemberTableM *table = [_groupMemberTable objectForKey:gID.address];
     MKMMember *member = [table objectForKey:ID.address];
-    NSAssert(!member || [member.ID isEqual:ID], @"member ID error: %@", ID);
-    NSAssert(!member || [member.groupID isEqual:gID], @"group ID error: %@", gID);
-    
     while (!member) {
         // create by delegate
         NSAssert(_memberDelegate, @"member delegate not set");
@@ -374,6 +353,7 @@ SingletonImplementations(MKMBarrack, sharedInstance)
         [self addMember:member];
         break;
     }
+    NSAssert(!member || [member.groupID isEqual:gID], @"error: %@", member);
     return member;
 }
                      

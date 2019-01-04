@@ -22,7 +22,6 @@ static inline BOOL check_group(const MKMID *group, const MKMID *receiver) {
         if (group) {
             // if content.group exists,
             // the envelope.receiver should be a member of the group
-            assert(MKMNetwork_IsPerson(receiver.type));
             return [MKMGroupWithID(group) isMember:receiver];
         } else {
             return YES;

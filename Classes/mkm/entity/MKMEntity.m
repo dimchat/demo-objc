@@ -48,6 +48,19 @@
     return [entity.ID isEqual:_ID];
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p | p = %@; t = 0x%02X; n = %d>",
+            [self class], self, [self debugDescription], _ID.type, _ID.number];
+}
+
+- (NSString *)debugDescription {
+    NSDictionary *info = @{
+                           @"ID"   : self.ID,
+                           @"name" : self.name,
+                           };
+    return [info debugDescription];
+}
+
 - (MKMNetworkType)type {
     return _ID.type;
 }

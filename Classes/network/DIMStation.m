@@ -19,24 +19,12 @@
 
 @implementation DIMStation
 
-+ (instancetype)stationWithStation:(id)station {
-    if ([station isKindOfClass:[DIMStation class]]) {
-        return station;
-    } else if ([station isKindOfClass:[NSDictionary class]]) {
-        return [[self alloc] initWithDictionary:station];
-    } else if ([station isKindOfClass:[NSString class]]) {
-        return [[self alloc] initWithJSONString:station];
-    } else {
-        NSAssert(!station, @"unexpected station: %@", station);
-        return nil;
-    }
-}
-
-- (instancetype)init {
-    NSAssert(false, @"DON'T call me");
-    if (self = [super init]) {
+/* designated initializer */
+- (instancetype)initWithID:(const MKMID *)ID
+                 publicKey:(const MKMPublicKey *)PK {
+    if (self = [super initWithID:ID publicKey:PK]) {
         _host = nil;
-        _port = 0;
+        _port = 9394;
         _SP = nil;
         _CA = nil;
         _delegate = nil;
@@ -44,19 +32,40 @@
     return self;
 }
 
-- (instancetype)initWithHost:(const NSString *)host {
-    self = [self initWithHost:host port:9394];
-    return self;
-}
-
-- (instancetype)initWithHost:(const NSString *)host port:(NSUInteger)port {
-    NSDictionary *dict = @{@"host":host, @"port":@(port)};
-    if (self = [self initWithDictionary:dict]) {
-        _host = [host copy];
-        _port = port;
-        _SP = nil;
-        _CA = nil;
-        _delegate = nil;
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    // ID
+    DIMID *ID = [dict objectForKey:@"ID"];
+    ID = [DIMID IDWithID:ID];
+    // public key
+    DIMPublicKey *PK = [dict objectForKey:@"PK"];
+    PK = [DIMPublicKey keyWithKey:PK];
+    
+    // host
+    NSString *host = [dict objectForKey:@"host"];
+    // port
+    NSNumber *port = [dict objectForKey:@"port"];
+    if (!port) {
+        port = @(9394);
+    }
+    // SP
+    id SP = [dict objectForKey:@"SP"];
+    if ([SP isKindOfClass:[NSDictionary class]]) {
+        SP = [[DIMServiceProvider alloc] initWithDictionary:SP];
+    }
+    // CA
+    DIMCertificateAuthority *CA = [dict objectForKey:@"CA"];
+    CA = [DIMCertificateAuthority caWithCA:CA];
+    
+    if (!PK) {
+        PK = CA.info.publicKey;
+    }
+    
+    if (self = [self initWithID:ID publicKey:PK]) {
+        _host = host;
+        _port = [port unsignedIntegerValue];
+        
+        _SP = SP;
+        _CA = CA;
     }
     return self;
 }
@@ -75,68 +84,23 @@
 
 - (BOOL)isEqual:(id)object {
     DIMStation *station = (DIMStation *)object;
-    return [station.host isEqualToString:_host] && station.port == _port;
-}
-
-- (NSString *)host {
-    if (!_host) {
-        _host = [_storeDictionary objectForKey:@"host"];
+    if ([station.ID isEqual:_ID]) {
+        return YES;
     }
-    return _host;
-}
-
-- (NSUInteger)port {
-    if (_port == 0) {
-        NSNumber *num = [_storeDictionary objectForKey:@"port"];
-        _port = [num unsignedIntegerValue];
+    if ([station.host isEqualToString:_host] && station.port == _port) {
+        return YES;
     }
-    return _port;
-}
-
-#pragma mark Service Provider
-
-- (DIMServiceProvider *)SP {
-    if (!_SP) {
-        DIMServiceProvider *p = [_storeDictionary objectForKey:@"SP"];
-        _SP = [DIMServiceProvider providerWithProvider:p];
-    }
-    return _SP;
-}
-
-- (void)setSP:(DIMServiceProvider *)SP {
-    if (SP) {
-        [_storeDictionary setObject:SP forKey:@"SP"];
-    } else {
-        [_storeDictionary removeObjectForKey:@"SP"];
-    }
-    _SP = SP;
-}
-
-#pragma mark Certificate Authority
-
-- (DIMCertificateAuthority *)CA {
-    if (!_CA) {
-        DIMCertificateAuthority *a = [_storeDictionary objectForKey:@"CA"];
-        _CA = [DIMCertificateAuthority caWithCA:a];
-    }
-    return _CA;
-}
-
-- (void)setCA:(DIMCertificateAuthority *)CA {
-    if (CA) {
-        [_storeDictionary setObject:CA forKey:@"CA"];
-    } else {
-        [_storeDictionary removeObjectForKey:@"CA"];
-    }
-    _CA = CA;
+    return NO;
 }
 
 - (NSString *)name {
     DIMCASubject *subject = self.CA.info.subject;
     if (subject.commonName) {
         return subject.commonName;
-    } else {
+    } else if (subject.organization) {
         return subject.organization;
+    } else {
+        return [super name];
     }
 }
 

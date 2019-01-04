@@ -44,7 +44,7 @@ static inline NSMutableArray *json_array(const NSArray *events) {
 @property (strong, nonatomic) NSMutableArray *transactions;
 @property (strong, nonatomic) NSData *merkleRoot;
 @property (strong, nonatomic) NSData *signature;
-@property (strong, nonatomic) MKMID *recorder;
+@property (strong, nonatomic, nullable) MKMID *recorder;
 
 @end
 
