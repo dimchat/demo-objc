@@ -21,7 +21,7 @@
         if (error) {
             NSLog(@"send content error: %@", error);
         } else {
-            NSLog(@"send content %@ -> %@", content, rMsg);
+            NSLog(@"sent content: %@ -> %@", content, rMsg);
         }
     };
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
@@ -44,22 +44,52 @@
 #pragma mark -
 
 - (void)login:(DIMUser *)user {
-    if (_currentUser) {
-        // TODO: logout current user first
-        NSLog(@"logout: %@", _currentUser);
+    if ([_currentUser isEqual:user]) {
+        NSLog(@"user not change");
+        return ;
     }
+    
+    // logout current user first
+    NSLog(@"logout: %@", _currentUser);
+    _session = nil;
     
     self.currentUser = user;
     
     // switch state for re-login
     _state = DIMTerminalState_Init;
+    NSLog(@"login: %@", _currentUser);
 }
 
 - (void)handshake {
+    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
+    
     DIMHandshakeCommand *cmd;
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:_session];
     // TODO: insert task to front of the sending queue
-    [self sendCommand:cmd];
+    DIMInstantMessage *iMsg;
+    iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
+                                               sender:_currentUser.ID
+                                             receiver:_currentStation.ID
+                                                 time:nil];
+    DIMReliableMessage *rMsg;
+    rMsg = [trans encryptAndSignMessage:iMsg];
+    
+    // first handshake?
+    if (cmd.state == DIMHandshake_Start) {
+        rMsg.meta = MKMMetaForID(_currentUser.ID);
+    }
+    
+    DKDTransceiverCallback callback;
+    callback = ^(const DKDReliableMessage * rMsg, const NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"send handshake command error: %@", error);
+        } else {
+            NSLog(@"sent handshake command: %@ -> %@", cmd, rMsg);
+        }
+    };
+    
+    // TODO: insert the task in front of the sending queue
+    [trans sendReliableMessage:rMsg callback:callback];
 }
 
 - (void)postProfile:(DIMProfile *)profile meta:(nullable DIMMeta *)meta {

@@ -187,6 +187,7 @@
 - (BOOL)sendPackage:(const NSData *)data completionHandler:(nullable DKDTransceiverCompletionHandler)handler {
     NSLog(@"sending data len: %ld", data.length);
     // TODO: send data
+    NSAssert(_star, @"star not found");
     NSInteger res = [_star send:data];
     
     if (handler) {
