@@ -12,7 +12,8 @@
 
 - (void)sendContent:(DKDMessageContent *)content to:(MKMID *)receiver {
     if (!_currentUser) {
-        NSLog(@"not login yet");
+        NSLog(@"not login, drop message content: %@", content);
+        // TODO: save the message content in waiting queue
         return ;
     }
     DKDTransceiverCallback callback;
@@ -32,13 +33,18 @@
                      callback:callback];
 }
 
+- (void)sendCommand:(DIMCommand *)cmd {
+    if (!_currentStation) {
+        NSLog(@"not connect, drop command: %@", cmd);
+        // TODO: save the command in waiting queue
+        return ;
+    }
+    [self sendContent:cmd to:_currentStation.ID];
+}
+
 - (void)sendMessage:(DKDInstantMessage *)msg {
     NSAssert([msg.envelope.sender isEqual:_currentUser.ID], @"sender error: %@", msg);
     [self sendContent:msg.content to:msg.envelope.receiver];
-}
-
-- (void)sendCommand:(DIMCommand *)cmd {
-    [self sendContent:cmd to:_currentStation.ID];
 }
 
 #pragma mark -
