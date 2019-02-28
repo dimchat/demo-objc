@@ -6,12 +6,13 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
 @implementation DIMTerminal (Command)
 
 - (void)sendContent:(DKDMessageContent *)content to:(MKMID *)receiver {
-    if (!_currentUser) {
+    if (!self.currentUser) {
         NSLog(@"not login, drop message content: %@", content);
         // TODO: save the message content in waiting queue
         return ;
@@ -27,7 +28,7 @@
     };
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
     [trans sendMessageContent:content
-                         from:_currentUser.ID
+                         from:self.currentUser.ID
                            to:receiver
                          time:nil
                      callback:callback];
@@ -43,74 +44,46 @@
 }
 
 - (void)sendMessage:(DKDInstantMessage *)msg {
-    NSAssert([msg.envelope.sender isEqual:_currentUser.ID], @"sender error: %@", msg);
+    NSAssert([msg.envelope.sender isEqual:self.currentUser.ID], @"sender error: %@", msg);
     [self sendContent:msg.content to:msg.envelope.receiver];
 }
 
 #pragma mark -
 
 - (void)login:(DIMUser *)user {
-    if ([_currentUser isEqual:user]) {
+    if (!user || [self.currentUser isEqual:user]) {
         NSLog(@"user not change");
         return ;
     }
     
-    // logout current user first
-    NSLog(@"logout: %@", _currentUser);
+    // clear session
     _session = nil;
     
+    NSLog(@"logout: %@", self.currentUser);
     self.currentUser = user;
+    NSLog(@"login: %@", user);
     
-    // switch state for re-login
-    _state = DIMTerminalState_Init;
-    NSLog(@"login: %@", _currentUser);
-}
-
-- (void)handshake {
-    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    
-    DIMHandshakeCommand *cmd;
-    cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:_session];
-    // TODO: insert task to front of the sending queue
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
-                                               sender:_currentUser.ID
-                                             receiver:_currentStation.ID
-                                                 time:nil];
-    DIMReliableMessage *rMsg;
-    rMsg = [trans encryptAndSignMessage:iMsg];
-    
-    // first handshake?
-    if (cmd.state == DIMHandshake_Start) {
-        rMsg.meta = MKMMetaForID(_currentUser.ID);
+    // add to the list of this client
+    if (user && ![_users containsObject:user]) {
+        [_users addObject:user];
     }
-    
-    DKDTransceiverCallback callback;
-    callback = ^(const DKDReliableMessage * rMsg, const NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"send handshake command error: %@", error);
-        } else {
-            NSLog(@"sent handshake command: %@ -> %@", cmd, rMsg);
-        }
-    };
-    
-    // TODO: insert the task in front of the sending queue
-    [trans sendReliableMessage:rMsg callback:callback];
 }
 
 - (void)postProfile:(DIMProfile *)profile meta:(nullable DIMMeta *)meta {
     if (!profile) {
         return ;
     }
-    if (![profile.ID isEqual:_currentUser.ID]) {
+    DIMID *ID = self.currentUser.ID;
+    if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match");
         return ;
     }
+    DIMPrivateKey *SK = self.currentUser.privateKey;
     
     DIMProfileCommand *cmd;
-    cmd = [[DIMProfileCommand alloc] initWithID:_currentUser.ID
+    cmd = [[DIMProfileCommand alloc] initWithID:ID
                                            meta:meta
-                                     privateKey:_currentUser.privateKey
+                                     privateKey:SK
                                         profile:profile];
     [self sendCommand:cmd];
 }

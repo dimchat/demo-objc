@@ -7,29 +7,16 @@
 //
 
 #import <DIMCore/DIMCore.h>
-#import <MarsGate/StarGate.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(UInt8, DIMTerminalState) {
-    DIMTerminalState_Init,         // (re)set user, (re)connect
-    DIMTerminalState_Connecting,   // connecting to server
-    DIMTerminalState_Connected,    // success to connect server
-    DIMTerminalState_Error,        // failed to connect
-    DIMTerminalState_ShakingHands, // user not login
-    DIMTerminalState_Running,      // user login, sending msg
-    DIMTerminalState_Stopped,      // disconnected
-};
+@class DIMServer;
 
-@interface DIMTerminal : NSObject <DIMTransceiverDelegate, DIMStationDelegate,
-                                   SGStarDelegate> {
+@interface DIMTerminal : NSObject <DIMStationDelegate> {
     
     NSMutableArray<DIMUser *> *_users;
-    DIMUser *_currentUser;
     
-    DIMStation *_currentStation;
-    
-    DIMTerminalState _state;
+    DIMServer *_currentStation;
     NSString *_session;
 }
 
@@ -42,19 +29,6 @@ typedef NS_ENUM(UInt8, DIMTerminalState) {
 
 - (void)addUser:(DIMUser *)user;
 - (void)removeUser:(DIMUser *)user;
-
-#pragma mark - Server
-
-@property (strong, nonatomic) DIMStation *currentStation;
-
-@property (nonatomic) DIMTerminalState state;
-@property (strong, nonatomic) NSString *session;
-
-- (void)startWithOptions:(nullable NSDictionary *)launchOptions;
-- (void)end;
-
-- (void)pause;
-- (void)resume;
 
 @end
 

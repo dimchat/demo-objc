@@ -6,6 +6,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
 #import "DIMTerminal+Response.h"
@@ -18,20 +19,21 @@
     DIMHandshakeState state = cmd.state;
     if (state == DIMHandshake_Success) {
         // handshake OK
-        NSLog(@"handshake accepted: %@", _currentUser);
+        NSLog(@"handshake accepted: %@", self.currentUser);
         NSLog(@"current station: %@", self);
-        _state = DIMTerminalState_Running;
+        [_currentStation handshakeAccepted:YES];
         // post profile
-        DIMProfile *profile = MKMProfileForID(_currentUser.ID);
+        DIMProfile *profile = MKMProfileForID(self.currentUser.ID);
         [self postProfile:profile meta:nil];
     } else if (state == DIMHandshake_Again) {
         // update session and handshake again
         NSString *session = cmd.sessionKey;
         NSLog(@"session %@ -> %@", _session, session);
         _session = session;
-        [self handshake];
+        [_currentStation handshakeWithSession:session];
     } else {
         NSLog(@"handshake rejected: %@", content);
+        [_currentStation handshakeAccepted:NO];
     }
 }
 
