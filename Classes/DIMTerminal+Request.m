@@ -1,12 +1,12 @@
 //
-//  DIMTerminal+Command.m
+//  DIMTerminal+Request.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/2/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMTerminal+Command.h"
+#import "DIMTerminal+Request.h"
 
 @implementation DIMTerminal (Command)
 

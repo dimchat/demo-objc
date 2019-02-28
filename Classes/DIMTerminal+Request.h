@@ -1,5 +1,5 @@
 //
-//  DIMTerminal+Command.h
+//  DIMTerminal+Request.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/2/25.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal (Command)
+@interface DIMTerminal (Request)
 
 - (void)sendContent:(DIMMessageContent *)content to:(DIMID *)receiver;
 - (void)sendMessage:(DIMInstantMessage *)msg;

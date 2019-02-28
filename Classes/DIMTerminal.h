@@ -21,7 +21,8 @@ typedef NS_ENUM(UInt8, DIMTerminalState) {
     DIMTerminalState_Stopped,      // disconnected
 };
 
-@interface DIMTerminal : NSObject <DIMTransceiverDelegate, SGStarDelegate> {
+@interface DIMTerminal : NSObject <DIMTransceiverDelegate, DIMStationDelegate,
+                                   SGStarDelegate> {
     
     NSMutableArray<DIMUser *> *_users;
     DIMUser *_currentUser;
@@ -48,8 +49,6 @@ typedef NS_ENUM(UInt8, DIMTerminalState) {
 
 @property (nonatomic) DIMTerminalState state;
 @property (strong, nonatomic) NSString *session;
-
-@property (weak, nonatomic) id<DIMStationDelegate> delegate;
 
 - (void)startWithOptions:(nullable NSDictionary *)launchOptions;
 - (void)end;

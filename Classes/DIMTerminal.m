@@ -8,7 +8,10 @@
 
 #import <MarsGate/MarsGate.h>
 
-#import "DIMTerminal+Command.h"
+#import "NSObject+JsON.h"
+
+#import "DIMTerminal+Request.h"
+#import "DIMTerminal+Response.h"
 
 #import "DIMTerminal.h"
 
@@ -30,8 +33,6 @@
         _currentStation = nil;
         _state = DIMTerminalState_Init;
         _session = nil;
-        
-        _delegate = nil;
         
         _star = nil;
     }
@@ -82,7 +83,6 @@
 - (void)setCurrentStation:(DIMStation *)newStation {
     if (![_currentStation isEqual:newStation]) {
         _currentStation = newStation;
-        _delegate = newStation.delegate;
     }
 }
 
@@ -205,11 +205,74 @@
     return res == 0;
 }
 
+#pragma mark DIMStationDelegate
+
+- (void)station:(nonnull const DIMStation *)server didReceivePackage:(nonnull const NSData *)data {
+    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
+    
+    // decode
+    NSString *json = [data UTF8String];
+    DIMReliableMessage *rMsg;
+    rMsg = [[DKDReliableMessage alloc] initWithJSONString:json];
+    
+    // check sender
+    DIMID *sender = rMsg.envelope.sender;
+    DIMMeta *meta = MKMMetaForID(sender);
+    if (!meta) {
+        meta = rMsg.meta;
+        if (!meta) {
+            NSLog(@"meta for %@ not found, query from the network...", sender);
+            return [self queryMetaForID:sender];
+        }
+    }
+    
+    // trans to instant message
+    DKDInstantMessage *iMsg;
+    iMsg = [trans verifyAndDecryptMessage:rMsg forUser:_currentUser];
+    
+    // process commands
+    DIMMessageContent *content = iMsg.content;
+    if (content.type == DIMMessageType_Command) {
+        NSString *command = content.command;
+        if ([command isEqualToString:@"handshake"]) {
+            // handshake
+            return [self processHandshakeMessageContent:content];
+        } else if ([command isEqualToString:@"meta"]) {
+            // query meta response
+            return [self processMetaMessageContent:content];
+        } else if ([command isEqualToString:@"profile"]) {
+            // query profile response
+            return [self processProfileMessageContent:content];
+        } else if ([command isEqualToString:@"users"]) {
+            // query online users response
+            return [self processOnlineUsersMessageContent:content];
+        } else if ([command isEqualToString:@"search"]) {
+            // search users response
+            return [self processSearchUsersMessageContent:content];
+        } else {
+            NSLog(@"!!! unknown command: %@, sender: %@, message content: %@",
+                  command, sender, content);
+            return ;
+        }
+    }
+    
+    if (MKMNetwork_IsStation(sender.type)) {
+        NSLog(@"*** message from station: %@", content);
+        //return ;
+    }
+    
+    // normal message, let the clerk to deliver it
+    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
+    [clerk saveMessage:iMsg];
+}
+
 #pragma mark SGStarDelegate
 
 - (NSInteger)star:(id<SGStar>)star onReceive:(const NSData *)responseData {
     NSLog(@"response data len: %ld", responseData.length);
-    [_delegate station:_currentStation didReceivePackage:responseData];
+    NSAssert(_currentStation, @"current station not connected");
+    NSAssert(_currentStation.delegate, @"current station delegate not set");
+    [_currentStation.delegate station:_currentStation didReceivePackage:responseData];
     return 0;
 }
 
