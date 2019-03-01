@@ -39,6 +39,7 @@
 }
 
 - (void)setCurrentStation:(DIMServer *)server {
+    if (_currentStation != server) {
         _currentStation = server;
         if (server.currentUser == nil) {
             server.currentUser = _users.firstObject;
