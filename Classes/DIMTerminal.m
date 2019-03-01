@@ -38,14 +38,26 @@
     return @"DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1";
 }
 
+- (void)setCurrentStation:(DIMServer *)server {
+        _currentStation = server;
+        if (server.currentUser == nil) {
+            server.currentUser = _users.firstObject;
+        }
+    }
+}
+
 #pragma mark - User(s)
 
 - (DIMUser *)currentUser {
     return _currentStation.currentUser;
 }
 
-- (void)setCurrentUser:(DIMUser *)currentUser {
-    _currentStation.currentUser = currentUser;
+- (void)setCurrentUser:(DIMUser *)user {
+    _currentStation.currentUser = user;
+    if (user && ![_users containsObject:user]) {
+        // insert the user to the first
+        [_users insertObject:user atIndex:0];
+    }
 }
 
 - (void)addUser:(DIMUser *)user {

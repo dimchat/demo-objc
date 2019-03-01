@@ -14,13 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTerminal : NSObject <DIMStationDelegate> {
     
-    NSMutableArray<DIMUser *> *_users;
-    
     DIMServer *_currentStation;
     NSString *_session;
+    
+    NSMutableArray<DIMUser *> *_users;
 }
 
 @property (readonly, nonatomic) NSString *userAgent;
+
+@property (strong, nonatomic) DIMServer *currentStation;
 
 #pragma mark - User(s)
 
