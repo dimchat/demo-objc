@@ -38,15 +38,6 @@
     return @"DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1";
 }
 
-- (void)setCurrentStation:(DIMServer *)server {
-    if (_currentStation != server) {
-        _currentStation = server;
-        if (server.currentUser == nil) {
-            server.currentUser = _users.firstObject;
-        }
-    }
-}
-
 #pragma mark - User(s)
 
 - (DIMUser *)currentUser {

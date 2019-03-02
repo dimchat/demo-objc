@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, nonatomic) NSString *userAgent;
 
-@property (strong, nonatomic) DIMServer *currentStation;
-
 #pragma mark - User(s)
 
 @property (readonly, strong, nonatomic) NSArray<DIMUser *> *users;

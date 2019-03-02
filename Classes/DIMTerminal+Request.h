@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)login:(DIMUser *)user;
 
-- (void)handshake;
-
 - (void)postProfile:(DIMProfile *)profile meta:(nullable DIMMeta *)meta;
 
 - (void)queryMetaForID:(const DIMID *)ID;
