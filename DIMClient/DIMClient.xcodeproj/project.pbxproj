@@ -28,6 +28,8 @@
 		E97926E1222A5530005ED1F0 /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E97926DB222A5530005ED1F0 /* NSString+Extension.m */; };
 		E97926E4222A58AA005ED1F0 /* DIMProfile+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E97926E2222A58AA005ED1F0 /* DIMProfile+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97926E5222A58AA005ED1F0 /* DIMProfile+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E97926E3222A58AA005ED1F0 /* DIMProfile+Extension.m */; };
+		E99A5CB8222D946400EE6C86 /* UIImageView+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E99A5CB6222D946400EE6C86 /* UIImageView+Extension.h */; };
+		E99A5CB9222D946400EE6C86 /* UIImageView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E99A5CB7222D946400EE6C86 /* UIImageView+Extension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +109,8 @@
 		E97926DB222A5530005ED1F0 /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
 		E97926E2222A58AA005ED1F0 /* DIMProfile+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMProfile+Extension.h"; sourceTree = "<group>"; };
 		E97926E3222A58AA005ED1F0 /* DIMProfile+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMProfile+Extension.m"; sourceTree = "<group>"; };
+		E99A5CB6222D946400EE6C86 /* UIImageView+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Extension.h"; sourceTree = "<group>"; };
+		E99A5CB7222D946400EE6C86 /* UIImageView+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Extension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,6 +232,8 @@
 				E97926DB222A5530005ED1F0 /* NSString+Extension.m */,
 				E97926D6222A5530005ED1F0 /* UIImage+Extension.h */,
 				E97926D8222A5530005ED1F0 /* UIImage+Extension.m */,
+				E99A5CB6222D946400EE6C86 /* UIImageView+Extension.h */,
+				E99A5CB7222D946400EE6C86 /* UIImageView+Extension.m */,
 				E97926D7222A5530005ED1F0 /* UIViewController+Extension.h */,
 				E97926DA222A5530005ED1F0 /* UIViewController+Extension.m */,
 				E97926E2222A58AA005ED1F0 /* DIMProfile+Extension.h */,
@@ -252,6 +258,7 @@
 				E97926B62227DB1D005ED1F0 /* DIMTerminal+Response.h in Headers */,
 				E97816D72223F82F00BCE3AD /* DIMTerminal+Request.h in Headers */,
 				E97816D02223EAFC00BCE3AD /* DIMClient.h in Headers */,
+				E99A5CB8222D946400EE6C86 /* UIImageView+Extension.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +408,7 @@
 				E97926E5222A58AA005ED1F0 /* DIMProfile+Extension.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
 				E97926BC22284D59005ED1F0 /* DIMServer.m in Sources */,
+				E99A5CB9222D946400EE6C86 /* UIImageView+Extension.m in Sources */,
 				E97926E1222A5530005ED1F0 /* NSString+Extension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
