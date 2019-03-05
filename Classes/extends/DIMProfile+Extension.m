@@ -24,8 +24,11 @@
     }
     if (!image) {
         NSString *name = self.name;
-        if (!name) {
+        if (name.length == 0) {
             name = self.ID.name;
+            if (name.length == 0) {
+                name = @"Đ"; // BTC Address: ฿
+            }
         }
         if (name.length > 0) {
             NSString *text = [name substringToIndex:1];
