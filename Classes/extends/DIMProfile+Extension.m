@@ -30,10 +30,8 @@
                 name = @"Đ"; // BTC Address: ฿
             }
         }
-        if (name.length > 0) {
-            NSString *text = [name substringToIndex:1];
-            image = [UIImage imageWithText:text size:size];
-        }
+        NSString *text = [name substringToIndex:1];
+        image = [UIImage imageWithText:text size:size];
     }
     return image;
 }

@@ -110,11 +110,11 @@
         }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
         DIMGroup *group = MKMGroupWithID(receiver);
-        if ([group hasMember:receiver]) {
+        if ([group existsMember:receiver]) {
             NSLog(@"got group message for current user: %@", user);
         } else {
             for (DIMUser *item in self.users) {
-                if ([group hasMember:item.ID]) {
+                if ([group existsMember:item.ID]) {
                     user = item;
                     NSLog(@"got group message for user: %@", user);
                 }
