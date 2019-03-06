@@ -32,4 +32,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DIMTerminal (Notification)
+
+- (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSNotificationName)aName object:(nullable id)anObject;
+
+- (void)postNotification:(NSNotification *)notification;
+- (void)postNotificationName:(NSNotificationName)aName object:(nullable id)anObject;
+- (void)postNotificationName:(NSNotificationName)aName object:(nullable id)anObject userInfo:(nullable NSDictionary *)aUserInfo;
+
+- (void)removeObserver:(id)observer;
+- (void)removeObserver:(id)observer name:(nullable NSNotificationName)aName object:(nullable id)anObject;
+
+@end
+
 NS_ASSUME_NONNULL_END

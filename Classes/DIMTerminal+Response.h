@@ -10,6 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+static NSString *kNotificationName_ProfileUpdated = @"ProfileUpdated";
+static NSString *kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
+static NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
+
 @interface DIMTerminal (Response)
 
 - (void)processHandshakeMessageContent:(DIMMessageContent *)content;

@@ -94,9 +94,39 @@
         }
     }
     
+    // check receiver
+    DIMID *receiver = rMsg.envelope.receiver;
+    DIMUser *user = self.currentUser;
+    if (MKMNetwork_IsCommunicator(receiver.type)) {
+        if ([receiver isEqual:user.ID]) {
+            NSLog(@"got message for current user: %@", user);
+        } else {
+            for (DIMUser *item in self.users) {
+                if ([receiver isEqual:item.ID]) {
+                    user = item;
+                    NSLog(@"got message for user: %@", user);
+                }
+            }
+        }
+    } else if (MKMNetwork_IsGroup(receiver.type)) {
+        DIMGroup *group = MKMGroupWithID(receiver);
+        if ([group hasMember:receiver]) {
+            NSLog(@"got group message for current user: %@", user);
+        } else {
+            for (DIMUser *item in self.users) {
+                if ([group hasMember:item.ID]) {
+                    user = item;
+                    NSLog(@"got group message for user: %@", user);
+                }
+            }
+        }
+    } else {
+        NSAssert(false, @"receiver type error: %@", receiver);
+    }
+    
     // trans to instant message
     DKDInstantMessage *iMsg;
-    iMsg = [trans verifyAndDecryptMessage:rMsg forUser:self.currentUser];
+    iMsg = [trans verifyAndDecryptMessage:rMsg forUser:user];
     
     // process commands
     DIMMessageContent *content = iMsg.content;
@@ -132,6 +162,42 @@
     // normal message, let the clerk to deliver it
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     [clerk saveMessage:iMsg];
+}
+
+@end
+
+@implementation DIMTerminal (Notification)
+
+- (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSNotificationName)aName object:(nullable id)anObject {
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    [dc addObserver:observer selector:aSelector name:aName object:anObject];
+}
+
+- (void)postNotification:(NSNotification *)notification {
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    [dc performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:NO];
+}
+
+- (void)postNotificationName:(NSNotificationName)aName object:(nullable id)anObject {
+    [self postNotificationName:aName object:anObject userInfo:nil];
+}
+
+- (void)postNotificationName:(NSNotificationName)aName
+                      object:(nullable id)anObject
+                    userInfo:(nullable NSDictionary *)aUserInfo {
+    NSNotification *noti = [[NSNotification alloc] initWithName:aName
+                                                         object:anObject
+                                                       userInfo:aUserInfo];
+    [self postNotification:noti];
+}
+
+- (void)removeObserver:(id)observer {
+    [self removeObserver:observer name:nil object:nil];
+}
+
+- (void)removeObserver:(id)observer name:(nullable NSNotificationName)aName object:(nullable id)anObject {
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    [dc removeObserver:observer name:aName object:anObject];
 }
 
 @end

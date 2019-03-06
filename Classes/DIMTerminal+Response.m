@@ -63,16 +63,14 @@
     DIMProfile *profile = cmd.profile;
     if ([profile.ID isEqual:cmd.ID]) {
         NSLog(@"got new profile for %@", cmd.ID);
-        NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-        [dc postNotificationName:@"ProfileUpdated" object:self userInfo:cmd];
+        [self postNotificationName:kNotificationName_ProfileUpdated object:self userInfo:cmd];
     }
 }
 
 - (void)processOnlineUsersMessageContent:(DIMMessageContent *)content {
     NSArray *users = [content objectForKey:@"users"];
     NSDictionary *info = @{@"users": users};
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc postNotificationName:@"OnlineUsersUpdated" object:self userInfo:info];
+    [self postNotificationName:kNotificationName_OnlineUsersUpdated object:self userInfo:info];
 }
 
 - (void)processSearchUsersMessageContent:(DIMMessageContent *)content {
@@ -85,8 +83,7 @@
     if (results) {
         [mDict setObject:results forKey:@"results"];
     }
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc postNotificationName:@"SearchUsersUpdated" object:self userInfo:mDict];
+    [self postNotificationName:kNotificationName_SearchUsersUpdated object:self userInfo:mDict];
 }
 
 @end
