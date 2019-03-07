@@ -9,32 +9,25 @@
 #import <MarsGate/StarGate.h>
 #import <DIMCore/DIMCore.h>
 
+#import "DIMServerState.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(UInt8, DIMServerState) {
-    DIMServerState_Init,         // (re)set user, (re)connect
-    DIMServerState_Connecting,   // connecting to server
-    DIMServerState_Connected,    // success to connect server
-    DIMServerState_Error,        // failed to connect
-    DIMServerState_ShakingHands, // user not login
-    DIMServerState_Running,      // user login, sending msg
-    DIMServerState_Stopped,      // disconnected
-};
+static NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
-@interface DIMServer : DIMStation <SGStarDelegate, DIMTransceiverDelegate> {
+@interface DIMServer : DIMStation <DIMTransceiverDelegate, SGStarDelegate, FSMDelegate> {
     
     DIMUser *_currentUser;
     
-    DIMServerState _state;
+    DIMServerStateMachine *_fsm;
 }
 
 @property (strong, nonatomic) DIMUser *currentUser;
 
-@property (readonly, nonatomic) DIMServerState state;
 @property (readonly, strong, nonatomic) id<SGStar> star;
 
 - (void)handshakeWithSession:(nullable NSString *)session;
-- (void)handshakeAccepted:(BOOL)success;
+- (void)handshakeAccepted:(BOOL)success session:(nullable NSString *)session;
 
 #pragma mark -
 

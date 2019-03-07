@@ -21,7 +21,7 @@
         // handshake OK
         NSLog(@"handshake accepted: %@", self.currentUser);
         NSLog(@"current station: %@", self);
-        [_currentStation handshakeAccepted:YES];
+        [_currentStation handshakeAccepted:YES session:_session];
         // post profile
         DIMProfile *profile = MKMProfileForID(self.currentUser.ID);
         [self postProfile:profile meta:nil];
@@ -33,7 +33,7 @@
         [_currentStation handshakeWithSession:session];
     } else {
         NSLog(@"handshake rejected: %@", content);
-        [_currentStation handshakeAccepted:NO];
+        [_currentStation handshakeAccepted:NO session:nil];
     }
 }
 

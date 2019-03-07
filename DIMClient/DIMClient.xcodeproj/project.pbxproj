@@ -32,6 +32,9 @@
 		E99A5CB9222D946400EE6C86 /* UIImageView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E99A5CB7222D946400EE6C86 /* UIImageView+Extension.m */; };
 		E99A5CE0222F088900EE6C86 /* UIStoryboardSegue+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E99A5CDE222F088900EE6C86 /* UIStoryboardSegue+Extension.h */; };
 		E99A5CE1222F088900EE6C86 /* UIStoryboardSegue+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E99A5CDF222F088900EE6C86 /* UIStoryboardSegue+Extension.m */; };
+		E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
+		E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAEB223116AC001F95C6 /* DIMServerState.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAEC223116AC001F95C6 /* DIMServerState.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +87,27 @@
 			remoteGlobalIDString = E9FAF5E7221EAC5F00DB6567;
 			remoteInfo = MarsGate;
 		};
+		E9AFAAD322310A93001F95C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9AFAA70223105F0001F95C6;
+			remoteInfo = FiniteStateMachine;
+		};
+		E9AFAAD522310A93001F95C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9AFAA79223105F0001F95C6;
+			remoteInfo = FiniteStateMachineTests;
+		};
+		E9AFAADB22310B07001F95C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E9AFAA6F223105F0001F95C6;
+			remoteInfo = FiniteStateMachine;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -115,6 +139,9 @@
 		E99A5CB7222D946400EE6C86 /* UIImageView+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Extension.m"; sourceTree = "<group>"; };
 		E99A5CDE222F088900EE6C86 /* UIStoryboardSegue+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIStoryboardSegue+Extension.h"; sourceTree = "<group>"; };
 		E99A5CDF222F088900EE6C86 /* UIStoryboardSegue+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIStoryboardSegue+Extension.m"; sourceTree = "<group>"; };
+		E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = ../../../moky/FiniteStateMachine/FiniteStateMachine/FiniteStateMachine.xcodeproj; sourceTree = "<group>"; };
+		E9AFAAEB223116AC001F95C6 /* DIMServerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServerState.h; sourceTree = "<group>"; };
+		E9AFAAEC223116AC001F95C6 /* DIMServerState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMServerState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,8 +149,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E97816C92223E97100BCE3AD /* DIMCore.framework in Frameworks */,
+				E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */,
 				E97816CC2223E97E00BCE3AD /* MarsGate.framework in Frameworks */,
+				E97816C92223E97100BCE3AD /* DIMCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,8 +169,9 @@
 		E97816762223E7F200BCE3AD = {
 			isa = PBXGroup;
 			children = (
-				E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */,
+				E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */,
 				E97816A92223E8C100BCE3AD /* MarsGate.xcodeproj */,
+				E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */,
 				E978169A2223E89D00BCE3AD /* Classes */,
 				E978169B2223E89D00BCE3AD /* Resources */,
 				E97816822223E7F200BCE3AD /* DIMClient */,
@@ -184,6 +213,8 @@
 				E97926D2222A54B9005ED1F0 /* extends */,
 				E97926B922284D59005ED1F0 /* DIMServer.h */,
 				E97926BA22284D59005ED1F0 /* DIMServer.m */,
+				E9AFAAEB223116AC001F95C6 /* DIMServerState.h */,
+				E9AFAAEC223116AC001F95C6 /* DIMServerState.m */,
 				E97816D12223EB4700BCE3AD /* DIMTerminal.h */,
 				E97816D22223EB4700BCE3AD /* DIMTerminal.m */,
 				E97816D52223F82F00BCE3AD /* DIMTerminal+Request.h */,
@@ -248,6 +279,15 @@
 			path = extends;
 			sourceTree = "<group>";
 		};
+		E9AFAACE22310A93001F95C6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */,
+				E9AFAAD622310A93001F95C6 /* FiniteStateMachineTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -256,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E97926E4222A58AA005ED1F0 /* DIMProfile+Extension.h in Headers */,
+				E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */,
 				E97926DC222A5530005ED1F0 /* UIImage+Extension.h in Headers */,
 				E97926DD222A5530005ED1F0 /* UIViewController+Extension.h in Headers */,
 				E97926BB22284D59005ED1F0 /* DIMServer.h in Headers */,
@@ -284,8 +325,9 @@
 			buildRules = (
 			);
 			dependencies = (
-				E978171722254AD000BCE3AD /* PBXTargetDependency */,
+				E9AFAADC22310B07001F95C6 /* PBXTargetDependency */,
 				E978171922254AD300BCE3AD /* PBXTargetDependency */,
+				E978171722254AD000BCE3AD /* PBXTargetDependency */,
 			);
 			name = DIMClient;
 			productName = DIMClient;
@@ -343,6 +385,10 @@
 					ProjectRef = E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */;
 				},
 				{
+					ProductGroup = E9AFAACE22310A93001F95C6 /* Products */;
+					ProjectRef = E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */;
+				},
+				{
 					ProductGroup = E97816AA2223E8C100BCE3AD /* Products */;
 					ProjectRef = E97816A92223E8C100BCE3AD /* MarsGate.xcodeproj */;
 				},
@@ -384,6 +430,20 @@
 			remoteRef = E97816B02223E8C100BCE3AD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FiniteStateMachine.framework;
+			remoteRef = E9AFAAD322310A93001F95C6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9AFAAD622310A93001F95C6 /* FiniteStateMachineTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = FiniteStateMachineTests.xctest;
+			remoteRef = E9AFAAD522310A93001F95C6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -413,6 +473,7 @@
 				E97816D82223F82F00BCE3AD /* DIMTerminal+Request.m in Sources */,
 				E97926B72227DB1D005ED1F0 /* DIMTerminal+Response.m in Sources */,
 				E97926E5222A58AA005ED1F0 /* DIMProfile+Extension.m in Sources */,
+				E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
 				E97926BC22284D59005ED1F0 /* DIMServer.m in Sources */,
 				E99A5CB9222D946400EE6C86 /* UIImageView+Extension.m in Sources */,
@@ -446,6 +507,11 @@
 			isa = PBXTargetDependency;
 			name = MarsGate;
 			targetProxy = E978171822254AD300BCE3AD /* PBXContainerItemProxy */;
+		};
+		E9AFAADC22310B07001F95C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FiniteStateMachine;
+			targetProxy = E9AFAADB22310B07001F95C6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

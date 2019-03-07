@@ -8,10 +8,13 @@
 
 #import <MarsGate/MarsGate.h>
 
+#import "DIMServerState.h"
+
 #import "DIMServer.h"
 
 @interface DIMServer ()
 
+@property (strong, nonatomic) DIMServerStateMachine *fsm;
 @property (strong, nonatomic) id<SGStar> star;
 
 @end
@@ -23,7 +26,9 @@
     if (self = [super initWithID:ID]) {
         _currentUser = nil;
         
-        _state = DIMServerState_Init;
+        _fsm = [[DIMServerStateMachine alloc] init];
+        _fsm.server = self;
+        _fsm.delegate = self;
         _star = nil;
     }
     return self;
@@ -37,8 +42,26 @@
         [DIMKeyStore sharedInstance].currentUser = newUser;
         
         // switch state for re-login
-        _state = DIMServerState_Init;
+        _fsm.session = nil;
     }
+}
+
+- (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
+    NSDictionary *info = @{@"state": state.name};
+    NSString *name = kNotificationName_ServerStateChanged;
+    NSNotification *noti;
+    noti = [[NSNotification alloc] initWithName:name
+                                         object:self
+                                       userInfo:info];
+    
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    [dc performSelectorOnMainThread:@selector(postNotification:)
+                         withObject:noti
+                      waitUntilDone:NO];
+}
+
+- (void)machine:(FSMMachine *)machine exitState:(FSMState *)state {
+    //
 }
 
 - (void)handshakeWithSession:(nullable NSString *)session {
@@ -73,11 +96,11 @@
     [trans sendReliableMessage:rMsg callback:callback];
 }
 
-- (void)handshakeAccepted:(BOOL)success {
-    NSAssert(_state == DIMServerState_ShakingHands, @"state error");
+- (void)handshakeAccepted:(BOOL)success session:(nullable NSString *)session {
+    NSAssert([_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking], @"state error: %@", _fsm.currentState.name);
     if (success) {
-        NSLog(@"handshake success");
-        _state = DIMServerState_Running;
+        NSLog(@"handshake success: %@", session);
+        _fsm.session = session;
     } else {
         NSLog(@"handshake failed");
         // TODO: prompt to handshake again
@@ -88,7 +111,7 @@
 
 - (void)startWithOptions:(NSDictionary *)launchOptions {
     
-    _state = DIMServerState_Init;
+    [_fsm start];
     
     [DIMTransceiver sharedInstance].delegate = self;
     
@@ -101,88 +124,30 @@
 - (void)end {
     NSAssert(_star, @"star not found");
     [_star terminate];
-    _state = DIMServerState_Stopped;
+    [_fsm stop];
 }
 
 - (void)pause {
     NSAssert(_star, @"star not found");
     [_star enterBackground];
+    [_fsm pause];
 }
 
 - (void)resume {
     NSAssert(_star, @"star not found");
     [_star enterForeground];
+    [_fsm resume];
 }
 
 - (void)run {
-    while (_state != DIMServerState_Stopped) {
-        
-        switch (_state) {
-                
-            case DIMServerState_Init: {
-                // check user login
-                if (_currentUser) {
-                    _state = DIMServerState_Connecting;
-                } else {
-                    // waiting for new user login
-                    sleep(1);
-                }
-            }
-                break;
-                
-            case DIMServerState_Connecting: {
-                if ([_star isConnected]) {
-                    _state = DIMServerState_Connected;
-                } else {
-                    // waiting for long connection
-                    sleep(1);
-                }
-            }
-                break;
-                
-            case DIMServerState_Connected: {
-                if (_currentUser) {
-                    _state = DIMServerState_ShakingHands;
-                    // shake hands with current station
-                    [self handshakeWithSession:nil];
-                } else {
-                    // waiting for new user login
-                    sleep(1);
-                }
-            }
-                break;
-                
-            case DIMServerState_ShakingHands: {
-                // waiting for handshaking
-                sleep(1);
-            }
-                break;
-                
-            case DIMServerState_Running: {
-                // sending or receiving messages
-                sleep(1);
-            }
-                break;
-                
-            case DIMServerState_Error: {
-                // reset for next connection
-                NSLog(@"DIM Server error");
-                _state = DIMServerState_Init;
-            }
-                break;
-                
-            case DIMServerState_Stopped: {
-                // exit
-                NSLog(@"DIM Server stopped");
-            }
-                break;
-                
-            default:
-                break;
-                
-        } /* EOF switch (_state) */
-        
-    } /* EOF while (_state != DIMServerState_Stopped) */
+    FSMState *state;
+    NSString *name;
+    while (![name isEqualToString:kDIMServerState_Stopped]) {
+        sleep(1);
+        [_fsm tick];
+        state = _fsm.currentState;
+        name = state.name;
+    }
 }
 
 #pragma mark SGStarDelegate
@@ -195,38 +160,8 @@
 }
 
 - (void)star:(id<SGStar>)star onConnectionStatusChanged:(SGStarStatus)status {
-    NSLog(@"connection status changed: %d", status);
-    
-    switch (status) {
-        case SGStarStatus_Init: {
-            NSLog(@"Mars: connection init");
-        }
-            break;
-            
-        case SGStarStatus_Connecting: {
-            NSLog(@"Mars: connecting server");
-        }
-            break;
-            
-        case SGStarStatus_Connected: {
-            NSLog(@"Mars: server connected");
-        }
-            break;
-            
-        case SGStarStatus_Error: {
-            NSLog(@"Mars: connection error");
-            _state = DIMServerState_Error;
-        }
-            break;
-            
-        case SGStarStatus_Unknown: {
-            NSLog(@"Mars: status unknown");
-        }
-            break;
-            
-        default:
-            break;
-    }
+    NSLog(@"DIM Server: Star status changed to %d", status);
+    [_fsm tick];
 }
 
 #pragma mark DKDTransceiverDelegate
