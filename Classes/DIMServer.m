@@ -46,24 +46,6 @@
     }
 }
 
-- (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
-    NSDictionary *info = @{@"state": state.name};
-    NSString *name = kNotificationName_ServerStateChanged;
-    NSNotification *noti;
-    noti = [[NSNotification alloc] initWithName:name
-                                         object:self
-                                       userInfo:info];
-    
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc performSelectorOnMainThread:@selector(postNotification:)
-                         withObject:noti
-                      waitUntilDone:NO];
-}
-
-- (void)machine:(FSMMachine *)machine exitState:(FSMState *)state {
-    //
-}
-
 - (void)handshakeWithSession:(nullable NSString *)session {
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
     
@@ -184,6 +166,26 @@
     }
     
     return res == 0;
+}
+
+#pragma mark - FSMDelegate
+
+- (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
+    NSDictionary *info = @{@"state": state.name};
+    NSString *name = kNotificationName_ServerStateChanged;
+    NSNotification *noti;
+    noti = [[NSNotification alloc] initWithName:name
+                                         object:self
+                                       userInfo:info];
+    
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    [dc performSelectorOnMainThread:@selector(postNotification:)
+                         withObject:noti
+                      waitUntilDone:NO];
+}
+
+- (void)machine:(FSMMachine *)machine exitState:(FSMState *)state {
+    //
 }
 
 @end

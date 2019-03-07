@@ -160,6 +160,19 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
     [state addTransition:trans];
     
+    // target state: Error
+    block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
+        DIMServer *server = [(DIMServerStateMachine *)machine server];
+        SGStarStatus status = server.star.status;
+        if (status == SGStarStatus_Error) {
+            return YES;
+        }
+        return NO;
+    };
+    name = kDIMServerState_Error;
+    trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
+    [state addTransition:trans];
+    
     return state;
 }
 
