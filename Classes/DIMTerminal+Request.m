@@ -11,7 +11,7 @@
 
 @implementation DIMTerminal (Command)
 
-- (void)sendContent:(DKDMessageContent *)content to:(MKMID *)receiver {
+- (void)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver {
     if (!self.currentUser) {
         NSLog(@"not login, drop message content: %@", content);
         // TODO: save the message content in waiting queue
@@ -69,11 +69,11 @@
     }
 }
 
-- (void)postProfile:(DIMProfile *)profile meta:(nullable DIMMeta *)meta {
+- (void)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta {
     if (!profile) {
         return ;
     }
-    DIMID *ID = self.currentUser.ID;
+    const DIMID *ID = self.currentUser.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match");
         return ;

@@ -6,6 +6,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "NSNotificationCenter+Extension.h"
+
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
@@ -41,7 +43,7 @@
     DIMMetaCommand *cmd;
     cmd = [[DIMMetaCommand alloc] initWithDictionary:content];
     // check meta
-    DIMMeta *meta = cmd.meta;
+    const DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
@@ -53,7 +55,7 @@
     DIMProfileCommand *cmd;
     cmd = [[DIMProfileCommand alloc] initWithDictionary:content];
     // check meta
-    DIMMeta *meta = cmd.meta;
+    const DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
@@ -63,14 +65,14 @@
     DIMProfile *profile = cmd.profile;
     if ([profile.ID isEqual:cmd.ID]) {
         NSLog(@"got new profile for %@", cmd.ID);
-        [self postNotificationName:kNotificationName_ProfileUpdated object:self userInfo:cmd];
+        [NSNotificationCenter postNotificationName:kNotificationName_ProfileUpdated object:self userInfo:cmd];
     }
 }
 
 - (void)processOnlineUsersMessageContent:(DIMMessageContent *)content {
     NSArray *users = [content objectForKey:@"users"];
     NSDictionary *info = @{@"users": users};
-    [self postNotificationName:kNotificationName_OnlineUsersUpdated object:self userInfo:info];
+    [NSNotificationCenter postNotificationName:kNotificationName_OnlineUsersUpdated object:self userInfo:info];
 }
 
 - (void)processSearchUsersMessageContent:(DIMMessageContent *)content {
@@ -83,7 +85,7 @@
     if (results) {
         [mDict setObject:results forKey:@"results"];
     }
-    [self postNotificationName:kNotificationName_SearchUsersUpdated object:self userInfo:mDict];
+    [NSNotificationCenter postNotificationName:kNotificationName_SearchUsersUpdated object:self userInfo:mDict];
 }
 
 @end

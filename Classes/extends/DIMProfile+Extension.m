@@ -36,4 +36,29 @@
     return image;
 }
 
+- (UIImage *)logoImageWithSize:(const CGSize)size {
+    UIImage *image = nil;
+    NSString *avatar = self.avatar;
+    if (avatar) {
+        if ([avatar containsString:@"://"]) {
+            image = [UIImage imageWithURLString:avatar];
+        } else {
+            image = [UIImage imageNamed:avatar];
+        }
+    }
+    if (!image) {
+        NSString *name = self.name;
+        if (name.length == 0) {
+            name = self.ID.name;
+            if (name.length == 0) {
+                name = @"Đ"; // BTC Address: ฿
+            }
+        }
+        NSString *text = [name substringToIndex:1];
+        text = [NSString stringWithFormat:@"[%@]", text];
+        image = [UIImage imageWithText:text size:size];
+    }
+    return image;
+}
+
 @end

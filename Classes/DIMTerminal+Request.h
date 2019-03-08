@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTerminal (Request)
 
-- (void)sendContent:(DIMMessageContent *)content to:(DIMID *)receiver;
+- (void)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver;
 - (void)sendMessage:(DIMInstantMessage *)msg;
 
 // pack and send command to station
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)login:(DIMUser *)user;
 
-- (void)postProfile:(DIMProfile *)profile meta:(nullable DIMMeta *)meta;
+- (void)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta;
 
 - (void)queryMetaForID:(const DIMID *)ID;
 - (void)queryProfileForID:(const DIMID *)ID;

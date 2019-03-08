@@ -83,8 +83,8 @@
     rMsg = [[DKDReliableMessage alloc] initWithJSONString:json];
     
     // check sender
-    DIMID *sender = rMsg.envelope.sender;
-    DIMMeta *meta = MKMMetaForID(sender);
+    const DIMID *sender = rMsg.envelope.sender;
+    const DIMMeta *meta = MKMMetaForID(sender);
     if (!meta) {
         meta = rMsg.meta;
         if (!meta) {
@@ -95,7 +95,7 @@
     }
     
     // check receiver
-    DIMID *receiver = rMsg.envelope.receiver;
+    const DIMID *receiver = rMsg.envelope.receiver;
     DIMUser *user = self.currentUser;
     if (MKMNetwork_IsCommunicator(receiver.type)) {
         if ([receiver isEqual:user.ID]) {
@@ -166,38 +166,32 @@
 
 @end
 
-@implementation DIMTerminal (Notification)
+@implementation DIMTerminal (Creation)
 
-- (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSNotificationName)aName object:(nullable id)anObject {
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc addObserver:observer selector:aSelector name:aName object:anObject];
-}
-
-- (void)postNotification:(NSNotification *)notification {
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:NO];
-}
-
-- (void)postNotificationName:(NSNotificationName)aName object:(nullable id)anObject {
-    [self postNotificationName:aName object:anObject userInfo:nil];
-}
-
-- (void)postNotificationName:(NSNotificationName)aName
-                      object:(nullable id)anObject
-                    userInfo:(nullable NSDictionary *)aUserInfo {
-    NSNotification *noti = [[NSNotification alloc] initWithName:aName
-                                                         object:anObject
-                                                       userInfo:aUserInfo];
-    [self postNotification:noti];
-}
-
-- (void)removeObserver:(id)observer {
-    [self removeObserver:observer name:nil object:nil];
-}
-
-- (void)removeObserver:(id)observer name:(nullable NSNotificationName)aName object:(nullable id)anObject {
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc removeObserver:observer name:aName object:anObject];
+- (DIMGroup *)createGroupWithName:(const NSString *)seed {
+    DIMUser *user = self.currentUser;
+    // generate group meta with current user's private key
+    DIMMeta *meta = [[DIMMeta alloc] initWithSeed:seed
+                                       privateKey:user.privateKey
+                                        publicKey:nil
+                                          version:MKMMetaDefaultVersion];
+    // generate group ID
+    const DIMID *ID = [meta buildIDWithNetworkID:MKMNetwork_Polylogue];
+    
+    // set meta into memory cache for the group ID
+    DIMBarrack *barrack = [DIMBarrack sharedInstance];
+    [barrack setMeta:meta forID:ID];
+    
+    // TODO: save current user as founder & owner of the group
+    // ...
+    
+    // create group
+    DIMGroup *group = [[DIMGroup alloc] initWithID:ID];
+    if (group) {
+        // set barrack as data source
+        group.dataSource = barrack;
+    }
+    return group;
 }
 
 @end

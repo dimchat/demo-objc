@@ -6,9 +6,17 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "UIImage+Extension.h"
+
 #import "UIImageView+Extension.h"
 
 @implementation UIImageView (Extension)
+
+- (void)setText:(NSString *)text {
+    CGSize size = self.bounds.size;
+    UIImage *image = [UIImage imageWithText:text size:size];
+    [self setImage:image];
+}
 
 - (void)roundedCorner {
     if (self.layer.mask) {

@@ -8,6 +8,8 @@
 
 #import <MarsGate/MarsGate.h>
 
+#import "NSNotificationCenter+Extension.h"
+
 #import "DIMServerState.h"
 
 #import "DIMServer.h"
@@ -173,15 +175,9 @@
 - (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
     NSDictionary *info = @{@"state": state.name};
     NSString *name = kNotificationName_ServerStateChanged;
-    NSNotification *noti;
-    noti = [[NSNotification alloc] initWithName:name
-                                         object:self
-                                       userInfo:info];
-    
-    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc performSelectorOnMainThread:@selector(postNotification:)
-                         withObject:noti
-                      waitUntilDone:NO];
+    [NSNotificationCenter postNotificationName:name
+                                        object:self
+                                      userInfo:info];
 }
 
 - (void)machine:(FSMMachine *)machine exitState:(FSMState *)state {

@@ -12,32 +12,55 @@
 
 - (void)showMessage:(NSString *)text withTitle:(NSString *)title {
     
+    [self showMessage:text withTitle:title defaultButton:@"OK"];
+}
+
+- (void)showMessage:(nullable NSString *)text
+          withTitle:(nullable NSString *)title
+      defaultButton:(nullable NSString *)defaultTitle {
+    
     UIAlertController * alert;
     alert = [UIAlertController alertControllerWithTitle:title
                                                 message:text
                                          preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *OK;
-    OK = [UIAlertAction actionWithTitle:@"OK"
+    OK = [UIAlertAction actionWithTitle:defaultTitle
                                   style:UIAlertActionStyleDefault
                                 handler:nil];
     [alert addAction:OK];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)showMessage:(NSString *)text withTitle:(NSString *)title
-      cancelHandler:(void (^ __nullable)(UIAlertAction *))cancelHandler
-     defaultHandler:(void (^ __nullable)(UIAlertAction *))okHandler {
+- (void)showMessage:(nullable NSString *)text
+          withTitle:(nullable NSString *)title
+      cancelHandler:(void (^)(UIAlertAction *))cancelHandler
+     defaultHandler:(void (^)(UIAlertAction *))okHandler {
+    
+    [self showMessage:text
+            withTitle:title
+        cancelHandler:cancelHandler
+          cacelButton:@"Cancel"
+       defaultHandler:okHandler
+        defaultButton:@"OK"];
+}
+
+- (void)showMessage:(nullable NSString *)text
+          withTitle:(nullable NSString *)title
+      cancelHandler:(void (^ __nullable)(UIAlertAction *action))cancelHandler
+        cacelButton:(nullable NSString *)cancelTitle
+     defaultHandler:(void (^ __nullable)(UIAlertAction *action))okHandler
+      defaultButton:(nullable NSString *)defaultTitle {
     
     UIAlertController * alert;
     alert = [UIAlertController alertControllerWithTitle:title
                                                 message:text
                                          preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *cancelAction;
-    cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+    cancelAction = [UIAlertAction actionWithTitle:cancelTitle
                                       style:UIAlertActionStyleCancel
                                     handler:cancelHandler];
     UIAlertAction *okAction;
-    okAction = [UIAlertAction actionWithTitle:@"OK"
+    okAction = [UIAlertAction actionWithTitle:defaultTitle
                                         style:UIAlertActionStyleDefault
                                       handler:okHandler];
 
