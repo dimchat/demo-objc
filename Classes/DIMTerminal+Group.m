@@ -15,24 +15,27 @@
 
 - (void)sendOutGroupID:(const DIMID *)groupID
                   meta:(const DIMMeta *)meta
-               profile:(const DIMProfile *)profile
+               profile:(nullable const DIMProfile *)profile
                members:(const NSArray<const DIMID *> *)list {
     DIMUser *user = self.currentUser;
     DIMID *ID;
     
     // 1. send out meta & profile
-    DIMPrivateKey *SK = user.privateKey;
-    NSString *string = [profile jsonString];
-    NSString *signature = [[SK sign:[string data]] base64Encode];
+    NSString *string = nil;
+    NSString *signature = nil;
+    if (profile) {
+        string = [profile jsonString];
+        signature = [[user.privateKey sign:[string data]] base64Encode];
+    }
     
-    DIMCommand *cmd;
+    DIMMessageContent *cmd;
     cmd = [[DIMProfileCommand alloc] initWithID:groupID
                                            meta:meta
                                         profile:string
                                       signature:signature];
     
     // 1.1. share to station
-    [self sendCommand:cmd];
+    [self sendCommand:(DIMProfileCommand *)cmd];
     
     // 1.2. send to each member
     for (ID in list) {
@@ -44,31 +47,59 @@
     }
     
     // 2. send out member list
-    if (![list containsObject:user.ID]) {
-        // add myself into the group members list
+    NSUInteger index = [list indexOfObject:user.ID];
+    if (index == NSNotFound) {
+        // add myself to the front of group members list
         NSMutableArray *mArray = [list mutableCopy];
-        [mArray addObject:user.ID];
+        [mArray insertObject:user.ID atIndex:0];
+        list = mArray;
+    } else if (index != 0) {
+        NSAssert(false, @"the owner must be the first member");
+        // move myself to the front
+        NSMutableArray *mArray = [list mutableCopy];
+        [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
         list = mArray;
     }
     
-    DIMMessageContent *ctx;
-    ctx = [[DIMInviteCommand alloc] initWithGroup:groupID
-                                          members:list];
-    [ctx setObject:user.ID forKey:@"owner"];
+    // 2.1. send expel command to all old members
+    DIMGroup *group = MKMGroupWithID(groupID);
+    NSArray<const DIMID *> *members = group.members;
+    if (members.count > 0) {
+        NSMutableArray<const DIMID *> *expels;
+        expels = [[NSMutableArray alloc] initWithCapacity:members.count];
+        for (ID in members) {
+            if (![list containsObject:ID]) {
+                [expels addObject:ID];
+            }
+        }
+        if (expels.count > 0) {
+            cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
+            [cmd setObject:user.ID forKey:@"owner"];
+            for (ID in members) {
+                if ([ID isEqual:user.ID]) {
+                    // ignore myself
+                    continue;
+                }
+                [self sendContent:cmd to:ID];
+            }
+        }
+    }
     
-    // 2.1. send to each member
+    // 2.2. send invite command to all new members
+    cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:list];
+    [cmd setObject:user.ID forKey:@"owner"];
     for (ID in list) {
         if ([ID isEqual:user.ID]) {
             // ignore myself
             continue;
         }
-        [self sendContent:ctx to:ID];
+        [self sendContent:cmd to:ID];
     }
 }
 
 - (DIMGroup *)createGroupWithSeed:(const NSString *)seed
-                             name:(const NSString *)name
-                          members:(const NSArray<const MKMID *> *)list {
+                          members:(const NSArray<const MKMID *> *)list
+                          profile:(const NSDictionary *)dict {
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
@@ -84,9 +115,13 @@
     
     // end out meta+profile command
     DIMProfile *profile;
-    profile = [[DIMProfile alloc] initWithDictionary:@{@"ID":ID,
-                                                       @"name":name,
-                                                       }];
+    profile = [[DIMProfile alloc] initWithID:ID];
+    for (NSString *key in dict) {
+        if ([key isEqualToString:@"ID"]) {
+            continue;
+        }
+        [profile setObject:[dict objectForKey:key] forKey:key];
+    }
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
     [self sendOutGroupID:ID meta:meta profile:profile members:list];
     
@@ -100,21 +135,13 @@
 }
 
 - (BOOL)updateGroupWithID:(const MKMID *)ID
-                     name:(const NSString *)name
-                  members:(const NSArray<const MKMID *> *)list {
+                  members:(const NSArray<const MKMID *> *)list
+                  profile:(const MKMProfile *)profile {
     DIMGroup *group = MKMGroupWithID(ID);
     const DIMMeta *meta = group.meta;
     if (![meta matchID:ID]) {
         NSAssert(false, @"meta not match: %@", ID);
         return NO;
-    }
-    DIMProfile *profile = MKMProfileForID(ID);
-    if (profile) {
-        profile.name = (NSString *)name;
-    } else {
-        profile = [[DIMProfile alloc] initWithDictionary:@{@"ID":ID,
-                                                           @"name":name,
-                                                           }];
     }
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
     [self sendOutGroupID:ID meta:meta profile:profile members:list];
