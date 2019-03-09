@@ -32,12 +32,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMTerminal (GroupEntity)
-
-- (DIMGroup *)createGroupWithSeed:(const NSString *)seed name:(const NSString *)name members:(const NSArray<const DIMID *> *)list;
-
-- (BOOL)updateGroupWithID:(const DIMID *)ID name:(const NSString *)name members:(const NSArray<const DIMID *> *)list;
-
-@end
-
 NS_ASSUME_NONNULL_END

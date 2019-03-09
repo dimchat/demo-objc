@@ -56,14 +56,16 @@
     cmd = [[DIMProfileCommand alloc] initWithDictionary:content];
     // check meta
     const DIMMeta *meta = cmd.meta;
-    if ([meta matchID:cmd.ID]) {
+    if (meta) {
+        NSAssert([meta matchID:cmd.ID], @"meta not match ID: %@", cmd);
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
         [barrack saveMeta:cmd.meta forEntityID:cmd.ID];
     }
     // check profile
     DIMProfile *profile = cmd.profile;
-    if ([profile.ID isEqual:cmd.ID]) {
+    if (profile) {
+        NSAssert([profile.ID isEqual:cmd.ID], @"profile not match ID: %@", cmd);
         NSLog(@"got new profile for %@", cmd.ID);
         [NSNotificationCenter postNotificationName:kNotificationName_ProfileUpdated object:self userInfo:cmd];
     }
