@@ -152,27 +152,68 @@
 
 @implementation DIMTerminal (GroupHistory)
 
-- (BOOL)processInviteMembersMessageContent:(DKDMessageContent *)content {
+- (BOOL)checkPolylogueCommand:(DKDMessageContent *)content
+                    commander:(const MKMID *)sender {
+    const DIMID *groupID = content.group;
+    NSString *command = content.command;
+    // quit command
+    if ([command isEqualToString:@"quit"]) {
+        DIMGroup *group = MKMGroupWithID(groupID);
+        if ([group existsMember:sender]) {
+            NSLog(@"member will be quit from group: %@, %@", groupID, sender);
+            return YES;
+        } else if ([group.founder isEqual:sender] ||
+                   [group.owner isEqual:sender]) {
+            // NOTE: if the founder(owner) quit, it means this group should be dismissed
+            NSLog(@"!!! founder(owner) quit, group chat dismissed.");
+            return YES;
+        } else {
+            NSLog(@"!!! commander is not a member of group: %@, %@", groupID, sender);
+            return NO;
+        }
+    }
+    NSAssert([command isEqualToString:@"invite"] ||
+             [command isEqualToString:@"expel"], @"error command: %@", command);
+    
     // check owner
     DIMID *owner = [content objectForKey:@"owner"];
     owner = [DIMID IDWithID:owner];
-    DIMPublicKey *PK = MKMPublicKeyForID(owner);
-    
-    const DIMID *groupID = content.group;
-    const DIMMeta *meta = MKMMetaForID(groupID);
-    if (![meta matchPublicKey:PK]) {
-        NSLog(@"commander %@ not match the group.meta: %@", owner, meta);
+    if (![sender isEqual:owner]) {
+        NSLog(@"!!! only the owner can manage the group: %@, %@", sender, content);
         return NO;
     }
     
+    // check founder.publicKey
+    const DIMMeta *meta = MKMMetaForID(groupID);
+    DIMPublicKey *PK = MKMPublicKeyForID(owner);
+    if (![meta matchPublicKey:PK]) {
+        NSLog(@"founder (owner:%@) not match with group.meta: %@", owner, meta);
+        return NO;
+    }
+    
+    // check members
     NSArray *members = [content objectForKey:@"members"];
     if (members.count == 0) {
         NSLog(@"members is empty: %@", content);
         return NO;
     }
     
-    NSLog(@"receive %lu member(s) for group: %@, list: %@", members.count, groupID, members);
+    NSLog(@"group: %@, invite/expel members: %@", groupID, members);
     return YES;
+}
+
+- (BOOL)checkGroupCommand:(DKDMessageContent *)content
+                commander:(const MKMID *)sender {
+    const DIMID *groupID = content.group;
+    
+    if (groupID.type == MKMNetwork_Polylogue) {
+        return [self checkPolylogueCommand:content commander:sender];
+    } else if (groupID.type == MKMNetwork_Chatroom) {
+        // TODO: check by group history consensus
+    }
+    
+    NSAssert(false, @"unsupport group type: %u", groupID.type);
+    return NO;
 }
 
 @end

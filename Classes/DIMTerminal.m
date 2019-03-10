@@ -148,25 +148,21 @@
         } else if ([command isEqualToString:@"search"]) {
             // search users response
             return [self processSearchUsersMessageContent:content];
-        } else {
-            NSLog(@"!!! unknown command: %@, sender: %@, message content: %@",
-                  command, sender, content);
-            return ;
         }
+        NSLog(@"!!! unknown command: %@, sender: %@, message content: %@",
+              command, sender, content);
+        // NOTE: let the message processor to do the job
+        //return ;
     } else if (content.type == DIMMessageType_History) {
-        NSString *command = content.command;
-        if ([command isEqualToString:@"invite"]) {
-            DIMID *owner = [content objectForKey:@"owner"];
-            if (![sender isEqual:owner]) {
-                NSLog(@"!!! only allow the owner to operate the group: %@", content);
-                return ;
-            }
-            // invite member(s) to group
-            if (![self processInviteMembersMessageContent:content]) {
-                NSLog(@"!!! error history command from %@: %@", sender, content);
+        const DIMID *groupID = content.group;
+        if (groupID) {
+            if (![self checkGroupCommand:content commander:sender]) {
+                NSLog(@"!!! error group history command from %@: %@", sender, content);
                 return ;
             }
         }
+        // NOTE: let the message processor to do the job
+        //return ;
     }
     
     if (MKMNetwork_IsStation(sender.type)) {
