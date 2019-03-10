@@ -13,6 +13,10 @@
 
 #import "DIMTerminal+Response.h"
 
+const NSString *kNotificationName_ProfileUpdated = @"ProfileUpdated";
+const NSString *kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
+const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
+
 @implementation DIMTerminal (Response)
 
 - (void)processHandshakeMessageContent:(DIMMessageContent *)content {

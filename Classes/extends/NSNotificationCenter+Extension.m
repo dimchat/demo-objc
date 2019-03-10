@@ -10,9 +10,9 @@
 
 @implementation NSNotificationCenter (Extension)
 
-+ (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSNotificationName)aName object:(nullable id)anObject {
++ (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable const NSString *)aName object:(nullable id)anObject {
     NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc addObserver:observer selector:aSelector name:aName object:anObject];
+    [dc addObserver:observer selector:aSelector name:(NSNotificationName)aName object:anObject];
 }
 
 + (void)postNotification:(NSNotification *)notification {
@@ -20,14 +20,14 @@
     [dc performSelectorOnMainThread:@selector(postNotification:) withObject:notification waitUntilDone:NO];
 }
 
-+ (void)postNotificationName:(NSNotificationName)aName object:(nullable id)anObject {
++ (void)postNotificationName:(const NSString *)aName object:(nullable id)anObject {
     [self postNotificationName:aName object:anObject userInfo:nil];
 }
 
-+ (void)postNotificationName:(NSNotificationName)aName
++ (void)postNotificationName:(const NSString *)aName
                       object:(nullable id)anObject
                     userInfo:(nullable NSDictionary *)aUserInfo {
-    NSNotification *noti = [[NSNotification alloc] initWithName:aName
+    NSNotification *noti = [[NSNotification alloc] initWithName:(NSNotificationName)aName
                                                          object:anObject
                                                        userInfo:aUserInfo];
     [self postNotification:noti];
@@ -37,9 +37,9 @@
     [self removeObserver:observer name:nil object:nil];
 }
 
-+ (void)removeObserver:(id)observer name:(nullable NSNotificationName)aName object:(nullable id)anObject {
++ (void)removeObserver:(id)observer name:(nullable const NSString *)aName object:(nullable id)anObject {
     NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-    [dc removeObserver:observer name:aName object:anObject];
+    [dc removeObserver:observer name:(NSNotificationName)aName object:anObject];
 }
 
 @end

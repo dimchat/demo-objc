@@ -14,6 +14,8 @@
 
 #import "DIMServer.h"
 
+const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
+
 @interface DIMServer ()
 
 @property (strong, nonatomic) DIMServerStateMachine *fsm;
@@ -81,7 +83,11 @@
 }
 
 - (void)handshakeAccepted:(BOOL)success session:(nullable NSString *)session {
-    NSAssert([_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking], @"state error: %@", _fsm.currentState.name);
+    if (![_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking]) {
+        // FIXME: sometimes the current state will be not 'handshaking' here
+        //NSAssert(false, @"state error: %@", _fsm.currentState.name);
+        return ;
+    }
     if (success) {
         NSLog(@"handshake success: %@", session);
         _fsm.session = session;
@@ -174,7 +180,7 @@
 
 - (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
     NSDictionary *info = @{@"state": state.name};
-    NSString *name = kNotificationName_ServerStateChanged;
+    const NSString *name = kNotificationName_ServerStateChanged;
     [NSNotificationCenter postNotificationName:name
                                         object:self
                                       userInfo:info];

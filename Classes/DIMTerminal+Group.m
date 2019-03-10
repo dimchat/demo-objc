@@ -13,11 +13,21 @@
 
 @implementation DIMTerminal (GroupManage)
 
-- (void)sendOutGroupID:(const DIMID *)groupID
+- (BOOL)sendOutGroupID:(const DIMID *)groupID
                   meta:(const DIMMeta *)meta
                profile:(nullable const DIMProfile *)profile
                members:(const NSArray<const DIMID *> *)list {
+    DIMGroup *group = MKMGroupWithID(groupID);
     DIMUser *user = self.currentUser;
+    
+    if (group.ID.type == MKMNetwork_Polylogue) {
+        if (![group isFounder:user.ID]) {
+            NSLog(@"user %@ not the founder of group: %@", user, group);
+            return NO;
+        }
+    } else {
+        NSAssert(false, @"unsupported group type: %u", group.ID.type);
+    }
     DIMID *ID;
     
     // 1. send out meta & profile
@@ -39,10 +49,6 @@
     
     // 1.2. send to each member
     for (ID in list) {
-        if ([ID isEqual:user.ID]) {
-            // ignore myself
-            continue;
-        }
         [self sendContent:cmd to:ID];
     }
     
@@ -54,7 +60,7 @@
         [mArray insertObject:user.ID atIndex:0];
         list = mArray;
     } else if (index != 0) {
-        NSAssert(false, @"the owner must be the first member");
+        //NSAssert(false, @"the owner must be the first member");
         // move myself to the front
         NSMutableArray *mArray = [list mutableCopy];
         [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
@@ -62,7 +68,6 @@
     }
     
     // 2.1. send expel command to all old members
-    DIMGroup *group = MKMGroupWithID(groupID);
     NSArray<const DIMID *> *members = group.members;
     if (members.count > 0) {
         NSMutableArray<const DIMID *> *expels;
@@ -76,10 +81,6 @@
             cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
             [cmd setObject:user.ID forKey:@"owner"];
             for (ID in members) {
-                if ([ID isEqual:user.ID]) {
-                    // ignore myself
-                    continue;
-                }
                 [self sendContent:cmd to:ID];
             }
         }
@@ -89,12 +90,19 @@
     cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:list];
     [cmd setObject:user.ID forKey:@"owner"];
     for (ID in list) {
-        if ([ID isEqual:user.ID]) {
-            // ignore myself
-            continue;
-        }
         [self sendContent:cmd to:ID];
     }
+    
+    // send to myself
+    DIMInstantMessage *iMsg;
+    iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
+                                               sender:user.ID
+                                             receiver:groupID
+                                                 time:nil];
+    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
+    [clerk saveMessage:iMsg];
+    
+    return YES;
 }
 
 - (DIMGroup *)createGroupWithSeed:(const NSString *)seed
@@ -123,15 +131,14 @@
         [profile setObject:[dict objectForKey:key] forKey:key];
     }
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
-    [self sendOutGroupID:ID meta:meta profile:profile members:list];
+    BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
+    if (!sent) {
+        NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
+        return nil;
+    }
     
     // create group
-    DIMGroup *group = [[DIMGroup alloc] initWithID:ID];
-    if (group) {
-        // set barrack as data source
-        group.dataSource = barrack;
-    }
-    return group;
+    return MKMGroupWithID(ID);
 }
 
 - (BOOL)updateGroupWithID:(const MKMID *)ID
@@ -144,7 +151,12 @@
         return NO;
     }
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
-    [self sendOutGroupID:ID meta:meta profile:profile members:list];
+    BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
+    if (!sent) {
+        NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -155,10 +167,10 @@
 - (BOOL)checkPolylogueCommand:(DKDMessageContent *)content
                     commander:(const MKMID *)sender {
     const DIMID *groupID = content.group;
+    DIMGroup *group = MKMGroupWithID(groupID);
     NSString *command = content.command;
     // quit command
     if ([command isEqualToString:@"quit"]) {
-        DIMGroup *group = MKMGroupWithID(groupID);
         if ([group existsMember:sender]) {
             NSLog(@"member will be quit from group: %@, %@", groupID, sender);
             return YES;
@@ -183,11 +195,10 @@
         return NO;
     }
     
-    // check founder.publicKey
-    const DIMMeta *meta = MKMMetaForID(groupID);
-    DIMPublicKey *PK = MKMPublicKeyForID(owner);
-    if (![meta matchPublicKey:PK]) {
-        NSLog(@"founder (owner:%@) not match with group.meta: %@", owner, meta);
+    // check founder
+    if (![group isFounder:owner]) {
+        // polylogue's founder also be owner
+        NSLog(@"founder error: %@", owner);
         return NO;
     }
     

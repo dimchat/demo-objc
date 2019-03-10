@@ -10,9 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-static NSString *kNotificationName_ProfileUpdated = @"ProfileUpdated";
-static NSString *kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
-static NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
+extern const NSString *kNotificationName_ProfileUpdated;
+extern const NSString *kNotificationName_OnlineUsersUpdated;
+extern const NSString *kNotificationName_SearchUsersUpdated;
 
 @interface DIMTerminal (Response)
 
