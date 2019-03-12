@@ -75,7 +75,7 @@
     }
     const DIMID *ID = self.currentUser.ID;
     if (![profile.ID isEqual:ID]) {
-        NSAssert(false, @"profile ID not match");
+        NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return ;
     }
     DIMPrivateKey *SK = self.currentUser.privateKey;

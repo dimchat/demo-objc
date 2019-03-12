@@ -26,7 +26,7 @@
             return NO;
         }
     } else {
-        NSAssert(false, @"unsupported group type: %u", group.ID.type);
+        NSAssert(false, @"unsupported group type: %@", group.ID);
     }
     DIMID *ID;
     
@@ -111,10 +111,10 @@
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
-    DIMMeta *meta = [[DIMMeta alloc] initWithSeed:seed
-                                       privateKey:user.privateKey
-                                        publicKey:nil
-                                          version:MKMMetaDefaultVersion];
+    DIMMeta *meta = [[DIMMeta alloc] initWithVersion:MKMMetaDefaultVersion
+                                                seed:seed
+                                          privateKey:user.privateKey
+                                           publicKey:nil];
     // generate group ID
     const DIMID *ID = [meta buildIDWithNetworkID:MKMNetwork_Polylogue];
     // save meta for group ID
@@ -223,7 +223,7 @@
         // TODO: check by group history consensus
     }
     
-    NSAssert(false, @"unsupport group type: %u", groupID.type);
+    NSAssert(false, @"unsupport group type: %@", groupID);
     return NO;
 }
 
