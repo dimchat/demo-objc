@@ -31,7 +31,9 @@
             }
         }
         NSString *text = [name substringToIndex:1];
-        image = [UIImage imageWithText:text size:size];
+        UIColor *textColor = [UIColor whiteColor];
+        UIColor *bgColor = [UIColor darkGrayColor];
+        image = [UIImage imageWithText:text size:size color:textColor backgroundColor:bgColor];
     }
     return image;
 }
@@ -47,6 +49,30 @@
         }
     }
     if (!image) {
+        NSArray<const DIMID *> *members = MKMGroupWithID(self.ID).members;
+        if (members.count > 0) {
+            CGSize tileSize;
+            if (members.count > 4) {
+                tileSize = CGSizeMake(size.width / 3 - 2, size.height / 3 - 2);
+            } else {
+                tileSize = CGSizeMake(size.width / 2 - 2, size.height / 2 - 2);
+            }
+            NSMutableArray<UIImage *> *mArray;
+            mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
+            for (const DIMID *ID in members) {
+                image = [MKMProfileForID(ID) avatarImageWithSize:tileSize];
+                if (image) {
+                    [mArray addObject:image];
+                    if (mArray.count >= 9) {
+                        break;
+                    }
+                }
+            }
+            UIColor *bgColor = [UIColor lightGrayColor];
+            image = [UIImage tiledImages:mArray size:size backgroundColor:bgColor];
+        }
+    }
+    if (!image) {
         NSString *name = self.name;
         if (name.length == 0) {
             name = self.ID.name;
@@ -55,8 +81,10 @@
             }
         }
         NSString *text = [name substringToIndex:1];
-        text = [NSString stringWithFormat:@"[%@]", text];
-        image = [UIImage imageWithText:text size:size];
+        //text = [NSString stringWithFormat:@"[%@]", text];
+        UIColor *textColor = [UIColor whiteColor];
+        UIColor *bgColor = [UIColor lightGrayColor];
+        image = [UIImage imageWithText:text size:size color:textColor backgroundColor:bgColor];
     }
     return image;
 }

@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // set image with text
 - (void)setText:(NSString *)text;
+- (void)setText:(NSString *)text color:(nullable UIColor *)textColor backgroundColor:(nullable UIColor *)bgColor;
 
 - (void)roundedCorner;
 
