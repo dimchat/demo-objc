@@ -16,91 +16,110 @@
 - (BOOL)sendOutGroupID:(const DIMID *)groupID
                   meta:(const DIMMeta *)meta
                profile:(nullable const DIMProfile *)profile
-               members:(const NSArray<const DIMID *> *)list {
+               members:(const NSArray<const DIMID *> *)newMembers {
+    NSAssert([meta matchID:groupID], @"meta not match group ID: %@, %@", groupID, meta);
+    NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
+    
     DIMGroup *group = MKMGroupWithID(groupID);
     DIMUser *user = self.currentUser;
     
-    if (group.ID.type == MKMNetwork_Polylogue) {
+    if (group.ID.type != MKMNetwork_Polylogue) {
+        NSAssert(false, @"unsupported group type: %@", group.ID);
+        return NO;
+    }
+    
+    // checking founder
+    const DIMID *founder = group.founder;
+    if (![founder isValid] || !MKMNetwork_IsPerson(founder.type)) {
+        NSAssert(false, @"invalid founder: %@", founder);
+        return NO;
+    }
+    NSUInteger index = [newMembers indexOfObject:founder];
+    if (index == NSNotFound) {
+        NSAssert(false, @"the founder not found in the member list");
+        // add the founder to the front of group members list
+        NSMutableArray *mArray = [newMembers mutableCopy];
+        [mArray insertObject:founder atIndex:0];
+        newMembers = mArray;
+    } else if (index != 0) {
+        //NSAssert(false, @"the founder must be the first member");
+        // move the founder to the front
+        NSMutableArray *mArray = [newMembers mutableCopy];
+        [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
+        newMembers = mArray;
+    }
+    
+    // checking expeled list with old members
+    NSArray<const DIMID *> *members = group.members;
+    NSMutableArray<const DIMID *> *expels;
+    expels = [[NSMutableArray alloc] initWithCapacity:members.count];
+    for (const DIMID *ID in members) {
+        // if old member not in the new list, expel it
+        if (![newMembers containsObject:ID]) {
+            [expels addObject:ID];
+        }
+    }
+    if (expels.count > 0) {
+        // only the founder can expel members
         if (![group isFounder:user.ID]) {
-            NSLog(@"user %@ not the founder of group: %@", user, group);
+            NSLog(@"user (%@) not the founder of group: %@", user, group);
             return NO;
         }
-    } else {
-        NSAssert(false, @"unsupported group type: %@", group.ID);
+        if ([expels containsObject:founder]) {
+            NSLog(@"cannot expel founder (%@) of group: %@", group.founder, group);
+            return NO;
+        }
     }
-    DIMID *ID;
     
-    // 1. send out meta & profile
-    NSString *string = nil;
-    NSString *signature = nil;
-    if (profile) {
-        string = [profile jsonString];
-        signature = [[user.privateKey sign:[string data]] base64Encode];
+    // check membership
+    if (![group isFounder:user.ID] && ![members containsObject:user.ID]) {
+    //if (![group existsMember:user.ID]) {
+        NSLog(@"user (%@) not a member of group: %@", user, group);
+        return NO;
     }
     
     DIMMessageContent *cmd;
-    cmd = [[DIMProfileCommand alloc] initWithID:groupID
-                                           meta:meta
-                                        profile:string
-                                      signature:signature];
+    
+    // 1. send out meta & profile
+    if (profile) {
+        NSString *string = [profile jsonString];
+        NSData *CT = [user.privateKey sign:[string data]];
+        NSString *signature = [CT base64Encode];
+        cmd = [[DIMProfileCommand alloc] initWithID:groupID
+                                               meta:meta
+                                            profile:string
+                                          signature:signature];
+    } else {
+        cmd = [[DIMMetaCommand alloc] initWithID:groupID
+                                            meta:meta];
+    }
     
     // 1.1. share to station
-    [self sendCommand:(DIMProfileCommand *)cmd];
+    [self sendCommand:(DIMCommand *)cmd];
     
-    // 1.2. send to each member
-    for (ID in list) {
+    // 1.2. send to each new member
+    for (const DIMID *ID in newMembers) {
         [self sendContent:cmd to:ID];
     }
     
-    // 2. send out member list
-    NSUInteger index = [list indexOfObject:user.ID];
-    if (index == NSNotFound) {
-        // add myself to the front of group members list
-        NSMutableArray *mArray = [list mutableCopy];
-        [mArray insertObject:user.ID atIndex:0];
-        list = mArray;
-    } else if (index != 0) {
-        //NSAssert(false, @"the owner must be the first member");
-        // move myself to the front
-        NSMutableArray *mArray = [list mutableCopy];
-        [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
-        list = mArray;
-    }
-    
-    // 2.1. send expel command to all old members
-    NSArray<const DIMID *> *members = group.members;
+    // 2. send expel command to all old members
     if (members.count > 0) {
-        NSMutableArray<const DIMID *> *expels;
-        expels = [[NSMutableArray alloc] initWithCapacity:members.count];
-        for (ID in members) {
-            if (![list containsObject:ID]) {
-                [expels addObject:ID];
-            }
-        }
         if (expels.count > 0) {
             cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
             [cmd setObject:user.ID forKey:@"owner"];
-            for (ID in members) {
+            
+            for (const DIMID *ID in members) {
                 [self sendContent:cmd to:ID];
             }
         }
     }
     
-    // 2.2. send invite command to all new members
-    cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:list];
+    // 3. send invite command to all new members
+    cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
     [cmd setObject:user.ID forKey:@"owner"];
-    for (ID in list) {
+    for (const DIMID *ID in newMembers) {
         [self sendContent:cmd to:ID];
     }
-    
-    // send to myself
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
-                                               sender:user.ID
-                                             receiver:groupID
-                                                 time:nil];
-    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
-    [clerk saveMessage:iMsg];
     
     return YES;
 }
@@ -146,11 +165,7 @@
                   profile:(const MKMProfile *)profile {
     DIMGroup *group = MKMGroupWithID(ID);
     const DIMMeta *meta = group.meta;
-    if (![meta matchID:ID]) {
-        NSAssert(false, @"meta not match: %@", ID);
-        return NO;
-    }
-    NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
+    NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);
     BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
     if (!sent) {
         NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
@@ -169,47 +184,54 @@
     const DIMID *groupID = content.group;
     DIMGroup *group = MKMGroupWithID(groupID);
     NSString *command = content.command;
-    // quit command
-    if ([command isEqualToString:@"quit"]) {
-        if ([group existsMember:sender]) {
-            NSLog(@"member will be quit from group: %@, %@", groupID, sender);
-            return YES;
-        } else if ([group.founder isEqual:sender] ||
-                   [group.owner isEqual:sender]) {
-            // NOTE: if the founder(owner) quit, it means this group should be dismissed
-            NSLog(@"!!! founder(owner) quit, group chat dismissed.");
-            return YES;
-        } else {
-            NSLog(@"!!! commander is not a member of group: %@, %@", groupID, sender);
+    
+    if ([command isEqualToString:@"invite"]) {
+        
+        // check membership
+        if (![group isFounder:sender] && ![group existsMember:sender]) {
+            NSLog(@"!!! only the founder or member can invite other members");
             return NO;
         }
+        // check members
+        NSArray *members = [content objectForKey:@"members"];
+        if (members.count == 0) {
+            NSLog(@"members is empty: %@", content);
+            return NO;
+        }
+        
+    } else if ([command isEqualToString:@"expel"]) {
+        
+        // check founder
+        if (![group isFounder:sender]) {
+            // polylogue's founder also be owner
+            NSLog(@"!!! only the founder(owner) can expel members");
+            return NO;
+        }
+        // check members
+        NSArray *members = [content objectForKey:@"members"];
+        if (members.count == 0) {
+            NSLog(@"members is empty: %@", content);
+            return NO;
+        }
+        
+    } else if ([command isEqualToString:@"quit"]) {
+        
+        // check membership
+        if (![group existsMember:sender]) {
+            NSLog(@"!!! you are not a member yet");
+            return NO;
+        }
+        
+        if ([group isFounder:sender]) {
+            // NOTE: if the founder(owner) quit, it means this group should be dismissed
+            NSLog(@"!!! founder(owner) quit, group chat dismissed.");
+            //return YES;
+        }
+        
+    } else {
+        NSAssert(false, @"unknown command: %@", command);
     }
-    NSAssert([command isEqualToString:@"invite"] ||
-             [command isEqualToString:@"expel"], @"error command: %@", command);
     
-    // check owner
-    DIMID *owner = [content objectForKey:@"owner"];
-    owner = [DIMID IDWithID:owner];
-    if (![sender isEqual:owner]) {
-        NSLog(@"!!! only the owner can manage the group: %@, %@", sender, content);
-        return NO;
-    }
-    
-    // check founder
-    if (![group isFounder:owner]) {
-        // polylogue's founder also be owner
-        NSLog(@"founder error: %@", owner);
-        return NO;
-    }
-    
-    // check members
-    NSArray *members = [content objectForKey:@"members"];
-    if (members.count == 0) {
-        NSLog(@"members is empty: %@", content);
-        return NO;
-    }
-    
-    NSLog(@"group: %@, invite/expel members: %@", groupID, members);
     return YES;
 }
 

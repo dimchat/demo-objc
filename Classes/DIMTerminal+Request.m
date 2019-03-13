@@ -17,6 +17,11 @@
         // TODO: save the message content in waiting queue
         return ;
     }
+    if (!MKMPublicKeyForID(receiver)) {
+        NSLog(@"cannot get public key for receiver: %@", receiver);
+        [self queryMetaForID:receiver];
+        return ;
+    }
     DKDTransceiverCallback callback;
     callback = ^(const DKDReliableMessage *rMsg,
                  const NSError *error) {
