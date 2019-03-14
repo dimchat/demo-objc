@@ -32,12 +32,6 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #define __DIM_CLIENT__ 1
 
 // extends
-//#import <DIMClient/NSString+Extension.h>
-//#import <DIMClient/NSNotificationCenter+Extension.h>
-//#import <DIMClient/UIImage+Extension.h>
-//#import <DIMClient/UIImageView+Extension.h>
-//#import <DIMClient/UIViewController+Extension.h>
-//#import <DIMClient/UIStoryboardSegue+Extension.h>
 #import <DIMClient/DIMProfile+Extension.h>
 
 #import <DIMClient/DIMServer.h>

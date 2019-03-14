@@ -17,12 +17,12 @@
         // TODO: save the message content in waiting queue
         return ;
     }
-    if (!MKMPublicKeyForID(receiver)) {
+    if (!DIMPublicKeyForID(receiver)) {
         NSLog(@"cannot get public key for receiver: %@", receiver);
         [self queryMetaForID:receiver];
         return ;
     }
-    DKDTransceiverCallback callback;
+    DIMTransceiverCallback callback;
     callback = ^(const DKDReliableMessage *rMsg,
                  const NSError *error) {
         if (error) {
@@ -49,8 +49,9 @@
 }
 
 - (void)sendMessage:(DKDInstantMessage *)msg {
-    NSAssert([msg.envelope.sender isEqual:self.currentUser.ID], @"sender error: %@", msg);
-    [self sendContent:msg.content to:msg.envelope.receiver];
+    NSAssert([self.currentUser.ID isEqual:msg.envelope.sender], @"sender error: %@", msg);
+    const DIMID *receiver = [DIMID IDWithID:msg.envelope.receiver];
+    [self sendContent:msg.content to:receiver];
 }
 
 #pragma mark -

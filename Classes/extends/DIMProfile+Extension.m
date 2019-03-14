@@ -49,7 +49,7 @@
         }
     }
     if (!image) {
-        NSArray<const DIMID *> *members = MKMGroupWithID(self.ID).members;
+        NSArray<const DIMID *> *members = DIMGroupWithID(self.ID).members;
         if (members.count > 0) {
             CGSize tileSize;
             if (members.count > 4) {
@@ -60,7 +60,7 @@
             NSMutableArray<UIImage *> *mArray;
             mArray = [[NSMutableArray alloc] initWithCapacity:members.count];
             for (const DIMID *ID in members) {
-                image = [MKMProfileForID(ID) avatarImageWithSize:tileSize];
+                image = [DIMProfileForID(ID) avatarImageWithSize:tileSize];
                 if (image) {
                     [mArray addObject:image];
                     if (mArray.count >= 9) {

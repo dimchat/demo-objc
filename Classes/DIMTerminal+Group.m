@@ -20,7 +20,7 @@
     NSAssert([meta matchID:groupID], @"meta not match group ID: %@, %@", groupID, meta);
     NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
     
-    DIMGroup *group = MKMGroupWithID(groupID);
+    DIMGroup *group = DIMGroupWithID(groupID);
     DIMUser *user = self.currentUser;
     
     if (group.ID.type != MKMNetwork_Polylogue) {
@@ -61,7 +61,7 @@
     }
     if (expels.count > 0) {
         // only the founder can expel members
-        if (![group isFounder:user.ID]) {
+        if (![group.founder isEqual:user.ID]) {
             NSLog(@"user (%@) not the founder of group: %@", user, group);
             return NO;
         }
@@ -72,7 +72,7 @@
     }
     
     // check membership
-    if (![group isFounder:user.ID] && ![members containsObject:user.ID]) {
+    if (![group.founder isEqual:user.ID] && ![members containsObject:user.ID]) {
     //if (![group existsMember:user.ID]) {
         NSLog(@"user (%@) not a member of group: %@", user, group);
         return NO;
@@ -157,13 +157,13 @@
     }
     
     // create group
-    return MKMGroupWithID(ID);
+    return DIMGroupWithID(ID);
 }
 
 - (BOOL)updateGroupWithID:(const MKMID *)ID
                   members:(const NSArray<const MKMID *> *)list
                   profile:(const MKMProfile *)profile {
-    DIMGroup *group = MKMGroupWithID(ID);
+    DIMGroup *group = DIMGroupWithID(ID);
     const DIMMeta *meta = group.meta;
     NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);
     BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
@@ -181,14 +181,14 @@
 
 - (BOOL)checkPolylogueCommand:(DKDMessageContent *)content
                     commander:(const MKMID *)sender {
-    const DIMID *groupID = content.group;
-    DIMGroup *group = MKMGroupWithID(groupID);
+    const DIMID *groupID = [DIMID IDWithID:content.group];
+    DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = content.command;
     
     if ([command isEqualToString:@"invite"]) {
         
         // check membership
-        if (![group isFounder:sender] && ![group existsMember:sender]) {
+        if (![group.founder isEqual:sender] && ![group existsMember:sender]) {
             NSLog(@"!!! only the founder or member can invite other members");
             return NO;
         }
@@ -202,7 +202,7 @@
     } else if ([command isEqualToString:@"expel"]) {
         
         // check founder
-        if (![group isFounder:sender]) {
+        if (![group.founder isEqual:sender]) {
             // polylogue's founder also be owner
             NSLog(@"!!! only the founder(owner) can expel members");
             return NO;
@@ -222,7 +222,7 @@
             return NO;
         }
         
-        if ([group isFounder:sender]) {
+        if ([group.founder isEqual:sender]) {
             // NOTE: if the founder(owner) quit, it means this group should be dismissed
             NSLog(@"!!! founder(owner) quit, group chat dismissed.");
             //return YES;
@@ -237,7 +237,7 @@
 
 - (BOOL)checkGroupCommand:(DKDMessageContent *)content
                 commander:(const MKMID *)sender {
-    const DIMID *groupID = content.group;
+    const DIMID *groupID = [DIMID IDWithID:content.group];
     
     if (groupID.type == MKMNetwork_Polylogue) {
         return [self checkPolylogueCommand:content commander:sender];

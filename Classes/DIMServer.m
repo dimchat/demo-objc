@@ -66,10 +66,10 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     // first handshake?
     if (cmd.state == DIMHandshake_Start) {
-        rMsg.meta = MKMMetaForID(_currentUser.ID);
+        rMsg.meta = DIMMetaForID(_currentUser.ID);
     }
     
-    DKDTransceiverCallback callback;
+    DIMTransceiverCallback callback;
     callback = ^(const DKDReliableMessage * rMsg, const NSError * _Nullable error) {
         if (error) {
             NSLog(@"send handshake command error: %@", error);
@@ -156,7 +156,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 #pragma mark DKDTransceiverDelegate
 
-- (BOOL)sendPackage:(const NSData *)data completionHandler:(nullable DKDTransceiverCompletionHandler)handler {
+- (BOOL)sendPackage:(const NSData *)data completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
     NSLog(@"sending data len: %ld", data.length);
     NSAssert(_star, @"star not found");
     NSInteger res = [_star send:data];

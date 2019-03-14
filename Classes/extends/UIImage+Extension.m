@@ -88,7 +88,6 @@
 + (UIImage *)tiledImages:(NSArray<UIImage *> *)images
                     size:(const CGSize)size
          backgroundColor:(nullable UIColor *)bgColor {
-    NSAssert(images.count > 0, @"tiled images cannot be empty");
     
     // prepare image contact
     UIGraphicsBeginImageContext(size);
@@ -111,6 +110,10 @@
     UIImage *tileImage;
     CGRect tileRect;
     switch (count) {
+        case 0:
+            NSAssert(false, @"tiled images cannot be empty");
+            break;
+            
         case 1:
             UIImageTiledDraw(0,  0,  0,  0,  0); // center
             break;
@@ -171,7 +174,7 @@
             UIImageTiledDraw(7,  2,  2,  3,  3); // bottom right
             break;
             
-        case 9:
+        default: // >= 9
             UIImageTiledDraw(0, -2, -2, -3, -3); // top left
             UIImageTiledDraw(1,  0, -2,  0, -3); // top center
             UIImageTiledDraw(2,  2, -2,  3, -3); // top right
@@ -181,9 +184,6 @@
             UIImageTiledDraw(6, -2,  2, -3,  3); // bottom left
             UIImageTiledDraw(7,  0,  2,  0,  3); // bottom center
             UIImageTiledDraw(8,  2,  2,  3,  3); // bottom right
-            break;
-            
-        default:
             break;
     }
     

@@ -84,10 +84,10 @@
     rMsg = [[DKDReliableMessage alloc] initWithJSONString:json];
     
     // check sender
-    const DIMID *sender = rMsg.envelope.sender;
-    const DIMMeta *meta = MKMMetaForID(sender);
+    const DIMID *sender = [DIMID IDWithID:rMsg.envelope.sender];
+    const DIMMeta *meta = DIMMetaForID(sender);
     if (!meta) {
-        meta = rMsg.meta;
+        meta = [DIMMeta metaWithMeta:rMsg.meta];
         if (!meta) {
             NSLog(@"meta for %@ not found, query from the network...", sender);
             // TODO: insert the message to a temporary queue to waiting meta
@@ -96,7 +96,7 @@
     }
     
     // check receiver
-    const DIMID *receiver = rMsg.envelope.receiver;
+    const DIMID *receiver = [DIMID IDWithID:rMsg.envelope.receiver];
     DIMUser *user = self.currentUser;
     if (MKMNetwork_IsCommunicator(receiver.type)) {
         if ([receiver isEqual:user.ID]) {
@@ -110,7 +110,7 @@
             }
         }
     } else if (MKMNetwork_IsGroup(receiver.type)) {
-        DIMGroup *group = MKMGroupWithID(receiver);
+        DIMGroup *group = DIMGroupWithID(receiver);
         if ([group existsMember:receiver]) {
             NSLog(@"got group message for current user: %@", user);
         } else {
@@ -154,7 +154,7 @@
         // NOTE: let the message processor to do the job
         //return ;
     } else if (content.type == DIMMessageType_History) {
-        const DIMID *groupID = content.group;
+        const DIMID *groupID = [DIMID IDWithID:content.group];
         if (groupID) {
             if (![self checkGroupCommand:content commander:sender]) {
                 NSLog(@"!!! error group history command from %@: %@", sender, content);

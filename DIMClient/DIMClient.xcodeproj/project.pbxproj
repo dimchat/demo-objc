@@ -181,7 +181,6 @@
 				E97816A92223E8C100BCE3AD /* MarsGate.xcodeproj */,
 				E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */,
 				E978169A2223E89D00BCE3AD /* Classes */,
-				E978169B2223E89D00BCE3AD /* Resources */,
 				E97816822223E7F200BCE3AD /* DIMClient */,
 				E978168D2223E7F200BCE3AD /* DIMClientTests */,
 				E97816812223E7F200BCE3AD /* Products */,
@@ -235,14 +234,6 @@
 			);
 			name = Classes;
 			path = ../Classes;
-			sourceTree = "<group>";
-		};
-		E978169B2223E89D00BCE3AD /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Resources;
-			path = ../Resources;
 			sourceTree = "<group>";
 		};
 		E978169F2223E8B400BCE3AD /* Products */ = {
