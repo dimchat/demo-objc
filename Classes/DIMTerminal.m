@@ -97,37 +97,33 @@
     
     // check receiver
     const DIMID *receiver = [DIMID IDWithID:rMsg.envelope.receiver];
-    DIMUser *user = self.currentUser;
-    if (MKMNetwork_IsCommunicator(receiver.type)) {
-        if ([receiver isEqual:user.ID]) {
-            NSLog(@"got message for current user: %@", user);
-        } else {
-            for (DIMUser *item in self.users) {
-                if ([receiver isEqual:item.ID]) {
-                    user = item;
-                    NSLog(@"got message for user: %@", user);
-                }
-            }
-        }
-    } else if (MKMNetwork_IsGroup(receiver.type)) {
-        DIMGroup *group = DIMGroupWithID(receiver);
-        if ([group existsMember:receiver]) {
-            NSLog(@"got group message for current user: %@", user);
-        } else {
-            for (DIMUser *item in self.users) {
-                if ([group existsMember:item.ID]) {
-                    user = item;
-                    NSLog(@"got group message for user: %@", user);
-                }
-            }
-        }
+    const DIMID *groupID = [DIMID IDWithID:rMsg.group];
+    DIMUser *user = nil;
+    if (MKMNetwork_IsGroup(receiver.type)) {
+        NSAssert(!groupID || [groupID isEqual:receiver], @"group error: %@ != %@", receiver, groupID);
+        groupID = receiver;
+        // FIXME: maybe other user?
+        user = self.currentUser;
+        receiver = user.ID;
+    } else if ([self.currentUser.ID isEqual:receiver]) {
+        user = self.currentUser;
     } else {
-        NSAssert(false, @"receiver type error: %@", receiver);
+        for (DIMUser *item in self.users) {
+            if ([item.ID isEqual:receiver]) {
+                user = item;
+                NSLog(@"got new message for: %@", item.ID);
+                break;
+            }
+        }
+    }
+    if (!user) {
+        NSAssert(false, @"!!! wrong recipient: %@", receiver);
+        return ;
     }
     
     // trans to instant message
     DKDInstantMessage *iMsg;
-    iMsg = [trans verifyAndDecryptMessage:rMsg forUser:user];
+    iMsg = [trans verifyAndDecryptMessage:rMsg users:self.users];
     
     // process commands
     DIMMessageContent *content = iMsg.content;

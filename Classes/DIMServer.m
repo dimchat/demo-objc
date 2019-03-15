@@ -63,6 +63,10 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
                                                  time:nil];
     DIMReliableMessage *rMsg;
     rMsg = [trans encryptAndSignMessage:iMsg];
+    if (!rMsg) {
+        NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
+        return ;
+    }
     
     // first handshake?
     if (cmd.state == DIMHandshake_Start) {
