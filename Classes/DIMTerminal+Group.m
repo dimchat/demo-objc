@@ -185,54 +185,52 @@
     DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = content.command;
     
+    // check founder
+    BOOL isFounder = NO;
+    const DIMID *founder = group.founder;
+    if (founder) {
+        isFounder = [sender isEqual:founder];
+    } else {
+        const DIMMeta *meta = group.meta;
+        const DIMPublicKey *PK = DIMPublicKeyForID(sender);
+        isFounder = [meta matchPublicKey:PK];
+    }
+    
+    // check membership
+    BOOL isMember = [group existsMember:sender];
+    
     if ([command isEqualToString:@"invite"]) {
-        
-        // check membership
-        if (![group.founder isEqual:sender] && ![group existsMember:sender]) {
+        // add member(s)
+        if (isFounder || isMember) {
+            return YES;
+        } else {
             NSLog(@"!!! only the founder or member can invite other members");
             return NO;
         }
-        // check members
-        NSArray *members = [content objectForKey:@"members"];
-        if (members.count == 0) {
-            NSLog(@"members is empty: %@", content);
-            return NO;
-        }
-        
     } else if ([command isEqualToString:@"expel"]) {
-        
-        // check founder
-        if (![group.founder isEqual:sender]) {
-            // polylogue's founder also be owner
+        // remove member(s)
+        if (isFounder) {
+            return YES;
+        } else {
             NSLog(@"!!! only the founder(owner) can expel members");
             return NO;
         }
-        // check members
-        NSArray *members = [content objectForKey:@"members"];
-        if (members.count == 0) {
-            NSLog(@"members is empty: %@", content);
-            return NO;
-        }
-        
     } else if ([command isEqualToString:@"quit"]) {
-        
-        // check membership
-        if (![group existsMember:sender]) {
+        // remove member
+        if (isFounder) {
+            NSLog(@"founder can not quit from polylogue: %@", group);
+            return NO;
+        } else if (isMember) {
+            return YES;
+        } else {
             NSLog(@"!!! you are not a member yet");
             return NO;
         }
-        
-        if ([group.founder isEqual:sender]) {
-            // NOTE: if the founder(owner) quit, it means this group should be dismissed
-            NSLog(@"!!! founder(owner) quit, group chat dismissed.");
-            //return YES;
-        }
-        
     } else {
         NSAssert(false, @"unknown command: %@", command);
     }
     
-    return YES;
+    return NO;
 }
 
 - (BOOL)checkGroupCommand:(DKDMessageContent *)content
