@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - User(s)
 
-@property (readonly, strong, nonatomic) NSArray<DIMUser *> *users;
+@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
 @property (strong, nonatomic) DIMUser *currentUser;
 
 - (void)addUser:(DIMUser *)user;

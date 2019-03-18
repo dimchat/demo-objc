@@ -19,7 +19,7 @@
 
 @interface DIMTerminal ()
 
-@property (strong, nonatomic) NSMutableArray<DIMUser *> *users;
+@property (copy, nonatomic) NSMutableArray<DIMUser *> *users;
 
 @end
 
@@ -40,6 +40,10 @@
 }
 
 #pragma mark - User(s)
+
+- (NSArray<DIMUser *> *)users {
+    return [_users copy];
+}
 
 - (DIMUser *)currentUser {
     return _currentStation.currentUser;

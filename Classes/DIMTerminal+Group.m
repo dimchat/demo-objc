@@ -47,6 +47,8 @@
         NSMutableArray *mArray = [newMembers mutableCopy];
         [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
         newMembers = mArray;
+    } else {
+        newMembers = [newMembers copy];
     }
     
     // checking expeled list with old members
@@ -143,6 +145,7 @@
     // end out meta+profile command
     DIMProfile *profile;
     profile = [[DIMProfile alloc] initWithID:ID];
+    //dict = [dict copy];
     for (NSString *key in dict) {
         if ([key isEqualToString:@"ID"]) {
             continue;
@@ -186,15 +189,7 @@
     NSString *command = content.command;
     
     // check founder
-    BOOL isFounder = NO;
-    const DIMID *founder = group.founder;
-    if (founder) {
-        isFounder = [sender isEqual:founder];
-    } else {
-        const DIMMeta *meta = group.meta;
-        const DIMPublicKey *PK = DIMPublicKeyForID(sender);
-        isFounder = [meta matchPublicKey:PK];
-    }
+    BOOL isFounder = [group isFounder:sender];
     
     // check membership
     BOOL isMember = [group existsMember:sender];
