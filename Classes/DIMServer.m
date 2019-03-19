@@ -8,15 +8,41 @@
 
 #import <MarsGate/MarsGate.h>
 
+#import "NSData+Crypto.h"
+
 #import "NSNotificationCenter+Extension.h"
 
 #import "DIMServerState.h"
 
 #import "DIMServer.h"
 
+@interface HandlerWrapper : NSObject
+
+@property (nonatomic) DIMTransceiverCompletionHandler handler;
+
+- (instancetype)initWithHandler:(DIMTransceiverCompletionHandler)handler;
+
+@end
+
+@implementation HandlerWrapper
+
+- (instancetype)initWithHandler:(DIMTransceiverCompletionHandler)handler {
+    if (self = [self init]) {
+        _handler = handler;
+    }
+    return self;
+}
+
+@end
+
+#pragma mark -
+
 const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
-@interface DIMServer ()
+@interface DIMServer () {
+    
+    NSMutableDictionary<NSData *, HandlerWrapper *> *_handlers;
+}
 
 @property (strong, nonatomic) DIMServerStateMachine *fsm;
 @property (strong, nonatomic) id<SGStar> star;
@@ -29,6 +55,8 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 - (instancetype)initWithID:(const MKMID *)ID {
     if (self = [super initWithID:ID]) {
         _currentUser = nil;
+        
+        _handlers = [[NSMutableDictionary alloc] init];
         
         _fsm = [[DIMServerStateMachine alloc] init];
         _fsm.server = self;
@@ -158,6 +186,19 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     [_fsm tick];
 }
 
+- (void)star:(id<SGStar>)star onFinishSend:(const NSData *)requestData withError:(const NSError *)error {
+    NSData *key = [requestData sha256];
+    HandlerWrapper *wrapper = [_handlers objectForKey:key];
+    if (wrapper) {
+        wrapper.handler(error);
+        [_handlers removeObjectForKey:key];
+    } else if (error) {
+        NSLog(@"send data package failed: %@", error);
+    } else {
+        NSLog(@"send data package success");
+    }
+}
+
 #pragma mark DKDTransceiverDelegate
 
 - (BOOL)sendPackage:(const NSData *)data completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
@@ -166,15 +207,9 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     NSInteger res = [_star send:data];
     
     if (handler) {
-        NSError *error;
-        if (res < 0) {
-            error = [[NSError alloc] initWithDomain:NSNetServicesErrorDomain
-                                               code:res
-                                           userInfo:nil];
-        } else {
-            error = nil;
-        }
-        handler(error);
+        NSData *key = [data sha256];
+        HandlerWrapper *wrapper = [[HandlerWrapper alloc] initWithHandler:handler];
+        [_handlers setObject:wrapper forKey:key];
     }
     
     return res == 0;

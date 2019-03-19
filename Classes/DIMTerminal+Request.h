@@ -10,6 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern const NSString *kNotificationName_MessageSent;
+extern const NSString *kNotificationName_SendMessageFailed;
+
 @interface DIMTerminal (Request)
 
 - (void)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver;

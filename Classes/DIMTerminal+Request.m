@@ -6,10 +6,15 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "NSNotificationCenter+Extension.h"
+
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
-@implementation DIMTerminal (Command)
+const NSString *kNotificationName_MessageSent       = @"MessageSent";
+const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
+
+@implementation DIMTerminal (Request)
 
 - (void)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver {
     if (!self.currentUser) {
@@ -20,23 +25,16 @@
     if (!DIMPublicKeyForID(receiver)) {
         NSLog(@"cannot get public key for receiver: %@", receiver);
         [self queryMetaForID:receiver];
+        // TODO: save the message content in waiting queue
         return ;
     }
-    DIMTransceiverCallback callback;
-    callback = ^(const DKDReliableMessage *rMsg,
-                 const NSError *error) {
-        if (error) {
-            NSLog(@"send content error: %@", error);
-        } else {
-            NSLog(@"sent content: %@ -> %@", content, rMsg);
-        }
-    };
-    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    [trans sendMessageContent:content
-                         from:self.currentUser.ID
-                           to:receiver
-                         time:nil
-                     callback:callback];
+    // make instant message
+    DIMInstantMessage *iMsg;
+    iMsg = [[DIMInstantMessage alloc] initWithContent:content
+                                               sender:self.currentUser.ID
+                                             receiver:receiver
+                                                 time:nil];
+    [self sendMessage:iMsg];
 }
 
 - (void)sendCommand:(DIMCommand *)cmd {
@@ -50,8 +48,26 @@
 
 - (void)sendMessage:(DKDInstantMessage *)msg {
     NSAssert([self.currentUser.ID isEqual:msg.envelope.sender], @"sender error: %@", msg);
-    const DIMID *receiver = [DIMID IDWithID:msg.envelope.receiver];
-    [self sendContent:msg.content to:receiver];
+    // callback
+    DIMTransceiverCallback callback;
+    callback = ^(const DKDReliableMessage *rMsg, const NSError *error) {
+        const NSString *name = nil;
+        NSDictionary *info = nil;
+        if (error) {
+            NSLog(@"send message error: %@", error);
+            name = kNotificationName_SendMessageFailed;
+            info = @{@"message": msg, @"error": error};
+        } else {
+            NSLog(@"sent message: %@ -> %@", msg, rMsg);
+            name = kNotificationName_MessageSent;
+            info = @{@"message": msg};
+        }
+        [NSNotificationCenter postNotificationName:name
+                                            object:self
+                                          userInfo:info];
+    };
+    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
+    [trans sendInstantMessage:msg callback:callback dispersedly:YES];
 }
 
 #pragma mark -
