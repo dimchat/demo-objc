@@ -6,7 +6,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for DIMClient.
 FOUNDATION_EXPORT double DIMClientVersionNumber;

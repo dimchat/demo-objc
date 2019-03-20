@@ -8,6 +8,10 @@
 
 #import "UIViewController+Extension.h"
 
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+// TODO:
+#else
+
 @implementation UIViewController (Extension)
 
 - (void)showMessage:(NSString *)text withTitle:(NSString *)title {
@@ -70,3 +74,5 @@
 }
 
 @end
+
+#endif

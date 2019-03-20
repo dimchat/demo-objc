@@ -10,6 +10,10 @@
 
 #import "DIMProfile+Extension.h"
 
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+#import <Cocoa/Cocoa.h>
+#else
+
 @implementation DIMProfile (Extension)
 
 - (UIImage *)avatarImageWithSize:(const CGSize)size {
@@ -90,3 +94,5 @@
 }
 
 @end
+
+#endif

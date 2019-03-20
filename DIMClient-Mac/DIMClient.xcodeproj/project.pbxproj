@@ -1,0 +1,778 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E9BBC2F322429D6C00E6ACDA /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */; };
+		E9BBC2F822429D6C00E6ACDA /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */; };
+		E9BBC32222429D9500E6ACDA /* DIMProfile+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30522429D9500E6ACDA /* DIMProfile+Extension.h */; };
+		E9BBC32322429D9500E6ACDA /* UIImageView+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30622429D9500E6ACDA /* UIImageView+Extension.h */; };
+		E9BBC32422429D9500E6ACDA /* NSString+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30722429D9500E6ACDA /* NSString+Extension.h */; };
+		E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */; };
+		E9BBC32622429D9500E6ACDA /* UIViewController+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30922429D9500E6ACDA /* UIViewController+Extension.m */; };
+		E9BBC32722429D9500E6ACDA /* UIImage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30A22429D9500E6ACDA /* UIImage+Extension.m */; };
+		E9BBC32822429D9500E6ACDA /* UIStoryboardSegue+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30B22429D9500E6ACDA /* UIStoryboardSegue+Extension.h */; };
+		E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */; };
+		E9BBC32A22429D9500E6ACDA /* UIImageView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30D22429D9500E6ACDA /* UIImageView+Extension.m */; };
+		E9BBC32B22429D9500E6ACDA /* DIMProfile+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30E22429D9500E6ACDA /* DIMProfile+Extension.m */; };
+		E9BBC32C22429D9500E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */; };
+		E9BBC32D22429D9500E6ACDA /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31022429D9500E6ACDA /* NSString+Extension.m */; };
+		E9BBC32E22429D9500E6ACDA /* UIImage+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31122429D9500E6ACDA /* UIImage+Extension.h */; };
+		E9BBC32F22429D9500E6ACDA /* UIViewController+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31222429D9500E6ACDA /* UIViewController+Extension.h */; };
+		E9BBC33022429D9500E6ACDA /* NSNotificationCenter+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */; };
+		E9BBC33122429D9500E6ACDA /* UIStoryboardSegue+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31422429D9500E6ACDA /* UIStoryboardSegue+Extension.m */; };
+		E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31522429D9500E6ACDA /* DIMClient.h */; };
+		E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */; };
+		E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */; };
+		E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31822429D9500E6ACDA /* DIMTerminal.h */; };
+		E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31922429D9500E6ACDA /* DIMServer.m */; };
+		E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31A22429D9500E6ACDA /* DIMTerminal+Group.m */; };
+		E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31B22429D9500E6ACDA /* DIMServerState.h */; };
+		E9BBC33922429D9500E6ACDA /* DIMTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31C22429D9500E6ACDA /* DIMTerminal.m */; };
+		E9BBC33A22429D9500E6ACDA /* DIMTerminal+Request.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31D22429D9500E6ACDA /* DIMTerminal+Request.m */; };
+		E9BBC33B22429D9500E6ACDA /* DIMTerminal+Response.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31E22429D9500E6ACDA /* DIMTerminal+Response.m */; };
+		E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31F22429D9500E6ACDA /* DIMServer.h */; };
+		E9BBC33D22429D9500E6ACDA /* DIMServerState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC32022429D9500E6ACDA /* DIMServerState.m */; };
+		E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC32122429D9500E6ACDA /* DIMTerminal+Group.h */; };
+		E9BBC35D2242A1C900E6ACDA /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC34722429DAA00E6ACDA /* DIMCore.framework */; };
+		E9BBC3602242A1F600E6ACDA /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC35022429E3E00E6ACDA /* MarsGate.framework */; };
+		E9BBC3612242A1FA00E6ACDA /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC35922429EA300E6ACDA /* FiniteStateMachine.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E9BBC2F422429D6C00E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC2E022429D6C00E6ACDA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9BBC2E822429D6C00E6ACDA;
+			remoteInfo = DIMClient;
+		};
+		E9BBC34622429DAA00E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9BBC14222427EBC00E6ACDA;
+			remoteInfo = DIMCore;
+		};
+		E9BBC34822429DAA00E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9BBC14B22427EBC00E6ACDA;
+			remoteInfo = DIMCoreTests;
+		};
+		E9BBC34F22429E3E00E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9BBC26F224288EE00E6ACDA;
+			remoteInfo = MarsGate;
+		};
+		E9BBC35122429E3E00E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9BBC278224288EE00E6ACDA;
+			remoteInfo = MarsGateTests;
+		};
+		E9BBC35822429EA300E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9BBC2082242874100E6ACDA;
+			remoteInfo = FiniteStateMachine;
+		};
+		E9BBC35A22429EA300E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E9BBC2112242874100E6ACDA;
+			remoteInfo = FiniteStateMachineTests;
+		};
+		E9BBC3622242A20900E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E9BBC14122427EBC00E6ACDA;
+			remoteInfo = DIMCore;
+		};
+		E9BBC3642242A20E00E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E9BBC26E224288EE00E6ACDA;
+			remoteInfo = MarsGate;
+		};
+		E9BBC3662242A21100E6ACDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E9BBC2072242874100E6ACDA;
+			remoteInfo = FiniteStateMachine;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9BBC2ED22429D6C00E6ACDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9BBC2F222429D6C00E6ACDA /* DIMClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMClientTests.m; sourceTree = "<group>"; };
+		E9BBC2F922429D6C00E6ACDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9BBC30522429D9500E6ACDA /* DIMProfile+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMProfile+Extension.h"; sourceTree = "<group>"; };
+		E9BBC30622429D9500E6ACDA /* UIImageView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Extension.h"; sourceTree = "<group>"; };
+		E9BBC30722429D9500E6ACDA /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
+		E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
+		E9BBC30922429D9500E6ACDA /* UIViewController+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Extension.m"; sourceTree = "<group>"; };
+		E9BBC30A22429D9500E6ACDA /* UIImage+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extension.m"; sourceTree = "<group>"; };
+		E9BBC30B22429D9500E6ACDA /* UIStoryboardSegue+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIStoryboardSegue+Extension.h"; sourceTree = "<group>"; };
+		E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+Extension.h"; sourceTree = "<group>"; };
+		E9BBC30D22429D9500E6ACDA /* UIImageView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Extension.m"; sourceTree = "<group>"; };
+		E9BBC30E22429D9500E6ACDA /* DIMProfile+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMProfile+Extension.m"; sourceTree = "<group>"; };
+		E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
+		E9BBC31022429D9500E6ACDA /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
+		E9BBC31122429D9500E6ACDA /* UIImage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extension.h"; sourceTree = "<group>"; };
+		E9BBC31222429D9500E6ACDA /* UIViewController+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Extension.h"; sourceTree = "<group>"; };
+		E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+Extension.m"; sourceTree = "<group>"; };
+		E9BBC31422429D9500E6ACDA /* UIStoryboardSegue+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIStoryboardSegue+Extension.m"; sourceTree = "<group>"; };
+		E9BBC31522429D9500E6ACDA /* DIMClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMClient.h; sourceTree = "<group>"; };
+		E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Response.h"; sourceTree = "<group>"; };
+		E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Request.h"; sourceTree = "<group>"; };
+		E9BBC31822429D9500E6ACDA /* DIMTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMTerminal.h; sourceTree = "<group>"; };
+		E9BBC31922429D9500E6ACDA /* DIMServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMServer.m; sourceTree = "<group>"; };
+		E9BBC31A22429D9500E6ACDA /* DIMTerminal+Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMTerminal+Group.m"; sourceTree = "<group>"; };
+		E9BBC31B22429D9500E6ACDA /* DIMServerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServerState.h; sourceTree = "<group>"; };
+		E9BBC31C22429D9500E6ACDA /* DIMTerminal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMTerminal.m; sourceTree = "<group>"; };
+		E9BBC31D22429D9500E6ACDA /* DIMTerminal+Request.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMTerminal+Request.m"; sourceTree = "<group>"; };
+		E9BBC31E22429D9500E6ACDA /* DIMTerminal+Response.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMTerminal+Response.m"; sourceTree = "<group>"; };
+		E9BBC31F22429D9500E6ACDA /* DIMServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServer.h; sourceTree = "<group>"; };
+		E9BBC32022429D9500E6ACDA /* DIMServerState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMServerState.m; sourceTree = "<group>"; };
+		E9BBC32122429D9500E6ACDA /* DIMTerminal+Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Group.h"; sourceTree = "<group>"; };
+		E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore-Mac/DIMCore.xcodeproj"; sourceTree = "<group>"; };
+		E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MarsGate.xcodeproj; path = "../../../moky/StarGate/MarsGate-Mac/MarsGate.xcodeproj"; sourceTree = "<group>"; };
+		E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = "../../../moky/FiniteStateMachine/FiniteStateMachine-Mac/FiniteStateMachine.xcodeproj"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E9BBC2E622429D6C00E6ACDA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BBC3612242A1FA00E6ACDA /* FiniteStateMachine.framework in Frameworks */,
+				E9BBC3602242A1F600E6ACDA /* MarsGate.framework in Frameworks */,
+				E9BBC35D2242A1C900E6ACDA /* DIMCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9BBC2EF22429D6C00E6ACDA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BBC2F322429D6C00E6ACDA /* DIMClient.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E9BBC2DF22429D6C00E6ACDA = {
+			isa = PBXGroup;
+			children = (
+				E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */,
+				E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */,
+				E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */,
+				E9BBC30322429D9500E6ACDA /* Classes */,
+				E9BBC2EB22429D6C00E6ACDA /* DIMClient */,
+				E9BBC2F622429D6C00E6ACDA /* DIMClientTests */,
+				E9BBC2EA22429D6C00E6ACDA /* Products */,
+				E9BBC35C2242A1C900E6ACDA /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		E9BBC2EA22429D6C00E6ACDA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */,
+				E9BBC2F222429D6C00E6ACDA /* DIMClientTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9BBC2EB22429D6C00E6ACDA /* DIMClient */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC2ED22429D6C00E6ACDA /* Info.plist */,
+			);
+			path = DIMClient;
+			sourceTree = "<group>";
+		};
+		E9BBC2F622429D6C00E6ACDA /* DIMClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */,
+				E9BBC2F922429D6C00E6ACDA /* Info.plist */,
+			);
+			path = DIMClientTests;
+			sourceTree = "<group>";
+		};
+		E9BBC30322429D9500E6ACDA /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC30422429D9500E6ACDA /* extends */,
+				E9BBC31F22429D9500E6ACDA /* DIMServer.h */,
+				E9BBC31922429D9500E6ACDA /* DIMServer.m */,
+				E9BBC31B22429D9500E6ACDA /* DIMServerState.h */,
+				E9BBC32022429D9500E6ACDA /* DIMServerState.m */,
+				E9BBC31822429D9500E6ACDA /* DIMTerminal.h */,
+				E9BBC31C22429D9500E6ACDA /* DIMTerminal.m */,
+				E9BBC32122429D9500E6ACDA /* DIMTerminal+Group.h */,
+				E9BBC31A22429D9500E6ACDA /* DIMTerminal+Group.m */,
+				E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */,
+				E9BBC31D22429D9500E6ACDA /* DIMTerminal+Request.m */,
+				E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */,
+				E9BBC31E22429D9500E6ACDA /* DIMTerminal+Response.m */,
+				E9BBC31522429D9500E6ACDA /* DIMClient.h */,
+			);
+			name = Classes;
+			path = ../Classes;
+			sourceTree = "<group>";
+		};
+		E9BBC30422429D9500E6ACDA /* extends */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC30522429D9500E6ACDA /* DIMProfile+Extension.h */,
+				E9BBC30E22429D9500E6ACDA /* DIMProfile+Extension.m */,
+				E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */,
+				E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */,
+				E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */,
+				E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */,
+				E9BBC30722429D9500E6ACDA /* NSString+Extension.h */,
+				E9BBC31022429D9500E6ACDA /* NSString+Extension.m */,
+				E9BBC31122429D9500E6ACDA /* UIImage+Extension.h */,
+				E9BBC30A22429D9500E6ACDA /* UIImage+Extension.m */,
+				E9BBC30622429D9500E6ACDA /* UIImageView+Extension.h */,
+				E9BBC30D22429D9500E6ACDA /* UIImageView+Extension.m */,
+				E9BBC30B22429D9500E6ACDA /* UIStoryboardSegue+Extension.h */,
+				E9BBC31422429D9500E6ACDA /* UIStoryboardSegue+Extension.m */,
+				E9BBC31222429D9500E6ACDA /* UIViewController+Extension.h */,
+				E9BBC30922429D9500E6ACDA /* UIViewController+Extension.m */,
+			);
+			path = extends;
+			sourceTree = "<group>";
+		};
+		E9BBC34022429DAA00E6ACDA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC34722429DAA00E6ACDA /* DIMCore.framework */,
+				E9BBC34922429DAA00E6ACDA /* DIMCoreTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9BBC34B22429E3E00E6ACDA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC35022429E3E00E6ACDA /* MarsGate.framework */,
+				E9BBC35222429E3E00E6ACDA /* MarsGateTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9BBC35422429EA200E6ACDA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E9BBC35922429EA300E6ACDA /* FiniteStateMachine.framework */,
+				E9BBC35B22429EA300E6ACDA /* FiniteStateMachineTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9BBC35C2242A1C900E6ACDA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		E9BBC2E422429D6C00E6ACDA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BBC32E22429D9500E6ACDA /* UIImage+Extension.h in Headers */,
+				E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */,
+				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
+				E9BBC32422429D9500E6ACDA /* NSString+Extension.h in Headers */,
+				E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */,
+				E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */,
+				E9BBC32222429D9500E6ACDA /* DIMProfile+Extension.h in Headers */,
+				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
+				E9BBC32322429D9500E6ACDA /* UIImageView+Extension.h in Headers */,
+				E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */,
+				E9BBC32822429D9500E6ACDA /* UIStoryboardSegue+Extension.h in Headers */,
+				E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */,
+				E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */,
+				E9BBC32F22429D9500E6ACDA /* UIViewController+Extension.h in Headers */,
+				E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		E9BBC2E822429D6C00E6ACDA /* DIMClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9BBC2FD22429D6C00E6ACDA /* Build configuration list for PBXNativeTarget "DIMClient" */;
+			buildPhases = (
+				E9BBC2E422429D6C00E6ACDA /* Headers */,
+				E9BBC2E522429D6C00E6ACDA /* Sources */,
+				E9BBC2E622429D6C00E6ACDA /* Frameworks */,
+				E9BBC2E722429D6C00E6ACDA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9BBC3672242A21100E6ACDA /* PBXTargetDependency */,
+				E9BBC3652242A20E00E6ACDA /* PBXTargetDependency */,
+				E9BBC3632242A20900E6ACDA /* PBXTargetDependency */,
+			);
+			name = DIMClient;
+			productName = DIMClient;
+			productReference = E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		E9BBC2F122429D6C00E6ACDA /* DIMClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9BBC30022429D6C00E6ACDA /* Build configuration list for PBXNativeTarget "DIMClientTests" */;
+			buildPhases = (
+				E9BBC2EE22429D6C00E6ACDA /* Sources */,
+				E9BBC2EF22429D6C00E6ACDA /* Frameworks */,
+				E9BBC2F022429D6C00E6ACDA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9BBC2F522429D6C00E6ACDA /* PBXTargetDependency */,
+			);
+			name = DIMClientTests;
+			productName = DIMClientTests;
+			productReference = E9BBC2F222429D6C00E6ACDA /* DIMClientTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E9BBC2E022429D6C00E6ACDA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = "DIM Group";
+				TargetAttributes = {
+					E9BBC2E822429D6C00E6ACDA = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					E9BBC2F122429D6C00E6ACDA = {
+						CreatedOnToolsVersion = 10.1;
+					};
+				};
+			};
+			buildConfigurationList = E9BBC2E322429D6C00E6ACDA /* Build configuration list for PBXProject "DIMClient" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = E9BBC2DF22429D6C00E6ACDA;
+			productRefGroup = E9BBC2EA22429D6C00E6ACDA /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = E9BBC34022429DAA00E6ACDA /* Products */;
+					ProjectRef = E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */;
+				},
+				{
+					ProductGroup = E9BBC35422429EA200E6ACDA /* Products */;
+					ProjectRef = E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */;
+				},
+				{
+					ProductGroup = E9BBC34B22429E3E00E6ACDA /* Products */;
+					ProjectRef = E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				E9BBC2E822429D6C00E6ACDA /* DIMClient */,
+				E9BBC2F122429D6C00E6ACDA /* DIMClientTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		E9BBC34722429DAA00E6ACDA /* DIMCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = DIMCore.framework;
+			remoteRef = E9BBC34622429DAA00E6ACDA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9BBC34922429DAA00E6ACDA /* DIMCoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DIMCoreTests.xctest;
+			remoteRef = E9BBC34822429DAA00E6ACDA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9BBC35022429E3E00E6ACDA /* MarsGate.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = MarsGate.framework;
+			remoteRef = E9BBC34F22429E3E00E6ACDA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9BBC35222429E3E00E6ACDA /* MarsGateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = MarsGateTests.xctest;
+			remoteRef = E9BBC35122429E3E00E6ACDA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9BBC35922429EA300E6ACDA /* FiniteStateMachine.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = FiniteStateMachine.framework;
+			remoteRef = E9BBC35822429EA300E6ACDA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		E9BBC35B22429EA300E6ACDA /* FiniteStateMachineTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = FiniteStateMachineTests.xctest;
+			remoteRef = E9BBC35A22429EA300E6ACDA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E9BBC2E722429D6C00E6ACDA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9BBC2F022429D6C00E6ACDA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E9BBC2E522429D6C00E6ACDA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BBC33122429D9500E6ACDA /* UIStoryboardSegue+Extension.m in Sources */,
+				E9BBC33B22429D9500E6ACDA /* DIMTerminal+Response.m in Sources */,
+				E9BBC32B22429D9500E6ACDA /* DIMProfile+Extension.m in Sources */,
+				E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */,
+				E9BBC32D22429D9500E6ACDA /* NSString+Extension.m in Sources */,
+				E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */,
+				E9BBC32C22429D9500E6ACDA /* NSDate+Extension.m in Sources */,
+				E9BBC32622429D9500E6ACDA /* UIViewController+Extension.m in Sources */,
+				E9BBC32A22429D9500E6ACDA /* UIImageView+Extension.m in Sources */,
+				E9BBC32722429D9500E6ACDA /* UIImage+Extension.m in Sources */,
+				E9BBC33922429D9500E6ACDA /* DIMTerminal.m in Sources */,
+				E9BBC33D22429D9500E6ACDA /* DIMServerState.m in Sources */,
+				E9BBC33A22429D9500E6ACDA /* DIMTerminal+Request.m in Sources */,
+				E9BBC33022429D9500E6ACDA /* NSNotificationCenter+Extension.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9BBC2EE22429D6C00E6ACDA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9BBC2F822429D6C00E6ACDA /* DIMClientTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E9BBC2F522429D6C00E6ACDA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9BBC2E822429D6C00E6ACDA /* DIMClient */;
+			targetProxy = E9BBC2F422429D6C00E6ACDA /* PBXContainerItemProxy */;
+		};
+		E9BBC3632242A20900E6ACDA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DIMCore;
+			targetProxy = E9BBC3622242A20900E6ACDA /* PBXContainerItemProxy */;
+		};
+		E9BBC3652242A20E00E6ACDA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MarsGate;
+			targetProxy = E9BBC3642242A20E00E6ACDA /* PBXContainerItemProxy */;
+		};
+		E9BBC3672242A21100E6ACDA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FiniteStateMachine;
+			targetProxy = E9BBC3662242A21100E6ACDA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E9BBC2FB22429D6C00E6ACDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E9BBC2FC22429D6C00E6ACDA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E9BBC2FE22429D6C00E6ACDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = (
+					"../../dkd-objc/Classes/**",
+					"../../mkm-objc/Classes/**",
+					"../../core-objc/Classes/**",
+				);
+				INFOPLIST_FILE = DIMClient/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.DIMClient;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E9BBC2FF22429D6C00E6ACDA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = (
+					"../../dkd-objc/Classes/**",
+					"../../mkm-objc/Classes/**",
+					"../../core-objc/Classes/**",
+				);
+				INFOPLIST_FILE = DIMClient/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.DIMClient;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		E9BBC30122429D6C00E6ACDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				INFOPLIST_FILE = DIMClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.DIMClientTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		E9BBC30222429D6C00E6ACDA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				INFOPLIST_FILE = DIMClientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = DIM.DIMClientTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E9BBC2E322429D6C00E6ACDA /* Build configuration list for PBXProject "DIMClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9BBC2FB22429D6C00E6ACDA /* Debug */,
+				E9BBC2FC22429D6C00E6ACDA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9BBC2FD22429D6C00E6ACDA /* Build configuration list for PBXNativeTarget "DIMClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9BBC2FE22429D6C00E6ACDA /* Debug */,
+				E9BBC2FF22429D6C00E6ACDA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E9BBC30022429D6C00E6ACDA /* Build configuration list for PBXNativeTarget "DIMClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9BBC30122429D6C00E6ACDA /* Debug */,
+				E9BBC30222429D6C00E6ACDA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E9BBC2E022429D6C00E6ACDA /* Project object */;
+}

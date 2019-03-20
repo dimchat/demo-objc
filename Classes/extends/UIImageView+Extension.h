@@ -6,6 +6,11 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#include <TargetConditionals.h>
+
+#if (TARGET_OS_MAC && !(TARGET_OS_EMBEDDED || TARGET_OS_IPHONE))
+// TODO:
+#else
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -25,3 +30,5 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+
+#endif
