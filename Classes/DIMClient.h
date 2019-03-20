@@ -16,6 +16,12 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <DIMClient/PublicHeader.h>
 
+// FiniteStateMachine
+//#import <FiniteStateMachine/FiniteStateMachine.h>
+
+// StarGate
+//#import <MarsGate/MarsGate.h>
+
 // MKM
 //#import <MingKeMing/MingKeMing.h>
 
@@ -25,14 +31,8 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 // Core
 //#import <DIMCore/DIMCore.h>
 
-// StarGate
-//#import <MarsGate/MarsGate.h>
-
 #if !defined(__DIM_CLIENT__)
 #define __DIM_CLIENT__ 1
-
-// extends
-#import <DIMClient/DIMProfile+Extension.h>
 
 #import <DIMClient/DIMServer.h>
 #import <DIMClient/DIMServerState.h>

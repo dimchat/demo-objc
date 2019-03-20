@@ -9,22 +9,10 @@
 /* Begin PBXBuildFile section */
 		E9BBC2F322429D6C00E6ACDA /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */; };
 		E9BBC2F822429D6C00E6ACDA /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */; };
-		E9BBC32222429D9500E6ACDA /* DIMProfile+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30522429D9500E6ACDA /* DIMProfile+Extension.h */; };
-		E9BBC32322429D9500E6ACDA /* UIImageView+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30622429D9500E6ACDA /* UIImageView+Extension.h */; };
-		E9BBC32422429D9500E6ACDA /* NSString+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30722429D9500E6ACDA /* NSString+Extension.h */; };
 		E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */; };
-		E9BBC32622429D9500E6ACDA /* UIViewController+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30922429D9500E6ACDA /* UIViewController+Extension.m */; };
-		E9BBC32722429D9500E6ACDA /* UIImage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30A22429D9500E6ACDA /* UIImage+Extension.m */; };
-		E9BBC32822429D9500E6ACDA /* UIStoryboardSegue+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30B22429D9500E6ACDA /* UIStoryboardSegue+Extension.h */; };
 		E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */; };
-		E9BBC32A22429D9500E6ACDA /* UIImageView+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30D22429D9500E6ACDA /* UIImageView+Extension.m */; };
-		E9BBC32B22429D9500E6ACDA /* DIMProfile+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30E22429D9500E6ACDA /* DIMProfile+Extension.m */; };
 		E9BBC32C22429D9500E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */; };
-		E9BBC32D22429D9500E6ACDA /* NSString+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31022429D9500E6ACDA /* NSString+Extension.m */; };
-		E9BBC32E22429D9500E6ACDA /* UIImage+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31122429D9500E6ACDA /* UIImage+Extension.h */; };
-		E9BBC32F22429D9500E6ACDA /* UIViewController+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31222429D9500E6ACDA /* UIViewController+Extension.h */; };
 		E9BBC33022429D9500E6ACDA /* NSNotificationCenter+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */; };
-		E9BBC33122429D9500E6ACDA /* UIStoryboardSegue+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31422429D9500E6ACDA /* UIStoryboardSegue+Extension.m */; };
 		E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31522429D9500E6ACDA /* DIMClient.h */; };
 		E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */; };
 		E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */; };
@@ -122,22 +110,10 @@
 		E9BBC2F222429D6C00E6ACDA /* DIMClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMClientTests.m; sourceTree = "<group>"; };
 		E9BBC2F922429D6C00E6ACDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E9BBC30522429D9500E6ACDA /* DIMProfile+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMProfile+Extension.h"; sourceTree = "<group>"; };
-		E9BBC30622429D9500E6ACDA /* UIImageView+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+Extension.h"; sourceTree = "<group>"; };
-		E9BBC30722429D9500E6ACDA /* NSString+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Extension.h"; sourceTree = "<group>"; };
 		E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
-		E9BBC30922429D9500E6ACDA /* UIViewController+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Extension.m"; sourceTree = "<group>"; };
-		E9BBC30A22429D9500E6ACDA /* UIImage+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Extension.m"; sourceTree = "<group>"; };
-		E9BBC30B22429D9500E6ACDA /* UIStoryboardSegue+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIStoryboardSegue+Extension.h"; sourceTree = "<group>"; };
 		E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+Extension.h"; sourceTree = "<group>"; };
-		E9BBC30D22429D9500E6ACDA /* UIImageView+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+Extension.m"; sourceTree = "<group>"; };
-		E9BBC30E22429D9500E6ACDA /* DIMProfile+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMProfile+Extension.m"; sourceTree = "<group>"; };
 		E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
-		E9BBC31022429D9500E6ACDA /* NSString+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Extension.m"; sourceTree = "<group>"; };
-		E9BBC31122429D9500E6ACDA /* UIImage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Extension.h"; sourceTree = "<group>"; };
-		E9BBC31222429D9500E6ACDA /* UIViewController+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Extension.h"; sourceTree = "<group>"; };
 		E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+Extension.m"; sourceTree = "<group>"; };
-		E9BBC31422429D9500E6ACDA /* UIStoryboardSegue+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIStoryboardSegue+Extension.m"; sourceTree = "<group>"; };
 		E9BBC31522429D9500E6ACDA /* DIMClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMClient.h; sourceTree = "<group>"; };
 		E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Response.h"; sourceTree = "<group>"; };
 		E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Request.h"; sourceTree = "<group>"; };
@@ -243,22 +219,10 @@
 		E9BBC30422429D9500E6ACDA /* extends */ = {
 			isa = PBXGroup;
 			children = (
-				E9BBC30522429D9500E6ACDA /* DIMProfile+Extension.h */,
-				E9BBC30E22429D9500E6ACDA /* DIMProfile+Extension.m */,
 				E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */,
 				E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */,
 				E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */,
 				E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */,
-				E9BBC30722429D9500E6ACDA /* NSString+Extension.h */,
-				E9BBC31022429D9500E6ACDA /* NSString+Extension.m */,
-				E9BBC31122429D9500E6ACDA /* UIImage+Extension.h */,
-				E9BBC30A22429D9500E6ACDA /* UIImage+Extension.m */,
-				E9BBC30622429D9500E6ACDA /* UIImageView+Extension.h */,
-				E9BBC30D22429D9500E6ACDA /* UIImageView+Extension.m */,
-				E9BBC30B22429D9500E6ACDA /* UIStoryboardSegue+Extension.h */,
-				E9BBC31422429D9500E6ACDA /* UIStoryboardSegue+Extension.m */,
-				E9BBC31222429D9500E6ACDA /* UIViewController+Extension.h */,
-				E9BBC30922429D9500E6ACDA /* UIViewController+Extension.m */,
 			);
 			path = extends;
 			sourceTree = "<group>";
@@ -304,20 +268,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9BBC32E22429D9500E6ACDA /* UIImage+Extension.h in Headers */,
 				E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */,
 				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
-				E9BBC32422429D9500E6ACDA /* NSString+Extension.h in Headers */,
 				E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */,
 				E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */,
-				E9BBC32222429D9500E6ACDA /* DIMProfile+Extension.h in Headers */,
 				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
-				E9BBC32322429D9500E6ACDA /* UIImageView+Extension.h in Headers */,
 				E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */,
-				E9BBC32822429D9500E6ACDA /* UIStoryboardSegue+Extension.h in Headers */,
 				E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */,
 				E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */,
-				E9BBC32F22429D9500E6ACDA /* UIViewController+Extension.h in Headers */,
 				E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -480,16 +438,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9BBC33122429D9500E6ACDA /* UIStoryboardSegue+Extension.m in Sources */,
 				E9BBC33B22429D9500E6ACDA /* DIMTerminal+Response.m in Sources */,
-				E9BBC32B22429D9500E6ACDA /* DIMProfile+Extension.m in Sources */,
 				E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */,
-				E9BBC32D22429D9500E6ACDA /* NSString+Extension.m in Sources */,
 				E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */,
 				E9BBC32C22429D9500E6ACDA /* NSDate+Extension.m in Sources */,
-				E9BBC32622429D9500E6ACDA /* UIViewController+Extension.m in Sources */,
-				E9BBC32A22429D9500E6ACDA /* UIImageView+Extension.m in Sources */,
-				E9BBC32722429D9500E6ACDA /* UIImage+Extension.m in Sources */,
 				E9BBC33922429D9500E6ACDA /* DIMTerminal.m in Sources */,
 				E9BBC33D22429D9500E6ACDA /* DIMServerState.m in Sources */,
 				E9BBC33A22429D9500E6ACDA /* DIMTerminal+Request.m in Sources */,
