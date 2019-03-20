@@ -13,19 +13,19 @@
 		E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30C22429D9500E6ACDA /* NSNotificationCenter+Extension.h */; };
 		E9BBC32C22429D9500E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC30F22429D9500E6ACDA /* NSDate+Extension.m */; };
 		E9BBC33022429D9500E6ACDA /* NSNotificationCenter+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31322429D9500E6ACDA /* NSNotificationCenter+Extension.m */; };
-		E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31522429D9500E6ACDA /* DIMClient.h */; };
-		E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */; };
-		E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */; };
-		E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31822429D9500E6ACDA /* DIMTerminal.h */; };
+		E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31522429D9500E6ACDA /* DIMClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31622429D9500E6ACDA /* DIMTerminal+Response.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31722429D9500E6ACDA /* DIMTerminal+Request.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31822429D9500E6ACDA /* DIMTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31922429D9500E6ACDA /* DIMServer.m */; };
 		E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31A22429D9500E6ACDA /* DIMTerminal+Group.m */; };
-		E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31B22429D9500E6ACDA /* DIMServerState.h */; };
+		E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31B22429D9500E6ACDA /* DIMServerState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BBC33922429D9500E6ACDA /* DIMTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31C22429D9500E6ACDA /* DIMTerminal.m */; };
 		E9BBC33A22429D9500E6ACDA /* DIMTerminal+Request.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31D22429D9500E6ACDA /* DIMTerminal+Request.m */; };
 		E9BBC33B22429D9500E6ACDA /* DIMTerminal+Response.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC31E22429D9500E6ACDA /* DIMTerminal+Response.m */; };
-		E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31F22429D9500E6ACDA /* DIMServer.h */; };
+		E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC31F22429D9500E6ACDA /* DIMServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BBC33D22429D9500E6ACDA /* DIMServerState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC32022429D9500E6ACDA /* DIMServerState.m */; };
-		E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC32122429D9500E6ACDA /* DIMTerminal+Group.h */; };
+		E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC32122429D9500E6ACDA /* DIMTerminal+Group.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BBC35D2242A1C900E6ACDA /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC34722429DAA00E6ACDA /* DIMCore.framework */; };
 		E9BBC3602242A1F600E6ACDA /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC35022429E3E00E6ACDA /* MarsGate.framework */; };
 		E9BBC3612242A1FA00E6ACDA /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC35922429EA300E6ACDA /* FiniteStateMachine.framework */; };
@@ -272,11 +272,11 @@
 				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
 				E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */,
 				E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */,
-				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
 				E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */,
 				E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */,
-				E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */,
 				E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */,
+				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
+				E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -613,9 +613,9 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
+					"../../core-objc/Classes/**",
 					"../../dkd-objc/Classes/**",
 					"../../mkm-objc/Classes/**",
-					"../../core-objc/Classes/**",
 				);
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -643,9 +643,9 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
+					"../../core-objc/Classes/**",
 					"../../dkd-objc/Classes/**",
 					"../../mkm-objc/Classes/**",
-					"../../core-objc/Classes/**",
 				);
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
