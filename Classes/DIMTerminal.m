@@ -94,8 +94,9 @@
         meta = [DIMMeta metaWithMeta:rMsg.meta];
         if (!meta) {
             NSLog(@"meta for %@ not found, query from the network...", sender);
+            [self queryMetaForID:sender];
             // TODO: insert the message to a temporary queue to waiting meta
-            return [self queryMetaForID:sender];
+            return ;
         }
     }
     

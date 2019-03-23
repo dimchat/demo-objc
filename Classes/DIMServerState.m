@@ -126,8 +126,6 @@ NSString *kDIMServerState_Stopped     = @"stopped";
         DIMServer *server = [(DIMServerStateMachine *)machine server];
         DIMUser *user = server.currentUser;
         if (user) {
-            NSString *sess = [(DIMServerStateMachine *)machine session];
-            [server handshakeWithSession:sess];
             return YES;
         }
         return NO;
@@ -167,6 +165,9 @@ NSString *kDIMServerState_Stopped     = @"stopped";
         if (status == SGStarStatus_Error) {
             return YES;
         }
+        
+        // TODO: timeout, switch to ErrorState
+        
         return NO;
     };
     name = kDIMServerState_Error;

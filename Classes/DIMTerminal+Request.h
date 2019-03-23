@@ -15,23 +15,23 @@ extern const NSString *kNotificationName_SendMessageFailed;
 
 @interface DIMTerminal (Request)
 
-- (void)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver;
-- (void)sendMessage:(DIMInstantMessage *)msg;
+- (BOOL)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver;
+- (BOOL)sendMessage:(DIMInstantMessage *)msg;
 
 // pack and send command to station
-- (void)sendCommand:(DIMCommand *)cmd;
+- (BOOL)sendCommand:(DIMCommand *)cmd;
 
 #pragma mark -
 
-- (void)login:(DIMUser *)user;
+- (BOOL)login:(DIMUser *)user;
 
-- (void)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta;
+- (BOOL)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta;
 
-- (void)queryMetaForID:(const DIMID *)ID;
-- (void)queryProfileForID:(const DIMID *)ID;
+- (BOOL)queryMetaForID:(const DIMID *)ID;
+- (BOOL)queryProfileForID:(const DIMID *)ID;
 
-- (void)queryOnlineUsers;
-- (void)searchUsersWithKeywords:(const NSString *)keywords;
+- (BOOL)queryOnlineUsers;
+- (BOOL)searchUsersWithKeywords:(const NSString *)keywords;
 
 @end
 

@@ -8,6 +8,7 @@
 
 #import <MarsGate/MarsGate.h>
 
+#import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
 #import "NSNotificationCenter+Extension.h"
@@ -16,21 +17,30 @@
 
 #import "DIMServer.h"
 
-@interface HandlerWrapper : NSObject
+@interface PackageHandler : NSObject
 
+@property (strong, nonatomic) const NSData *data;
 @property (nonatomic) DIMTransceiverCompletionHandler handler;
 
-- (instancetype)initWithHandler:(DIMTransceiverCompletionHandler)handler;
+- (instancetype)initWithData:(const NSData *)data handler:(DIMTransceiverCompletionHandler)handler;
+
++ (id<NSCopying>)keyWithData:(const NSData *)data;
 
 @end
 
-@implementation HandlerWrapper
+@implementation PackageHandler
 
-- (instancetype)initWithHandler:(DIMTransceiverCompletionHandler)handler {
+- (instancetype)initWithData:(const NSData *)data
+                     handler:(DIMTransceiverCompletionHandler)handler {
     if (self = [self init]) {
+        _data = data;
         _handler = handler;
     }
     return self;
+}
+
++ (id<NSCopying>)keyWithData:(const NSData *)data {
+    return [data sha256];
 }
 
 @end
@@ -41,7 +51,8 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 @interface DIMServer () {
     
-    NSMutableDictionary<NSData *, HandlerWrapper *> *_handlers;
+    NSMutableArray<PackageHandler *> *_waitingList;
+    NSMutableDictionary<id<NSCopying>, PackageHandler *> *_sendingTable;
 }
 
 @property (strong, nonatomic) DIMServerStateMachine *fsm;
@@ -56,7 +67,8 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     if (self = [super initWithID:ID]) {
         _currentUser = nil;
         
-        _handlers = [[NSMutableDictionary alloc] init];
+        _waitingList = [[NSMutableArray alloc] init];
+        _sendingTable = [[NSMutableDictionary alloc] init];
         
         _fsm = [[DIMServerStateMachine alloc] init];
         _fsm.server = self;
@@ -79,7 +91,18 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (void)handshakeWithSession:(nullable NSString *)session {
-    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
+    if (![_currentUser.ID isValid]) {
+        NSAssert(false, @"current user error: %@", _currentUser);
+        return ;
+    }
+    if (![_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking]) {
+        NSAssert(false, @"server state error: %@", _fsm.currentState.name);
+        return ;
+    }
+    if (_star.status != SGStarStatus_Connected) {
+        NSAssert(false, @"star status error: %d", _star.status);
+        return ;
+    }
     
     DIMHandshakeCommand *cmd;
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
@@ -90,7 +113,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
                                              receiver:_ID
                                                  time:nil];
     DIMReliableMessage *rMsg;
-    rMsg = [trans encryptAndSignMessage:iMsg];
+    rMsg = [[DIMTransceiver sharedInstance] encryptAndSignMessage:iMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
         return ;
@@ -101,17 +124,9 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
         rMsg.meta = DIMMetaForID(_currentUser.ID);
     }
     
-    DIMTransceiverCallback callback;
-    callback = ^(const DKDReliableMessage * rMsg, const NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"send handshake command error: %@", error);
-        } else {
-            NSLog(@"sent handshake command: %@ -> %@", cmd, rMsg);
-        }
-    };
-    
-    // TODO: insert the task in front of the sending queue
-    [trans sendReliableMessage:rMsg callback:callback];
+    // send out directly
+    NSData *data = [rMsg jsonData];
+    [_star send:data];
 }
 
 - (void)handshakeAccepted:(BOOL)success session:(nullable NSString *)session {
@@ -187,11 +202,18 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (void)star:(id<SGStar>)star onFinishSend:(const NSData *)requestData withError:(const NSError *)error {
-    NSData *key = [requestData sha256];
-    HandlerWrapper *wrapper = [_handlers objectForKey:key];
+    DIMTransceiverCompletionHandler handler = NULL;
+    
+    id key = [PackageHandler keyWithData:requestData];
+    PackageHandler *wrapper = [_sendingTable objectForKey:key];
     if (wrapper) {
-        wrapper.handler(error);
-        [_handlers removeObjectForKey:key];
+        handler = wrapper.handler;
+        [_sendingTable removeObjectForKey:key];
+    }
+    
+    if (handler) {
+        // tell the handler to do the resending job
+        handler(error);
     } else if (error) {
         NSLog(@"send data package failed: %@", error);
     } else {
@@ -204,12 +226,21 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 - (BOOL)sendPackage:(const NSData *)data completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
     NSLog(@"sending data len: %ld", data.length);
     NSAssert(_star, @"star not found");
+    
+    PackageHandler *wrapper;
+    wrapper = [[PackageHandler alloc] initWithData:data handler:handler];
+    
+    if (![_fsm.currentState.name isEqualToString:kDIMServerState_Running]) {
+        // puth the request data to waiting queue
+        [_waitingList addObject:wrapper];
+        return NO;
+    }
+    
     NSInteger res = [_star send:data];
     
     if (handler) {
-        NSData *key = [data sha256];
-        HandlerWrapper *wrapper = [[HandlerWrapper alloc] initWithHandler:handler];
-        [_handlers setObject:wrapper forKey:key];
+        id key = [PackageHandler keyWithData:data];
+        [_sendingTable setObject:wrapper forKey:key];
     }
     
     return res == 0;
@@ -223,6 +254,20 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     [NSNotificationCenter postNotificationName:name
                                         object:self
                                       userInfo:info];
+    
+    if ([state.name isEqualToString:kDIMServerState_Handshaking]) {
+        // start handshake
+        NSString *sess = _fsm.session;
+        _fsm.session = nil;
+        [self handshakeWithSession:sess];
+    } else if ([state.name isEqualToString:kDIMServerState_Running]) {
+        // send all packages waiting
+        NSArray *waitingList = [_waitingList copy];
+        for (PackageHandler *wrapper in waitingList) {
+            [self sendPackage:wrapper.data completionHandler:wrapper.handler];
+            [_waitingList removeObject:wrapper];
+        }
+    }
 }
 
 - (void)machine:(FSMMachine *)machine exitState:(FSMState *)state {
