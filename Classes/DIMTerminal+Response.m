@@ -28,9 +28,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         NSLog(@"handshake accepted: %@", self.currentUser);
         NSLog(@"current station: %@", self);
         [_currentStation handshakeAccepted:YES session:_session];
-        // post profile
-        DIMProfile *profile = DIMProfileForID(self.currentUser.ID);
-        [self postProfile:profile meta:nil];
+        [self onHandshakeAccepted:_session];
     } else if (state == DIMHandshake_Again) {
         // update session and handshake again
         NSString *session = cmd.sessionKey;

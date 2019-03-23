@@ -25,6 +25,8 @@ extern const NSString *kNotificationName_SendMessageFailed;
 
 - (BOOL)login:(DIMUser *)user;
 
+- (void)onHandshakeAccepted:(const NSString *)session;
+
 - (BOOL)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta;
 
 - (BOOL)queryMetaForID:(const DIMID *)ID;

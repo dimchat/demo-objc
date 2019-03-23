@@ -115,6 +115,12 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return YES;
 }
 
+- (void)onHandshakeAccepted:(const NSString *)session {
+    // post profile
+    DIMProfile *profile = DIMProfileForID(self.currentUser.ID);
+    [self postProfile:profile meta:nil];
+}
+
 - (BOOL)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta {
     if (!profile) {
         return NO;
