@@ -30,6 +30,10 @@
     
     // checking founder
     const DIMID *founder = group.founder;
+    if (!founder) {
+        // FIXME: new group?
+        founder = user.ID;
+    }
     if (![founder isValid] || !MKMNetwork_IsPerson(founder.type)) {
         NSAssert(false, @"invalid founder: %@", founder);
         return NO;
@@ -63,7 +67,7 @@
     }
     if (expels.count > 0) {
         // only the founder can expel members
-        if (![group.founder isEqual:user.ID]) {
+        if (![founder isEqual:user.ID]) {
             NSLog(@"user (%@) not the founder of group: %@", user, group);
             return NO;
         }
@@ -74,7 +78,7 @@
     }
     
     // check membership
-    if (![group.founder isEqual:user.ID] && ![members containsObject:user.ID]) {
+    if (![founder isEqual:user.ID] && ![members containsObject:user.ID]) {
     //if (![group existsMember:user.ID]) {
         NSLog(@"user (%@) not a member of group: %@", user, group);
         return NO;
@@ -108,8 +112,6 @@
     if (members.count > 0) {
         if (expels.count > 0) {
             cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
-            [cmd setObject:user.ID forKey:@"owner"];
-            
             for (const DIMID *ID in members) {
                 [self sendContent:cmd to:ID];
             }
@@ -118,7 +120,6 @@
     
     // 3. send invite command to all new members
     cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
-    [cmd setObject:user.ID forKey:@"owner"];
     for (const DIMID *ID in newMembers) {
         [self sendContent:cmd to:ID];
     }
