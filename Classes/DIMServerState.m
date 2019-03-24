@@ -148,6 +148,8 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     
     // target state: Running
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
+        // when current user changed, the server will clear this session, so
+        // if it's set again, it means handshake accepted
         NSString *sess = [(DIMServerStateMachine *)machine session];
         if (sess) {
             return YES;
@@ -162,7 +164,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
         SGStarStatus status = server.star.status;
-        if (status == SGStarStatus_Error) {
+        if (status != SGStarStatus_Connected) {
             return YES;
         }
         

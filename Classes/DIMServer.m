@@ -11,6 +11,7 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
+#import "NSObject+Extension.h"
 #import "NSNotificationCenter+Extension.h"
 
 #import "DIMServerState.h"
@@ -96,7 +97,8 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
         return ;
     }
     if (![_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking]) {
-        NSAssert(false, @"server state error: %@", _fsm.currentState.name);
+        // FIXME: sometimes the connection state will be reset
+        NSLog(@"server state error: %@", _fsm.currentState.name);
         return ;
     }
     if (_star.status != SGStarStatus_Connected) {
@@ -106,6 +108,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     DIMHandshakeCommand *cmd;
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
+    NSLog(@"handshake command: %@", cmd);
     
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
@@ -141,6 +144,16 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     } else {
         NSLog(@"handshake failed");
         // TODO: prompt to handshake again
+    }
+}
+
+- (void)_carryOutWaitingTasks {
+    NSArray *waitingList = [_waitingList copy];
+    NSLog(@"carry out %lu waiting task(s)...", waitingList.count);
+    for (PackageHandler *wrapper in waitingList) {
+        [self sendPackage:wrapper.data completionHandler:wrapper.handler];
+        [_waitingList removeObject:wrapper];
+        sleep(1);
     }
 }
 
@@ -257,16 +270,13 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     if ([state.name isEqualToString:kDIMServerState_Handshaking]) {
         // start handshake
-        NSString *sess = _fsm.session;
-        _fsm.session = nil;
-        [self handshakeWithSession:sess];
+        [self handshakeWithSession:_fsm.session];
     } else if ([state.name isEqualToString:kDIMServerState_Running]) {
         // send all packages waiting
-        NSArray *waitingList = [_waitingList copy];
-        for (PackageHandler *wrapper in waitingList) {
-            [self sendPackage:wrapper.data completionHandler:wrapper.handler];
-            [_waitingList removeObject:wrapper];
-        }
+        void (^block)(void) = ^{
+            [self _carryOutWaitingTasks];
+        };
+        [NSObject performBlock:block afterDelay:1.0];
     }
 }
 

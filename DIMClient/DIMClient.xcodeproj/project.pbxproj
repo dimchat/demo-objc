@@ -29,6 +29,8 @@
 		E9AFAB452233A522001F95C6 /* DIMTerminal+Group.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAB432233A522001F95C6 /* DIMTerminal+Group.m */; };
 		E9BBBE4B223FA6D400E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */; };
 		E9BBBE4C223FA6D400E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */; };
+		E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8248322475AFD00A029F1 /* NSObject+Extension.h */; };
+		E9E8248622475AFD00A029F1 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E8248422475AFD00A029F1 /* NSObject+Extension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +132,8 @@
 		E9AFAB432233A522001F95C6 /* DIMTerminal+Group.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMTerminal+Group.m"; sourceTree = "<group>"; };
 		E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
 		E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
+		E9E8248322475AFD00A029F1 /* NSObject+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
+		E9E8248422475AFD00A029F1 /* NSObject+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +252,8 @@
 				E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */,
 				E9AFAB0B2232B960001F95C6 /* NSNotificationCenter+Extension.h */,
 				E9AFAB0C2232B960001F95C6 /* NSNotificationCenter+Extension.m */,
+				E9E8248322475AFD00A029F1 /* NSObject+Extension.h */,
+				E9E8248422475AFD00A029F1 /* NSObject+Extension.m */,
 			);
 			path = extends;
 			sourceTree = "<group>";
@@ -270,6 +276,7 @@
 			files = (
 				E9BBBE4B223FA6D400E6ACDA /* NSDate+Extension.h in Headers */,
 				E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */,
+				E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */,
 				E97926BB22284D59005ED1F0 /* DIMServer.h in Headers */,
 				E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */,
 				E97816D72223F82F00BCE3AD /* DIMTerminal+Request.h in Headers */,
@@ -440,6 +447,7 @@
 			files = (
 				E9BBBE4C223FA6D400E6ACDA /* NSDate+Extension.m in Sources */,
 				E9AFAB0E2232B960001F95C6 /* NSNotificationCenter+Extension.m in Sources */,
+				E9E8248622475AFD00A029F1 /* NSObject+Extension.m in Sources */,
 				E9AFAB452233A522001F95C6 /* DIMTerminal+Group.m in Sources */,
 				E97816D82223F82F00BCE3AD /* DIMTerminal+Request.m in Sources */,
 				E97926B72227DB1D005ED1F0 /* DIMTerminal+Response.m in Sources */,
