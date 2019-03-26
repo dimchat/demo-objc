@@ -222,6 +222,22 @@
             NSLog(@"!!! you are not a member yet");
             return NO;
         }
+    } else if ([command isEqualToString:@"reset"]) {
+        // reset group members
+        if (isFounder) {
+            return YES;
+        } else {
+            NSLog(@"!!! only the founder(owner) can reset members");
+            return NO;
+        }
+    } else if ([command isEqualToString:@"query"]) {
+        // query group members
+        if (isMember) {
+            return YES;
+        } else {
+            NSLog(@"!!! only the member can query members");
+            return NO;
+        }
     } else {
         NSAssert(false, @"unknown command: %@", command);
     }
