@@ -134,13 +134,13 @@
     DIMMessageContent *content = iMsg.content;
     if (content.type == DIMMessageType_Command) {
         NSString *command = content.command;
-        if ([command isEqualToString:@"handshake"]) {
+        if ([command isEqualToString:DKDSystemCommand_Handshake]) {
             // handshake
             return [self processHandshakeMessageContent:content];
-        } else if ([command isEqualToString:@"meta"]) {
+        } else if ([command isEqualToString:DKDSystemCommand_Meta]) {
             // query meta response
             return [self processMetaMessageContent:content];
-        } else if ([command isEqualToString:@"profile"]) {
+        } else if ([command isEqualToString:DKDSystemCommand_Profile]) {
             // query profile response
             return [self processProfileMessageContent:content];
         } else if ([command isEqualToString:@"users"]) {

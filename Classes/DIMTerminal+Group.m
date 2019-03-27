@@ -195,7 +195,7 @@
     // check membership
     BOOL isMember = [group existsMember:sender];
     
-    if ([command isEqualToString:@"invite"]) {
+    if ([command isEqualToString:DKDGroupCommand_Invite]) {
         // add member(s)
         if (isFounder || isMember) {
             return YES;
@@ -203,7 +203,7 @@
             NSLog(@"!!! only the founder or member can invite other members");
             return NO;
         }
-    } else if ([command isEqualToString:@"expel"]) {
+    } else if ([command isEqualToString:DKDGroupCommand_Expel]) {
         // remove member(s)
         if (isFounder) {
             return YES;
@@ -211,7 +211,7 @@
             NSLog(@"!!! only the founder(owner) can expel members");
             return NO;
         }
-    } else if ([command isEqualToString:@"quit"]) {
+    } else if ([command isEqualToString:DKDGroupCommand_Quit]) {
         // remove member
         if (isFounder) {
             NSLog(@"founder can not quit from polylogue: %@", group);
