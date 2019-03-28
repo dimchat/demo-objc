@@ -151,8 +151,13 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     NSArray *waitingList = [_waitingList copy];
     NSLog(@"carry out %lu waiting task(s)...", waitingList.count);
     for (PackageHandler *wrapper in waitingList) {
-        [self sendPackage:wrapper.data completionHandler:wrapper.handler];
-        [_waitingList removeObject:wrapper];
+        if ([_fsm.currentState.name isEqualToString:kDIMServerState_Running]) {
+            [self sendPackage:wrapper.data completionHandler:wrapper.handler];
+            [_waitingList removeObject:wrapper];
+        } else {
+            NSLog(@"connection lost again, waiting task(s) interrupted");
+            break;
+        }
         sleep(1);
     }
 }
