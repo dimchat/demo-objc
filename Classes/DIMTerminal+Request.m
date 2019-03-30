@@ -65,7 +65,7 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     };
     // send out
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    return [trans sendInstantMessage:iMsg callback:NULL dispersedly:NO];
+    return [trans sendInstantMessage:iMsg callback:callback dispersedly:NO];
 }
 
 - (BOOL)sendMessage:(DKDInstantMessage *)msg {

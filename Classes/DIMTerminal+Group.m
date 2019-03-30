@@ -127,9 +127,9 @@
     return YES;
 }
 
-- (DIMGroup *)createGroupWithSeed:(const NSString *)seed
-                          members:(const NSArray<const MKMID *> *)list
-                          profile:(const NSDictionary *)dict {
+- (nullable DIMGroup *)createGroupWithSeed:(const NSString *)seed
+                                   members:(const NSArray<const MKMID *> *)list
+                                   profile:(const NSDictionary *)dict {
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
@@ -157,6 +157,7 @@
     BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
     if (!sent) {
         NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
+        // TODO: remove the new group info
         return nil;
     }
     

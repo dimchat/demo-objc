@@ -17,12 +17,6 @@
 
 #import "DIMTerminal.h"
 
-@interface DIMTerminal ()
-
-@property (copy, nonatomic) NSMutableArray<DIMUser *> *users;
-
-@end
-
 @implementation DIMTerminal
 
 - (instancetype)init {
@@ -102,11 +96,10 @@
     
     // check receiver
     const DIMID *receiver = [DIMID IDWithID:rMsg.envelope.receiver];
-    const DIMID *groupID = [DIMID IDWithID:rMsg.group];
     DIMUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
-        NSAssert(!groupID || [groupID isEqual:receiver], @"group error: %@ != %@", receiver, groupID);
-        groupID = receiver;
+        NSAssert(rMsg.group == nil || [[DIMID IDWithID:rMsg.group] isEqual:receiver],
+                 @"group error: %@ != %@", receiver, rMsg.group);
         // FIXME: maybe other user?
         user = self.currentUser;
         receiver = user.ID;
