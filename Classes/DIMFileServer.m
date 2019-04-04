@@ -109,11 +109,13 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return _session;
 }
 
-- (NSData *)buildHTTPBodyWithFilename:(const NSString *)name data:(const NSData *)data {
+- (NSData *)buildHTTPBodyWithFilename:(const NSString *)name
+                              varName:(const NSString *)var
+                                 data:(const NSData *)data {
     
     NSMutableString *begin = [[NSMutableString alloc] init];
     [begin appendString:@"--4Tcjm5mp8BNiQN5YnxAAAnexqnbb3MrWjK\r\n"];
-    [begin appendFormat:@"Content-Disposition: form-data; name=file; filename=%@\r\n", name];
+    [begin appendFormat:@"Content-Disposition: form-data; name=%@; filename=%@\r\n", var, name];
     [begin appendString:@"Content-Type: application/octet-stream\r\n\r\n"];
     
     NSString *end = @"\r\n--4Tcjm5mp8BNiQN5YnxAAAnexqnbb3MrWjK--";
@@ -126,7 +128,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return mData;
 }
 
-- (void)post:(NSData *)data name:(NSString *)filename url:(NSURL *)url {
+- (void)post:(NSData *)data name:(NSString *)filename varName:(NSString *)var url:(NSURL *)url {
     
     // check uploading queue
     if ([_uploadings objectForKey:filename]) {
@@ -140,12 +142,19 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     request.HTTPMethod = @"POST";
     
     // HTTP body
-    NSData *body = [self buildHTTPBodyWithFilename:filename data:data];
+    NSData *body = [self buildHTTPBodyWithFilename:filename varName:var data:data];
     
     // completion handler
     void (^handler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
     handler = ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSLog(@"HTTP upload task complete: %@, %@, %@", response, error, [data UTF8String]);
+        
+        if (error) {
+            // connection error
+            NSLog(@"upload %@ error: %@", url, error);
+        } else {
+            // TODO: post notice 'EncryptedFileUploaded'
+        }
         
         // remove uploading task
         NSLog(@"removing task: %@, filename: %@", [self->_uploadings objectForKey:filename], filename);
@@ -191,6 +200,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
             } else {
                 NSLog(@"download error: %@", error);
             }
+            // TODO: post notice 'EncryptedFileDownloaded'
         }
         
         // remove downloading task
@@ -224,7 +234,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     NSString *upload = _uploadAPI;
     upload = [upload stringByReplacingOccurrencesOfString:@"{ID}" withString:(NSString *)from.address];
     NSURL *url = [NSURL URLWithString:upload];
-    [self post:(NSData *)data name:filename url:url];
+    [self post:(NSData *)data name:filename varName:@"file" url:url];
     
     // build download URL
     NSString *download = _downloadAPI;
@@ -294,6 +304,12 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return [data writeToFile:path atomically:YES];
 }
 
+- (NSData *)loadDataWithFilename:(const NSString *)name {
+    
+    NSString *path = full_filepath((NSString *)name);
+    return [NSData dataWithContentsOfFile:path];
+}
+
 - (BOOL)saveThumbnail:(const NSData *)data filename:(const NSString *)name {
     
     NSArray *pair = [name componentsSeparatedByString:@"."];
@@ -303,10 +319,32 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return [data writeToFile:path atomically:YES];
 }
 
-- (NSData *)loadDataWithFilename:(const NSString *)name {
+- (NSData *)loadThumbnailWithFilename:(const NSString *)name {
     
-    NSString *path = full_filepath((NSString *)name);
+    NSArray *pair = [name componentsSeparatedByString:@"."];
+    NSAssert(pair.count == 2, @"image filename error: %@", name);
+    NSString *filename = [[NSString alloc] initWithFormat:@"%@-s.%@", pair.firstObject, pair.lastObject];
+    NSString *path = full_filepath(filename);
     return [NSData dataWithContentsOfFile:path];
+}
+
+#pragma mark Avatar
+
+- (NSURL *)uploadAvatar:(const NSData *)data filename:(const NSString *)name sender:(const MKMID *)ID {
+    
+    NSString *ext = [name pathExtension];
+    
+    // upload to CDN
+    NSString *upload = _uploadAPI;
+    upload = [upload stringByReplacingOccurrencesOfString:@"{ID}" withString:(NSString *)ID.address];
+    NSURL *url = [NSURL URLWithString:upload];
+    [self post:(NSData *)data name:(NSString *)name varName:@"avatar" url:url];
+    
+    // build download URL
+    NSString *download = _avatarAPI;
+    download = [download stringByReplacingOccurrencesOfString:@"{ID}" withString:(NSString *)ID.address];
+    download = [download stringByReplacingOccurrencesOfString:@"{ext}" withString:ext];
+    return [NSURL URLWithString:download];
 }
 
 @end

@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 // @"http://124.156.108.150:8081/download/{ID}/{filename}"
 @property (strong, nonatomic) NSString *downloadAPI;
 
+// @"http://124.156.108.150:8081/{ID}/avatar.{ext}"
+@property (strong, nonatomic) NSString *avatarAPI;
+
 + (instancetype)sharedInstance;
 
 - (NSURL *)uploadEncryptedData:(const NSData *)data
@@ -36,6 +39,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)loadDataWithFilename:(const NSString *)name;
 
 - (BOOL)saveThumbnail:(const NSData *)data filename:(const NSString *)name;
+- (NSData *)loadThumbnailWithFilename:(const NSString *)name;
+
+#pragma mark Avatar
+
+- (NSURL *)uploadAvatar:(const NSData *)data
+               filename:(nullable const NSString *)name
+                 sender:(const DIMID *)ID;
 
 @end
 
