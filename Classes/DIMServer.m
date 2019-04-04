@@ -14,6 +14,8 @@
 #import "NSObject+Extension.h"
 #import "NSNotificationCenter+Extension.h"
 
+#import "DIMFileServer.h"
+
 #import "DIMServerState.h"
 
 #import "DIMServer.h"
@@ -262,6 +264,22 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
     
     return res == 0;
+}
+
+- (NSURL *)uploadEncryptedFileData:(const NSData *)CT forMessage:(const DKDInstantMessage *)iMsg {
+    
+    DIMID *sender = [DIMID IDWithID:iMsg.envelope.sender];
+    DIMMessageContent *content = iMsg.content;
+    NSString *filename = content.filename;
+    
+    DIMFileServer *ftp = [DIMFileServer sharedInstance];
+    return [ftp uploadEncryptedData:CT filename:filename sender:sender];
+}
+
+- (nullable NSData *)downloadEncryptedFileData:(const NSURL *)url forMessage:(const DKDInstantMessage *)iMsg {
+    
+    DIMFileServer *ftp = [DIMFileServer sharedInstance];
+    return [ftp downloadEncryptedDataFromURL:url];
 }
 
 #pragma mark - FSMDelegate
