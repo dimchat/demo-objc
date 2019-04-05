@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFileServer : NSObject <NSURLSessionDelegate, NSURLSessionTaskDelegate>
 
-@property (strong, nonatomic) NSString *userAgent; // default is nil
+@property (strong, nonatomic, nullable) NSString *userAgent; // default is nil
 
 // @"http://124.156.108.150:8081/{ID}}/upload"
 @property (strong, nonatomic) NSString *uploadAPI;
