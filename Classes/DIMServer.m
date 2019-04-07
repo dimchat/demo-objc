@@ -100,11 +100,14 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
     if (![_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking]) {
         // FIXME: sometimes the connection state will be reset
+        //NSAssert(false, @"server state error: %@", _fsm.currentState.name);
         NSLog(@"server state error: %@", _fsm.currentState.name);
         return ;
     }
     if (_star.status != SGStarStatus_Connected) {
-        NSAssert(false, @"star status error: %d", _star.status);
+        // FIXME: sometimes the connection will be lost while handshaking
+        //NSAssert(false, @"star status error: %d", _star.status);
+        NSLog(@"star status error: %d", _star.status);
         return ;
     }
     

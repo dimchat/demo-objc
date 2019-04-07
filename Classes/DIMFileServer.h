@@ -14,13 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (strong, nonatomic, nullable) NSString *userAgent; // default is nil
 
-// @"http://124.156.108.150:8081/{ID}}/upload"
+// @"https://sechat.dim.chat/{ID}}/upload"
 @property (strong, nonatomic) NSString *uploadAPI;
 
-// @"http://124.156.108.150:8081/download/{ID}/{filename}"
+// @"https://sechat.dim.chat/download/{ID}/{filename}"
 @property (strong, nonatomic) NSString *downloadAPI;
 
-// @"http://124.156.108.150:8081/{ID}/avatar.{ext}"
+// @"https://sechat.dim.chat/avatar/{ID}/{filename}"
 @property (strong, nonatomic) NSString *avatarAPI;
 
 + (instancetype)sharedInstance;

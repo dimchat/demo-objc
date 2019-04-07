@@ -67,8 +67,8 @@ SingletonImplementations(DIMFileServer, sharedInstance)
         // @"DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1";
         _userAgent = nil;
         
-        _uploadAPI = nil;   // @"http://124.156.108.150:8081/{ID}/upload"
-        _downloadAPI = nil; // @"http://124.156.108.150:8081/download/{ID}/{filename}"
+        _uploadAPI = nil;
+        _downloadAPI = nil;
         
         _uploadings = [[NSMutableDictionary alloc] init];
         _downloadings = [[NSMutableDictionary alloc] init];
@@ -332,18 +332,21 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 - (NSURL *)uploadAvatar:(const NSData *)data filename:(const NSString *)name sender:(const MKMID *)ID {
     
-    NSString *ext = [name pathExtension];
-    
     // upload to CDN
     NSString *upload = _uploadAPI;
     upload = [upload stringByReplacingOccurrencesOfString:@"{ID}" withString:(NSString *)ID.address];
     NSURL *url = [NSURL URLWithString:upload];
     [self post:(NSData *)data name:(NSString *)name varName:@"avatar" url:url];
     
+    NSString *ext = [name pathExtension];
+    name = [[data md5] hexEncode];
+    NSString *filename = [name stringByAppendingPathExtension:ext];
+    
     // build download URL
     NSString *download = _avatarAPI;
     download = [download stringByReplacingOccurrencesOfString:@"{ID}" withString:(NSString *)ID.address];
     download = [download stringByReplacingOccurrencesOfString:@"{ext}" withString:ext];
+    download = [download stringByReplacingOccurrencesOfString:@"{filename}" withString:filename];
     return [NSURL URLWithString:download];
 }
 
