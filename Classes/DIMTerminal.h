@@ -20,7 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableArray<DIMUser *> *_users;
 }
 
-@property (readonly, nonatomic) NSString *userAgent;
+/**
+ *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
+ */
+@property (readonly, nonatomic, nullable) NSString *userAgent;
+
 @property (readonly, nonatomic) NSString *language;
 
 #pragma mark - User(s)

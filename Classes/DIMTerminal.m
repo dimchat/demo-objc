@@ -6,8 +6,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 #import <MarsGate/MarsGate.h>
 
 #import "NSObject+JsON.h"
@@ -19,11 +17,7 @@
 
 #import "DIMTerminal.h"
 
-@interface DIMTerminal () {
-    
-    NSString *_language;
-    NSString *_userAgent;
-}
+@interface DIMTerminal ()
 
 @end
 
@@ -40,31 +34,9 @@
 }
 
 - (NSString *)language {
-    if (!_language) {
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSArray *languages = [defaults objectForKey:@"AppleLanguages"];
-        _language = languages.firstObject;
-    }
-    return _language;
-}
-
-// "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
-- (NSString *)userAgent {
-    if (!_userAgent) {
-        // device model & system
-        UIDevice *device = [UIDevice currentDevice];
-        NSString *model = device.model;          // e.g. @"iPhone", @"iPod touch"
-        NSString *sysName = device.systemName;   // e.g. @"iOS"
-        NSString *sysVer = device.systemVersion; // e.g. @"4.0"
-        
-        // current language
-        NSString *lang = self.language;
-        
-        NSString *format = @"DIMP/1.0 (%@; U; %@ %@; %@) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1";
-        _userAgent = [[NSString alloc] initWithFormat:format, model, sysName, sysVer, lang];
-        NSLog(@"User-Agent: %@", _userAgent);
-    }
-    return _userAgent;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSArray *languages = [defaults objectForKey:@"AppleLanguages"];
+    return languages.firstObject;
 }
 
 #pragma mark - User(s)
