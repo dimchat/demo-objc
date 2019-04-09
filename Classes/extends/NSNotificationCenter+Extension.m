@@ -8,7 +8,7 @@
 
 #import "NSNotificationCenter+Extension.h"
 
-@implementation NSNotificationCenter (Extension)
+@implementation NSNotificationCenter (MainThread)
 
 + (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable const NSString *)aName object:(nullable id)anObject {
     NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];

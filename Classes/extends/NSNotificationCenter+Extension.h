@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSNotificationCenter (Extension)
+@interface NSNotificationCenter (MainThread)
 
 + (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable const NSString *)aName object:(nullable id)anObject;
 

@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @property (readonly, nonatomic) NSString *userAgent;
+@property (readonly, nonatomic) NSString *language;
 
 #pragma mark - User(s)
 

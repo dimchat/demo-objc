@@ -8,7 +8,7 @@
 
 #import "NSObject+Extension.h"
 
-@implementation NSObject (Extension)
+@implementation NSObject (DelayBlock)
 
 + (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
     dispatch_time_t when = dispatch_time(DISPATCH_TIME_NOW, delay*NSEC_PER_SEC);

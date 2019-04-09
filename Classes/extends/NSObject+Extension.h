@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (Extension)
+@interface NSObject (DelayBlock)
 
 + (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay;
 
