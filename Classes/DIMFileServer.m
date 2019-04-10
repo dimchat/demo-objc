@@ -12,6 +12,13 @@
 
 #import "DIMFileServer.h"
 
+static inline NSString *document_directory(void) {
+    NSArray *paths;
+    paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
+                                                NSUserDomainMask, YES);
+    return paths.firstObject;
+}
+
 static inline NSString *caches_directory(void) {
     NSArray *paths;
     paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
@@ -19,17 +26,7 @@ static inline NSString *caches_directory(void) {
     return paths.firstObject;
 }
 
-/**
- Get full filepath to Documents Directory
- 
- @param filename - "xxxx.png"
- @return "Library/Caches/.dim/{address}/xxxx.png"
- */
-static inline NSString *full_filepath(NSString *filename) {
-    // base directory: Library/Caches/.dim/{address}
-    NSString *dir = caches_directory();
-    dir = [dir stringByAppendingPathComponent:@".dim"];
-    
+static inline void make_dirs(NSString *dir) {
     // check base directory exists
     NSFileManager *fm = [NSFileManager defaultManager];
     if (![fm fileExistsAtPath:dir isDirectory:nil]) {
@@ -39,10 +36,73 @@ static inline NSString *full_filepath(NSString *filename) {
                        attributes:nil error:&error];
         assert(!error);
     }
+}
+
+static inline BOOL file_exists(NSString *path) {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    return [fm fileExistsAtPath:path];
+}
+
+static inline BOOL remove_file(NSString *path) {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:path]) {
+        NSError *err = nil;
+        [fm removeItemAtPath:path error:&err];
+        if (err) {
+            NSLog(@"failed to remove file: %@", err);
+            return NO;
+        }
+    }
+    return YES;
+}
+
+#pragma mark Paths
+
+/**
+ Get data filepath in Caches Directory
+ 
+ @param filename - "xxxx.png"
+ @return "Library/Caches/.dkd/files/xxxx.png"
+ */
+static inline NSString *data_filepath(NSString *filename, BOOL autoCreate) {
+    // base directory: Library/Caches/.dkd/files
+    NSString *dir = caches_directory();
+    dir = [dir stringByAppendingPathComponent:@".dkd"];
+    dir = [dir stringByAppendingPathComponent:@"files"];
+    
+    // check base directory exists
+    if (autoCreate && !file_exists(dir)) {
+        // make sure directory exists
+        make_dirs(dir);
+    }
     
     // build filepath
     return [dir stringByAppendingPathComponent:filename];
 }
+
+/**
+ Get thumbnail filepath in Documents Directory
+ 
+ @param filename - "xxxx.png"
+ @return "Documents/.dkd/thumbnail/xxxx.png"
+ */
+static inline NSString *thumbnail_filepath(NSString *filename, BOOL autoCreate) {
+    // base directory: Documents/.dkd/thumbnail
+    NSString *dir = document_directory();
+    dir = [dir stringByAppendingPathComponent:@".dkd"];
+    dir = [dir stringByAppendingPathComponent:@"thumbnail"];
+    
+    // check base directory exists
+    if (autoCreate && !file_exists(dir)) {
+        // make sure directory exists
+        make_dirs(dir);
+    }
+    
+    // build filepath
+    return [dir stringByAppendingPathComponent:filename];
+}
+
+#pragma mark -
 
 @interface DIMFileServer () {
     
@@ -84,10 +144,11 @@ SingletonImplementations(DIMFileServer, sharedInstance)
                        totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
     
     float progress = (float)totalBytesSent / totalBytesExpectedToSend;
-    NSLog(@"progress %f", progress);
+    NSLog(@"progress %f%%", progress * 100);
     
     // finished
     if (totalBytesSent == totalBytesExpectedToSend) {
+        NSLog(@"task finished: %@", task);
     }
 }
 
@@ -194,7 +255,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
         } else {
             // move to caches directory
             NSFileManager *fm = [NSFileManager defaultManager];
-            NSURL *path = [NSURL fileURLWithPath:full_filepath(filename)];
+            NSURL *path = [NSURL fileURLWithPath:data_filepath(filename, YES)];
             if ([fm moveItemAtURL:location toURL:path error:&error]) {
                 NSLog(@"download success: %@", path);
             } else {
@@ -247,9 +308,8 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     
     // load data with URL
     NSString *filename = [url lastPathComponent];
-    NSString *path = full_filepath(filename);
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
+    NSString *path = data_filepath(filename, NO);
+    if (file_exists(path)) {
         return [[NSData alloc] initWithContentsOfFile:path];
     }
     
@@ -263,9 +323,8 @@ SingletonImplementations(DIMFileServer, sharedInstance)
                                 wityKey:(const MKMSymmetricKey *)key {
     // check file with local cache path
     NSString *filename1 = [url lastPathComponent];
-    NSString *path1 = full_filepath(filename1);
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if (![fm fileExistsAtPath:path1]) {
+    NSString *path1 = data_filepath(filename1, NO);
+    if (!file_exists(path1)) {
         NSAssert(false, @"encrypted file not exists: %@", path1);
         return nil;
     }
@@ -282,12 +341,10 @@ SingletonImplementations(DIMFileServer, sharedInstance)
         filename2 = [filename2 stringByAppendingPathExtension:ext];
     }
     NSAssert([filename2 isEqualToString:(id)name], @"filename error: %@, %@", filename2, name);
-    NSString *path2 = full_filepath(filename2);
+    NSString *path2 = data_filepath(filename2, YES);
     if ([data writeToFile:path2 atomically:YES]) {
         // erase the old file
-        NSError *error = nil;
-        [fm removeItemAtPath:path1 error:&error];
-        NSAssert(!error, @"failed to remove old file: %@", error);
+        remove_file(path1);
     }
     return data;
 }
@@ -300,31 +357,27 @@ SingletonImplementations(DIMFileServer, sharedInstance)
         filename = [filename stringByAppendingPathExtension:ext];
     }
     NSAssert([filename isEqualToString:(id)name], @"filename error: %@, %@", filename, name);
-    NSString *path = full_filepath(filename);
+    NSString *path = data_filepath(filename, YES);
     return [data writeToFile:path atomically:YES];
 }
 
 - (NSData *)loadDataWithFilename:(const NSString *)name {
     
-    NSString *path = full_filepath((NSString *)name);
+    NSString *path = data_filepath((NSString *)name, NO);
     return [NSData dataWithContentsOfFile:path];
 }
 
 - (BOOL)saveThumbnail:(const NSData *)data filename:(const NSString *)name {
-    
-    NSArray *pair = [name componentsSeparatedByString:@"."];
-    NSAssert(pair.count == 2, @"image filename error: %@", name);
-    NSString *filename = [[NSString alloc] initWithFormat:@"%@-s.%@", pair.firstObject, pair.lastObject];
-    NSString *path = full_filepath(filename);
+    // use the same filename for thumbnail but different directory
+    NSString *filename = [[NSString alloc] initWithFormat:@"%@", name];
+    NSString *path = thumbnail_filepath(filename, YES);
     return [data writeToFile:path atomically:YES];
 }
 
 - (NSData *)loadThumbnailWithFilename:(const NSString *)name {
-    
-    NSArray *pair = [name componentsSeparatedByString:@"."];
-    NSAssert(pair.count == 2, @"image filename error: %@", name);
-    NSString *filename = [[NSString alloc] initWithFormat:@"%@-s.%@", pair.firstObject, pair.lastObject];
-    NSString *path = full_filepath(filename);
+    // use the same filename for thumbnail but different directory
+    NSString *filename = [[NSString alloc] initWithFormat:@"%@", name];
+    NSString *path = thumbnail_filepath(filename, NO);
     return [NSData dataWithContentsOfFile:path];
 }
 

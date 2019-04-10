@@ -58,6 +58,7 @@
 }
 
 - (void)addUser:(DIMUser *)user {
+    NSAssert([user.ID isValid], @"invalid user: %@", user);
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
     }
