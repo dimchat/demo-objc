@@ -16,60 +16,27 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 @implementation DIMTerminal (Request)
 
-- (BOOL)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver {
+- (nullable DIMInstantMessage *)sendContent:(DIMMessageContent *)content
+                                         to:(const DIMID *)receiver {
     if (!self.currentUser) {
         NSLog(@"not login, drop message content: %@", content);
         // TODO: save the message content in waiting queue
-        return NO;
+        return nil;
     }
     if (!DIMPublicKeyForID(receiver)) {
         NSLog(@"cannot get public key for receiver: %@", receiver);
         [self queryMetaForID:receiver];
         // TODO: save the message content in waiting queue
-        return NO;
+        return nil;
     }
+    const DIMID *sender = self.currentUser.ID;
+    
     // make instant message
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:content
-                                               sender:self.currentUser.ID
+                                               sender:sender
                                              receiver:receiver
                                                  time:nil];
-    return [self sendMessage:iMsg];
-}
-
-- (BOOL)sendCommand:(DIMCommand *)cmd {
-    if (!_currentStation) {
-        NSLog(@"not connect, drop command: %@", cmd);
-        // TODO: save the command in waiting queue
-        return NO;
-    }
-    if (!self.currentUser) {
-        NSLog(@"not login, drop command: %@", cmd);
-        // TODO: save the command in waiting queue
-        return NO;
-    }
-    // make instant message
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
-                                               sender:self.currentUser.ID
-                                             receiver:_currentStation.ID
-                                                 time:nil];
-    // callback
-    DIMTransceiverCallback callback;
-    callback = ^(const DKDReliableMessage *rMsg, const NSError *error) {
-        if (error) {
-            NSLog(@"send command error: %@", error);
-        } else {
-            NSLog(@"sent command: %@", cmd);
-        }
-    };
-    // send out
-    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    return [trans sendInstantMessage:iMsg callback:callback dispersedly:NO];
-}
-
-- (BOOL)sendMessage:(DKDInstantMessage *)iMsg {
-    NSAssert([self.currentUser.ID isEqual:iMsg.envelope.sender], @"sender error: %@", iMsg);
     // callback
     DIMTransceiverCallback callback;
     callback = ^(const DKDReliableMessage *rMsg, const NSError *error) {
@@ -92,7 +59,21 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     };
     // send out
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    return [trans sendInstantMessage:iMsg callback:callback dispersedly:YES];
+    if ([trans sendInstantMessage:iMsg callback:callback dispersedly:YES]) {
+        return iMsg;
+    } else {
+        NSLog(@"failed to send message content: %@ to receiver: %@", content, receiver);
+        return nil;
+    }
+}
+
+- (nullable DIMInstantMessage *)sendCommand:(DIMCommand *)cmd {
+    if (!_currentStation) {
+        NSLog(@"not connect, drop command: %@", cmd);
+        // TODO: save the command in waiting queue
+        return nil;
+    }
+    return [self sendContent:cmd to:_currentStation.ID];
 }
 
 #pragma mark -
@@ -123,14 +104,12 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     [self postProfile:profile meta:nil];
 }
 
-- (BOOL)postProfile:(DIMProfile *)profile meta:(nullable const DIMMeta *)meta {
-    if (!profile) {
-        return NO;
-    }
+- (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile
+                                       meta:(nullable const DIMMeta *)meta {
     const DIMID *ID = self.currentUser.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
-        return NO;
+        return nil;
     }
     DIMPrivateKey *SK = self.currentUser.privateKey;
     
@@ -142,14 +121,14 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryMetaForID:(const DIMID *)ID {
+- (nullable DIMInstantMessage *)queryMetaForID:(const DIMID *)ID {
     DIMMetaCommand *cmd;
     cmd = [[DIMMetaCommand alloc] initWithID:ID
                                         meta:nil];
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryProfileForID:(const DIMID *)ID {
+- (nullable DIMInstantMessage *)queryProfileForID:(const DIMID *)ID {
     DIMProfileCommand *cmd;
     cmd = [[DIMProfileCommand alloc] initWithID:ID
                                            meta:nil
@@ -158,13 +137,13 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryOnlineUsers {
+- (nullable DIMInstantMessage *)queryOnlineUsers {
     DIMCommand *cmd;
     cmd = [[DIMCommand alloc] initWithCommand:@"users"];
     return [self sendCommand:cmd];
 }
 
-- (BOOL)searchUsersWithKeywords:(const NSString *)keywords {
+- (nullable DIMInstantMessage *)searchUsersWithKeywords:(const NSString *)keywords {
     DIMCommand *cmd = [[DIMCommand alloc] initWithCommand:@"search"];
     [cmd setObject:keywords forKey:@"keywords"];
     return [self sendCommand:cmd];
