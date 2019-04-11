@@ -68,29 +68,31 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [trans sendInstantMessage:iMsg callback:callback dispersedly:NO];
 }
 
-- (BOOL)sendMessage:(DKDInstantMessage *)msg {
-    NSAssert([self.currentUser.ID isEqual:msg.envelope.sender], @"sender error: %@", msg);
+- (BOOL)sendMessage:(DKDInstantMessage *)iMsg {
+    NSAssert([self.currentUser.ID isEqual:iMsg.envelope.sender], @"sender error: %@", iMsg);
     // callback
     DIMTransceiverCallback callback;
     callback = ^(const DKDReliableMessage *rMsg, const NSError *error) {
         const NSString *name = nil;
-        NSDictionary *info = nil;
         if (error) {
             NSLog(@"send message error: %@", error);
             name = kNotificationName_SendMessageFailed;
-            info = @{@"message": msg, @"error": error};
+            iMsg.state = DIMMessageState_Error;
+            iMsg.error = [error localizedDescription];
         } else {
-            NSLog(@"sent message: %@ -> %@", msg, rMsg);
+            NSLog(@"sent message: %@ -> %@", iMsg, rMsg);
             name = kNotificationName_MessageSent;
-            info = @{@"message": msg};
+            iMsg.state = DIMMessageState_Accepted;
         }
+        
+        NSDictionary *info = @{@"message": iMsg};
         [NSNotificationCenter postNotificationName:name
                                             object:self
                                           userInfo:info];
     };
     // send out
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    return [trans sendInstantMessage:msg callback:callback dispersedly:YES];
+    return [trans sendInstantMessage:iMsg callback:callback dispersedly:YES];
 }
 
 #pragma mark -

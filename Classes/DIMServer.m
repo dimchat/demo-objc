@@ -226,21 +226,32 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 - (void)star:(id<SGStar>)star onFinishSend:(const NSData *)requestData withError:(const NSError *)error {
     DIMTransceiverCompletionHandler handler = NULL;
+    const NSData *data = nil;
     
     id key = [PackageHandler keyWithData:requestData];
     PackageHandler *wrapper = [_sendingTable objectForKey:key];
     if (wrapper) {
         handler = wrapper.handler;
+        data = wrapper.data;
         [_sendingTable removeObjectForKey:key];
+    }
+    
+    if (error == nil) {
+        // send sucess
+        if ([_delegate respondsToSelector:@selector(station:didSendPackage:)]) {
+            [_delegate station:self didSendPackage:data];
+        }
+        NSLog(@"send data package success");
+    } else {
+        if ([_delegate respondsToSelector:@selector(station:sendPackage:didFailWithError:)]) {
+            [_delegate station:self sendPackage:data didFailWithError:error];
+        }
+        NSLog(@"send data package failed: %@", error);
     }
     
     if (handler) {
         // tell the handler to do the resending job
         handler(error);
-    } else if (error) {
-        NSLog(@"send data package failed: %@", error);
-    } else {
-        NSLog(@"send data package success");
     }
 }
 

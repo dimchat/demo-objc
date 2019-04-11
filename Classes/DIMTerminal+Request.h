@@ -16,7 +16,7 @@ extern const NSString *kNotificationName_SendMessageFailed;
 @interface DIMTerminal (Request)
 
 - (BOOL)sendContent:(DIMMessageContent *)content to:(const DIMID *)receiver;
-- (BOOL)sendMessage:(DIMInstantMessage *)msg;
+- (BOOL)sendMessage:(DIMInstantMessage *)iMsg;
 
 // pack and send command to station
 - (BOOL)sendCommand:(DIMCommand *)cmd;
