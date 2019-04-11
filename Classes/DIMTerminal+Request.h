@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern const NSString *kNotificationName_MessageSent;
 extern const NSString *kNotificationName_SendMessageFailed;
 
-@interface DIMTerminal (Request)
+@interface DIMTerminal (Packing)
 
 // pack and send message content to receiver
 - (nullable DIMInstantMessage *)sendContent:(DIMMessageContent *)content
@@ -22,7 +22,9 @@ extern const NSString *kNotificationName_SendMessageFailed;
 // pack and send command to station
 - (nullable DIMInstantMessage *)sendCommand:(DIMCommand *)cmd;
 
-#pragma mark -
+@end
+
+@interface DIMTerminal (Request)
 
 - (BOOL)login:(DIMUser *)user;
 

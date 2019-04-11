@@ -149,6 +149,13 @@
         } else if ([command isEqualToString:@"search"]) {
             // search users response
             return [self processSearchUsersMessageContent:content];
+        } else if ([command isEqualToString:DKDSystemCommand_Receipt]) {
+            // receipt
+            DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
+            if ([clerk saveReceipt:iMsg]) {
+                NSLog(@"target message state updated with receipt: %@", content);
+            }
+            return ;
         }
         NSLog(@"!!! unknown command: %@, sender: %@, message content: %@",
               command, sender, content);

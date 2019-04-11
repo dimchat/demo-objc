@@ -14,7 +14,7 @@
 const NSString *kNotificationName_MessageSent       = @"MessageSent";
 const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
-@implementation DIMTerminal (Request)
+@implementation DIMTerminal (Packing)
 
 - (nullable DIMInstantMessage *)sendContent:(DIMMessageContent *)content
                                          to:(const DIMID *)receiver {
@@ -76,7 +76,9 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendContent:cmd to:_currentStation.ID];
 }
 
-#pragma mark -
+@end
+
+@implementation DIMTerminal (Request)
 
 - (BOOL)login:(DIMUser *)user {
     if (!user || [self.currentUser isEqual:user]) {
