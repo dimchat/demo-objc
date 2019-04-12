@@ -226,25 +226,25 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 - (void)star:(id<SGStar>)star onFinishSend:(const NSData *)requestData withError:(const NSError *)error {
     DIMTransceiverCompletionHandler handler = NULL;
-    const NSData *data = nil;
     
     id key = [PackageHandler keyWithData:requestData];
     PackageHandler *wrapper = [_sendingTable objectForKey:key];
     if (wrapper) {
         handler = wrapper.handler;
-        data = wrapper.data;
+        NSAssert([wrapper.data isEqual:requestData], @"data not match, error: %@", error);
+        //requestData = wrapper.data;
         [_sendingTable removeObjectForKey:key];
     }
     
     if (error == nil) {
         // send sucess
         if ([_delegate respondsToSelector:@selector(station:didSendPackage:)]) {
-            [_delegate station:self didSendPackage:data];
+            [_delegate station:self didSendPackage:requestData];
         }
         NSLog(@"send data package success");
     } else {
         if ([_delegate respondsToSelector:@selector(station:sendPackage:didFailWithError:)]) {
-            [_delegate station:self sendPackage:data didFailWithError:error];
+            [_delegate station:self sendPackage:requestData didFailWithError:error];
         }
         NSLog(@"send data package failed: %@", error);
     }
@@ -265,9 +265,9 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     wrapper = [[PackageHandler alloc] initWithData:data handler:handler];
     
     if (![_fsm.currentState.name isEqualToString:kDIMServerState_Running]) {
-        // puth the request data to waiting queue
+        NSLog(@"current server's state: %@, puth the request data to waiting queue", _fsm.currentState.name);
         [_waitingList addObject:wrapper];
-        return NO;
+        return YES;
     }
     
     NSInteger res = [_star send:data];

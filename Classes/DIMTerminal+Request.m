@@ -62,7 +62,7 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     if ([trans sendInstantMessage:iMsg callback:callback dispersedly:YES]) {
         return iMsg;
     } else {
-        NSLog(@"failed to send message content: %@ to receiver: %@", content, receiver);
+        NSLog(@"failed to send message: %@", iMsg);
         return nil;
     }
 }
