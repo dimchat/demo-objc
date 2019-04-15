@@ -129,6 +129,10 @@
     // trans to instant message
     DKDInstantMessage *iMsg;
     iMsg = [trans verifyAndDecryptMessage:rMsg users:self.users];
+    if (iMsg == nil) {
+        NSLog(@"failed to verify/decrypt message: %@", rMsg);
+        return ;
+    }
     
     // process commands
     DIMMessageContent *content = iMsg.content;
