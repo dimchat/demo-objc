@@ -55,6 +55,10 @@
         // insert the user to the first
         [_users insertObject:user atIndex:0];
     }
+    
+    //Save current user
+    [[NSUserDefaults standardUserDefaults] setObject:user.ID forKey:@"Current_User_ID"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)addUser:(DIMUser *)user {
