@@ -49,7 +49,9 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
-        [barrack saveMeta:cmd.meta forEntityID:cmd.ID];
+        [barrack saveMeta:cmd.meta forID:cmd.ID];
+    } else {
+        NSAssert(false, @"meta error: %@", cmd);
     }
 }
 
@@ -58,11 +60,12 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     cmd = [[DIMProfileCommand alloc] initWithDictionary:content];
     // check meta
     const DIMMeta *meta = cmd.meta;
-    if (meta) {
-        NSAssert([meta matchID:cmd.ID], @"meta not match ID: %@", cmd);
+    if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
-        [barrack saveMeta:cmd.meta forEntityID:cmd.ID];
+        [barrack saveMeta:cmd.meta forID:cmd.ID];
+    } else {
+        NSAssert(meta == nil, @"meta error: %@", cmd);
     }
     // check profile
     DIMProfile *profile = cmd.profile;
