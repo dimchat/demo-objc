@@ -141,7 +141,7 @@
     const DIMID *ID = [meta buildIDWithNetworkID:MKMNetwork_Polylogue];
     // save meta for group ID
     DIMBarrack *barrack = [DIMBarrack sharedInstance];
-    [barrack saveMeta:meta forID:ID];
+    [barrack setMeta:meta forID:ID];
     
     // end out meta+profile command
     DIMProfile *profile;

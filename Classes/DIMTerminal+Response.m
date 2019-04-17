@@ -49,7 +49,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
-        [barrack saveMeta:cmd.meta forID:cmd.ID];
+        [barrack setMeta:cmd.meta forID:cmd.ID];
     } else {
         NSAssert(false, @"meta error: %@", cmd);
     }
@@ -63,7 +63,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
-        [barrack saveMeta:cmd.meta forID:cmd.ID];
+        [barrack setMeta:cmd.meta forID:cmd.ID];
     } else {
         NSAssert(meta == nil, @"meta error: %@", cmd);
     }
