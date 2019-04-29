@@ -38,6 +38,9 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMServer.h>
 #import <DIMClient/DIMServerState.h>
 
+#import <DIMClient/DIMConversation.h>
+#import <DIMClient/DIMAmanuensis.h>
+
 #import <DIMClient/DIMTerminal.h>
 #import <DIMClient/DIMTerminal+Request.h>
 #import <DIMClient/DIMTerminal+Response.h>
