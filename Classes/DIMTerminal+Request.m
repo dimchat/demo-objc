@@ -23,7 +23,8 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
         // TODO: save the message content in waiting queue
         return nil;
     }
-    if (!DIMPublicKeyForID(receiver)) {
+    if (!DIMMetaForID(receiver)) {
+        // TODO: check profile.key
         NSLog(@"cannot get public key for receiver: %@", receiver);
         [self queryMetaForID:receiver];
         // TODO: save the message content in waiting queue
@@ -113,12 +114,10 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return nil;
     }
-    DIMPrivateKey *SK = self.currentUser.privateKey;
     
     DIMProfileCommand *cmd;
     cmd = [[DIMProfileCommand alloc] initWithID:ID
                                            meta:meta
-                                     privateKey:SK
                                         profile:profile];
     return [self sendCommand:cmd];
 }
@@ -131,11 +130,9 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (nullable DIMInstantMessage *)queryProfileForID:(const DIMID *)ID {
-    DIMProfileCommand *cmd;
-    cmd = [[DIMProfileCommand alloc] initWithID:ID
-                                           meta:nil
-                                        profile:nil
-                                      signature:nil];
+    DIMProfileCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
+                                                              meta:nil
+                                                           profile:nil];
     return [self sendCommand:cmd];
 }
 

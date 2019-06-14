@@ -39,40 +39,40 @@ NS_DESIGNATED_INITIALIZER;
 #pragma mark - Read
 
 /**
- Get message count
-
- @return total count
+ *  Get message count
+ *
+ * @return total count
  */
 - (NSInteger)numberOfMessage;
 
 /**
- Get message at index
-
- @param index - start from 0, latest first
- @return instant message
+ *  Get message at index
+ *
+ * @param index - start from 0, latest first
+ * @return instant message
  */
 - (DIMInstantMessage *)messageAtIndex:(NSInteger)index;
 
 #pragma mark - Write
 
 /**
- Insert a new message
-
- @param iMsg - instant message
+ *  Insert a new message
+ *
+ * @param iMsg - instant message
  */
 - (BOOL)insertMessage:(DIMInstantMessage *)iMsg;
 
 /**
- Delete the message
-
- @param iMsg - instant message
+ *  Delete the message
+ *
+ * @param iMsg - instant message
  */
 - (BOOL)removeMessage:(DIMInstantMessage *)iMsg;
 
 /**
- Try to withdraw the message
-
- @param iMsg - instant message
+ *  Try to withdraw the message
+ *
+ * @param iMsg - instant message
  */
 - (BOOL)withdrawMessage:(DIMInstantMessage *)iMsg;
 
@@ -83,19 +83,19 @@ NS_DESIGNATED_INITIALIZER;
 @protocol DIMConversationDataSource <NSObject>
 
 /**
- Get message count in this conversation for an entity
- 
- @param chatBox - conversation instance
- @return total count
+ *  Get message count in this conversation for an entity
+ *
+ * @param chatBox - conversation instance
+ * @return total count
  */
 - (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatBox;
 
 /**
- Get message at index of this conversation
- 
- @param chatBox - conversation instance
- @param index - start from 0, latest first
- @return instant message
+ *  Get message at index of this conversation
+ *
+ * @param chatBox - conversation instance
+ * @param index - start from 0, latest first
+ * @return instant message
  */
 - (DIMInstantMessage *)conversation:(const DIMConversation *)chatBox
                      messageAtIndex:(NSInteger)index;
@@ -105,18 +105,18 @@ NS_DESIGNATED_INITIALIZER;
 @protocol DIMConversationDelegate <NSObject>
 
 /**
- Conversation factory
-
- @param ID - entity ID
- @return conversation(chat box)
+ *  Conversation factory
+ *
+ * @param ID - entity ID
+ * @return conversation(chat box)
  */
 - (DIMConversation *)conversationWithID:(const DIMID *)ID;
 
 /**
- Save the new message to local storage
- 
- @param chatBox - conversation instance
- @param iMsg - instant message
+ *  Save the new message to local storage
+ *
+ * @param chatBox - conversation instance
+ * @param iMsg - instant message
  */
 - (BOOL)conversation:(const DIMConversation *)chatBox
        insertMessage:(DIMInstantMessage *)iMsg;
@@ -124,19 +124,19 @@ NS_DESIGNATED_INITIALIZER;
 @optional
 
 /**
- Delete the message
- 
- @param chatBox - conversation instance
- @param iMsg - instant message
+ *  Delete the message
+ *
+ * @param chatBox - conversation instance
+ * @param iMsg - instant message
  */
 - (BOOL)conversation:(const DIMConversation *)chatBox
        removeMessage:(DIMInstantMessage *)iMsg;
 
 /**
- Try to withdraw the message, maybe won't success
- 
- @param chatBox - conversation instance
- @param iMsg - instant message
+ *  Try to withdraw the message, maybe won't success
+ *
+ * @param chatBox - conversation instance
+ * @param iMsg - instant message
  */
 - (BOOL)conversation:(const DIMConversation *)chatBox
      withdrawMessage:(DIMInstantMessage *)iMsg;

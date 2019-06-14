@@ -14,11 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable DIMGroup *)createGroupWithSeed:(const NSString *)seed
                                    members:(const NSArray<const DIMID *> *)list
-                                   profile:(nullable const NSDictionary *)dict;
+                                   profile:(nullable NSDictionary *)dict;
 
 - (BOOL)updateGroupWithID:(const DIMID *)ID
                   members:(const NSArray<const DIMID *> *)list
-                  profile:(nullable const DIMProfile *)profile;
+                  profile:(nullable DIMProfile *)profile;
 
 @end
 

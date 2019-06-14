@@ -15,7 +15,7 @@
 
 - (BOOL)sendOutGroupID:(const DIMID *)groupID
                   meta:(const DIMMeta *)meta
-               profile:(nullable const DIMProfile *)profile
+               profile:(nullable DIMProfile *)profile
                members:(const NSArray<const DIMID *> *)newMembers {
     NSAssert([meta matchID:groupID], @"meta not match group ID: %@, %@", groupID, meta);
     NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
@@ -88,13 +88,9 @@
     
     // 1. send out meta & profile
     if (profile) {
-        NSString *string = [profile jsonString];
-        NSData *CT = [user.privateKey sign:[string data]];
-        NSString *signature = [CT base64Encode];
         cmd = [[DIMProfileCommand alloc] initWithID:groupID
                                                meta:meta
-                                            profile:string
-                                          signature:signature];
+                                            profile:profile];
     } else {
         cmd = [[DIMMetaCommand alloc] initWithID:groupID
                                             meta:meta];
@@ -130,30 +126,29 @@
 - (nullable DIMGroup *)createGroupWithSeed:(const NSString *)seed
                                    members:(const NSArray<const MKMID *> *)list
                                    profile:(const NSDictionary *)dict {
+    DIMBarrack *barrack = [DIMBarrack sharedInstance];
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
+    DIMPrivateKey *SK = [barrack privateKeyForSignatureOfUser:user.ID];
     DIMMeta *meta = [[DIMMeta alloc] initWithVersion:MKMMetaDefaultVersion
                                                 seed:seed
-                                          privateKey:user.privateKey
-                                           publicKey:nil];
+                                          privateKey:SK
+                                           publicKey:[SK publicKey]];
     // generate group ID
     const DIMID *ID = [meta buildIDWithNetworkID:MKMNetwork_Polylogue];
     // save meta for group ID
-    DIMBarrack *barrack = [DIMBarrack sharedInstance];
     [barrack saveMeta:meta forID:ID];
     
-    // end out meta+profile command
-    DIMProfile *profile;
-    profile = [[DIMProfile alloc] initWithID:ID];
-    //dict = [dict copy];
-    for (NSString *key in dict) {
-        if ([key isEqualToString:@"ID"]) {
-            continue;
-        }
-        [profile setObject:[dict objectForKey:key] forKey:key];
-    }
+    // generate group profile
+    NSData *data = [dict jsonData];
+    NSData *signature = [user sign:data];
+    DIMProfile *profile = [[DIMProfile alloc] initWithID:ID
+                                                    data:[data UTF8String]
+                                               signature:signature];
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
+    
+    // send out meta+profile command
     BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
     if (!sent) {
         NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
@@ -167,7 +162,7 @@
 
 - (BOOL)updateGroupWithID:(const MKMID *)ID
                   members:(const NSArray<const MKMID *> *)list
-                  profile:(const MKMProfile *)profile {
+                  profile:(nullable MKMProfile *)profile {
     DIMGroup *group = DIMGroupWithID(ID);
     const DIMMeta *meta = group.meta;
     NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);

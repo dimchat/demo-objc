@@ -43,18 +43,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMAmanuensis (Message)
 
 /**
- Save received message
- 
- @param iMsg - instant message
- @return YES on success
+ *  Save received message
+ *
+ * @param iMsg - instant message
+ * @return YES on success
  */
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg;
 
 /**
- Update message state with receipt
- 
- @param iMsg - receipt message
- @return YES while target message found
+ *  Update message state with receipt
+ *
+ * @param iMsg - receipt message
+ * @return YES while target message found
  */
 - (BOOL)saveReceipt:(DIMInstantMessage *)iMsg;
 
