@@ -104,7 +104,9 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
 - (void)onHandshakeAccepted:(const NSString *)session {
     // post profile
     DIMProfile *profile = DIMProfileForID(self.currentUser.ID);
-    [self postProfile:profile meta:nil];
+    if (profile) {
+        [self postProfile:profile meta:nil];
+    }
 }
 
 - (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile
