@@ -8,8 +8,6 @@
 
 #import "NSObject+Singleton.h"
 
-#import "DIMReceiptCommand.h"
-
 #import "DIMBarrack.h"
 #import "DIMConversation.h"
 
@@ -142,14 +140,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (BOOL)saveReceipt:(DKDInstantMessage *)iMsg {
-    DIMMessageContent *content = iMsg.content;
-    if (content.type != DIMMessageType_Command ||
-        ![content.command isEqualToString:DKDSystemCommand_Receipt]) {
+    DIMCommand *receipt = [[DIMReceiptCommand alloc] initWithDictionary:iMsg.content];
+    if (receipt.type != DIMContentType_Command ||
+        ![receipt.command isEqualToString:DIMSystemCommand_Receipt]) {
         NSAssert(false, @"this is not a receipt: %@", iMsg);
         return NO;
     }
-    DIMReceiptCommand *receipt;
-    receipt = [[DIMReceiptCommand alloc] initWithDictionary:content];
     NSLog(@"saving receipt: %@", receipt);
     
     DIMConversation *chatBox = nil;
@@ -209,7 +205,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (nullable DIMInstantMessage *)conversation:(DIMConversation *)chatBox
-                         messageMatchReceipt:(DIMReceiptCommand *)receipt {
+                         messageMatchReceipt:(DIMCommand *)receipt {
     DIMInstantMessage *iMsg = nil;
     NSInteger count = [chatBox numberOfMessage];
     for (NSInteger index = count - 1; index >= 0; --index) {

@@ -16,7 +16,7 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 @implementation DIMTerminal (Packing)
 
-- (nullable DIMInstantMessage *)sendContent:(DIMMessageContent *)content
+- (nullable DIMInstantMessage *)sendContent:(DIMContent *)content
                                          to:(const DIMID *)receiver {
     if (!self.currentUser) {
         NSLog(@"not login, drop message content: %@", content);
@@ -116,31 +116,22 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return nil;
     }
-    
-    DIMProfileCommand *cmd;
-    cmd = [[DIMProfileCommand alloc] initWithID:ID
-                                           meta:meta
-                                        profile:profile];
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID meta:meta profile:profile];
     return [self sendCommand:cmd];
 }
 
 - (nullable DIMInstantMessage *)queryMetaForID:(const DIMID *)ID {
-    DIMMetaCommand *cmd;
-    cmd = [[DIMMetaCommand alloc] initWithID:ID
-                                        meta:nil];
+    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID meta:nil];
     return [self sendCommand:cmd];
 }
 
 - (nullable DIMInstantMessage *)queryProfileForID:(const DIMID *)ID {
-    DIMProfileCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
-                                                              meta:nil
-                                                           profile:nil];
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID meta:nil profile:nil];
     return [self sendCommand:cmd];
 }
 
 - (nullable DIMInstantMessage *)queryOnlineUsers {
-    DIMCommand *cmd;
-    cmd = [[DIMCommand alloc] initWithCommand:@"users"];
+    DIMCommand *cmd = [[DIMCommand alloc] initWithCommand:@"users"];
     return [self sendCommand:cmd];
 }
 

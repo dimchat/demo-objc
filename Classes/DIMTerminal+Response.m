@@ -19,9 +19,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 @implementation DIMTerminal (Response)
 
-- (void)processHandshakeMessageContent:(DIMMessageContent *)content {
-    DIMHandshakeCommand *cmd;
-    cmd = [[DIMHandshakeCommand alloc] initWithDictionary:content];
+- (void)processHandshakeCommand:(DIMCommand *)cmd {
     DIMHandshakeState state = cmd.state;
     if (state == DIMHandshake_Success) {
         // handshake OK
@@ -36,14 +34,12 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         _session = session;
         [_currentStation handshakeWithSession:session];
     } else {
-        NSLog(@"handshake rejected: %@", content);
+        NSLog(@"handshake rejected: %@", cmd);
         [_currentStation handshakeAccepted:NO session:nil];
     }
 }
 
-- (void)processMetaMessageContent:(DIMMessageContent *)content {
-    DIMMetaCommand *cmd;
-    cmd = [[DIMMetaCommand alloc] initWithDictionary:content];
+- (void)processMetaCommand:(DIMCommand *)cmd {
     // check meta
     const DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
@@ -55,9 +51,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-- (void)processProfileMessageContent:(DIMMessageContent *)content {
-    DIMProfileCommand *cmd;
-    cmd = [[DIMProfileCommand alloc] initWithDictionary:content];
+- (void)processProfileCommand:(DIMCommand *)cmd {
     // check meta
     const DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
@@ -76,15 +70,15 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-- (void)processOnlineUsersMessageContent:(DIMMessageContent *)content {
-    NSArray *users = [content objectForKey:@"users"];
+- (void)processOnlineUsersCommand:(DIMCommand *)cmd {
+    NSArray *users = [cmd objectForKey:@"users"];
     NSDictionary *info = @{@"users": users};
     [NSNotificationCenter postNotificationName:kNotificationName_OnlineUsersUpdated object:self userInfo:info];
 }
 
-- (void)processSearchUsersMessageContent:(DIMMessageContent *)content {
-    NSArray *users = [content objectForKey:@"users"];
-    NSDictionary *results = [content objectForKey:@"results"];
+- (void)processSearchUsersCommand:(DIMCommand *)cmd {
+    NSArray *users = [cmd objectForKey:@"users"];
+    NSDictionary *results = [cmd objectForKey:@"results"];
     NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:2];
     if (users) {
         [mDict setObject:users forKey:@"users"];

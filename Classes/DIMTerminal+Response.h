@@ -16,13 +16,13 @@ extern const NSString *kNotificationName_SearchUsersUpdated;
 
 @interface DIMTerminal (Response)
 
-- (void)processHandshakeMessageContent:(DIMMessageContent *)content;
+- (void)processHandshakeCommand:(DIMCommand *)cmd;
 
-- (void)processMetaMessageContent:(DIMMessageContent *)content;
-- (void)processProfileMessageContent:(DIMMessageContent *)content;
+- (void)processMetaCommand:(DIMCommand *)cmd;
+- (void)processProfileCommand:(DIMCommand *)cmd;
 
-- (void)processOnlineUsersMessageContent:(DIMMessageContent *)content;
-- (void)processSearchUsersMessageContent:(DIMMessageContent *)content;
+- (void)processOnlineUsersCommand:(DIMCommand *)cmd;
+- (void)processSearchUsersCommand:(DIMCommand *)cmd;
 
 @end
 

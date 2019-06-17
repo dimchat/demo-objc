@@ -89,8 +89,9 @@
     
     // decode
     NSString *json = [data UTF8String];
+    NSDictionary *dict = [[json data] jsonDictionary];
     DIMReliableMessage *rMsg;
-    rMsg = [[DKDReliableMessage alloc] initWithJSONString:json];
+    rMsg = [[DIMReliableMessage alloc] initWithDictionary:dict];
     
     // check sender
     const DIMID *sender = [DIMID IDWithID:rMsg.envelope.sender];
@@ -139,29 +140,30 @@
     }
     
     // process commands
-    DIMMessageContent *content = iMsg.content;
-    if (content.type == DIMMessageType_Command) {
-        NSString *command = content.command;
-        if ([command isEqualToString:DKDSystemCommand_Handshake]) {
+    DIMContent *content = iMsg.content;
+    if (content.type == DIMContentType_Command) {
+        DIMCommand *cmd = [[DIMCommand alloc] initWithDictionary:content];
+        NSString *command = cmd.command;
+        if ([command isEqualToString:DIMSystemCommand_Handshake]) {
             // handshake
-            return [self processHandshakeMessageContent:content];
-        } else if ([command isEqualToString:DKDSystemCommand_Meta]) {
+            return [self processHandshakeCommand:cmd];
+        } else if ([command isEqualToString:DIMSystemCommand_Meta]) {
             // query meta response
-            return [self processMetaMessageContent:content];
-        } else if ([command isEqualToString:DKDSystemCommand_Profile]) {
+            return [self processMetaCommand:cmd];
+        } else if ([command isEqualToString:DIMSystemCommand_Profile]) {
             // query profile response
-            return [self processProfileMessageContent:content];
+            return [self processProfileCommand:cmd];
         } else if ([command isEqualToString:@"users"]) {
             // query online users response
-            return [self processOnlineUsersMessageContent:content];
+            return [self processOnlineUsersCommand:cmd];
         } else if ([command isEqualToString:@"search"]) {
             // search users response
-            return [self processSearchUsersMessageContent:content];
-        } else if ([command isEqualToString:DKDSystemCommand_Receipt]) {
+            return [self processSearchUsersCommand:cmd];
+        } else if ([command isEqualToString:DIMSystemCommand_Receipt]) {
             // receipt
             DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
             if ([clerk saveReceipt:iMsg]) {
-                NSLog(@"target message state updated with receipt: %@", content);
+                NSLog(@"target message state updated with receipt: %@", cmd);
             }
             return ;
         }
@@ -169,11 +171,13 @@
               command, sender, content);
         // NOTE: let the message processor to do the job
         //return ;
-    } else if (content.type == DIMMessageType_History) {
+    } else if (content.type == DIMContentType_History) {
         const DIMID *groupID = [DIMID IDWithID:content.group];
         if (groupID) {
-            if (![self checkGroupCommand:content commander:sender]) {
-                NSLog(@"!!! error group history command from %@: %@", sender, content);
+            DIMGroupCommand *cmd;
+            cmd = [[DIMGroupCommand alloc] initWithDictionary:content];
+            if (![self checkGroupCommand:cmd commander:sender]) {
+                NSLog(@"!!! error group command from %@: %@", sender, content);
                 return ;
             }
         }

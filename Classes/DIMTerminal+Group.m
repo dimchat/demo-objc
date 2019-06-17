@@ -84,20 +84,17 @@
         return NO;
     }
     
-    DIMMessageContent *cmd;
+    DIMCommand *cmd;
     
     // 1. send out meta & profile
     if (profile) {
-        cmd = [[DIMProfileCommand alloc] initWithID:groupID
-                                               meta:meta
-                                            profile:profile];
+        cmd = [[DIMProfileCommand alloc] initWithID:groupID meta:meta profile:profile];
     } else {
-        cmd = [[DIMMetaCommand alloc] initWithID:groupID
-                                            meta:meta];
+        cmd = [[DIMMetaCommand alloc] initWithID:groupID meta:meta];
     }
     
     // 1.1. share to station
-    [self sendCommand:(DIMCommand *)cmd];
+    [self sendCommand:cmd];
     
     // 1.2. send to each new member
     for (const DIMID *ID in newMembers) {
@@ -179,11 +176,11 @@
 
 @implementation DIMTerminal (GroupHistory)
 
-- (BOOL)checkPolylogueCommand:(DKDMessageContent *)content
+- (BOOL)checkPolylogueCommand:(DIMCommand *)cmd
                     commander:(const MKMID *)sender {
-    const DIMID *groupID = [DIMID IDWithID:content.group];
+    const DIMID *groupID = [DIMID IDWithID:cmd.group];
     DIMGroup *group = DIMGroupWithID(groupID);
-    NSString *command = content.command;
+    NSString *command = cmd.command;
     
     // check founder
     BOOL isFounder = [group isFounder:sender];
@@ -191,7 +188,7 @@
     // check membership
     BOOL isMember = [group existsMember:sender];
     
-    if ([command isEqualToString:DKDGroupCommand_Invite]) {
+    if ([command isEqualToString:DIMGroupCommand_Invite]) {
         // add member(s)
         if (isFounder || isMember) {
             return YES;
@@ -199,7 +196,7 @@
             NSLog(@"!!! only the founder or member can invite other members");
             return NO;
         }
-    } else if ([command isEqualToString:DKDGroupCommand_Expel]) {
+    } else if ([command isEqualToString:DIMGroupCommand_Expel]) {
         // remove member(s)
         if (isFounder) {
             return YES;
@@ -207,7 +204,7 @@
             NSLog(@"!!! only the founder(owner) can expel members");
             return NO;
         }
-    } else if ([command isEqualToString:DKDGroupCommand_Quit]) {
+    } else if ([command isEqualToString:DIMGroupCommand_Quit]) {
         // remove member
         if (isFounder) {
             NSLog(@"founder can not quit from polylogue: %@", group);
@@ -241,12 +238,11 @@
     return NO;
 }
 
-- (BOOL)checkGroupCommand:(DKDMessageContent *)content
-                commander:(const MKMID *)sender {
-    const DIMID *groupID = [DIMID IDWithID:content.group];
+- (BOOL)checkGroupCommand:(DIMCommand *)cmd commander:(const MKMID *)sender {
+    const DIMID *groupID = [DIMID IDWithID:cmd.group];
     
     if (groupID.type == MKMNetwork_Polylogue) {
-        return [self checkPolylogueCommand:content commander:sender];
+        return [self checkPolylogueCommand:cmd commander:sender];
     } else if (groupID.type == MKMNetwork_Chatroom) {
         // TODO: check by group history consensus
     }
