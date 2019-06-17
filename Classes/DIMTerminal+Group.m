@@ -136,7 +136,7 @@
                                           privateKey:SK
                                            publicKey:[SK publicKey]];
     // generate group ID
-    const DIMID *ID = [meta buildIDWithNetworkID:MKMNetwork_Polylogue];
+    const DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
     // save meta for group ID
     [barrack saveMeta:meta forID:ID];
     
