@@ -33,11 +33,7 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     const DIMID *sender = self.currentUser.ID;
     
     // make instant message
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:content
-                                               sender:sender
-                                             receiver:receiver
-                                                 time:nil];
+    DIMInstantMessage *iMsg = DKDInstantMessageCreate(content, sender, receiver, nil);
     // callback
     DIMTransceiverCallback callback;
     callback = ^(const DKDReliableMessage *rMsg, const NSError *error) {

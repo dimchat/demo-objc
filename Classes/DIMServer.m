@@ -115,13 +115,9 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
     NSLog(@"handshake command: %@", cmd);
     
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:cmd
-                                               sender:_currentUser.ID
-                                             receiver:_ID
-                                                 time:nil];
-    DIMReliableMessage *rMsg;
-    rMsg = [[DIMTransceiver sharedInstance] encryptAndSignMessage:iMsg];
+    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
+    DIMInstantMessage *iMsg = DKDInstantMessageCreate(cmd, _currentUser.ID, _ID, nil);
+    DIMReliableMessage *rMsg = [trans encryptAndSignMessage:iMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
         return ;
@@ -282,7 +278,8 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 - (NSURL *)uploadEncryptedFileData:(const NSData *)CT forMessage:(const DKDInstantMessage *)iMsg {
     DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
-    NSString *filename = iMsg.content.filename;
+    DIMFileContent *content = (DIMFileContent *)iMsg.content;
+    NSString *filename = content.filename;
     
     DIMFileServer *ftp = [DIMFileServer sharedInstance];
     return [ftp uploadEncryptedData:CT filename:filename sender:sender];

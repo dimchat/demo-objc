@@ -13,13 +13,13 @@
 
 #import "DIMTerminal+Response.h"
 
-const NSString *kNotificationName_ProfileUpdated     = @"ProfileUpdated";
-const NSString *kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
-const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
+NSString * const kNotificationName_ProfileUpdated     = @"ProfileUpdated";
+NSString * const kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
+NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 @implementation DIMTerminal (Response)
 
-- (void)processHandshakeCommand:(DIMCommand *)cmd {
+- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd {
     DIMHandshakeState state = cmd.state;
     if (state == DIMHandshake_Success) {
         // handshake OK
@@ -39,7 +39,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-- (void)processMetaCommand:(DIMCommand *)cmd {
+- (void)processMetaCommand:(DIMMetaCommand *)cmd {
     // check meta
     const DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
@@ -51,7 +51,7 @@ const NSString *kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-- (void)processProfileCommand:(DIMCommand *)cmd {
+- (void)processProfileCommand:(DIMProfileCommand *)cmd {
     // check meta
     const DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {

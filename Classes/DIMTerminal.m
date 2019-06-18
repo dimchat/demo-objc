@@ -142,17 +142,17 @@
     // process commands
     DIMContent *content = iMsg.content;
     if (content.type == DIMContentType_Command) {
-        DIMCommand *cmd = [[DIMCommand alloc] initWithDictionary:content];
+        DIMCommand *cmd = (DIMCommand *)content;
         NSString *command = cmd.command;
         if ([command isEqualToString:DIMSystemCommand_Handshake]) {
             // handshake
-            return [self processHandshakeCommand:cmd];
+            return [self processHandshakeCommand:(DIMHandshakeCommand *)cmd];
         } else if ([command isEqualToString:DIMSystemCommand_Meta]) {
             // query meta response
-            return [self processMetaCommand:cmd];
+            return [self processMetaCommand:(DIMMetaCommand *)cmd];
         } else if ([command isEqualToString:DIMSystemCommand_Profile]) {
             // query profile response
-            return [self processProfileCommand:cmd];
+            return [self processProfileCommand:(DIMProfileCommand *)cmd];
         } else if ([command isEqualToString:@"users"]) {
             // query online users response
             return [self processOnlineUsersCommand:cmd];
@@ -174,8 +174,7 @@
     } else if (content.type == DIMContentType_History) {
         const DIMID *groupID = MKMIDFromString(content.group);
         if (groupID) {
-            DIMGroupCommand *cmd;
-            cmd = [[DIMGroupCommand alloc] initWithDictionary:content];
+            DIMGroupCommand *cmd = (DIMGroupCommand *)content;
             if (![self checkGroupCommand:cmd commander:sender]) {
                 NSLog(@"!!! error group command from %@: %@", sender, content);
                 return ;

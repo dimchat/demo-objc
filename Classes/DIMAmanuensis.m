@@ -140,7 +140,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (BOOL)saveReceipt:(DKDInstantMessage *)iMsg {
-    DIMCommand *receipt = [[DIMReceiptCommand alloc] initWithDictionary:iMsg.content];
+    DIMReceiptCommand *receipt = (DIMReceiptCommand *)iMsg.content;
     if (receipt.type != DIMContentType_Command ||
         ![receipt.command isEqualToString:DIMSystemCommand_Receipt]) {
         NSAssert(false, @"this is not a receipt: %@", iMsg);
@@ -177,7 +177,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     
     NSAssert(chatBox, @"chat box not found for receipt: %@", receipt);
     DIMInstantMessage *targetMessage;
-    targetMessage = [self conversation:chatBox messageMatchReceipt:receipt];
+    targetMessage = [self _conversation:chatBox messageMatchReceipt:receipt];
     if (targetMessage) {
         if ([sender isEqual:receiver]) {
             // the receiver's client feedback
@@ -204,8 +204,8 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     return NO;
 }
 
-- (nullable DIMInstantMessage *)conversation:(DIMConversation *)chatBox
-                         messageMatchReceipt:(DIMCommand *)receipt {
+- (nullable DIMInstantMessage *)_conversation:(DIMConversation *)chatBox
+                          messageMatchReceipt:(DIMReceiptCommand *)receipt {
     DIMInstantMessage *iMsg = nil;
     NSInteger count = [chatBox numberOfMessage];
     for (NSInteger index = count - 1; index >= 0; --index) {

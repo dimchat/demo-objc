@@ -10,16 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern const NSString *kNotificationName_ProfileUpdated;
-extern const NSString *kNotificationName_OnlineUsersUpdated;
-extern const NSString *kNotificationName_SearchUsersUpdated;
+extern NSString * const kNotificationName_ProfileUpdated;
+extern NSString * const kNotificationName_OnlineUsersUpdated;
+extern NSString * const kNotificationName_SearchUsersUpdated;
 
 @interface DIMTerminal (Response)
 
-- (void)processHandshakeCommand:(DIMCommand *)cmd;
+- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
 
-- (void)processMetaCommand:(DIMCommand *)cmd;
-- (void)processProfileCommand:(DIMCommand *)cmd;
+- (void)processMetaCommand:(DIMMetaCommand *)cmd;
+- (void)processProfileCommand:(DIMProfileCommand *)cmd;
 
 - (void)processOnlineUsersCommand:(DIMCommand *)cmd;
 - (void)processSearchUsersCommand:(DIMCommand *)cmd;

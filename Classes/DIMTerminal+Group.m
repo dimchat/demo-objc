@@ -176,8 +176,8 @@
 
 @implementation DIMTerminal (GroupHistory)
 
-- (BOOL)checkPolylogueCommand:(DIMCommand *)cmd
-                    commander:(const MKMID *)sender {
+- (BOOL)_checkPolylogueCommand:(DIMGroupCommand *)cmd
+                     commander:(const MKMID *)sender {
     const DIMID *groupID = MKMIDFromString(cmd.group);
     DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = cmd.command;
@@ -238,11 +238,11 @@
     return NO;
 }
 
-- (BOOL)checkGroupCommand:(DIMCommand *)cmd commander:(const MKMID *)sender {
+- (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(const MKMID *)sender {
     const DIMID *groupID = MKMIDFromString(cmd.group);
     
     if (groupID.type == MKMNetwork_Polylogue) {
-        return [self checkPolylogueCommand:cmd commander:sender];
+        return [self _checkPolylogueCommand:cmd commander:sender];
     } else if (groupID.type == MKMNetwork_Chatroom) {
         // TODO: check by group history consensus
     }
