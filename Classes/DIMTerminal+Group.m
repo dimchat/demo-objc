@@ -128,9 +128,10 @@
     
     // generate group meta with current user's private key
     DIMPrivateKey *SK = [barrack privateKeyForSignatureOfUser:user.ID];
-    DIMMeta *meta = [[MKMMetaDefault alloc] initWithSeed:seed
-                                              privateKey:SK
-                                               publicKey:[SK publicKey]];
+    DIMMeta *meta = [[MKMMeta alloc] initWithVersion:MKMMetaDefaultVersion
+                                                seed:seed
+                                          privateKey:SK
+                                           publicKey:[SK publicKey]];
     // generate group ID
     const DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
     // save meta for group ID
