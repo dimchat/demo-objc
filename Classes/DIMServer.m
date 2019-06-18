@@ -281,8 +281,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (NSURL *)uploadEncryptedFileData:(const NSData *)CT forMessage:(const DKDInstantMessage *)iMsg {
-    
-    DIMID *sender = [DIMID IDWithID:iMsg.envelope.sender];
+    DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
     NSString *filename = iMsg.content.filename;
     
     DIMFileServer *ftp = [DIMFileServer sharedInstance];

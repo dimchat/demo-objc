@@ -120,9 +120,9 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     DIMConversation *chatBox = nil;
     
     DIMEnvelope *env = iMsg.envelope;
-    const DIMID *sender = [DIMID IDWithID:env.sender];
-    const DIMID *receiver = [DIMID IDWithID:env.receiver];
-    const DIMID *groupID = [DIMID IDWithID:iMsg.content.group];
+    const DIMID *sender = MKMIDFromString(env.sender);
+    const DIMID *receiver = MKMIDFromString(env.receiver);
+    const DIMID *groupID = MKMIDFromString(iMsg.content.group);
     
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chat box with group ID
@@ -152,15 +152,15 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     
     // NOTE: this is the receipt's commander,
     //       it can be a station, or the original message's receiver
-    const DIMID *sender = [DIMID IDWithID:iMsg.envelope.sender];
+    const DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
     
     // NOTE: this is the original message's receiver
-    const DIMID *receiver = [DIMID IDWithID:receipt.envelope.receiver];
+    const DIMID *receiver = MKMIDFromString(receipt.envelope.receiver);
     
     // FIXME: only the real receiver will know the exact message detail, so
     //        the station may not know if this is a group message.
     //        maybe we should try another way to search the exact conversation.
-    const DIMID *groupID = [DIMID IDWithID:receipt.group];
+    const DIMID *groupID = MKMIDFromString(receipt.group);
     
     if (receiver == nil) {
         NSLog(@"receiver not found, it's not a receipt for instant message");

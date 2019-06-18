@@ -94,10 +94,10 @@
     rMsg = [[DIMReliableMessage alloc] initWithDictionary:dict];
     
     // check sender
-    const DIMID *sender = [DIMID IDWithID:rMsg.envelope.sender];
+    const DIMID *sender = MKMIDFromString(rMsg.envelope.sender);
     const DIMMeta *meta = DIMMetaForID(sender);
     if (!meta) {
-        meta = [DIMMeta metaWithMeta:rMsg.meta];
+        meta = MKMMetaFromDictionary(rMsg.meta);
         if (!meta) {
             NSLog(@"meta for %@ not found, query from the network...", sender);
             [self queryMetaForID:sender];
@@ -107,10 +107,10 @@
     }
     
     // check receiver
-    const DIMID *receiver = [DIMID IDWithID:rMsg.envelope.receiver];
+    const DIMID *receiver = MKMIDFromString(rMsg.envelope.receiver);
     DIMUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
-        NSAssert(rMsg.group == nil || [[DIMID IDWithID:rMsg.group] isEqual:receiver],
+        NSAssert(rMsg.group == nil || [MKMIDFromString(rMsg.group) isEqual:receiver],
                  @"group error: %@ != %@", receiver, rMsg.group);
         // FIXME: maybe other user?
         user = self.currentUser;
@@ -172,7 +172,7 @@
         // NOTE: let the message processor to do the job
         //return ;
     } else if (content.type == DIMContentType_History) {
-        const DIMID *groupID = [DIMID IDWithID:content.group];
+        const DIMID *groupID = MKMIDFromString(content.group);
         if (groupID) {
             DIMGroupCommand *cmd;
             cmd = [[DIMGroupCommand alloc] initWithDictionary:content];

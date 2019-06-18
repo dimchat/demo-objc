@@ -128,10 +128,9 @@
     
     // generate group meta with current user's private key
     DIMPrivateKey *SK = [barrack privateKeyForSignatureOfUser:user.ID];
-    DIMMeta *meta = [[DIMMeta alloc] initWithVersion:MKMMetaDefaultVersion
-                                                seed:seed
-                                          privateKey:SK
-                                           publicKey:[SK publicKey]];
+    DIMMeta *meta = [[MKMMetaDefault alloc] initWithSeed:seed
+                                              privateKey:SK
+                                               publicKey:[SK publicKey]];
     // generate group ID
     const DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
     // save meta for group ID
@@ -178,7 +177,7 @@
 
 - (BOOL)checkPolylogueCommand:(DIMCommand *)cmd
                     commander:(const MKMID *)sender {
-    const DIMID *groupID = [DIMID IDWithID:cmd.group];
+    const DIMID *groupID = MKMIDFromString(cmd.group);
     DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = cmd.command;
     
@@ -239,7 +238,7 @@
 }
 
 - (BOOL)checkGroupCommand:(DIMCommand *)cmd commander:(const MKMID *)sender {
-    const DIMID *groupID = [DIMID IDWithID:cmd.group];
+    const DIMID *groupID = MKMIDFromString(cmd.group);
     
     if (groupID.type == MKMNetwork_Polylogue) {
         return [self checkPolylogueCommand:cmd commander:sender];
