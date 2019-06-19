@@ -15,7 +15,7 @@
 
 @interface DIMAmanuensis () {
     
-    NSMutableDictionary<const DIMAddress *, DIMConversation *> *_conversations;
+    NSMutableDictionary<DIMAddress *, DIMConversation *> *_conversations;
 }
 
 @end
@@ -33,7 +33,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 - (void)setConversationDataSource:(id<DIMConversationDataSource>)dataSource {
     if (dataSource) {
-        NSMutableDictionary<const DIMAddress *, DIMConversation *> *list;
+        NSMutableDictionary<DIMAddress *, DIMConversation *> *list;
         list = [_conversations copy];
         // update exists chat boxes
         DIMConversation *chatBox;
@@ -49,7 +49,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 - (void)setConversationDelegate:(id<DIMConversationDelegate>)delegate {
     if (delegate) {
-        NSMutableDictionary<const DIMAddress *, DIMConversation *> *list;
+        NSMutableDictionary<DIMAddress *, DIMConversation *> *list;
         list = [_conversations copy];
         // update exists chat boxes
         DIMConversation *chatBox;
@@ -63,7 +63,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     _conversationDelegate = delegate;
 }
 
-- (DIMConversation *)conversationWithID:(const DIMID *)ID {
+- (DIMConversation *)conversationWithID:(DIMID *)ID {
     DIMConversation *chatBox = [_conversations objectForKey:ID.address];
     if (!chatBox) {
         if (_conversationDelegate) {
@@ -101,12 +101,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     if (chatBox.delegate == nil) {
         chatBox.delegate = _conversationDelegate;
     }
-    const DIMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     [_conversations setObject:chatBox forKey:ID.address];
 }
 
 - (void)removeConversation:(DIMConversation *)chatBox {
-    const DIMID *ID = chatBox.ID;
+    DIMID *ID = chatBox.ID;
     [_conversations removeObjectForKey:ID.address];
 }
 
@@ -120,9 +120,9 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     DIMConversation *chatBox = nil;
     
     DIMEnvelope *env = iMsg.envelope;
-    const DIMID *sender = MKMIDFromString(env.sender);
-    const DIMID *receiver = MKMIDFromString(env.receiver);
-    const DIMID *groupID = MKMIDFromString(iMsg.content.group);
+    DIMID *sender = MKMIDFromString(env.sender);
+    DIMID *receiver = MKMIDFromString(env.receiver);
+    DIMID *groupID = MKMIDFromString(iMsg.content.group);
     
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group chat, get chat box with group ID
@@ -152,15 +152,15 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     
     // NOTE: this is the receipt's commander,
     //       it can be a station, or the original message's receiver
-    const DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
+    DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
     
     // NOTE: this is the original message's receiver
-    const DIMID *receiver = MKMIDFromString(receipt.envelope.receiver);
+    DIMID *receiver = MKMIDFromString(receipt.envelope.receiver);
     
     // FIXME: only the real receiver will know the exact message detail, so
     //        the station may not know if this is a group message.
     //        maybe we should try another way to search the exact conversation.
-    const DIMID *groupID = MKMIDFromString(receipt.group);
+    DIMID *groupID = MKMIDFromString(receipt.group);
     
     if (receiver == nil) {
         NSLog(@"receiver not found, it's not a receipt for instant message");

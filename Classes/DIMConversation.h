@@ -26,14 +26,14 @@ typedef UInt8 DIMConversationType;
 
 @property (readonly, nonatomic) DIMConversationType type; // Network ID
 
-@property (readonly, strong, nonatomic) const DIMID *ID;
+@property (readonly, strong, nonatomic) DIMID *ID;
 @property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, strong, nonatomic) NSString *title;
 
 @property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;
 
-- (instancetype)initWithEntity:(const DIMEntity *)entity
+- (instancetype)initWithEntity:(DIMEntity *)entity
 NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Read
@@ -88,7 +88,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param chatBox - conversation instance
  * @return total count
  */
-- (NSInteger)numberOfMessagesInConversation:(const DIMConversation *)chatBox;
+- (NSInteger)numberOfMessagesInConversation:(DIMConversation *)chatBox;
 
 /**
  *  Get message at index of this conversation
@@ -97,7 +97,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param index - start from 0, latest first
  * @return instant message
  */
-- (DIMInstantMessage *)conversation:(const DIMConversation *)chatBox
+- (DIMInstantMessage *)conversation:(DIMConversation *)chatBox
                      messageAtIndex:(NSInteger)index;
 
 @end
@@ -110,7 +110,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param ID - entity ID
  * @return conversation(chat box)
  */
-- (DIMConversation *)conversationWithID:(const DIMID *)ID;
+- (DIMConversation *)conversationWithID:(DIMID *)ID;
 
 /**
  *  Save the new message to local storage
@@ -118,7 +118,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param chatBox - conversation instance
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(const DIMConversation *)chatBox
+- (BOOL)conversation:(DIMConversation *)chatBox
        insertMessage:(DIMInstantMessage *)iMsg;
 
 @optional
@@ -129,7 +129,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param chatBox - conversation instance
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(const DIMConversation *)chatBox
+- (BOOL)conversation:(DIMConversation *)chatBox
        removeMessage:(DIMInstantMessage *)iMsg;
 
 /**
@@ -138,7 +138,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param chatBox - conversation instance
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(const DIMConversation *)chatBox
+- (BOOL)conversation:(DIMConversation *)chatBox
      withdrawMessage:(DIMInstantMessage *)iMsg;
 
 @end

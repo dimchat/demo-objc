@@ -12,12 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTerminal (GroupManage)
 
-- (nullable DIMGroup *)createGroupWithSeed:(const NSString *)seed
-                                   members:(const NSArray<const DIMID *> *)list
+- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
+                                   members:(NSArray<DIMID *> *)list
                                    profile:(nullable NSDictionary *)dict;
 
-- (BOOL)updateGroupWithID:(const DIMID *)ID
-                  members:(const NSArray<const DIMID *> *)list
+- (BOOL)updateGroupWithID:(DIMID *)ID
+                  members:(NSArray<DIMID *> *)list
                   profile:(nullable DIMProfile *)profile;
 
 @end
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMTerminal (GroupHistory)
 
 // group history command
-- (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(const DIMID *)sender;
+- (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(DIMID *)sender;
 
 @end
 

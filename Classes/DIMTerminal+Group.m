@@ -13,10 +13,10 @@
 
 @implementation DIMTerminal (GroupManage)
 
-- (BOOL)sendOutGroupID:(const DIMID *)groupID
-                  meta:(const DIMMeta *)meta
+- (BOOL)sendOutGroupID:(DIMID *)groupID
+                  meta:(DIMMeta *)meta
                profile:(nullable DIMProfile *)profile
-               members:(const NSArray<const DIMID *> *)newMembers {
+               members:(NSArray<DIMID *> *)newMembers {
     NSAssert([meta matchID:groupID], @"meta not match group ID: %@, %@", groupID, meta);
     NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
     
@@ -29,7 +29,7 @@
     }
     
     // checking founder
-    const DIMID *founder = group.founder;
+    DIMID *founder = group.founder;
     if (!founder) {
         // FIXME: new group?
         founder = user.ID;
@@ -56,10 +56,10 @@
     }
     
     // checking expeled list with old members
-    NSArray<const DIMID *> *members = group.members;
-    NSMutableArray<const DIMID *> *expels;
+    NSArray<DIMID *> *members = group.members;
+    NSMutableArray<DIMID *> *expels;
     expels = [[NSMutableArray alloc] initWithCapacity:members.count];
-    for (const DIMID *ID in members) {
+    for (DIMID *ID in members) {
         // if old member not in the new list, expel it
         if (![newMembers containsObject:ID]) {
             [expels addObject:ID];
@@ -97,7 +97,7 @@
     [self sendCommand:cmd];
     
     // 1.2. send to each new member
-    for (const DIMID *ID in newMembers) {
+    for (DIMID *ID in newMembers) {
         [self sendContent:cmd to:ID];
     }
     
@@ -105,7 +105,7 @@
     if (members.count > 0) {
         if (expels.count > 0) {
             cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
-            for (const DIMID *ID in members) {
+            for (DIMID *ID in members) {
                 [self sendContent:cmd to:ID];
             }
         }
@@ -113,27 +113,27 @@
     
     // 3. send invite command to all new members
     cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
-    for (const DIMID *ID in newMembers) {
+    for (DIMID *ID in newMembers) {
         [self sendContent:cmd to:ID];
     }
     
     return YES;
 }
 
-- (nullable DIMGroup *)createGroupWithSeed:(const NSString *)seed
-                                   members:(const NSArray<const MKMID *> *)list
-                                   profile:(const NSDictionary *)dict {
+- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
+                                   members:(NSArray<DIMID *> *)list
+                                   profile:(NSDictionary *)dict {
     DIMBarrack *barrack = [DIMBarrack sharedInstance];
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
     DIMPrivateKey *SK = [barrack privateKeyForSignatureOfUser:user.ID];
-    DIMMeta *meta = [[MKMMeta alloc] initWithVersion:MKMMetaDefaultVersion
+    DIMMeta *meta = [[DIMMeta alloc] initWithVersion:MKMMetaDefaultVersion
                                                 seed:seed
                                           privateKey:SK
                                            publicKey:[SK publicKey]];
     // generate group ID
-    const DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
+    DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
     // save meta for group ID
     [barrack saveMeta:meta forID:ID];
     
@@ -157,11 +157,11 @@
     return DIMGroupWithID(ID);
 }
 
-- (BOOL)updateGroupWithID:(const MKMID *)ID
-                  members:(const NSArray<const MKMID *> *)list
+- (BOOL)updateGroupWithID:(DIMID *)ID
+                  members:(NSArray<DIMID *> *)list
                   profile:(nullable MKMProfile *)profile {
     DIMGroup *group = DIMGroupWithID(ID);
-    const DIMMeta *meta = group.meta;
+    DIMMeta *meta = group.meta;
     NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);
     BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
     if (!sent) {
@@ -177,8 +177,8 @@
 @implementation DIMTerminal (GroupHistory)
 
 - (BOOL)_checkPolylogueCommand:(DIMGroupCommand *)cmd
-                     commander:(const MKMID *)sender {
-    const DIMID *groupID = MKMIDFromString(cmd.group);
+                     commander:(DIMID *)sender {
+    DIMID *groupID = MKMIDFromString(cmd.group);
     DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = cmd.command;
     
@@ -238,8 +238,8 @@
     return NO;
 }
 
-- (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(const MKMID *)sender {
-    const DIMID *groupID = MKMIDFromString(cmd.group);
+- (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(DIMID *)sender {
+    DIMID *groupID = MKMIDFromString(cmd.group);
     
     if (groupID.type == MKMNetwork_Polylogue) {
         return [self _checkPolylogueCommand:cmd commander:sender];

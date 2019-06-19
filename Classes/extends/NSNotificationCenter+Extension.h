@@ -12,14 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSNotificationCenter (MainThread)
 
-+ (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable const NSString *)aName object:(nullable id)anObject;
++ (void)addObserver:(id)observer selector:(SEL)aSelector name:(nullable NSString *)aName object:(nullable id)anObject;
 
 + (void)postNotification:(NSNotification *)notification;
-+ (void)postNotificationName:(const NSString *)aName object:(nullable id)anObject;
-+ (void)postNotificationName:(const NSString *)aName object:(nullable id)anObject userInfo:(nullable NSDictionary *)aUserInfo;
++ (void)postNotificationName:(NSString *)aName object:(nullable id)anObject;
++ (void)postNotificationName:(NSString *)aName object:(nullable id)anObject userInfo:(nullable NSDictionary *)aUserInfo;
 
 + (void)removeObserver:(id)observer;
-+ (void)removeObserver:(id)observer name:(nullable const NSString *)aName object:(nullable id)anObject;
++ (void)removeObserver:(id)observer name:(nullable NSString *)aName object:(nullable id)anObject;
 
 @end
 

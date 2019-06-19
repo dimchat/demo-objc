@@ -19,13 +19,12 @@
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
     DIMEntity *entity = nil;
-    self = [self initWithEntity:entity];
-    return self;
+    return [self initWithEntity:entity];
 }
 
-- (instancetype)initWithEntity:(const DIMEntity *)entity {
+- (instancetype)initWithEntity:(DIMEntity *)entity {
     if (self = [super init]) {
-        _entity = [entity copy];
+        _entity = entity;
     }
     return self;
 }
@@ -39,7 +38,7 @@
     return DIMConversationUnknown;
 }
 
-- (const DIMID *)ID {
+- (DIMID *)ID {
     return _entity.ID;
 }
 

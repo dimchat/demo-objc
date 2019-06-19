@@ -28,6 +28,6 @@
 
 @end
 
-NSString *NSStringFromDate(const NSDate *date) {
+NSString *NSStringFromDate(NSDate *date) {
     return [NSString stringWithFormat:@"%@", date];
 }

@@ -25,27 +25,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (NSURL *)uploadEncryptedData:(const NSData *)data
-                      filename:(nullable const NSString *)name
-                        sender:(const DIMID *)from;
+- (NSURL *)uploadEncryptedData:(NSData *)data
+                      filename:(nullable NSString *)name
+                        sender:(DIMID *)from;
 
-- (nullable NSData *)downloadEncryptedDataFromURL:(const NSURL *)url;
+- (nullable NSData *)downloadEncryptedDataFromURL:(NSURL *)url;
 
-- (nullable NSData *)decryptDataFromURL:(const NSURL *)url
-                               filename:(const NSString *)name
-                                wityKey:(const DIMSymmetricKey *)key;
+- (nullable NSData *)decryptDataFromURL:(NSURL *)url
+                               filename:(NSString *)name
+                                wityKey:(DIMSymmetricKey *)key;
 
-- (BOOL)saveData:(const NSData *)data filename:(const NSString *)name;
-- (NSData *)loadDataWithFilename:(const NSString *)name;
+- (BOOL)saveData:(NSData *)data filename:(NSString *)name;
+- (NSData *)loadDataWithFilename:(NSString *)name;
 
-- (BOOL)saveThumbnail:(const NSData *)data filename:(const NSString *)name;
-- (NSData *)loadThumbnailWithFilename:(const NSString *)name;
+- (BOOL)saveThumbnail:(NSData *)data filename:(NSString *)name;
+- (NSData *)loadThumbnailWithFilename:(NSString *)name;
 
 #pragma mark Avatar
 
-- (NSURL *)uploadAvatar:(const NSData *)data
-               filename:(nullable const NSString *)name
-                 sender:(const DIMID *)ID;
+- (NSURL *)uploadAvatar:(NSData *)data
+               filename:(nullable NSString *)name
+                 sender:(DIMID *)ID;
 
 @end
 

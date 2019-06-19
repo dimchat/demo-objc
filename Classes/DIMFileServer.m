@@ -170,9 +170,9 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return _session;
 }
 
-- (NSData *)buildHTTPBodyWithFilename:(const NSString *)name
-                              varName:(const NSString *)var
-                                 data:(const NSData *)data {
+- (NSData *)buildHTTPBodyWithFilename:(NSString *)name
+                              varName:(NSString *)var
+                                 data:(NSData *)data {
     
     NSMutableString *begin = [[NSMutableString alloc] init];
     [begin appendString:@"--4Tcjm5mp8BNiQN5YnxAAAnexqnbb3MrWjK\r\n"];
@@ -280,9 +280,9 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 #pragma mark -
 
-- (NSURL *)uploadEncryptedData:(const NSData *)data
-                      filename:(nullable const NSString *)name
-                        sender:(const DIMID *)from {
+- (NSURL *)uploadEncryptedData:(NSData *)data
+                      filename:(nullable NSString *)name
+                        sender:(DIMID *)from {
     
     // prepare filename (make sure that filenames won't conflict)
     NSString *filename = [[data md5] hexEncode];
@@ -304,7 +304,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return [NSURL URLWithString:download];
 }
 
-- (nullable NSData *)downloadEncryptedDataFromURL:(const NSURL *)url {
+- (nullable NSData *)downloadEncryptedDataFromURL:(NSURL *)url {
     
     // load data with URL
     NSString *filename = [url lastPathComponent];
@@ -318,9 +318,9 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return nil;
 }
 
-- (nullable NSData *)decryptDataFromURL:(const NSURL *)url
-                               filename:(const NSString *)name
-                                wityKey:(const MKMSymmetricKey *)key {
+- (nullable NSData *)decryptDataFromURL:(NSURL *)url
+                               filename:(NSString *)name
+                                wityKey:(DIMSymmetricKey *)key {
     // check file with local cache path
     NSString *filename1 = [url lastPathComponent];
     NSString *path1 = data_filepath(filename1, NO);
@@ -349,7 +349,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return data;
 }
 
-- (BOOL)saveData:(const NSData *)data filename:(const NSString *)name {
+- (BOOL)saveData:(NSData *)data filename:(NSString *)name {
     
     NSString *filename = [[data md5] hexEncode];
     NSString *ext = [name pathExtension];
@@ -361,20 +361,20 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return [data writeToFile:path atomically:YES];
 }
 
-- (NSData *)loadDataWithFilename:(const NSString *)name {
+- (NSData *)loadDataWithFilename:(NSString *)name {
     
     NSString *path = data_filepath((NSString *)name, NO);
     return [NSData dataWithContentsOfFile:path];
 }
 
-- (BOOL)saveThumbnail:(const NSData *)data filename:(const NSString *)name {
+- (BOOL)saveThumbnail:(NSData *)data filename:(NSString *)name {
     // use the same filename for thumbnail but different directory
     NSString *filename = [[NSString alloc] initWithFormat:@"%@", name];
     NSString *path = thumbnail_filepath(filename, YES);
     return [data writeToFile:path atomically:YES];
 }
 
-- (NSData *)loadThumbnailWithFilename:(const NSString *)name {
+- (NSData *)loadThumbnailWithFilename:(NSString *)name {
     // use the same filename for thumbnail but different directory
     NSString *filename = [[NSString alloc] initWithFormat:@"%@", name];
     NSString *path = thumbnail_filepath(filename, NO);
@@ -383,7 +383,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 #pragma mark Avatar
 
-- (NSURL *)uploadAvatar:(const NSData *)data filename:(const NSString *)name sender:(const MKMID *)ID {
+- (NSURL *)uploadAvatar:(NSData *)data filename:(NSString *)name sender:(DIMID *)ID {
     
     // upload to CDN
     NSString *upload = _uploadAPI;

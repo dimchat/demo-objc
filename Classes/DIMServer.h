@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern const NSString *kNotificationName_ServerStateChanged;
+extern NSString * const kNotificationName_ServerStateChanged;
 
 @interface DIMServer : DIMStation <DIMTransceiverDelegate, SGStarDelegate, FSMDelegate> {
     

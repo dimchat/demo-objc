@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)sharedInstance;
 
 // conversation factory
-- (DIMConversation *)conversationWithID:(const DIMID *)ID;
+- (DIMConversation *)conversationWithID:(DIMID *)ID;
 
 - (void)addConversation:(DIMConversation *)chatBox;
 - (void)removeConversation:(DIMConversation *)chatBox;

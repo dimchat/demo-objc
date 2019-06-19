@@ -84,7 +84,7 @@
 
 #pragma mark DIMStationDelegate
 
-- (void)station:(nonnull const DIMStation *)server didReceivePackage:(nonnull const NSData *)data {
+- (void)station:(nonnull DIMStation *)server didReceivePackage:(nonnull NSData *)data {
     DIMTransceiver *trans = [DIMTransceiver sharedInstance];
     
     // decode
@@ -94,8 +94,8 @@
     rMsg = [[DIMReliableMessage alloc] initWithDictionary:dict];
     
     // check sender
-    const DIMID *sender = MKMIDFromString(rMsg.envelope.sender);
-    const DIMMeta *meta = DIMMetaForID(sender);
+    DIMID *sender = MKMIDFromString(rMsg.envelope.sender);
+    DIMMeta *meta = DIMMetaForID(sender);
     if (!meta) {
         meta = MKMMetaFromDictionary(rMsg.meta);
         if (!meta) {
@@ -107,7 +107,7 @@
     }
     
     // check receiver
-    const DIMID *receiver = MKMIDFromString(rMsg.envelope.receiver);
+    DIMID *receiver = MKMIDFromString(rMsg.envelope.receiver);
     DIMUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
         NSAssert(rMsg.group == nil || [MKMIDFromString(rMsg.group) isEqual:receiver],
@@ -172,7 +172,7 @@
         // NOTE: let the message processor to do the job
         //return ;
     } else if (content.type == DIMContentType_History) {
-        const DIMID *groupID = MKMIDFromString(content.group);
+        DIMID *groupID = MKMIDFromString(content.group);
         if (groupID) {
             DIMGroupCommand *cmd = (DIMGroupCommand *)content;
             if (![self checkGroupCommand:cmd commander:sender]) {

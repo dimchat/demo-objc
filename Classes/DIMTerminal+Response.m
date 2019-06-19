@@ -41,7 +41,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 - (void)processMetaCommand:(DIMMetaCommand *)cmd {
     // check meta
-    const DIMMeta *meta = cmd.meta;
+    DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];
@@ -53,7 +53,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 - (void)processProfileCommand:(DIMProfileCommand *)cmd {
     // check meta
-    const DIMMeta *meta = cmd.meta;
+    DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
         DIMBarrack *barrack = [DIMBarrack sharedInstance];

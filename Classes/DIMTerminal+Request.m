@@ -11,13 +11,13 @@
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
-const NSString *kNotificationName_MessageSent       = @"MessageSent";
-const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
+NSString * const kNotificationName_MessageSent       = @"MessageSent";
+NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 @implementation DIMTerminal (Packing)
 
 - (nullable DIMInstantMessage *)sendContent:(DIMContent *)content
-                                         to:(const DIMID *)receiver {
+                                         to:(DIMID *)receiver {
     if (!self.currentUser) {
         NSLog(@"not login, drop message content: %@", content);
         // TODO: save the message content in waiting queue
@@ -30,14 +30,14 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
         // TODO: save the message content in waiting queue
         return nil;
     }
-    const DIMID *sender = self.currentUser.ID;
+    DIMID *sender = self.currentUser.ID;
     
     // make instant message
     DIMInstantMessage *iMsg = DKDInstantMessageCreate(content, sender, receiver, nil);
     // callback
     DIMTransceiverCallback callback;
-    callback = ^(const DKDReliableMessage *rMsg, const NSError *error) {
-        const NSString *name = nil;
+    callback = ^(DKDReliableMessage *rMsg, NSError *error) {
+        NSString *name = nil;
         if (error) {
             NSLog(@"send message error: %@", error);
             name = kNotificationName_SendMessageFailed;
@@ -97,7 +97,7 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return YES;
 }
 
-- (void)onHandshakeAccepted:(const NSString *)session {
+- (void)onHandshakeAccepted:(NSString *)session {
     // post profile
     DIMProfile *profile = DIMProfileForID(self.currentUser.ID);
     if (profile) {
@@ -106,8 +106,8 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile
-                                       meta:(nullable const DIMMeta *)meta {
-    const DIMID *ID = self.currentUser.ID;
+                                       meta:(nullable DIMMeta *)meta {
+    DIMID *ID = self.currentUser.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return nil;
@@ -116,12 +116,12 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendCommand:cmd];
 }
 
-- (nullable DIMInstantMessage *)queryMetaForID:(const DIMID *)ID {
+- (nullable DIMInstantMessage *)queryMetaForID:(DIMID *)ID {
     DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID meta:nil];
     return [self sendCommand:cmd];
 }
 
-- (nullable DIMInstantMessage *)queryProfileForID:(const DIMID *)ID {
+- (nullable DIMInstantMessage *)queryProfileForID:(DIMID *)ID {
     DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID meta:nil profile:nil];
     return [self sendCommand:cmd];
 }
@@ -131,7 +131,7 @@ const NSString *kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendCommand:cmd];
 }
 
-- (nullable DIMInstantMessage *)searchUsersWithKeywords:(const NSString *)keywords {
+- (nullable DIMInstantMessage *)searchUsersWithKeywords:(NSString *)keywords {
     DIMCommand *cmd = [[DIMCommand alloc] initWithCommand:@"search"];
     [cmd setObject:keywords forKey:@"keywords"];
     return [self sendCommand:cmd];

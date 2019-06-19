@@ -10,6 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString *NSStringFromDate(const NSDate *date);
+NSString *NSStringFromDate(NSDate *date);
 
 NS_ASSUME_NONNULL_END

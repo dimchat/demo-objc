@@ -22,18 +22,18 @@
 
 @interface PackageHandler : NSObject
 
-@property (strong, nonatomic) const NSData *data;
+@property (strong, nonatomic) NSData *data;
 @property (nonatomic) DIMTransceiverCompletionHandler handler;
 
-- (instancetype)initWithData:(const NSData *)data handler:(DIMTransceiverCompletionHandler)handler;
+- (instancetype)initWithData:(NSData *)data handler:(DIMTransceiverCompletionHandler)handler;
 
-+ (id<NSCopying>)keyWithData:(const NSData *)data;
++ (id<NSCopying>)keyWithData:(NSData *)data;
 
 @end
 
 @implementation PackageHandler
 
-- (instancetype)initWithData:(const NSData *)data
+- (instancetype)initWithData:(NSData *)data
                      handler:(DIMTransceiverCompletionHandler)handler {
     if (self = [self init]) {
         _data = data;
@@ -42,7 +42,7 @@
     return self;
 }
 
-+ (id<NSCopying>)keyWithData:(const NSData *)data {
++ (id<NSCopying>)keyWithData:(NSData *)data {
     return [data sha256];
 }
 
@@ -50,7 +50,7 @@
 
 #pragma mark -
 
-const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
+NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 @interface DIMServer () {
     
@@ -66,7 +66,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 @implementation DIMServer
 
 /* designated initializer */
-- (instancetype)initWithID:(const MKMID *)ID {
+- (instancetype)initWithID:(DIMID *)ID {
     if (self = [super initWithID:ID]) {
         _currentUser = nil;
         
@@ -208,7 +208,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 #pragma mark SGStarDelegate
 
-- (NSInteger)star:(id<SGStar>)star onReceive:(const NSData *)responseData {
+- (NSInteger)star:(id<SGStar>)star onReceive:(NSData *)responseData {
     NSLog(@"response data len: %ld", responseData.length);
     NSAssert(_delegate, @"station delegate not set");
     [_delegate station:self didReceivePackage:responseData];
@@ -220,7 +220,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     [_fsm tick];
 }
 
-- (void)star:(id<SGStar>)star onFinishSend:(const NSData *)requestData withError:(const NSError *)error {
+- (void)star:(id<SGStar>)star onFinishSend:(NSData *)requestData withError:(NSError *)error {
     DIMTransceiverCompletionHandler handler = NULL;
     
     id key = [PackageHandler keyWithData:requestData];
@@ -253,7 +253,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 #pragma mark DKDTransceiverDelegate
 
-- (BOOL)sendPackage:(const NSData *)data completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
+- (BOOL)sendPackage:(NSData *)data completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
     NSLog(@"sending data len: %ld", data.length);
     NSAssert(_star, @"star not found");
     
@@ -276,7 +276,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return res == 0;
 }
 
-- (NSURL *)uploadEncryptedFileData:(const NSData *)CT forMessage:(const DKDInstantMessage *)iMsg {
+- (NSURL *)uploadEncryptedFileData:(NSData *)CT forMessage:(DKDInstantMessage *)iMsg {
     DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;
@@ -285,7 +285,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return [ftp uploadEncryptedData:CT filename:filename sender:sender];
 }
 
-- (nullable NSData *)downloadEncryptedFileData:(const NSURL *)url forMessage:(const DKDInstantMessage *)iMsg {
+- (nullable NSData *)downloadEncryptedFileData:(NSURL *)url forMessage:(DKDInstantMessage *)iMsg {
     
     DIMFileServer *ftp = [DIMFileServer sharedInstance];
     return [ftp downloadEncryptedDataFromURL:url];
@@ -295,7 +295,7 @@ const NSString *kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 - (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
     NSDictionary *info = @{@"state": state.name};
-    const NSString *name = kNotificationName_ServerStateChanged;
+    NSString *name = kNotificationName_ServerStateChanged;
     [NSNotificationCenter postNotificationName:name
                                         object:self
                                       userInfo:info];

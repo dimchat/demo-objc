@@ -10,14 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern const NSString *kNotificationName_MessageSent;
-extern const NSString *kNotificationName_SendMessageFailed;
+extern NSString * const kNotificationName_MessageSent;
+extern NSString * const kNotificationName_SendMessageFailed;
 
 @interface DIMTerminal (Packing)
 
 // pack and send message content to receiver
 - (nullable DIMInstantMessage *)sendContent:(DIMContent *)content
-                                         to:(const DIMID *)receiver;
+                                         to:(DIMID *)receiver;
 
 // pack and send command to station
 - (nullable DIMInstantMessage *)sendCommand:(DIMCommand *)cmd;
@@ -28,16 +28,16 @@ extern const NSString *kNotificationName_SendMessageFailed;
 
 - (BOOL)login:(DIMUser *)user;
 
-- (void)onHandshakeAccepted:(const NSString *)session;
+- (void)onHandshakeAccepted:(NSString *)session;
 
 - (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile
-                                       meta:(nullable const DIMMeta *)meta;
+                                       meta:(nullable DIMMeta *)meta;
 
-- (nullable DIMInstantMessage *)queryMetaForID:(const DIMID *)ID;
-- (nullable DIMInstantMessage *)queryProfileForID:(const DIMID *)ID;
+- (nullable DIMInstantMessage *)queryMetaForID:(DIMID *)ID;
+- (nullable DIMInstantMessage *)queryProfileForID:(DIMID *)ID;
 
 - (nullable DIMInstantMessage *)queryOnlineUsers;
-- (nullable DIMInstantMessage *)searchUsersWithKeywords:(const NSString *)keywords;
+- (nullable DIMInstantMessage *)searchUsersWithKeywords:(NSString *)keywords;
 
 @end
 
