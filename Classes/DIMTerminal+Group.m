@@ -128,10 +128,7 @@
     
     // generate group meta with current user's private key
     DIMPrivateKey *SK = [barrack privateKeyForSignatureOfUser:user.ID];
-    DIMMeta *meta = [[DIMMeta alloc] initWithVersion:MKMMetaDefaultVersion
-                                                seed:seed
-                                          privateKey:SK
-                                           publicKey:[SK publicKey]];
+    DIMMeta *meta = MKMMetaGenerate(MKMMetaDefaultVersion, SK, seed);
     // generate group ID
     DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
     // save meta for group ID
@@ -159,7 +156,7 @@
 
 - (BOOL)updateGroupWithID:(DIMID *)ID
                   members:(NSArray<DIMID *> *)list
-                  profile:(nullable MKMProfile *)profile {
+                  profile:(nullable DIMProfile *)profile {
     DIMGroup *group = DIMGroupWithID(ID);
     DIMMeta *meta = group.meta;
     NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);
