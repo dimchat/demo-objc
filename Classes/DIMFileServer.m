@@ -184,7 +184,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     NSUInteger len = begin.length + data.length + end.length;
     NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:len];
     [mData appendData:[begin data]];
-    [mData appendData:[data copy]];
+    [mData appendData:data];
     [mData appendData:[end data]];
     return mData;
 }

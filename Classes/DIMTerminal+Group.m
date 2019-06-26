@@ -9,6 +9,11 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
+#import "MKMGroup+Extension.h"
+#import "DIMFacebook.h"
+
+#import "DIMTerminal+Request.h"
+
 #import "DIMTerminal+Group.h"
 
 @implementation DIMTerminal (GroupManage)
@@ -51,8 +56,6 @@
         NSMutableArray *mArray = [newMembers mutableCopy];
         [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
         newMembers = mArray;
-    } else {
-        newMembers = [newMembers copy];
     }
     
     // checking expeled list with old members
@@ -123,16 +126,16 @@
 - (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
                                    members:(NSArray<DIMID *> *)list
                                    profile:(NSDictionary *)dict {
-    DIMBarrack *barrack = [DIMBarrack sharedInstance];
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
-    DIMPrivateKey *SK = [barrack privateKeyForSignatureOfUser:user.ID];
+    DIMPrivateKey *SK = [facebook privateKeyForSignatureOfUser:user.ID];
     DIMMeta *meta = MKMMetaGenerate(MKMMetaDefaultVersion, SK, seed);
     // generate group ID
     DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
     // save meta for group ID
-    [barrack saveMeta:meta forID:ID];
+    [facebook saveMeta:meta forID:ID];
     
     // generate group profile
     NSData *data = [dict jsonData];

@@ -29,6 +29,7 @@ typedef UInt8 DIMConversationType;
 @property (readonly, strong, nonatomic) DIMID *ID;
 @property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, strong, nonatomic) NSString *title;
+@property (readonly, strong, nonatomic, nullable) DIMProfile *profile;
 
 @property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;

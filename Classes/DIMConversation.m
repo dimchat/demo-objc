@@ -64,6 +64,10 @@
     return @"Conversation";
 }
 
+- (nullable DIMProfile *)profile {
+    return _entity.profile;
+}
+
 #pragma mark - Read from data source
 
 - (NSInteger)numberOfMessage {

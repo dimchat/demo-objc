@@ -8,6 +8,8 @@
 
 #import "NSNotificationCenter+Extension.h"
 
+#import "DIMFacebook.h"
+
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
@@ -44,8 +46,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
-        DIMBarrack *barrack = [DIMBarrack sharedInstance];
-        [barrack saveMeta:cmd.meta forID:cmd.ID];
+        DIMFacebook *facebook = [DIMFacebook sharedInstance];
+        [facebook saveMeta:cmd.meta forID:cmd.ID];
     } else {
         NSAssert(false, @"meta error: %@", cmd);
     }
@@ -56,8 +58,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     DIMMeta *meta = cmd.meta;
     if ([meta matchID:cmd.ID]) {
         NSLog(@"got new meta for %@", cmd.ID);
-        DIMBarrack *barrack = [DIMBarrack sharedInstance];
-        [barrack saveMeta:cmd.meta forID:cmd.ID];
+        DIMFacebook *facebook = [DIMFacebook sharedInstance];
+        [facebook saveMeta:cmd.meta forID:cmd.ID];
     } else {
         NSAssert(meta == nil, @"meta error: %@", cmd);
     }

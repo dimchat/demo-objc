@@ -10,6 +10,11 @@
 
 #import "NSObject+JsON.h"
 
+#import "DIMTransceiver+Extension.h"
+#import "DIMFacebook.h"
+
+#import "DIMAmanuensis.h"
+
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 #import "DIMTerminal+Response.h"

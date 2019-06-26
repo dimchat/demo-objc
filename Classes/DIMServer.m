@@ -14,6 +14,8 @@
 #import "NSObject+Extension.h"
 #import "NSNotificationCenter+Extension.h"
 
+#import "DIMTransceiver+Extension.h"
+
 #import "DIMFileServer.h"
 
 #import "DIMServerState.h"
@@ -85,9 +87,6 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     if (![_currentUser isEqual:newUser]) {
         _currentUser = newUser;
         
-        // update keystore
-        [DIMKeyStore sharedInstance].currentUser = newUser;
-        
         // switch state for re-login
         _fsm.session = nil;
     }
@@ -125,7 +124,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     // first handshake?
     if (cmd.state == DIMHandshake_Start) {
-        rMsg.meta = DIMMetaForID(_currentUser.ID);
+        rMsg.meta = _currentUser.meta;
     }
     
     // send out directly

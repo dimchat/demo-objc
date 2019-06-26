@@ -8,6 +8,9 @@
 
 #import "NSNotificationCenter+Extension.h"
 
+#import "DIMTransceiver+Extension.h"
+#import "DIMFacebook.h"
+
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
@@ -98,8 +101,8 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (void)onHandshakeAccepted:(NSString *)session {
-    // post profile
-    DIMProfile *profile = DIMProfileForID(self.currentUser.ID);
+    // TODO: post profile
+    DIMProfile *profile = self.currentUser.profile;
     if (profile) {
         [self postProfile:profile meta:nil];
     }

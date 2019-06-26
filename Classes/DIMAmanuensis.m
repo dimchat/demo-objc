@@ -8,7 +8,8 @@
 
 #import "NSObject+Singleton.h"
 
-#import "DIMBarrack.h"
+#import "DIMFacebook.h"
+
 #import "DIMConversation.h"
 
 #import "DIMAmanuensis.h"
