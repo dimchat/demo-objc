@@ -21,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
+// default "Documents/.mkm/{address}/meta.plist"
+- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID;
+
 - (BOOL)verifyProfile:(DIMProfile *)profile;
 
 @end
