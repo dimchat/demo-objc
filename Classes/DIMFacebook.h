@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
+- (BOOL)verifyProfile:(DIMProfile *)profile;
+
 @end
 
 NS_ASSUME_NONNULL_END

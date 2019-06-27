@@ -16,6 +16,33 @@
 
 SingletonImplementations(DIMFacebook, sharedInstance)
 
+- (BOOL)verifyProfile:(DIMProfile *)profile {
+    DIMID *ID = profile.ID;
+    DIMPublicKey *key = nil;
+    // check signer
+    if (MKMNetwork_IsCommunicator(ID.type)) {
+        // verify with meta.key
+        DIMMeta *meta = [self metaForID:ID];
+        key = meta.key;
+    } else if (MKMNetwork_IsGroup(ID.type)) {
+        // verify with group owner's meta.key
+        DIMGroup *group = DIMGroupWithID(ID);
+        DIMMeta *meta = [self metaForID:group.owner];
+        key = meta.key;
+    }
+    return [profile verify:key];
+}
+
+- (DIMProfile *)profileForID:(DIMID *)ID {
+    DIMProfile *profile = [super profileForID:ID];
+    if (profile && [self verifyProfile:profile]) {
+        // signature correct
+        return profile;
+    }
+    // profile error
+    return profile;
+}
+
 #pragma mark - DIMBarrackDelegate
 
 - (nullable DIMAccount *)accountWithID:(DIMID *)ID {
