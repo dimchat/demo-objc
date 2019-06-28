@@ -72,6 +72,27 @@ static inline NSString *meta_filepath(DIMID *ID, BOOL autoCreate) {
 
 SingletonImplementations(DIMFacebook, sharedInstance)
 
+- (BOOL)verifyProfile:(DIMProfile *)profile {
+    if ([profile isValid]) {
+        // already verified
+        return YES;
+    }
+    DIMID *ID = profile.ID;
+    DIMPublicKey *key = nil;
+    // check signer
+    if (MKMNetwork_IsCommunicator(ID.type)) {
+        // verify with meta.key
+        DIMMeta *meta = [self metaForID:ID];
+        key = meta.key;
+    } else if (MKMNetwork_IsGroup(ID.type)) {
+        // verify with group owner's meta.key
+        DIMGroup *group = DIMGroupWithID(ID);
+        DIMMeta *meta = [self metaForID:group.owner];
+        key = meta.key;
+    }
+    return [profile verify:key];
+}
+
 - (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
     NSString *path = meta_filepath(ID, NO);
     if (file_exists(path)) {
@@ -80,6 +101,8 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     }
     return nil;
 }
+
+#pragma mark - DIMEntityDataSource
 
 - (nullable DIMMeta *)metaForID:(DIMID *)ID {
     DIMMeta *meta = [super metaForID:ID];
@@ -105,7 +128,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
         return NO;
     }
-    // check default directary
+    // check default directory
     NSString *path = meta_filepath(ID, YES);
     if (file_exists(path)) {
         // no need to update meta file
@@ -114,30 +137,17 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     return [meta writeToBinaryFile:path];
 }
 
-- (BOOL)verifyProfile:(DIMProfile *)profile {
-    DIMID *ID = profile.ID;
-    DIMPublicKey *key = nil;
-    // check signer
-    if (MKMNetwork_IsCommunicator(ID.type)) {
-        // verify with meta.key
-        DIMMeta *meta = [self metaForID:ID];
-        key = meta.key;
-    } else if (MKMNetwork_IsGroup(ID.type)) {
-        // verify with group owner's meta.key
-        DIMGroup *group = DIMGroupWithID(ID);
-        DIMMeta *meta = [self metaForID:group.owner];
-        key = meta.key;
-    }
-    return [profile verify:key];
-}
-
 - (DIMProfile *)profileForID:(DIMID *)ID {
     DIMProfile *profile = [super profileForID:ID];
-    if (profile && [self verifyProfile:profile]) {
+    if (!profile || [profile isValid]) {
+        // already verified?
+        return profile;
+    }
+    if ([self verifyProfile:profile]) {
         // signature correct
         return profile;
     }
-    // profile error
+    // profile error?
     return profile;
 }
 
@@ -177,12 +187,8 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     }
     // TODO: check private key
     
-    // create it with type
-    if (MKMNetwork_IsPerson(ID.type)) {
-        user = [[DIMUser alloc] initWithID:ID];
-    } else {
-        NSAssert(false, @"user error: %@", ID);
-    }
+    // create it
+    user = [[DIMUser alloc] initWithID:ID];
     [self cacheUser:user];
     return user;
 }
