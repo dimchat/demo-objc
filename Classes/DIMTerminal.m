@@ -6,8 +6,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <MarsGate/MarsGate.h>
-
 #import "NSObject+JsON.h"
 
 #import "DIMTransceiver+Extension.h"

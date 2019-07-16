@@ -94,14 +94,14 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     NSLog(@"login: %@", user);
     
     // add to the list of this client
-    if (user && ![_users containsObject:user]) {
+    if (![_users containsObject:user]) {
         [_users addObject:user];
     }
     return YES;
 }
 
 - (void)onHandshakeAccepted:(NSString *)session {
-    // TODO: post profile
+    // post current profile to station
     DIMProfile *profile = self.currentUser.profile;
     if (profile) {
         [self postProfile:profile meta:nil];

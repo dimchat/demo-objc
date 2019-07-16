@@ -6,14 +6,15 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "NSObject+Singleton.h"
+
 #import "NSDate+Extension.h"
 
 @implementation NSDate (Locale)
 
 - (NSString *)descriptionWithLocale:(nullable id)locale {
     static NSDateFormatter *dateFormatter = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    SingletonDispatchOnce(^{
         dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.locale = [NSLocale currentLocale];
         dateFormatter.dateStyle = NSDateFormatterMediumStyle;

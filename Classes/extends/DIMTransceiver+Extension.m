@@ -8,6 +8,9 @@
 
 #import "NSObject+Singleton.h"
 
+#import "MKMAddress+Extension.h"
+#import "MKMMeta+Extension.h"
+
 #import "DIMFacebook.h"
 
 #import "DIMTransceiver+Extension.h"
@@ -26,6 +29,15 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
         
         // register all content classes
         [DIMContent loadContentClasses];
+        
+        // register new address classes
+        [MKMAddress registerClass:[MKMAddressETH class]];
+        
+        // register new meta classes
+        [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_BTC];
+        [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_ExBTC];
+        [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ETH];
+        [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
     }
     return self;
 }

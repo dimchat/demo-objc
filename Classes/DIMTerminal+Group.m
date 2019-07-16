@@ -18,10 +18,10 @@
 
 @implementation DIMTerminal (GroupManage)
 
-- (BOOL)sendOutGroupID:(DIMID *)groupID
-                  meta:(DIMMeta *)meta
-               profile:(nullable DIMProfile *)profile
-               members:(NSArray<DIMID *> *)newMembers {
+- (BOOL)_sendOutGroupID:(DIMID *)groupID
+                   meta:(DIMMeta *)meta
+                profile:(nullable DIMProfile *)profile
+                members:(NSArray<DIMID *> *)newMembers {
     NSAssert([meta matchID:groupID], @"meta not match group ID: %@, %@", groupID, meta);
     NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
     
@@ -146,7 +146,7 @@
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
     
     // send out meta+profile command
-    BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
+    BOOL sent = [self _sendOutGroupID:ID meta:meta profile:profile members:list];
     if (!sent) {
         NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
         // TODO: remove the new group info
@@ -163,7 +163,7 @@
     DIMGroup *group = DIMGroupWithID(ID);
     DIMMeta *meta = group.meta;
     NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);
-    BOOL sent = [self sendOutGroupID:ID meta:meta profile:profile members:list];
+    BOOL sent = [self _sendOutGroupID:ID meta:meta profile:profile members:list];
     if (!sent) {
         NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
         return NO;

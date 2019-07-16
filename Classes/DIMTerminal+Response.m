@@ -49,20 +49,14 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
         [facebook saveMeta:cmd.meta forID:cmd.ID];
     } else {
-        NSAssert(false, @"meta error: %@", cmd);
+        NSAssert(meta == nil, @"meta error: %@", cmd);
     }
 }
 
 - (void)processProfileCommand:(DIMProfileCommand *)cmd {
     // check meta
-    DIMMeta *meta = cmd.meta;
-    if ([meta matchID:cmd.ID]) {
-        NSLog(@"got new meta for %@", cmd.ID);
-        DIMFacebook *facebook = [DIMFacebook sharedInstance];
-        [facebook saveMeta:cmd.meta forID:cmd.ID];
-    } else {
-        NSAssert(meta == nil, @"meta error: %@", cmd);
-    }
+    [self processMetaCommand:cmd];
+    
     // check profile
     DIMProfile *profile = cmd.profile;
     if (profile) {

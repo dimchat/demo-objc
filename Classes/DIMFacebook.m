@@ -40,8 +40,7 @@ static inline BOOL file_exists(NSString *path) {
 // default: "Documents/.mkm"
 static NSString *s_directory = nil;
 static inline NSString *base_directory(void) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    SingletonDispatchOnce(^{
         if (s_directory == nil) {
             NSString *dir = document_directory();
             dir = [dir stringByAppendingPathComponent:@".mkm"];

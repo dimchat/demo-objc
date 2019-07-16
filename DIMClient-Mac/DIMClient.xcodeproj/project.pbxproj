@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E94C8DDA22DDBBEF0017F998 /* MKMAddress+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E94C8DD322DDBBEE0017F998 /* MKMAddress+Extension.m */; };
+		E94C8DDB22DDBBEF0017F998 /* MKMMeta+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E94C8DD722DDBBEE0017F998 /* MKMMeta+Extension.h */; };
+		E94C8DDC22DDBBEF0017F998 /* MKMMeta+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E94C8DD822DDBBEE0017F998 /* MKMMeta+Extension.m */; };
+		E94C8DDD22DDBBEF0017F998 /* MKMAddress+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E94C8DD922DDBBEE0017F998 /* MKMAddress+Extension.h */; };
 		E97907DE22573C930024C830 /* DIMFileServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E97907D922573C930024C830 /* DIMFileServer.m */; };
 		E97907DF22573C930024C830 /* DIMFileServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E97907DD22573C930024C830 /* DIMFileServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9BBC2F322429D6C00E6ACDA /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */; };
@@ -119,6 +123,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E94C8DD322DDBBEE0017F998 /* MKMAddress+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMAddress+Extension.m"; sourceTree = "<group>"; };
+		E94C8DD722DDBBEE0017F998 /* MKMMeta+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMMeta+Extension.h"; sourceTree = "<group>"; };
+		E94C8DD822DDBBEE0017F998 /* MKMMeta+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMMeta+Extension.m"; sourceTree = "<group>"; };
+		E94C8DD922DDBBEE0017F998 /* MKMAddress+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMAddress+Extension.h"; sourceTree = "<group>"; };
 		E97907D922573C930024C830 /* DIMFileServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMFileServer.m; sourceTree = "<group>"; };
 		E97907DD22573C930024C830 /* DIMFileServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMFileServer.h; sourceTree = "<group>"; };
 		E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -263,6 +271,10 @@
 				E9E824AC224A70F400A029F1 /* NSObject+Extension.m */,
 				E9D0D8F522C370B800EEBF8B /* MKMGroup+Extension.h */,
 				E9D0D8F722C370B900EEBF8B /* MKMGroup+Extension.m */,
+				E94C8DD922DDBBEE0017F998 /* MKMAddress+Extension.h */,
+				E94C8DD322DDBBEE0017F998 /* MKMAddress+Extension.m */,
+				E94C8DD722DDBBEE0017F998 /* MKMMeta+Extension.h */,
+				E94C8DD822DDBBEE0017F998 /* MKMMeta+Extension.m */,
 				E9D0D90422C398C900EEBF8B /* DIMTransceiver+Extension.h */,
 				E9D0D90322C398C900EEBF8B /* DIMTransceiver+Extension.m */,
 			);
@@ -315,6 +327,8 @@
 				E9D0D8FB22C370B900EEBF8B /* MKMGroup+Extension.h in Headers */,
 				E9FC8E1522B9095D0013FCD3 /* DIMAmanuensis.h in Headers */,
 				E9FC8E1622B9095D0013FCD3 /* DIMConversation.h in Headers */,
+				E94C8DDD22DDBBEF0017F998 /* MKMAddress+Extension.h in Headers */,
+				E94C8DDB22DDBBEF0017F998 /* MKMMeta+Extension.h in Headers */,
 				E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */,
 				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
 				E9E824B2224A70F400A029F1 /* NSObject+Extension.h in Headers */,
@@ -492,6 +506,7 @@
 				E9FC8E1822B9095D0013FCD3 /* DIMConversation.m in Sources */,
 				E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */,
 				E9E824B1224A70F400A029F1 /* NSObject+Extension.m in Sources */,
+				E94C8DDA22DDBBEF0017F998 /* MKMAddress+Extension.m in Sources */,
 				E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */,
 				E9FC8E1722B9095D0013FCD3 /* DIMAmanuensis.m in Sources */,
 				E9BBC32C22429D9500E6ACDA /* NSDate+Extension.m in Sources */,
@@ -503,6 +518,7 @@
 				E97907DE22573C930024C830 /* DIMFileServer.m in Sources */,
 				E9BBC33A22429D9500E6ACDA /* DIMTerminal+Request.m in Sources */,
 				E9BBC33022429D9500E6ACDA /* NSNotificationCenter+Extension.m in Sources */,
+				E94C8DDC22DDBBEF0017F998 /* MKMMeta+Extension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
