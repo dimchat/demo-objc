@@ -8,7 +8,7 @@
 
 #import "NSObject+Singleton.h"
 #import "NSObject+JsON.h"
-#import "NSData+Crypto.h"
+#import "NSData+Extension.h"
 
 #import "DIMFileServer.h"
 
