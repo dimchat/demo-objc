@@ -77,6 +77,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         return YES;
     }
     DIMID *ID = profile.ID;
+    NSAssert([ID isValid], @"Invalid ID: %@", ID);
     DIMPublicKey *key = nil;
     // check signer
     if (MKMNetwork_IsCommunicator(ID.type)) {
@@ -86,8 +87,11 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     } else if (MKMNetwork_IsGroup(ID.type)) {
         // verify with group owner's meta.key
         DIMGroup *group = DIMGroupWithID(ID);
-        DIMMeta *meta = [self metaForID:group.owner];
-        key = meta.key;
+        DIMID *owner = group.owner;
+        if ([owner isValid]) {
+            DIMMeta *meta = [self metaForID:owner];
+            key = meta.key;
+        }
     }
     return [profile verify:key];
 }
