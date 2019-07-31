@@ -113,13 +113,22 @@
     DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
     DIMUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
+        // group message
         NSAssert(rMsg.group == nil || [DIMIDWithString(rMsg.group) isEqual:receiver],
                  @"group error: %@ != %@", receiver, rMsg.group);
-        // FIXME: maybe other user?
-        user = self.currentUser;
-        receiver = user.ID;
-    } else if ([self.currentUser.ID isEqual:receiver]) {
-        user = self.currentUser;
+        // check group membership
+        DIMGroup *group = DIMGroupWithID(receiver);
+        for (DIMUser *item in self.users) {
+            if ([group existsMember:item.ID]) {
+                user = item;
+                NSLog(@"got new message for: %@", item.ID);
+                break;
+            }
+        }
+        if (user) {
+            // trim for current user
+            rMsg = [rMsg trimForMember:user.ID];
+        }
     } else {
         for (DIMUser *item in self.users) {
             if ([item.ID isEqual:receiver]) {
@@ -135,8 +144,7 @@
     }
     
     // trans to instant message
-    DKDInstantMessage *iMsg;
-    iMsg = [trans verifyAndDecryptMessage:rMsg users:self.users];
+    DKDInstantMessage *iMsg = [trans verifyAndDecryptMessage:rMsg];
     if (iMsg == nil) {
         NSLog(@"failed to verify/decrypt message: %@", rMsg);
         return ;
