@@ -97,7 +97,7 @@
     rMsg = [[DIMReliableMessage alloc] initWithDictionary:dict];
     
     // check sender
-    DIMID *sender = MKMIDFromString(rMsg.envelope.sender);
+    DIMID *sender = DIMIDWithString(rMsg.envelope.sender);
     DIMMeta *meta = DIMMetaForID(sender);
     if (!meta) {
         meta = MKMMetaFromDictionary(rMsg.meta);
@@ -110,10 +110,10 @@
     }
     
     // check receiver
-    DIMID *receiver = MKMIDFromString(rMsg.envelope.receiver);
+    DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
     DIMUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
-        NSAssert(rMsg.group == nil || [MKMIDFromString(rMsg.group) isEqual:receiver],
+        NSAssert(rMsg.group == nil || [DIMIDWithString(rMsg.group) isEqual:receiver],
                  @"group error: %@ != %@", receiver, rMsg.group);
         // FIXME: maybe other user?
         user = self.currentUser;
@@ -175,7 +175,7 @@
         // NOTE: let the message processor to do the job
         //return ;
     } else if (content.type == DIMContentType_History) {
-        DIMID *groupID = MKMIDFromString(content.group);
+        DIMID *groupID = DIMIDWithString(content.group);
         if (groupID) {
             DIMGroupCommand *cmd = (DIMGroupCommand *)content;
             if (![self checkGroupCommand:cmd commander:sender]) {

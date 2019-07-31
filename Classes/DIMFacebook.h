@@ -13,11 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMMetaForID(ID)         [[DIMFacebook sharedInstance] metaForID:(ID)]
 #define DIMProfileForID(ID)      [[DIMFacebook sharedInstance] profileForID:(ID)]
 
+#define DIMIDWithString(ID)      [[DIMFacebook sharedInstance] IDWithString:(ID)]
 #define DIMAccountWithID(ID)     [[DIMFacebook sharedInstance] accountWithID:(ID)]
 #define DIMUserWithID(ID)        [[DIMFacebook sharedInstance] userWithID:(ID)]
 #define DIMGroupWithID(ID)       [[DIMFacebook sharedInstance] groupWithID:(ID)]
 
-@interface DIMFacebook : DIMBarrack <DIMBarrackDelegate>
+@interface DIMFacebook : DIMBarrack
 
 + (instancetype)sharedInstance;
 

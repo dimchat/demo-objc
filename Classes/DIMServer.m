@@ -15,6 +15,7 @@
 #import "NSNotificationCenter+Extension.h"
 
 #import "DIMTransceiver+Extension.h"
+#import "DIMFacebook.h"
 
 #import "DIMFileServer.h"
 
@@ -276,7 +277,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (NSURL *)uploadEncryptedFileData:(NSData *)CT forMessage:(DKDInstantMessage *)iMsg {
-    DIMID *sender = MKMIDFromString(iMsg.envelope.sender);
+    DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;
     

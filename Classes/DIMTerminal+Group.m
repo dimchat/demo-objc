@@ -178,7 +178,7 @@
 
 - (BOOL)_checkPolylogueCommand:(DIMGroupCommand *)cmd
                      commander:(DIMID *)sender {
-    DIMID *groupID = MKMIDFromString(cmd.group);
+    DIMID *groupID = DIMIDWithString(cmd.group);
     DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = cmd.command;
     
@@ -239,7 +239,7 @@
 }
 
 - (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(DIMID *)sender {
-    DIMID *groupID = MKMIDFromString(cmd.group);
+    DIMID *groupID = DIMIDWithString(cmd.group);
     
     if (groupID.type == MKMNetwork_Polylogue) {
         return [self _checkPolylogueCommand:cmd commander:sender];

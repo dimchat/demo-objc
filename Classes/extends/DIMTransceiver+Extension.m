@@ -23,8 +23,7 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
     if (self = [super init]) {
         _keyStore = [[DIMKeyStore alloc] init];
         
-        _barrackDelegate = [DIMFacebook sharedInstance];
-        _entityDataSource = [DIMFacebook sharedInstance];
+        _barrack = [DIMFacebook sharedInstance];
         _cipherKeyDataSource = _keyStore;
         
         // register all content classes
@@ -43,9 +42,5 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
 }
 
 static DIMKeyStore *_keyStore;
-
-- (DIMKeyStore *)keyStore {
-    return _keyStore;
-}
 
 @end

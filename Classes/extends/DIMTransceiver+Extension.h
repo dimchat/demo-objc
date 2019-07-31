@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTransceiver (Extension)
 
-@property (readonly, strong, nonatomic) DIMKeyStore *keyStore;
-
 + (instancetype)sharedInstance;
 
 @end
