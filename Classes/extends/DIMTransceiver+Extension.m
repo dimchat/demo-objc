@@ -12,6 +12,7 @@
 #import "MKMMeta+Extension.h"
 
 #import "DIMFacebook.h"
+#import "DIMKeyStore.h"
 
 #import "DIMTransceiver+Extension.h"
 
@@ -21,11 +22,6 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        _keyStore = [[DIMKeyStore alloc] init];
-        
-        _barrack = [DIMFacebook sharedInstance];
-        _cipherKeyDataSource = _keyStore;
-        
         // register all content classes
         [DIMContent loadContentClasses];
         
@@ -37,10 +33,12 @@ SingletonImplementations(DIMTransceiver, sharedInstance)
         [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_ExBTC];
         [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ETH];
         [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
+        
+        // delegates
+        _barrack = [DIMFacebook sharedInstance];
+        _keyCache = [DIMKeyStore sharedInstance];
     }
     return self;
 }
-
-static DIMKeyStore *_keyStore;
 
 @end
