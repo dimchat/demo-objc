@@ -14,8 +14,8 @@
 #import "NSObject+Extension.h"
 #import "NSNotificationCenter+Extension.h"
 
-#import "DIMTransceiver+Extension.h"
 #import "DIMFacebook.h"
+#import "DIMMessanger.h"
 
 #import "DIMFileServer.h"
 
@@ -115,9 +115,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
     NSLog(@"handshake command: %@", cmd);
     
-    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
     DIMInstantMessage *iMsg = DKDInstantMessageCreate(cmd, _currentUser.ID, _ID, nil);
-    DIMReliableMessage *rMsg = [trans encryptAndSignMessage:iMsg];
+    DIMReliableMessage *rMsg = [[DIMMessanger sharedInstance] encryptAndSignMessage:iMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
         return ;
@@ -169,7 +168,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     [_fsm start];
     
-    [DIMTransceiver sharedInstance].delegate = self;
+    [DIMMessanger sharedInstance].delegate = self;
     
     _star = [[MGMars alloc] initWithMessageHandler:self];
     [_star launchWithOptions:launchOptions];

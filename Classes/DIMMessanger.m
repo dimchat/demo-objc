@@ -1,8 +1,8 @@
 //
-//  DIMTransceiver+Extension.m
+//  DIMMessanger.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/6/26.
+//  Created by Albert Moky on 2019/8/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
@@ -14,11 +14,11 @@
 #import "DIMFacebook.h"
 #import "DIMKeyStore.h"
 
-#import "DIMTransceiver+Extension.h"
+#import "DIMMessanger.h"
 
-@implementation DIMTransceiver (Extension)
+@implementation DIMMessanger
 
-SingletonImplementations(DIMTransceiver, sharedInstance)
+SingletonImplementations(DIMMessanger, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

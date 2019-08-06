@@ -8,8 +8,8 @@
 
 #import "NSObject+JsON.h"
 
-#import "DIMTransceiver+Extension.h"
 #import "DIMFacebook.h"
+#import "DIMMessanger.h"
 
 #import "DIMAmanuensis.h"
 
@@ -88,8 +88,6 @@
 #pragma mark DIMStationDelegate
 
 - (void)station:(nonnull DIMStation *)server didReceivePackage:(nonnull NSData *)data {
-    DIMTransceiver *trans = [DIMTransceiver sharedInstance];
-    
     // decode
     NSString *json = [data UTF8String];
     NSDictionary *dict = [[json data] jsonDictionary];
@@ -144,7 +142,7 @@
     }
     
     // trans to instant message
-    DKDInstantMessage *iMsg = [trans verifyAndDecryptMessage:rMsg];
+    DKDInstantMessage *iMsg = [[DIMMessanger sharedInstance] verifyAndDecryptMessage:rMsg];
     if (iMsg == nil) {
         NSLog(@"failed to verify/decrypt message: %@", rMsg);
         return ;

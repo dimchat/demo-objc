@@ -1,8 +1,8 @@
 //
-//  DIMTransceiver+Extension.h
+//  DIMMessanger.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/6/26.
+//  Created by Albert Moky on 2019/8/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTransceiver (Extension)
+@interface DIMMessanger : DIMTransceiver
 
 + (instancetype)sharedInstance;
 
