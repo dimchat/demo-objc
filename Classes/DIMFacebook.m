@@ -179,6 +179,9 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 }
 
 - (nullable DIMUser *)userWithID:(DIMID *)ID {
+    if (!MKMNetwork_IsPerson(ID.type)) {
+        return nil;
+    }
     DIMUser *user = [super userWithID:ID];
     if (user) {
         return user;
