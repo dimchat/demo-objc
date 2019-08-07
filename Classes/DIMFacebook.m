@@ -9,6 +9,11 @@
 #import "NSObject+Singleton.h"
 #import "NSDictionary+Binary.h"
 
+#import "MKMECCPrivateKey.h"
+#import "MKMECCPublicKey.h"
+#import "MKMAddressETH.h"
+#import "MKMMetaETH.h"
+
 #import "DIMServer.h"
 
 #import "DIMFacebook.h"
@@ -70,6 +75,24 @@ static inline NSString *meta_filepath(DIMID *ID, BOOL autoCreate) {
 @implementation DIMFacebook
 
 SingletonImplementations(DIMFacebook, sharedInstance)
+
+- (instancetype)init {
+    if (self = [super init]) {
+        // register new asymmetric cryptography key classes
+        [MKMPrivateKey registerClass:[MKMECCPrivateKey class] forAlgorithm:ACAlgorithmECC];
+        [MKMPublicKey registerClass:[MKMECCPublicKey class] forAlgorithm:ACAlgorithmECC];
+        
+        // register new address classes
+        [MKMAddress registerClass:[MKMAddressETH class]];
+        
+        // register new meta classes
+        [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_BTC];
+        [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_ExBTC];
+        [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ETH];
+        [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
+    }
+    return self;
+}
 
 - (BOOL)verifyProfile:(DIMProfile *)profile {
     if ([profile isValid]) {

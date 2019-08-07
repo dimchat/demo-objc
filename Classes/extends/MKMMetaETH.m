@@ -1,14 +1,14 @@
 //
-//  MKMMeta+Extension.m
+//  MKMMetaETH.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/7/16.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "MKMAddress+Extension.h"
+#import "MKMAddressETH.h"
 
-#import "MKMMeta+Extension.h"
+#import "MKMMetaETH.h"
 
 @implementation MKMMetaBTC
 

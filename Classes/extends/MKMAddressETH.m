@@ -1,12 +1,12 @@
 //
-//  MKMAddress+Extension.m
+//  MKMAddressETH.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/7/16.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "MKMAddress+Extension.h"
+#import "MKMAddressETH.h"
 
 @interface MKMAddress (Hacking)
 
