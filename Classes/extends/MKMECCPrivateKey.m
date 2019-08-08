@@ -54,7 +54,6 @@
     if (!_publicKey) {
         // TODO: create public key from private key
         // ...
-        NSAssert(false, @"implement me");
     }
     return _publicKey;
 }
@@ -66,7 +65,6 @@
     
     // TODO: ECC encrypt
     // ...
-    NSAssert(false, @"implement me");
     
     return plaintext;
 }
@@ -76,7 +74,6 @@
     
     // TODO: ECC sign
     // ...
-    NSAssert(false, @"implement me");
     
     return signature;
 }
@@ -90,7 +87,6 @@
     
     // TODO: load ECC private key from persistent store
     // ...
-    NSAssert(false, @"implement me");
     
     return SK;
 }

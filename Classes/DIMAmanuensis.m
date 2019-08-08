@@ -140,7 +140,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     return [chatBox insertMessage:iMsg];
 }
 
-- (BOOL)saveReceipt:(DKDInstantMessage *)iMsg {
+- (BOOL)saveReceipt:(DIMInstantMessage *)iMsg {
     DIMReceiptCommand *receipt = (DIMReceiptCommand *)iMsg.content;
     if (receipt.type != DIMContentType_Command ||
         ![receipt.command isEqualToString:DIMSystemCommand_Receipt]) {

@@ -87,12 +87,10 @@
 
 #pragma mark DIMStationDelegate
 
-- (void)station:(nonnull DIMStation *)server didReceivePackage:(nonnull NSData *)data {
-    // decode
-    NSString *json = [data UTF8String];
-    NSDictionary *dict = [[json data] jsonDictionary];
-    DIMReliableMessage *rMsg;
-    rMsg = [[DIMReliableMessage alloc] initWithDictionary:dict];
+- (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
+    // decode to reliable message
+    NSDictionary *dict = [data jsonDictionary];
+    DIMReliableMessage *rMsg = DKDReliableMessageFromDictionary(dict);
     
     // check sender
     DIMID *sender = DIMIDWithString(rMsg.envelope.sender);
@@ -142,7 +140,7 @@
     }
     
     // trans to instant message
-    DKDInstantMessage *iMsg = [[DIMMessanger sharedInstance] verifyAndDecryptMessage:rMsg];
+    DIMInstantMessage *iMsg = [[DIMMessanger sharedInstance] verifyAndDecryptMessage:rMsg];
     if (iMsg == nil) {
         NSLog(@"failed to verify/decrypt message: %@", rMsg);
         return ;

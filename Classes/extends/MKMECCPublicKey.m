@@ -52,7 +52,6 @@
     
     // TODO: ECC encrypt
     // ...
-    NSAssert(false, @"implement me");
     
     return ciphertext;
 }
@@ -62,7 +61,6 @@
     
     // TODO: ECC verify
     // ...
-    NSAssert(false, @"implement me");
     
     return match;
 }

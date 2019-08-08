@@ -95,28 +95,28 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 }
 
 - (BOOL)verifyProfile:(DIMProfile *)profile {
-    if ([profile isValid]) {
+    if (!profile) {
+        return NO;
+    } else if ([profile isValid]) {
         // already verified
         return YES;
     }
     DIMID *ID = profile.ID;
     NSAssert([ID isValid], @"Invalid ID: %@", ID);
-    DIMPublicKey *key = nil;
+    DIMMeta *meta = nil;
     // check signer
     if (MKMNetwork_IsCommunicator(ID.type)) {
-        // verify with meta.key
-        DIMMeta *meta = [self metaForID:ID];
-        key = meta.key;
+        // verify with account's meta.key
+        meta = [self metaForID:ID];
     } else if (MKMNetwork_IsGroup(ID.type)) {
         // verify with group owner's meta.key
         DIMGroup *group = DIMGroupWithID(ID);
         DIMID *owner = group.owner;
         if ([owner isValid]) {
-            DIMMeta *meta = [self metaForID:owner];
-            key = meta.key;
+            meta = [self metaForID:owner];
         }
     }
-    return [profile verify:key];
+    return [profile verify:meta.key];
 }
 
 - (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
@@ -177,7 +177,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     return profile;
 }
 
-#pragma mark - DIMBarrackDelegate
+#pragma mark - DIMSocialNetworkDataSource
 
 - (nullable DIMAccount *)accountWithID:(DIMID *)ID {
     DIMAccount *account = [super accountWithID:ID];
@@ -188,15 +188,15 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     DIMMeta *meta = DIMMetaForID(ID);
     if (!meta) {
         NSLog(@"meta not found: %@", ID);
+        return nil;
     }
     // create it with type
     if (MKMNetwork_IsStation(ID.type)) {
         account = [[DIMServer alloc] initWithID:ID];
     } else if (MKMNetwork_IsPerson(ID.type)) {
         account = [[DIMAccount alloc] initWithID:ID];
-    } else {
-        NSAssert(false, @"account error: %@", ID);
     }
+    NSAssert(account, @"account error: %@", ID);
     [self cacheAccount:account];
     return account;
 }
@@ -209,13 +209,13 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if (user) {
         return user;
     }
-    // check meta
+    // check meta and private key
     DIMMeta *meta = DIMMetaForID(ID);
-    if (!meta) {
-        NSLog(@"meta not found: %@", ID);
+    DIMPrivateKey *key = [self privateKeyForSignatureOfUser:ID];
+    if (!meta || !key) {
+        NSLog(@"meta/private key not found: %@", ID);
+        return nil;
     }
-    // TODO: check private key
-    
     // create it
     user = [[DIMUser alloc] initWithID:ID];
     [self cacheUser:user];
@@ -231,15 +231,15 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     DIMMeta *meta = DIMMetaForID(ID);
     if (!meta) {
         NSLog(@"meta not found: %@", ID);
+        return nil;
     }
     // create it with type
     if (ID.type == MKMNetwork_Polylogue) {
         group = [[DIMPolylogue alloc] initWithID:ID];
     } else if (ID.type == MKMNetwork_Chatroom) {
         group = [[DIMChatroom alloc] initWithID:ID];
-    } else {
-        NSAssert(false, @"group error: %@", ID);
     }
+    NSAssert(group, @"group error: %@", ID);
     [self cacheGroup:group];
     return group;
 }

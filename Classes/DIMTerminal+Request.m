@@ -39,7 +39,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     DIMInstantMessage *iMsg = DKDInstantMessageCreate(content, sender, receiver, nil);
     // callback
     DIMTransceiverCallback callback;
-    callback = ^(DKDReliableMessage *rMsg, NSError *error) {
+    callback = ^(DIMReliableMessage *rMsg, NSError *error) {
         NSString *name = nil;
         if (error) {
             NSLog(@"send message error: %@", error);
