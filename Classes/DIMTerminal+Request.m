@@ -119,6 +119,10 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (nullable DIMInstantMessage *)queryMetaForID:(DIMID *)ID {
+    if ([ID isEqual:_currentStation.ID]) {
+        NSAssert(false, @"cannot query meta for this station: %@", ID);
+        return nil;
+    }
     DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID meta:nil];
     return [self sendCommand:cmd];
 }

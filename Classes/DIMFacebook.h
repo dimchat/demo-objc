@@ -21,10 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-// default "Documents/.mkm/{address}/meta.plist"
-- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID;
+@end
 
-- (BOOL)verifyProfile:(DIMProfile *)profile;
+@interface DIMFacebook (Relationship)
+
+- (BOOL)user:(DIMLocalUser *)user addContact:(DIMID *)contact;
+- (BOOL)user:(DIMLocalUser *)user removeContact:(DIMID *)contact;
+
+- (BOOL)group:(DIMGroup *)group addMember:(DIMID *)member;
+- (BOOL)group:(DIMGroup *)group removeMember:(DIMID *)member;
 
 @end
 

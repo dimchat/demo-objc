@@ -38,6 +38,7 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/MKMGroup+Extension.h>
 
 #import <DIMClient/DIMFacebook.h>
+#import <DIMClient/DIMFacebook+Storage.h>
 #import <DIMClient/DIMKeyStore.h>
 #import <DIMClient/DIMMessanger.h>
 
