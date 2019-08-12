@@ -26,7 +26,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 @interface DIMTerminal (Request)
 
-- (BOOL)login:(DIMUser *)user;
+- (BOOL)login:(DIMLocalUser *)user;
 
 - (void)onHandshakeAccepted:(NSString *)session;
 

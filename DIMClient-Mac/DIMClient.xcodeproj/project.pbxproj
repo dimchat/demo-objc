@@ -16,11 +16,11 @@
 		E9B2FC8922FB3D6200E153EE /* MKMECCPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8122FB3D6100E153EE /* MKMECCPublicKey.m */; };
 		E9B2FC8A22FB3D6200E153EE /* MKMAddressETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8222FB3D6100E153EE /* MKMAddressETH.m */; };
 		E9B2FC8B22FB3D6200E153EE /* MKMECCPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8322FB3D6100E153EE /* MKMECCPrivateKey.m */; };
-		E9B2FC8C22FB3D6200E153EE /* MKMAddressETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8422FB3D6100E153EE /* MKMAddressETH.h */; };
-		E9B2FC8D22FB3D6200E153EE /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8522FB3D6100E153EE /* MKMMetaETH.h */; };
+		E9B2FC8C22FB3D6200E153EE /* MKMAddressETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8422FB3D6100E153EE /* MKMAddressETH.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9B2FC8D22FB3D6200E153EE /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8522FB3D6100E153EE /* MKMMetaETH.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E9B2FC8E22FB3D6200E153EE /* MKMMetaETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8622FB3D6100E153EE /* MKMMetaETH.m */; };
-		E9B2FC8F22FB3D6200E153EE /* MKMECCPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8722FB3D6200E153EE /* MKMECCPublicKey.h */; };
-		E9B2FC9022FB3D6200E153EE /* MKMECCPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8822FB3D6200E153EE /* MKMECCPrivateKey.h */; };
+		E9B2FC8F22FB3D6200E153EE /* MKMECCPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8722FB3D6200E153EE /* MKMECCPublicKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E9B2FC9022FB3D6200E153EE /* MKMECCPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8822FB3D6200E153EE /* MKMECCPrivateKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E9BBC2F322429D6C00E6ACDA /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */; };
 		E9BBC2F822429D6C00E6ACDA /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */; };
 		E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */; };
@@ -344,23 +344,23 @@
 				E959903522F2CF5100C97D2D /* DIMKeyStore.h in Headers */,
 				E9D0D91622C3B61600EEBF8B /* DIMFacebook.h in Headers */,
 				E9D0D8FB22C370B900EEBF8B /* MKMGroup+Extension.h in Headers */,
-				E9B2FC9022FB3D6200E153EE /* MKMECCPrivateKey.h in Headers */,
 				E9FC8E1522B9095D0013FCD3 /* DIMAmanuensis.h in Headers */,
 				E9FC8E1622B9095D0013FCD3 /* DIMConversation.h in Headers */,
 				E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */,
 				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
-				E9B2FC8D22FB3D6200E153EE /* MKMMetaETH.h in Headers */,
 				E9E824B2224A70F400A029F1 /* NSObject+Extension.h in Headers */,
 				E97907DF22573C930024C830 /* DIMFileServer.h in Headers */,
 				E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */,
-				E9B2FC8C22FB3D6200E153EE /* MKMAddressETH.h in Headers */,
+				E9B2FC9022FB3D6200E153EE /* MKMECCPrivateKey.h in Headers */,
 				E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */,
+				E9B2FC8F22FB3D6200E153EE /* MKMECCPublicKey.h in Headers */,
+				E9B2FC8C22FB3D6200E153EE /* MKMAddressETH.h in Headers */,
 				E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */,
+				E9B2FC8D22FB3D6200E153EE /* MKMMetaETH.h in Headers */,
 				E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */,
 				E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */,
-				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
 				E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */,
-				E9B2FC8F22FB3D6200E153EE /* MKMECCPublicKey.h in Headers */,
+				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

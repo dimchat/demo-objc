@@ -26,7 +26,7 @@
     NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
     
     DIMGroup *group = DIMGroupWithID(groupID);
-    DIMUser *user = self.currentUser;
+    DIMLocalUser *user = self.currentUser;
     
     if (group.ID.type != MKMNetwork_Polylogue) {
         NSAssert(false, @"unsupported group type: %@", group.ID);
@@ -127,7 +127,7 @@
                                    members:(NSArray<DIMID *> *)list
                                    profile:(NSDictionary *)dict {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    DIMUser *user = self.currentUser;
+    DIMLocalUser *user = self.currentUser;
     
     // generate group meta with current user's private key
     DIMPrivateKey *SK = [facebook privateKeyForSignatureOfUser:user.ID];

@@ -10,7 +10,7 @@
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) DIMEntity *entity; // Account or Group
+@property (strong, nonatomic) DIMEntity *entity; // User or Group
 
 @end
 
@@ -30,7 +30,7 @@
 }
 
 - (DIMConversationType)type {
-    if (MKMNetwork_IsCommunicator(_entity.type)) {
+    if (MKMNetwork_IsUser(_entity.type)) {
         return DIMConversationPersonal;
     } else if (MKMNetwork_IsGroup(_entity.type)) {
         return DIMConversationGroup;
@@ -49,7 +49,7 @@
 - (NSString *)title {
     DIMConversationType type = self.type;
     if (type == DIMConversationPersonal) {
-        DIMAccount *person = (DIMAccount *)_entity;
+        DIMUser *person = (DIMUser *)_entity;
         NSString *name = person.name;
         // "xxx"
         return name;

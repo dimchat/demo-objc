@@ -79,7 +79,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 @implementation DIMTerminal (Request)
 
-- (BOOL)login:(DIMUser *)user {
+- (BOOL)login:(DIMLocalUser *)user {
     if (!user || [self.currentUser isEqual:user]) {
         NSLog(@"user not change");
         return NO;

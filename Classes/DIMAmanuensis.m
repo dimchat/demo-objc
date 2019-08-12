@@ -75,14 +75,14 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
             // create directly if we can find the entity
             // get entity with ID
             DIMEntity *entity = nil;
-            if (MKMNetwork_IsCommunicator(ID.type)) {
-                entity = DIMAccountWithID(ID);
+            if (MKMNetwork_IsUser(ID.type)) {
+                entity = DIMUserWithID(ID);
             } else if (MKMNetwork_IsGroup(ID.type)) {
                 entity = DIMGroupWithID(ID);
             }
             NSAssert(entity, @"ID error: %@", ID);
             if (entity) {
-                // create new conversation with entity(Account/Group)
+                // create new conversation with entity(User/Group)
                 chatBox = [[DIMConversation alloc] initWithEntity:entity];
             }
         }

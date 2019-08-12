@@ -30,7 +30,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
     return [keyMap writeToBinaryFile:path];
 }
 
-- (NSDictionary *)loadKeys {
+- (nullable NSDictionary *)loadKeys {
     NSString *dir = caches_directory();
     NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
     NSFileManager *fm = [NSFileManager defaultManager];

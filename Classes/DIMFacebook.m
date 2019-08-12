@@ -105,8 +105,8 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     NSAssert([ID isValid], @"Invalid ID: %@", ID);
     DIMMeta *meta = nil;
     // check signer
-    if (MKMNetwork_IsCommunicator(ID.type)) {
-        // verify with account's meta.key
+    if (MKMNetwork_IsUser(ID.type)) {
+        // verify with user's meta.key
         meta = [self metaForID:ID];
     } else if (MKMNetwork_IsGroup(ID.type)) {
         // verify with group owner's meta.key
@@ -137,12 +137,15 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     }
     // load from local storage
     meta = [self loadMetaForID:ID];
-    if ([self cacheMeta:meta forID:ID]) {
-        return meta;
-    } else {
-        NSAssert(!meta, @"meta error: %@ -> %@", ID, meta);
+    if (!meta) {
         return nil;
     }
+    // check and cache it
+    if (![self cacheMeta:meta forID:ID]) {
+        NSAssert(false, @"meta error: %@ -> %@", ID, meta);
+        return nil;
+    }
+    return meta;
 }
 
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
@@ -163,7 +166,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     return [meta writeToBinaryFile:path];
 }
 
-- (DIMProfile *)profileForID:(DIMID *)ID {
+- (nullable __kindof DIMProfile *)profileForID:(DIMID *)ID {
     DIMProfile *profile = [super profileForID:ID];
     if (!profile || [profile isValid]) {
         // already verified?
@@ -179,50 +182,33 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 #pragma mark - DIMSocialNetworkDataSource
 
-- (nullable DIMAccount *)accountWithID:(DIMID *)ID {
-    DIMAccount *account = [super accountWithID:ID];
-    if (account) {
-        return account;
-    }
-    // check meta
-    DIMMeta *meta = DIMMetaForID(ID);
-    if (!meta) {
-        NSLog(@"meta not found: %@", ID);
-        return nil;
-    }
-    // create it with type
-    if (MKMNetwork_IsStation(ID.type)) {
-        account = [[DIMServer alloc] initWithID:ID];
-    } else if (MKMNetwork_IsPerson(ID.type)) {
-        account = [[DIMAccount alloc] initWithID:ID];
-    }
-    NSAssert(account, @"account error: %@", ID);
-    [self cacheAccount:account];
-    return account;
-}
-
-- (nullable DIMUser *)userWithID:(DIMID *)ID {
-    if (!MKMNetwork_IsPerson(ID.type)) {
-        return nil;
-    }
+- (nullable __kindof DIMUser *)userWithID:(DIMID *)ID {
     DIMUser *user = [super userWithID:ID];
     if (user) {
         return user;
     }
     // check meta and private key
     DIMMeta *meta = DIMMetaForID(ID);
-    DIMPrivateKey *key = [self privateKeyForSignatureOfUser:ID];
-    if (!meta || !key) {
-        NSLog(@"meta/private key not found: %@", ID);
+    if (!meta) {
+        NSLog(@"meta key not found: %@", ID);
         return nil;
     }
-    // create it
-    user = [[DIMUser alloc] initWithID:ID];
+    if (MKMNetwork_IsPerson(ID.type)) {
+        DIMPrivateKey *key = [self privateKeyForSignatureOfUser:ID];
+        if (!key) {
+            user = [[DIMUser alloc] initWithID:ID];
+        } else {
+            user = [[DIMLocalUser alloc] initWithID:ID];
+        }
+    } else if (MKMNetwork_IsStation(ID.type)) {
+        // FIXME: make sure the station not been erased from the memory cache
+        NSAssert(false, @"station not create: %@", ID);
+    }
     [self cacheUser:user];
     return user;
 }
 
-- (nullable DIMGroup *)groupWithID:(DIMID *)ID {
+- (nullable __kindof DIMGroup *)groupWithID:(DIMID *)ID {
     DIMGroup *group = [super groupWithID:ID];
     if (group) {
         return group;

@@ -80,11 +80,13 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         _fsm.server = self;
         _fsm.delegate = self;
         _star = nil;
+        
+        [[DIMFacebook sharedInstance] cacheUser:self];
     }
     return self;
 }
 
-- (void)setCurrentUser:(DIMUser *)newUser {
+- (void)setCurrentUser:(DIMLocalUser *)newUser {
     if (![_currentUser isEqual:newUser]) {
         _currentUser = newUser;
         
@@ -275,7 +277,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return res == 0;
 }
 
-- (NSURL *)uploadEncryptedFileData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
+- (nullable NSURL *)uploadEncryptedFileData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
     DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;

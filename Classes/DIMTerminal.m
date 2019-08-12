@@ -44,15 +44,15 @@
 
 #pragma mark - User(s)
 
-- (NSArray<DIMUser *> *)users {
+- (NSArray<DIMLocalUser *> *)users {
     return [_users copy];
 }
 
-- (DIMUser *)currentUser {
+- (DIMLocalUser *)currentUser {
     return _currentStation.currentUser;
 }
 
-- (void)setCurrentUser:(DIMUser *)user {
+- (void)setCurrentUser:(DIMLocalUser *)user {
     _currentStation.currentUser = user;
     if (user && ![_users containsObject:user]) {
         // insert the user to the first
@@ -64,7 +64,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)addUser:(DIMUser *)user {
+- (void)addUser:(DIMLocalUser *)user {
     NSAssert([user.ID isValid], @"invalid user: %@", user);
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
@@ -75,7 +75,7 @@
     }
 }
 
-- (void)removeUser:(DIMUser *)user {
+- (void)removeUser:(DIMLocalUser *)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }
@@ -107,14 +107,14 @@
     
     // check receiver
     DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
-    DIMUser *user = nil;
+    DIMLocalUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group message
         NSAssert(rMsg.group == nil || [DIMIDWithString(rMsg.group) isEqual:receiver],
                  @"group error: %@ != %@", receiver, rMsg.group);
         // check group membership
         DIMGroup *group = DIMGroupWithID(receiver);
-        for (DIMUser *item in self.users) {
+        for (DIMLocalUser *item in self.users) {
             if ([group existsMember:item.ID]) {
                 user = item;
                 NSLog(@"got new message for: %@", item.ID);
@@ -126,7 +126,7 @@
             rMsg = [rMsg trimForMember:user.ID];
         }
     } else {
-        for (DIMUser *item in self.users) {
+        for (DIMLocalUser *item in self.users) {
             if ([item.ID isEqual:receiver]) {
                 user = item;
                 NSLog(@"got new message for: %@", item.ID);
