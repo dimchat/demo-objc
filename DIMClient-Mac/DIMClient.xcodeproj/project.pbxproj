@@ -49,7 +49,7 @@
 		E9D0D91622C3B61600EEBF8B /* DIMFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D0D91422C3B61600EEBF8B /* DIMFacebook.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9E824B1224A70F400A029F1 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E824AC224A70F400A029F1 /* NSObject+Extension.m */; };
 		E9E824B2224A70F400A029F1 /* NSObject+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E824B0224A70F400A029F1 /* NSObject+Extension.h */; };
-		E9EAF9D523018CC300566755 /* MKMUser+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EAF9D323018CC300566755 /* MKMUser+Extension.h */; };
+		E9EAF9D523018CC300566755 /* MKMUser+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EAF9D323018CC300566755 /* MKMUser+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9EAF9D623018CC300566755 /* MKMUser+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EAF9D423018CC300566755 /* MKMUser+Extension.m */; };
 		E9EAF9E32301D97A00566755 /* DIMFacebook+Storage.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EAF9E12301D97900566755 /* DIMFacebook+Storage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9EAF9E42301D97A00566755 /* DIMFacebook+Storage.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EAF9E22301D97A00566755 /* DIMFacebook+Storage.m */; };
@@ -352,6 +352,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9EAF9D523018CC300566755 /* MKMUser+Extension.h in Headers */,
 				E9EAF9E32301D97A00566755 /* DIMFacebook+Storage.h in Headers */,
 				E925E84022F9904C00FC2F36 /* DIMMessanger.h in Headers */,
 				E959903522F2CF5100C97D2D /* DIMKeyStore.h in Headers */,
@@ -360,7 +361,6 @@
 				E9FC8E1522B9095D0013FCD3 /* DIMAmanuensis.h in Headers */,
 				E9FC8E1622B9095D0013FCD3 /* DIMConversation.h in Headers */,
 				E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */,
-				E9EAF9D523018CC300566755 /* MKMUser+Extension.h in Headers */,
 				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
 				E9E824B2224A70F400A029F1 /* NSObject+Extension.h in Headers */,
 				E97907DF22573C930024C830 /* DIMFileServer.h in Headers */,

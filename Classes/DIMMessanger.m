@@ -19,6 +19,9 @@ SingletonImplementations(DIMMessanger, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
+        // register all content classes
+        [DIMContent loadContentClasses];
+        
         // delegates
         _barrack = [DIMFacebook sharedInstance];
         _keyCache = [DIMKeyStore sharedInstance];

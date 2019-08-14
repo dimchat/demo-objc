@@ -8,7 +8,7 @@
 
 #import "NSNotificationCenter+Extension.h"
 
-#import "DIMFacebook.h"
+#import "DIMFacebook+Storage.h"
 
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"

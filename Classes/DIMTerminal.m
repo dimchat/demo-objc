@@ -148,7 +148,7 @@
     
     // process commands
     DIMContent *content = iMsg.content;
-    if (content.type == DIMContentType_Command) {
+    if (content.type == DKDContentType_Command) {
         DIMCommand *cmd = (DIMCommand *)content;
         NSString *command = cmd.command;
         if ([command isEqualToString:DIMSystemCommand_Handshake]) {
@@ -178,7 +178,7 @@
               command, sender, content);
         // NOTE: let the message processor to do the job
         //return ;
-    } else if (content.type == DIMContentType_History) {
+    } else if (content.type == DKDContentType_History) {
         DIMID *groupID = DIMIDWithString(content.group);
         if (groupID) {
             DIMGroupCommand *cmd = (DIMGroupCommand *)content;

@@ -142,7 +142,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 - (BOOL)saveReceipt:(DIMInstantMessage *)iMsg {
     DIMReceiptCommand *receipt = (DIMReceiptCommand *)iMsg.content;
-    if (receipt.type != DIMContentType_Command ||
+    if (receipt.type != DKDContentType_Command ||
         ![receipt.command isEqualToString:DIMSystemCommand_Receipt]) {
         NSAssert(false, @"this is not a receipt: %@", iMsg);
         return NO;

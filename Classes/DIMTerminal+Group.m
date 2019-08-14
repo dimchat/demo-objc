@@ -10,7 +10,7 @@
 #import "NSData+Crypto.h"
 
 #import "MKMGroup+Extension.h"
-#import "DIMFacebook.h"
+#import "DIMFacebook+Storage.h"
 
 #import "DIMTerminal+Request.h"
 

@@ -106,6 +106,10 @@ static inline NSString *members_filepath(DIMID *group, BOOL autoCreate) {
 
 @implementation DIMFacebook (Storage)
 
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID {
+    return [key saveKeyWithIdentifier:ID.address];
+}
+
 - (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
     NSString *path = meta_filepath(ID, NO);
     if (!file_exists(path)) {
@@ -117,6 +121,19 @@ static inline NSString *members_filepath(DIMID *group, BOOL autoCreate) {
     return MKMMetaFromDictionary(dict);
 }
 
+- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+    if (![self cacheMeta:meta forID:ID]) {
+        NSAssert(false, @"meta not match ID: %@ -> %@", ID, meta);
+        return NO;
+    }
+    NSString *path = meta_filepath(ID, YES);
+    if (file_exists(path)) {
+        NSLog(@"meta already exists: %@", path);
+        return YES;
+    }
+    return [meta writeToBinaryFile:path];
+}
+
 - (nullable __kindof DIMProfile *)loadProfileForID:(DIMID *)ID {
     NSString *path = profile_filepath(ID, NO);
     if (!file_exists(path)) {
@@ -126,6 +143,15 @@ static inline NSString *members_filepath(DIMID *group, BOOL autoCreate) {
     //NSLog(@"loading profile from %@", path);
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
     return MKMProfileFromDictionary(dict);
+}
+
+- (BOOL)saveProfile:(DIMProfile *)profile {
+    if (![self cacheProfile:profile]) {
+        NSAssert(false, @"profile not valid: %@", profile);
+        return NO;
+    }
+    NSString *path = profile_filepath(profile.ID, YES);
+    return [profile writeToBinaryFile:path];
 }
 
 - (nullable NSArray<DIMID *> *)loadContactsForUser:(DIMID *)user {

@@ -19,7 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFacebook : DIMBarrack
 
+@property (weak, nonatomic, nullable) id<DIMEntityDataSource> entityDataSource;
+@property (weak, nonatomic, nullable) id<DIMUserDataSource> userDataSource;
+@property (weak, nonatomic, nullable) id<DIMGroupDataSource> groupDataSource;
+
 + (instancetype)sharedInstance;
+
+- (BOOL)cacheProfile:(DIMProfile *)profile;
 
 @end
 

@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+Singleton.h"
+#import "NSDate+Timestamp.h"
 
 #import "MKMECCPrivateKey.h"
 #import "MKMECCPublicKey.h"
@@ -27,12 +28,21 @@
 
 @end
 
+typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTableM;
+
 typedef NSMutableArray<DIMID *> ContactTableM;
 typedef NSMutableDictionary<DIMAddress *, ContactTableM *> ContactMapM;
 
 @interface DIMFacebook () {
     
+    // memory caches
+    ProfileTableM *_profileTable;
     ContactMapM *_contactMap;
+    
+    // delegates
+    __weak __kindof id<DIMEntityDataSource> _entityDataSource;
+    __weak __kindof id<DIMUserDataSource> _userDataSource;
+    __weak __kindof id<DIMGroupDataSource> _groupDataSource;
 }
 
 @end
@@ -43,8 +53,9 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        // contacts list of each user
-        _contactMap = [[ContactMapM alloc] init];
+        // memory caches
+        _profileTable = [[ProfileTableM alloc] init];
+        _contactMap = [[ContactMapM alloc] init]; // contacts list of each user
         
         // register new asymmetric cryptography key classes
         [MKMPrivateKey registerClass:[MKMECCPrivateKey class] forAlgorithm:ACAlgorithmECC];
@@ -60,6 +71,45 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
     }
     return self;
+}
+
+- (BOOL)_verifyProfile:(DIMProfile *)profile {
+    if (!profile) {
+        return NO;
+    } else if ([profile isValid]) {
+        // already verified
+        return YES;
+    }
+    DIMID *ID = profile.ID;
+    NSAssert([ID isValid], @"profile ID not valid: %@", profile);
+    DIMMeta *meta = nil;
+    // check signer
+    if (MKMNetwork_IsUser(ID.type)) {
+        // verify with user's meta.key
+        meta = [self metaForID:ID];
+    } else if (MKMNetwork_IsGroup(ID.type)) {
+        if (ID.type == MKMNetwork_Polylogue) {
+            // verify with group found's key (AKA meta.key)
+            meta = [self metaForID:ID];
+        } else {
+            // verify with group owner's meta.key
+            DIMGroup *group = [self groupWithID:ID];
+            DIMID *owner = group.owner;
+            if ([owner isValid]) {
+                meta = [self metaForID:owner];
+            }
+        }
+    }
+    return [profile verify:meta.key];
+}
+
+- (BOOL)cacheProfile:(DIMProfile *)profile {
+    if (![self _verifyProfile:profile]) {
+        NSLog(@"profile not valid: %@", profile);
+        return NO;
+    }
+    [_profileTable setObject:profile forKey:profile.ID];
+    return YES;
 }
 
 #pragma mark - DIMSocialNetworkDataSource
@@ -84,7 +134,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         }
     } else if (MKMNetwork_IsStation(ID.type)) {
         // FIXME: make sure the station not been erased from the memory cache
-        NSAssert(false, @"station not create: %@", ID);
+        user = [[DIMServer alloc] initWithID:ID];
     } else {
         // TODO: implements other types
         NSAssert(false, @"user type not support: %@", ID);
@@ -117,32 +167,6 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     return group;
 }
 
-#pragma mark - DIMEntityDataSource
-
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
-    if ([super saveMeta:meta forID:ID]) {
-        return YES;
-    }
-    // check whether match ID
-    if (![meta matchID:ID]) {
-        NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
-        return NO;
-    }
-    return [self _storeMeta:meta forID:ID];
-}
-
-- (BOOL)saveProfile:(DIMProfile *)profile {
-    if ([super saveProfile:profile]) {
-        return YES;
-    }
-    // check whether match ID
-    if (![profile isValid]) {
-        NSAssert(false, @"profile not valid: %@", profile);
-        return NO;
-    }
-    return [self _storeProfile:profile];
-}
-
 #pragma mark - MKMEntityDataSource
 
 - (nullable DIMMeta *)metaForID:(DIMID *)ID {
@@ -168,16 +192,38 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if ([profile objectForKey:@"data"]) {
         return profile;
     }
-    // load from local storage
-    profile = [self loadProfileForID:ID];
+    // get from profile cache
+    profile = [_profileTable objectForKey:ID];
+    if (profile) {
+        // check timestamp
+        NSNumber *timestamp = [profile objectForKey:@"lastTime"];
+        if (timestamp) {
+            NSDate *lastTime = NSDateFromNumber(timestamp);
+            NSTimeInterval ti = [lastTime timeIntervalSinceNow];
+            if (fabs(ti) < 3600) {
+                // not expired yet
+                return profile;
+            }
+            NSLog(@"profile expired: %@", lastTime);
+            [_profileTable removeObjectForKey:ID];
+        } else {
+            // set last update time
+            NSDate *now = [[NSDate alloc] init];
+            [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
+        }
+    }
+    // get from entity data source
+    profile = [_entityDataSource profileForID:ID];
     if (!profile) {
-        return nil;
+        // load from local storage
+        profile = [self loadProfileForID:ID];
     }
     // check and cache it
-    if (![self cacheProfile:profile]) {
-        NSAssert(false, @"profile error: %@", profile);
-        return nil;
+    if (!profile || ![self cacheProfile:profile]) {
+        // place an empty profile for cache
+        profile = [[DIMProfile alloc] initWithID:ID];
     }
+    [_profileTable setObject:profile forKey:profile.ID];
     return profile;
 }
 
@@ -185,19 +231,20 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 - (nullable DIMPrivateKey *)privateKeyForSignatureOfUser:(DIMID *)user {
     DIMPrivateKey *key = [super privateKeyForSignatureOfUser:user];
-    if (!key) {
-        key = [DIMPrivateKey loadKeyWithIdentifier:user.address];
+    if (key) {
+        return key;
     }
-    return key;
+    return [DIMPrivateKey loadKeyWithIdentifier:user.address];
 }
 
 - (nullable NSArray<DIMPrivateKey *> *)privateKeysForDecryptionOfUser:(DIMID *)user {
     NSArray<DIMPrivateKey *> *keys = [super privateKeysForDecryptionOfUser:user];
-    if (!keys) {
-        DIMPrivateKey *key = [self privateKeyForSignatureOfUser:user];
-        if (key) {
-            keys = [[NSArray alloc] initWithObjects:key, nil];
-        }
+    if (keys) {
+        return keys;
+    }
+    DIMPrivateKey *key = [self privateKeyForSignatureOfUser:user];
+    if (key) {
+        keys = [[NSArray alloc] initWithObjects:key, nil];
     }
     return keys;
 }
@@ -241,7 +288,6 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    NSAssert(MKMNetwork_IsGroup(group.type), @"group error: %@", group);
     DIMID *owner = [super ownerOfGroup:group];
     if (owner) {
         return owner;

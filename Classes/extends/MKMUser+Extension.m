@@ -6,7 +6,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMFacebook.h"
+#import "DIMFacebook+Storage.h"
 
 #import "MKMUser+Extension.h"
 
