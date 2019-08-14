@@ -8,7 +8,7 @@
 
 #import "NSObject+JsON.h"
 
-#import "DIMFacebook.h"
+#import "DIMFacebook+Storage.h"
 #import "DIMMessanger.h"
 
 #import "DIMAmanuensis.h"
@@ -96,8 +96,12 @@
     DIMID *sender = DIMIDWithString(rMsg.envelope.sender);
     DIMMeta *meta = DIMMetaForID(sender);
     if (!meta) {
+        // [Meta Protocol] check meta in first contact message
         meta = MKMMetaFromDictionary(rMsg.meta);
-        if (!meta) {
+        if ([meta matchID:sender]) {
+            NSLog(@"got meta for new friend: %@ -> %@", sender, meta);
+            [[DIMFacebook sharedInstance] saveMeta:meta forID:sender];
+        } else {
             NSLog(@"meta for %@ not found, query from the network...", sender);
             [self queryMetaForID:sender];
             // TODO: insert the message to a temporary queue to waiting meta
