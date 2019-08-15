@@ -24,4 +24,24 @@
     }
 }
 
+- (BOOL)existsMember:(DIMID *)ID {
+    if ([self.owner isEqual:ID]) {
+        return YES;
+    }
+    NSAssert(_dataSource, @"group data source not set yet");
+    NSArray<DIMID *> *members = [self members];
+    NSInteger count = [members count];
+    if (count <= 0) {
+        return NO;
+    }
+    DIMID *member;
+    while (--count >= 0) {
+        member = [members objectAtIndex:count];
+        if ([member isEqual:ID]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 @end

@@ -8,6 +8,8 @@
 
 #import "NSObject+JsON.h"
 
+#import "MKMGroup+Extension.h"
+
 #import "DIMFacebook+Storage.h"
 #import "DIMMessanger.h"
 

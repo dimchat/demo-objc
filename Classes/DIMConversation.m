@@ -49,8 +49,8 @@
 - (NSString *)title {
     DIMConversationType type = self.type;
     if (type == DIMConversationPersonal) {
-        DIMUser *person = (DIMUser *)_entity;
-        NSString *name = person.name;
+        DIMUser *user = (DIMUser *)_entity;
+        NSString *name = user.name;
         // "xxx"
         return name;
     } else if (type == DIMConversationGroup) {

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isFounder:(MKMID *)ID;
 
+- (BOOL)existsMember:(MKMID *)ID;
+
 @end
 
 NS_ASSUME_NONNULL_END
