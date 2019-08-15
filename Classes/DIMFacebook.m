@@ -210,6 +210,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
             // set last update time
             NSDate *now = [[NSDate alloc] init];
             [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
+            return profile;
         }
     }
     // get from entity data source
