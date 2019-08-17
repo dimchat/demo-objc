@@ -24,8 +24,6 @@
 /* designated initializer */
 - (instancetype)initWithDictionary:(NSDictionary *)keyInfo {
     if (self = [super initWithDictionary:keyInfo]) {
-        NSAssert([self.algorithm isEqualToString:ACAlgorithmECC], @"algorithm error: %@", keyInfo);
-        
         // lazy
         _curve = nil;
         
