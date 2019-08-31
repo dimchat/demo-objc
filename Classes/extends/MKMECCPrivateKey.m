@@ -12,7 +12,7 @@
 
 @interface MKMECCPrivateKey () {
     
-    MKMPublicKey *_publicKey;
+    MKMECCPublicKey *_publicKey;
 }
 
 @property (strong, nonatomic) NSString *curve;
@@ -48,7 +48,7 @@
     return _curve;
 }
 
-- (MKMPublicKey *)publicKey {
+- (nullable __kindof MKMPublicKey *)publicKey {
     if (!_publicKey) {
         // TODO: create public key from private key
         // ...

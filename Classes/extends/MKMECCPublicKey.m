@@ -76,7 +76,7 @@
     if (!PK) {
         MKMECCPrivateKey *SK;
         SK = [MKMECCPrivateKey loadKeyWithIdentifier:identifier];
-        PK = (MKMECCPublicKey *)SK.publicKey;
+        PK = SK.publicKey;
     }
     
     return PK;

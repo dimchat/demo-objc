@@ -1,5 +1,5 @@
 //
-//  DIMMessanger.m
+//  DIMMessenger.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/8/6.
@@ -11,11 +11,11 @@
 #import "DIMFacebook.h"
 #import "DIMKeyStore.h"
 
-#import "DIMMessanger.h"
+#import "DIMMessenger.h"
 
-@implementation DIMMessanger
+@implementation DIMMessenger
 
-SingletonImplementations(DIMMessanger, sharedInstance)
+SingletonImplementations(DIMMessenger, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

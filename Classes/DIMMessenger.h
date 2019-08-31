@@ -1,5 +1,5 @@
 //
-//  DIMMessanger.h
+//  DIMMessenger.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/8/6.
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMessanger : DIMTransceiver
+@interface DIMMessenger : DIMTransceiver
 
 + (instancetype)sharedInstance;
 

@@ -11,7 +11,7 @@
 #import "MKMGroup+Extension.h"
 
 #import "DIMFacebook+Storage.h"
-#import "DIMMessanger.h"
+#import "DIMMessenger.h"
 
 #import "DIMAmanuensis.h"
 
@@ -146,7 +146,7 @@
     }
     
     // trans to instant message
-    DIMInstantMessage *iMsg = [[DIMMessanger sharedInstance] verifyAndDecryptMessage:rMsg];
+    DIMInstantMessage *iMsg = [[DIMMessenger sharedInstance] verifyAndDecryptMessage:rMsg];
     if (iMsg == nil) {
         NSLog(@"failed to verify/decrypt message: %@", rMsg);
         return ;
