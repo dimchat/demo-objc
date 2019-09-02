@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMTransceiver (Transform)
+@interface DIMMessenger (Convenient)
 
 /**
  *  Pack instant message to reliable message for delivering
@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMTransceiver (Send)
+@interface DIMMessenger (Send)
 
 /**
  *  Send message (secured + certified) to target station

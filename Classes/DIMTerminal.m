@@ -90,34 +90,34 @@
 #pragma mark DIMStationDelegate
 
 - (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
-    // decode to reliable message
+    
+    // 1. decode to reliable message
     NSDictionary *dict = [data jsonDictionary];
     DIMReliableMessage *rMsg = DKDReliableMessageFromDictionary(dict);
     
-    // check sender
     DIMID *sender = DIMIDWithString(rMsg.envelope.sender);
-    DIMMeta *meta = DIMMetaForID(sender);
-    if (!meta) {
-        // [Meta Protocol] check meta in first contact message
-        meta = MKMMetaFromDictionary(rMsg.meta);
-        if ([meta matchID:sender]) {
-            NSLog(@"got meta for new friend: %@ -> %@", sender, meta);
-            [[DIMFacebook sharedInstance] saveMeta:meta forID:sender];
-        } else {
+    DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+
+    // 2. verify it with sender's meta.key
+    DIMSecureMessage *sMsg = [messenger verifyMessage:rMsg];
+    if (!sMsg) {
+        // check meta
+        DIMMeta *meta = DIMMetaForID(sender);
+        if (!meta) {
             NSLog(@"meta for %@ not found, query from the network...", sender);
             [self queryMetaForID:sender];
             // TODO: insert the message to a temporary queue to waiting meta
-            return ;
         }
+        return ;
     }
     
-    // check receiver
-    DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
+    // 3. check receiver
     DIMLocalUser *user = nil;
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group message
-        NSAssert(rMsg.group == nil || [DIMIDWithString(rMsg.group) isEqual:receiver],
-                 @"group error: %@ != %@", receiver, rMsg.group);
+        NSAssert(sMsg.group == nil || [DIMIDWithString(sMsg.group) isEqual:receiver],
+                 @"group error: %@ != %@", receiver, sMsg.group);
         // check group membership
         DIMGroup *group = DIMGroupWithID(receiver);
         for (DIMLocalUser *item in self.users) {
@@ -129,7 +129,7 @@
         }
         if (user) {
             // trim for current user
-            rMsg = [rMsg trimForMember:user.ID];
+            sMsg = [sMsg trimForMember:user.ID];
         }
     } else {
         for (DIMLocalUser *item in self.users) {
@@ -145,14 +145,14 @@
         return ;
     }
     
-    // trans to instant message
-    DIMInstantMessage *iMsg = [[DIMMessenger sharedInstance] verifyAndDecryptMessage:rMsg];
+    // 4. decrypt it for local user
+    DIMInstantMessage *iMsg = [messenger decryptMessage:sMsg];
     if (iMsg == nil) {
-        NSLog(@"failed to verify/decrypt message: %@", rMsg);
+        NSLog(@"failed to decrypt message: %@", sMsg);
         return ;
     }
     
-    // process commands
+    // 5. process commands
     DIMContent *content = iMsg.content;
     if (content.type == DKDContentType_Command) {
         DIMCommand *cmd = (DIMCommand *)content;
