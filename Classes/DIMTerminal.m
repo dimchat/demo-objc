@@ -202,6 +202,18 @@
         //return ;
     }
     
+    NSString *group = iMsg.content.group;
+    if (group) {
+        DIMID *ID = DIMIDWithString(group);
+        DIMMeta *meta = DIMMetaForID(ID);
+        if (!meta) {
+            NSLog(@"meta for %@ not found, query from the network...", ID);
+            [self queryMetaForID:ID];
+            // TODO: insert the message to a temporary queue to waiting meta
+            return;
+        }
+    }
+    
     // normal message, let the clerk to deliver it
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     [clerk saveMessage:iMsg];
