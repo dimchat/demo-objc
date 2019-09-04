@@ -133,8 +133,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
             user = [[DIMLocalUser alloc] initWithID:ID];
         }
     } else if (MKMNetwork_IsRobot(ID.type)) {
-        // TODO: implements Robot
-        user = [[DIMContact alloc] initWithID:ID];
+        user = [[DIMRobot alloc] initWithID:ID];
     } else if (MKMNetwork_IsStation(ID.type)) {
         // FIXME: make sure the station not been erased from the memory cache
         user = [[DIMServer alloc] initWithID:ID];

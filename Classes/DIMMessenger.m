@@ -78,7 +78,7 @@ SingletonImplementations(DIMMessenger, sharedInstance)
 
 @end
 
-@implementation DIMMessenger (Convenient)
+@implementation DIMMessenger (Convenience)
 
 
 - (nullable DIMReliableMessage *)encryptAndSignMessage:(DIMInstantMessage *)iMsg {

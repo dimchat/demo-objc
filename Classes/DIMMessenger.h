@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMMessenger (Convenient)
+@interface DIMMessenger (Convenience)
 
 /**
  *  Pack instant message to reliable message for delivering
