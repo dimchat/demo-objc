@@ -147,7 +147,7 @@ static inline NSString *members_filepath(DIMID *group, BOOL autoCreate) {
 
 - (BOOL)saveProfile:(DIMProfile *)profile {
     if (![self cacheProfile:profile]) {
-        NSAssert(false, @"profile not valid: %@", profile);
+        //NSAssert(false, @"profile not valid: %@", profile);
         return NO;
     }
     NSString *path = profile_filepath(profile.ID, YES);

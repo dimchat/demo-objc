@@ -189,6 +189,11 @@
     BOOL isMember = [group existsMember:sender];
     
     if ([command isEqualToString:DIMGroupCommand_Invite]) {
+        if (group.founder == nil && group.members.count == 0) {
+            // FIXME: group profile lost?
+            // FIXME: how to avoid strangers impersonating group members?
+            return YES;
+        }
         // add member(s)
         if (isFounder || isMember) {
             return YES;
