@@ -195,6 +195,23 @@ static inline NSString *members_filepath(DIMID *group, BOOL autoCreate) {
         }
         [members addObject:ID];
     }
+    // ensure that founder is at the front
+    if (members.count > 1) {
+        DIMMeta *gMeta = [self metaForID:group];
+        DIMPublicKey *PK;
+        for (NSUInteger index = 0; index < members.count; ++index) {
+            ID = [members objectAtIndex:index];
+            PK = [DIMMetaForID(ID) key];
+            if ([gMeta matchPublicKey:PK]) {
+                if (index > 0) {
+                    // move to front
+                    [members removeObjectAtIndex:index];
+                    [members insertObject:ID atIndex:0];
+                }
+                break;
+            }
+        }
+    }
     return members;
 }
 
