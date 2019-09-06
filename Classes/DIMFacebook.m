@@ -13,7 +13,7 @@
 #import "MKMAddressETH.h"
 #import "MKMMetaETH.h"
 
-#import "DIMDatabase.h"
+#import "DIMSocialNetworkDatabase.h"
 
 #import "DIMServer.h"
 
@@ -22,7 +22,7 @@
 @interface DIMFacebook () {
     
     // delegates
-    __weak __kindof id<DIMDatabase> _database;
+    __weak __kindof id<DIMSocialNetworkDatabase> _database;
 }
 
 @end
@@ -48,6 +48,10 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
     }
     return self;
+}
+
+- (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
+    return [_database IDWithAddress:address];
 }
 
 #pragma mark - DIMSocialNetworkDataSource
@@ -216,7 +220,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 - (BOOL)user:(DIMLocalUser *)user addContact:(DIMID *)contact {
     NSLog(@"user %@ add contact %@", user, contact);
-    NSArray<DIMID *> *contacts = [_database contactsOfUser:user.ID];
+    NSArray<DIMID *> *contacts = [self contactsOfUser:user.ID];
     if (contacts) {
         if ([contacts containsObject:contact]) {
             NSLog(@"contact %@ already exists, user: %@", contact, user.ID);
@@ -231,12 +235,12 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         [mArray addObject:contact];
         contacts = mArray;
     }
-    return [_database saveContacts:contacts user:user.ID];
+    return [self saveContacts:contacts user:user.ID];
 }
 
 - (BOOL)user:(DIMLocalUser *)user removeContact:(DIMID *)contact {
     NSLog(@"user %@ remove contact %@", user, contact);
-    NSArray<DIMID *> *contacts = [_database contactsOfUser:user.ID];
+    NSArray<DIMID *> *contacts = [self contactsOfUser:user.ID];
     if (contacts) {
         if ([contacts containsObject:contact]) {
             NSMutableArray *mArray = [contacts mutableCopy];
@@ -250,7 +254,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         NSLog(@"user %@ doesn't has contact yet", user.ID);
         return NO;
     }
-    return [_database saveContacts:contacts user:user.ID];
+    return [self saveContacts:contacts user:user.ID];
 }
 
 - (BOOL)group:(DIMGroup *)group addMember:(DIMID *)member {
@@ -262,7 +266,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     NSMutableArray *mArray = [members mutableCopy];
     [mArray addObject:member];
     members = mArray;
-    return [_database saveMembers:members group:group.ID];
+    return [self saveMembers:members group:group.ID];
 }
 
 - (BOOL)group:(DIMGroup *)group removeMember:(DIMID *)member {
@@ -274,7 +278,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     NSMutableArray *mArray = [members mutableCopy];
     [mArray removeObject:member];
     members = mArray;
-    return [_database saveMembers:members group:group.ID];
+    return [self saveMembers:members group:group.ID];
 }
 
 @end

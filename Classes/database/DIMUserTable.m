@@ -1,5 +1,5 @@
 //
-//  DIMContactTable.m
+//  DIMUserTable.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/9/6.
@@ -8,24 +8,67 @@
 
 #import "DIMFacebook.h"
 
-#import "DIMContactTable.h"
+#import "DIMUserTable.h"
 
 typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 
-@interface DIMContactTable () {
+@interface DIMUserTable () {
     
     CacheTableM *_caches;
+    
+    NSMutableArray<DIMID *> *_users;
 }
 
 @end
 
-@implementation DIMContactTable
+@implementation DIMUserTable
 
 - (instancetype)init {
     if (self = [super init]) {
         _caches = [[CacheTableM alloc] init];
+        
+        _users = nil;
     }
     return self;
+}
+
+/**
+ *  Get users filepath in Documents Directory
+ *
+ * @return "Documents/.dim/users.plist"
+ */
+- (NSString *)_usersFilePath {
+    NSString *dir = self.documentDirectory;
+    dir = [dir stringByAppendingPathComponent:@".dim"];
+    return [dir stringByAppendingPathComponent:@"users.plist"];
+}
+
+- (nullable NSArray<DIMID *> *)allUsers {
+    if (_users) {
+        return _users;
+    }
+    _users = [[NSMutableArray alloc] init];
+    DIMID *ID;
+    
+    NSString *path = [self _usersFilePath];
+    NSLog(@"loading users: %@", path);
+    NSArray *array = [self arrayWithContentsOfFile:path];
+    for (NSString *item in array) {
+        ID = DIMIDWithString(item);
+        NSAssert([ID isValid], @"ID error: %@", item);
+        [_users addObject:ID];
+    }
+    
+    return _users;
+}
+
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+    // update cache
+    _users = [list mutableCopy];
+    // save into storage
+    NSString *path = [self _usersFilePath];
+    NSLog(@"saving %ld user(s): %@", list.count, path);
+    return [self array:list writeToFile:path];
 }
 
 /**

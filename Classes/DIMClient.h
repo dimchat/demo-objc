@@ -42,9 +42,11 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMStorage.h>
 #import <DIMClient/DIMMetaTable.h>
 #import <DIMClient/DIMProfileTable.h>
-#import <DIMClient/DIMContactTable.h>
+#import <DIMClient/DIMUserTable.h>
 #import <DIMClient/DIMGroupTable.h>
-#import <DIMClient/DIMDatabase.h>
+#import <DIMClient/DIMMessageTable.h>
+#import <DIMClient/DIMSocialNetworkDatabase.h>
+#import <DIMClient/DIMConversationDatabase.h>
 
 #import <DIMClient/DIMFacebook.h>
 #import <DIMClient/DIMKeyStore.h>

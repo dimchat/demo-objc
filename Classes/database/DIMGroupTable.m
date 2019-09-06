@@ -41,7 +41,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return [dir stringByAppendingPathComponent:@"members.plist"];
 }
 
-- (nullable NSArray<DIMID *> *)_loadMembersForGroup:(DIMID *)group {
+- (nullable NSArray<DIMID *> *)_loadMembersOfGroup:(DIMID *)group {
     NSString *path = [self _filePathWithID:group];
     NSArray *array = [self arrayWithContentsOfFile:path];
     if (!array) {
@@ -83,7 +83,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
     NSArray<DIMID *> *members = [_caches objectForKey:group];
     if (!members) {
-        members = [self _loadMembersForGroup:group];
+        members = [self _loadMembersOfGroup:group];
         if (members) {
             // cache it
             [_caches setObject:members forKey:group];

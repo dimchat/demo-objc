@@ -13,17 +13,20 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMMetaForID(ID)         [[DIMFacebook sharedInstance] metaForID:(ID)]
 #define DIMProfileForID(ID)      [[DIMFacebook sharedInstance] profileForID:(ID)]
 
+#define DIMIDWithAddress(addr)   [[DIMFacebook sharedInstance] IDWithAddress:(addr)]
 #define DIMIDWithString(ID)      [[DIMFacebook sharedInstance] IDWithString:(ID)]
 #define DIMUserWithID(ID)        [[DIMFacebook sharedInstance] userWithID:(ID)]
 #define DIMGroupWithID(ID)       [[DIMFacebook sharedInstance] groupWithID:(ID)]
 
-@protocol DIMDatabase;
+@protocol DIMSocialNetworkDatabase;
 
 @interface DIMFacebook : DIMBarrack
 
-@property (weak, nonatomic, nullable) id<DIMDatabase> database;
+@property (weak, nonatomic, nullable) id<DIMSocialNetworkDatabase> database;
 
 + (instancetype)sharedInstance;
+
+- (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
 
 @end
 

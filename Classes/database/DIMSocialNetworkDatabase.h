@@ -1,5 +1,5 @@
 //
-//  DIMDatabase.h
+//  DIMSocialNetworkDatabase.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/9/6.
@@ -10,9 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMDatabase <DIMUserDataSource, DIMGroupDataSource>
+@protocol DIMSocialNetworkDatabase <DIMUserDataSource, DIMGroupDataSource>
 
-+ (instancetype)sharedInstance;
+- (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
+
+- (nullable NSArray<DIMID *> *)allUsers;
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list;
+- (BOOL)saveUser:(DIMID *)user;
+- (BOOL)removeUser:(DIMID *)user;
 
 - (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID;
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
@@ -23,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMDatabase : NSObject <DIMDatabase>
+@interface DIMSocialNetworkDatabase : NSObject <DIMSocialNetworkDatabase>
 
 @end
 

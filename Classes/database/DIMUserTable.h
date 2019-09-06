@@ -1,5 +1,5 @@
 //
-//  DIMContactTable.h
+//  DIMUserTable.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/9/6.
@@ -10,9 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMContactTable : DIMStorage
+@interface DIMUserTable : DIMStorage
+
+- (nullable NSArray<DIMID *> *)allUsers;
+
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list;
 
 - (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user;
+
 - (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user;
 
 @end

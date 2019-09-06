@@ -1,39 +1,35 @@
 //
-//  DIMDatabase.m
+//  DIMSocialNetworkDatabase.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/9/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMMetaTable.h"
 #import "DIMProfileTable.h"
-#import "DIMContactTable.h"
+#import "DIMUserTable.h"
 #import "DIMGroupTable.h"
 
-#import "DIMDatabase.h"
+#import "DIMSocialNetworkDatabase.h"
 
-@interface DIMDatabase () {
+@interface DIMSocialNetworkDatabase () {
     
     DIMMetaTable *_metaTable;
     DIMProfileTable *_profileTable;
-    DIMContactTable *_contactTable;
+    DIMUserTable *_userTable;
     DIMGroupTable *_groupTable;
 }
 
 @end
 
-@implementation DIMDatabase
-
-SingletonImplementations(DIMDatabase, sharedInstance)
+@implementation DIMSocialNetworkDatabase
 
 - (instancetype)init {
     if (self = [super init]) {
         _metaTable = [[DIMMetaTable alloc] init];
         _profileTable = [[DIMProfileTable alloc] init];
-        _contactTable = [[DIMContactTable alloc] init];
+        _userTable = [[DIMUserTable alloc] init];
         _groupTable = [[DIMGroupTable alloc] init];
     }
     return self;
@@ -41,6 +37,10 @@ SingletonImplementations(DIMDatabase, sharedInstance)
 
 - (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID {
     return [key saveKeyWithIdentifier:ID.address];
+}
+
+- (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
+    return [_metaTable IDWithAddress:address];
 }
 
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
@@ -51,8 +51,38 @@ SingletonImplementations(DIMDatabase, sharedInstance)
     return [_profileTable saveProfile:profile];
 }
 
+- (nullable NSArray<DIMID *> *)allUsers {
+    return [_userTable allUsers];
+}
+
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+    return [_userTable saveUsers:list];
+}
+
+- (BOOL)saveUser:(DIMID *)user {
+    NSMutableArray<DIMID *> *list = (NSMutableArray<DIMID *> *)[_userTable allUsers];
+    NSAssert(list, @"would not happen");
+    if ([list containsObject:user]) {
+        //NSAssert(false, @"user already exists: %@", user);
+        return YES;
+    }
+    [list addObject:user];
+    return [self saveUsers:list];
+}
+
+- (BOOL)removeUser:(DIMID *)user {
+    NSMutableArray<DIMID *> *list = (NSMutableArray<DIMID *> *)[_userTable allUsers];
+    NSAssert(list, @"would not happen");
+    if (![list containsObject:user]) {
+        //NSAssert(false, @"user not exists: %@", user);
+        return YES;
+    }
+    [list removeObject:user];
+    return [self saveUsers:list];
+}
+
 - (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user {
-    return [_contactTable saveContacts:contacts user:user];
+    return [_userTable saveContacts:contacts user:user];
 }
 
 - (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group {
@@ -79,7 +109,7 @@ SingletonImplementations(DIMDatabase, sharedInstance)
 }
 
 - (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user {
-    return [_contactTable contactsOfUser:user];
+    return [_userTable contactsOfUser:user];
 }
 
 - (nullable DIMID *)founderOfGroup:(DIMID *)group {

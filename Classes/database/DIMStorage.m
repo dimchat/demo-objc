@@ -13,17 +13,32 @@
 
 @implementation DIMStorage
 
-static NSString *s_document = nil;
+static NSString *s_documentDirectory = nil;
+
 - (NSString *)documentDirectory {
     SingletonDispatchOnce(^{
-        if (s_document == nil) {
+        if (s_documentDirectory == nil) {
             NSArray *paths;
             paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
                                                         NSUserDomainMask, YES);
-            s_document = paths.firstObject;
+            s_documentDirectory = paths.firstObject;
         }
     });
-    return s_document;
+    return s_documentDirectory;
+}
+
+static NSString *s_cachesDirectory = nil;
+
+- (NSString *)cachesDirectory {
+    SingletonDispatchOnce(^{
+        if (s_cachesDirectory == nil) {
+            NSArray *paths;
+            paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
+                                                        NSUserDomainMask, YES);
+            s_cachesDirectory = paths.firstObject;
+        }
+    });
+    return s_cachesDirectory;
 }
 
 - (BOOL)createDirectoryAtPath:(NSString *)directory {
@@ -45,6 +60,19 @@ static NSString *s_document = nil;
 - (BOOL)fileExistsAtPath:(NSString *)path {
     NSFileManager *fm = [NSFileManager defaultManager];
     return [fm fileExistsAtPath:path];
+}
+
+- (BOOL)removeItemAtPath:(NSString *)path {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:path]) {
+        NSError *err = nil;
+        [fm removeItemAtPath:path error:&err];
+        if (err) {
+            NSLog(@"failed to remove file: %@", err);
+            return NO;
+        }
+    }
+    return YES;
 }
 
 - (nullable NSDictionary *)dictionaryWithContentsOfFile:(NSString *)path {

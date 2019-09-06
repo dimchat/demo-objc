@@ -6,6 +6,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMFacebook.h"
+
 #import "DIMMetaTable.h"
 
 //typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
@@ -33,9 +35,12 @@
  * @return "Documents/.mkm/{address}/meta.plist"
  */
 - (NSString *)_filePathWithID:(DIMID *)ID {
+    return [self _filePathWithAddress:ID.address];
+}
+- (NSString *)_filePathWithAddress:(DIMAddress *)address {
     NSString *dir = self.documentDirectory;
     dir = [dir stringByAppendingPathComponent:@".mkm"];
-    dir = [dir stringByAppendingPathComponent:ID.address];
+    dir = [dir stringByAppendingPathComponent:address];
     return [dir stringByAppendingPathComponent:@"meta.plist"];
 }
 
@@ -88,6 +93,26 @@
     }
     NSLog(@"saving meta into: %@", path);
     return [self dictionary:meta writeToBinaryFile:path];
+}
+
+@end
+
+@implementation DIMMetaTable (ID)
+
+- (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
+    DIMID *ID = nil;
+    NSString *path = [self _filePathWithAddress:address];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:path]) {
+        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+        NSString *seed = [dict objectForKey:@"seed"];
+        NSString *idstr = [NSString stringWithFormat:@"%@@%@", seed, address];
+        ID = DIMIDWithString(idstr);
+        NSLog(@"Address: %@ -> ID: %@", address, ID);
+    } else {
+        NSLog(@"meta file not exists: %@", path);
+    }
+    return ID;
 }
 
 @end
