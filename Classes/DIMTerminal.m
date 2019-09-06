@@ -10,7 +10,7 @@
 
 #import "MKMGroup+Extension.h"
 
-#import "DIMFacebook+Storage.h"
+#import "DIMFacebook.h"
 #import "DIMMessenger.h"
 
 #import "DIMAmanuensis.h"

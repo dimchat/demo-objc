@@ -19,6 +19,18 @@
 		E94E13F12276EB0F009D5275 /* DIMConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = E94E13ED2276EB0F009D5275 /* DIMConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959902B22F2CE7200C97D2D /* DIMKeyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E959902922F2CE7200C97D2D /* DIMKeyStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959902C22F2CE7200C97D2D /* DIMKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E959902A22F2CE7200C97D2D /* DIMKeyStore.m */; };
+		E96D14B52322455E00B5EA59 /* DIMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14B32322455E00B5EA59 /* DIMDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96D14B62322455E00B5EA59 /* DIMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14B42322455E00B5EA59 /* DIMDatabase.m */; };
+		E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14B7232247F600B5EA59 /* DIMMetaTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96D14BA232247F600B5EA59 /* DIMMetaTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14B8232247F600B5EA59 /* DIMMetaTable.m */; };
+		E96D14BD2322493300B5EA59 /* DIMStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14BB2322493300B5EA59 /* DIMStorage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96D14BE2322493300B5EA59 /* DIMStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14BC2322493300B5EA59 /* DIMStorage.m */; };
+		E96D14C12322523A00B5EA59 /* DIMProfileTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14BF2322523A00B5EA59 /* DIMProfileTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14C02322523A00B5EA59 /* DIMProfileTable.m */; };
+		E96D14C5232259D800B5EA59 /* DIMContactTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14C3232259D800B5EA59 /* DIMContactTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96D14C6232259D800B5EA59 /* DIMContactTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14C4232259D800B5EA59 /* DIMContactTable.m */; };
+		E96D14C92322614C00B5EA59 /* DIMGroupTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14C72322614C00B5EA59 /* DIMGroupTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96D14CA2322614C00B5EA59 /* DIMGroupTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14C82322614C00B5EA59 /* DIMGroupTable.m */; };
 		E978168A2223E7F200BCE3AD /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816802223E7F200BCE3AD /* DIMClient.framework */; };
 		E978168F2223E7F200BCE3AD /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E978168E2223E7F200BCE3AD /* DIMClientTests.m */; };
 		E97816C92223E97100BCE3AD /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816A62223E8B400BCE3AD /* DIMCore.framework */; };
@@ -55,8 +67,6 @@
 		E9D0D91222C3B60300EEBF8B /* DIMFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0D91022C3B60300EEBF8B /* DIMFacebook.m */; };
 		E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8248322475AFD00A029F1 /* NSObject+Extension.h */; };
 		E9E8248622475AFD00A029F1 /* NSObject+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E8248422475AFD00A029F1 /* NSObject+Extension.m */; };
-		E9EAF9DC2301D48200566755 /* DIMFacebook+Storage.h in Headers */ = {isa = PBXBuildFile; fileRef = E9EAF9DA2301D48200566755 /* DIMFacebook+Storage.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9EAF9DD2301D48200566755 /* DIMFacebook+Storage.m in Sources */ = {isa = PBXBuildFile; fileRef = E9EAF9DB2301D48200566755 /* DIMFacebook+Storage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -145,6 +155,18 @@
 		E94E13ED2276EB0F009D5275 /* DIMConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMConversation.h; sourceTree = "<group>"; };
 		E959902922F2CE7200C97D2D /* DIMKeyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMKeyStore.h; sourceTree = "<group>"; };
 		E959902A22F2CE7200C97D2D /* DIMKeyStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMKeyStore.m; sourceTree = "<group>"; };
+		E96D14B32322455E00B5EA59 /* DIMDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMDatabase.h; sourceTree = "<group>"; };
+		E96D14B42322455E00B5EA59 /* DIMDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMDatabase.m; sourceTree = "<group>"; };
+		E96D14B7232247F600B5EA59 /* DIMMetaTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMetaTable.h; sourceTree = "<group>"; };
+		E96D14B8232247F600B5EA59 /* DIMMetaTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMetaTable.m; sourceTree = "<group>"; };
+		E96D14BB2322493300B5EA59 /* DIMStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorage.h; sourceTree = "<group>"; };
+		E96D14BC2322493300B5EA59 /* DIMStorage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorage.m; sourceTree = "<group>"; };
+		E96D14BF2322523A00B5EA59 /* DIMProfileTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMProfileTable.h; sourceTree = "<group>"; };
+		E96D14C02322523A00B5EA59 /* DIMProfileTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMProfileTable.m; sourceTree = "<group>"; };
+		E96D14C3232259D800B5EA59 /* DIMContactTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMContactTable.h; sourceTree = "<group>"; };
+		E96D14C4232259D800B5EA59 /* DIMContactTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMContactTable.m; sourceTree = "<group>"; };
+		E96D14C72322614C00B5EA59 /* DIMGroupTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMGroupTable.h; sourceTree = "<group>"; };
+		E96D14C82322614C00B5EA59 /* DIMGroupTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMGroupTable.m; sourceTree = "<group>"; };
 		E97816802223E7F200BCE3AD /* DIMClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E97816842223E7F200BCE3AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E97816892223E7F200BCE3AD /* DIMClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -184,8 +206,6 @@
 		E9D0D91022C3B60300EEBF8B /* DIMFacebook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMFacebook.m; sourceTree = "<group>"; };
 		E9E8248322475AFD00A029F1 /* NSObject+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
 		E9E8248422475AFD00A029F1 /* NSObject+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Extension.m"; sourceTree = "<group>"; };
-		E9EAF9DA2301D48200566755 /* DIMFacebook+Storage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMFacebook+Storage.h"; sourceTree = "<group>"; };
-		E9EAF9DB2301D48200566755 /* DIMFacebook+Storage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMFacebook+Storage.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -210,6 +230,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E96D14AF232244D600B5EA59 /* database */ = {
+			isa = PBXGroup;
+			children = (
+				E96D14BB2322493300B5EA59 /* DIMStorage.h */,
+				E96D14BC2322493300B5EA59 /* DIMStorage.m */,
+				E96D14B7232247F600B5EA59 /* DIMMetaTable.h */,
+				E96D14B8232247F600B5EA59 /* DIMMetaTable.m */,
+				E96D14BF2322523A00B5EA59 /* DIMProfileTable.h */,
+				E96D14C02322523A00B5EA59 /* DIMProfileTable.m */,
+				E96D14C3232259D800B5EA59 /* DIMContactTable.h */,
+				E96D14C4232259D800B5EA59 /* DIMContactTable.m */,
+				E96D14C72322614C00B5EA59 /* DIMGroupTable.h */,
+				E96D14C82322614C00B5EA59 /* DIMGroupTable.m */,
+				E96D14B32322455E00B5EA59 /* DIMDatabase.h */,
+				E96D14B42322455E00B5EA59 /* DIMDatabase.m */,
+			);
+			path = database;
+			sourceTree = "<group>";
+		};
 		E97816762223E7F200BCE3AD = {
 			isa = PBXGroup;
 			children = (
@@ -254,6 +293,7 @@
 			isa = PBXGroup;
 			children = (
 				E97926D2222A54B9005ED1F0 /* extends */,
+				E96D14AF232244D600B5EA59 /* database */,
 				E97926B922284D59005ED1F0 /* DIMServer.h */,
 				E97926BA22284D59005ED1F0 /* DIMServer.m */,
 				E9AFAAEB223116AC001F95C6 /* DIMServerState.h */,
@@ -266,8 +306,6 @@
 				E94E13EC2276EB0F009D5275 /* DIMConversation.m */,
 				E9D0D90F22C3B60300EEBF8B /* DIMFacebook.h */,
 				E9D0D91022C3B60300EEBF8B /* DIMFacebook.m */,
-				E9EAF9DA2301D48200566755 /* DIMFacebook+Storage.h */,
-				E9EAF9DB2301D48200566755 /* DIMFacebook+Storage.m */,
 				E959902922F2CE7200C97D2D /* DIMKeyStore.h */,
 				E959902A22F2CE7200C97D2D /* DIMKeyStore.m */,
 				E925E82E22F98F5700FC2F36 /* DIMMessenger.h */,
@@ -352,8 +390,13 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E96D14C92322614C00B5EA59 /* DIMGroupTable.h in Headers */,
+				E96D14BD2322493300B5EA59 /* DIMStorage.h in Headers */,
+				E96D14C5232259D800B5EA59 /* DIMContactTable.h in Headers */,
+				E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */,
+				E96D14C12322523A00B5EA59 /* DIMProfileTable.h in Headers */,
+				E96D14B52322455E00B5EA59 /* DIMDatabase.h in Headers */,
 				E9B2FCBD230477E700E153EE /* MKMUser+Extension.h in Headers */,
-				E9EAF9DC2301D48200566755 /* DIMFacebook+Storage.h in Headers */,
 				E9D0D8E122C3686F00EEBF8B /* MKMGroup+Extension.h in Headers */,
 				E925E83022F98F5700FC2F36 /* DIMMessenger.h in Headers */,
 				E959902B22F2CE7200C97D2D /* DIMKeyStore.h in Headers */,
@@ -539,19 +582,24 @@
 			files = (
 				E9BBBE4C223FA6D400E6ACDA /* NSDate+Extension.m in Sources */,
 				E94E13F02276EB0F009D5275 /* DIMConversation.m in Sources */,
+				E96D14C6232259D800B5EA59 /* DIMContactTable.m in Sources */,
+				E96D14BE2322493300B5EA59 /* DIMStorage.m in Sources */,
+				E96D14BA232247F600B5EA59 /* DIMMetaTable.m in Sources */,
 				E9B2FC7A22FB3B6C00E153EE /* MKMECCPrivateKey.m in Sources */,
 				E9D0D8E022C3686F00EEBF8B /* MKMGroup+Extension.m in Sources */,
 				E9B2FC7D22FB3B6C00E153EE /* MKMECCPublicKey.m in Sources */,
+				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
 				E9AFAB0E2232B960001F95C6 /* NSNotificationCenter+Extension.m in Sources */,
 				E94C8DCB22DDB8B00017F998 /* MKMAddressETH.m in Sources */,
 				E9E8248622475AFD00A029F1 /* NSObject+Extension.m in Sources */,
 				E9AFAB452233A522001F95C6 /* DIMTerminal+Group.m in Sources */,
+				E96D14B62322455E00B5EA59 /* DIMDatabase.m in Sources */,
 				E94E13EF2276EB0F009D5275 /* DIMAmanuensis.m in Sources */,
 				E97816D82223F82F00BCE3AD /* DIMTerminal+Request.m in Sources */,
 				E97926B72227DB1D005ED1F0 /* DIMTerminal+Response.m in Sources */,
+				E96D14CA2322614C00B5EA59 /* DIMGroupTable.m in Sources */,
 				E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */,
 				E9D0D91222C3B60300EEBF8B /* DIMFacebook.m in Sources */,
-				E9EAF9DD2301D48200566755 /* DIMFacebook+Storage.m in Sources */,
 				E97907A2225621890024C830 /* DIMFileServer.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
 				E925E83122F98F5700FC2F36 /* DIMMessenger.m in Sources */,

@@ -10,7 +10,7 @@
 
 #import "NSObject+Singleton.h"
 
-#import "DIMFacebook+Storage.h"
+#import "DIMFacebook.h"
 #import "DIMKeyStore.h"
 
 #import "DIMMessenger.h"

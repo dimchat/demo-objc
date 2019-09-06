@@ -17,15 +17,24 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMUserWithID(ID)        [[DIMFacebook sharedInstance] userWithID:(ID)]
 #define DIMGroupWithID(ID)       [[DIMFacebook sharedInstance] groupWithID:(ID)]
 
+@protocol DIMDatabase;
+
 @interface DIMFacebook : DIMBarrack
 
-@property (weak, nonatomic, nullable) id<DIMEntityDataSource> entityDataSource;
-@property (weak, nonatomic, nullable) id<DIMUserDataSource> userDataSource;
-@property (weak, nonatomic, nullable) id<DIMGroupDataSource> groupDataSource;
+@property (weak, nonatomic, nullable) id<DIMDatabase> database;
 
 + (instancetype)sharedInstance;
 
-- (BOOL)cacheProfile:(DIMProfile *)profile;
+@end
+
+@interface DIMFacebook (Storage)
+
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID;
+- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
+- (BOOL)saveProfile:(DIMProfile *)profile;
+
+- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user;
+- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group;
 
 @end
 

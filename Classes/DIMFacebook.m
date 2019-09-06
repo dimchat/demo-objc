@@ -7,42 +7,22 @@
 //
 
 #import "NSObject+Singleton.h"
-#import "NSDate+Timestamp.h"
 
 #import "MKMECCPrivateKey.h"
 #import "MKMECCPublicKey.h"
 #import "MKMAddressETH.h"
 #import "MKMMetaETH.h"
 
+#import "DIMDatabase.h"
+
 #import "DIMServer.h"
 
-#import "DIMFacebook+Storage.h"
 #import "DIMFacebook.h"
-
-@interface DIMFacebook (Hacking)
-
-- (BOOL)_storeMeta:(DIMMeta *)meta forID:(DIMID *)ID;
-- (BOOL)_storeProfile:(DIMProfile *)profile;
-- (BOOL)_storeContacts:(NSArray *)contacts forUser:(DIMLocalUser *)user;
-- (BOOL)_storeMembers:(NSArray *)members forGroup:(DIMGroup *)group;
-
-@end
-
-typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTableM;
-
-typedef NSMutableArray<DIMID *> ContactTableM;
-typedef NSMutableDictionary<DIMAddress *, ContactTableM *> ContactMapM;
 
 @interface DIMFacebook () {
     
-    // memory caches
-    ProfileTableM *_profileTable;
-    ContactMapM *_contactMap;
-    
     // delegates
-    __weak __kindof id<DIMEntityDataSource> _entityDataSource;
-    __weak __kindof id<DIMUserDataSource> _userDataSource;
-    __weak __kindof id<DIMGroupDataSource> _groupDataSource;
+    __weak __kindof id<DIMDatabase> _database;
 }
 
 @end
@@ -53,9 +33,6 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
-        // memory caches
-        _profileTable = [[ProfileTableM alloc] init];
-        _contactMap = [[ContactMapM alloc] init]; // contacts list of each user
         
         // register new asymmetric cryptography key classes
         [MKMPrivateKey registerClass:[MKMECCPrivateKey class] forAlgorithm:ACAlgorithmECC];
@@ -71,45 +48,6 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
     }
     return self;
-}
-
-- (BOOL)_verifyProfile:(DIMProfile *)profile {
-    if (!profile) {
-        return NO;
-    } else if ([profile isValid]) {
-        // already verified
-        return YES;
-    }
-    DIMID *ID = profile.ID;
-    NSAssert([ID isValid], @"profile ID not valid: %@", profile);
-    DIMMeta *meta = nil;
-    // check signer
-    if (MKMNetwork_IsUser(ID.type)) {
-        // verify with user's meta.key
-        meta = [self metaForID:ID];
-    } else if (MKMNetwork_IsGroup(ID.type)) {
-        if (ID.type == MKMNetwork_Polylogue) {
-            // verify with group found's key (AKA meta.key)
-            meta = [self metaForID:ID];
-        } else {
-            // verify with group owner's meta.key
-            DIMGroup *group = [self groupWithID:ID];
-            DIMID *owner = group.owner;
-            if ([owner isValid]) {
-                meta = [self metaForID:owner];
-            }
-        }
-    }
-    return [profile verify:meta.key];
-}
-
-- (BOOL)cacheProfile:(DIMProfile *)profile {
-    if (![self _verifyProfile:profile]) {
-        NSLog(@"profile not valid: %@", profile);
-        return NO;
-    }
-    [_profileTable setObject:profile forKey:profile.ID];
-    return YES;
 }
 
 #pragma mark - DIMSocialNetworkDataSource
@@ -176,8 +114,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if (meta) {
         return meta;
     }
-    // load from local storage
-    meta = [self loadMetaForID:ID];
+    meta = [_database metaForID:ID];
     if (!meta) {
         return nil;
     }
@@ -194,60 +131,23 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if ([profile objectForKey:@"data"]) {
         return profile;
     }
-    // get from profile cache
-    profile = [_profileTable objectForKey:ID];
-    if (profile) {
-        // check timestamp
-        NSNumber *timestamp = [profile objectForKey:@"lastTime"];
-        if (timestamp) {
-            NSDate *lastTime = NSDateFromNumber(timestamp);
-            NSTimeInterval ti = [lastTime timeIntervalSinceNow];
-            if (fabs(ti) < 3600) {
-                // not expired yet
-                return profile;
-            }
-            NSLog(@"profile expired: %@", lastTime);
-            [_profileTable removeObjectForKey:ID];
-        } else {
-            // set last update time
-            NSDate *now = [[NSDate alloc] init];
-            [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
-            return profile;
-        }
-    }
-    // get from entity data source
-    profile = [_entityDataSource profileForID:ID];
-    if (!profile) {
-        // load from local storage
-        profile = [self loadProfileForID:ID];
-    }
-    // check and cache it
-    if (!profile || ![self cacheProfile:profile]) {
-        // place an empty profile for cache
-        profile = [[DIMProfile alloc] initWithID:ID];
-    }
-    [_profileTable setObject:profile forKey:profile.ID];
-    return profile;
+    return [_database profileForID:ID];
 }
 
 #pragma mark - MKMUserDataSource
 
 - (nullable DIMPrivateKey *)privateKeyForSignatureOfUser:(DIMID *)user {
     DIMPrivateKey *key = [super privateKeyForSignatureOfUser:user];
-    if (key) {
-        return key;
+    if (!key) {
+        key = [_database privateKeyForSignatureOfUser:user];
     }
-    return [DIMPrivateKey loadKeyWithIdentifier:user.address];
+    return key;
 }
 
 - (nullable NSArray<DIMPrivateKey *> *)privateKeysForDecryptionOfUser:(DIMID *)user {
     NSArray<DIMPrivateKey *> *keys = [super privateKeysForDecryptionOfUser:user];
-    if (keys) {
-        return keys;
-    }
-    DIMPrivateKey *key = [self privateKeyForSignatureOfUser:user];
-    if (key) {
-        keys = [[NSArray alloc] initWithObjects:key, nil];
+    if (keys.count == 0) {
+        keys = [_database privateKeysForDecryptionOfUser:user];
     }
     return keys;
 }
@@ -257,15 +157,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if (contacts) {
         return contacts;
     }
-    contacts = [_contactMap objectForKey:user.address];
-    if (contacts) {
-        return contacts;
-    }
-    contacts = [self loadContactsForUser:user];
-    if (contacts) {
-        [_contactMap setObject:(ContactTableM *)contacts forKey:user.address];
-    }
-    return contacts;
+    return [_database contactsOfUser:user];
 }
 
 #pragma mark - MKMGroupDataSource
@@ -275,19 +167,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if (founder) {
         return founder;
     }
-    // check each member's public key with group meta
-    DIMMeta *gMeta = [self metaForID:group];
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
-    DIMMeta *meta;
-    for (DIMID *member in members) {
-        // if the user's public key matches with the group's meta,
-        // it means this meta was generate by the user's private key
-        meta = [self metaForID:member];
-        if ([gMeta matchPublicKey:meta.key]) {
-            return member;
-        }
-    }
-    return nil;
+    return [_database founderOfGroup:group];
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
@@ -295,11 +175,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if (owner) {
         return owner;
     }
-    if (group.type == MKMNetwork_Polylogue) {
-        // the polylogue's owner is its founder
-        return [self founderOfGroup:group];
-    }
-    return nil;
+    return [_database ownerOfGroup:group];
 }
 
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
@@ -307,15 +183,31 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     if (members) {
         return members;
     }
-    members = [_contactMap objectForKey:group.address];
-    if (members) {
-        return members;
-    }
-    members = [self loadMembersForGroup:group];
-    if (members) {
-        [_contactMap setObject:(ContactTableM *)members forKey:group.address];
-    }
-    return members;
+    return [_database membersOfGroup:group];
+}
+
+@end
+
+@implementation DIMFacebook (Storage)
+
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID {
+    return [_database savePrivateKey:key forID:ID];
+}
+
+- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+    return [_database saveMeta:meta forID:ID];
+}
+
+- (BOOL)saveProfile:(DIMProfile *)profile {
+    return [_database saveProfile:profile];
+}
+
+- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user {
+    return [_database saveContacts:contacts user:user];
+}
+
+- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group {
+    return [_database saveMembers:members group:group];
 }
 
 @end
@@ -324,29 +216,32 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 - (BOOL)user:(DIMLocalUser *)user addContact:(DIMID *)contact {
     NSLog(@"user %@ add contact %@", user, contact);
-    NSMutableArray<DIMID *> *contacts = [_contactMap objectForKey:user.ID.address];
+    NSArray<DIMID *> *contacts = [_database contactsOfUser:user.ID];
     if (contacts) {
         if ([contacts containsObject:contact]) {
             NSLog(@"contact %@ already exists, user: %@", contact, user.ID);
             return NO;
         } else {
-            [contacts addObject:contact];
+            NSMutableArray *mArray = [contacts mutableCopy];
+            [mArray addObject:contact];
+            contacts = mArray;
         }
     } else {
-        contacts = [[NSMutableArray alloc] initWithCapacity:1];
-        [contacts addObject:contact];
-        [_contactMap setObject:contacts forKey:user.ID.address];
+        NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:1];
+        [mArray addObject:contact];
+        contacts = mArray;
     }
-    [self _storeContacts:contacts forUser:user];
-    return YES;
+    return [_database saveContacts:contacts user:user.ID];
 }
 
 - (BOOL)user:(DIMLocalUser *)user removeContact:(DIMID *)contact {
     NSLog(@"user %@ remove contact %@", user, contact);
-    NSMutableArray<DIMID *> *contacts = [_contactMap objectForKey:user.ID.address];
+    NSArray<DIMID *> *contacts = [_database contactsOfUser:user.ID];
     if (contacts) {
         if ([contacts containsObject:contact]) {
-            [contacts removeObject:contact];
+            NSMutableArray *mArray = [contacts mutableCopy];
+            [mArray removeObject:contact];
+            contacts = mArray;
         } else {
             NSLog(@"contact %@ not exists, user: %@", contact, user.ID);
             return NO;
@@ -355,8 +250,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         NSLog(@"user %@ doesn't has contact yet", user.ID);
         return NO;
     }
-    [self _storeContacts:contacts forUser:user];
-    return YES;
+    return [_database saveContacts:contacts user:user.ID];
 }
 
 - (BOOL)group:(DIMGroup *)group addMember:(DIMID *)member {
@@ -367,7 +261,8 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     }
     NSMutableArray *mArray = [members mutableCopy];
     [mArray addObject:member];
-    return [self _storeMembers:mArray forGroup:group];
+    members = mArray;
+    return [_database saveMembers:members group:group.ID];
 }
 
 - (BOOL)group:(DIMGroup *)group removeMember:(DIMID *)member {
@@ -378,7 +273,8 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     }
     NSMutableArray *mArray = [members mutableCopy];
     [mArray removeObject:member];
-    return [self _storeMembers:mArray forGroup:group];
+    members = mArray;
+    return [_database saveMembers:members group:group.ID];
 }
 
 @end
