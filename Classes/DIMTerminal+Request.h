@@ -20,7 +20,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
                                          to:(DIMID *)receiver;
 
 // pack and send command to station
-- (nullable DIMInstantMessage *)sendCommand:(DIMCommand *)cmd;
+- (void)sendCommand:(DIMCommand *)cmd;
 
 @end
 
@@ -30,13 +30,14 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 - (void)onHandshakeAccepted:(NSString *)session;
 
-- (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile;
+- (void)postProfile:(DIMProfile *)profile; // to station
+- (void)broadcastProfile:(DIMProfile *)profile; // to all contacts
 
-- (nullable DIMInstantMessage *)queryMetaForID:(DIMID *)ID;
-- (nullable DIMInstantMessage *)queryProfileForID:(DIMID *)ID;
+- (void)queryMetaForID:(DIMID *)ID;
+- (void)queryProfileForID:(DIMID *)ID;
 
-- (nullable DIMInstantMessage *)queryOnlineUsers;
-- (nullable DIMInstantMessage *)searchUsersWithKeywords:(NSString *)keywords;
+- (void)queryOnlineUsers;
+- (void)searchUsersWithKeywords:(NSString *)keywords;
 
 @end
 
