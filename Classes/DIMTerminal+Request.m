@@ -29,7 +29,8 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     if (!DIMMetaForID(receiver)) {
         // TODO: check profile.key
         NSLog(@"cannot get public key for receiver: %@", receiver);
-        [self queryMetaForID:receiver];
+        // NOTICE: if meta for sender not found,
+        //         the client will query it automatically
         // TODO: save the message content in waiting queue
         return nil;
     }

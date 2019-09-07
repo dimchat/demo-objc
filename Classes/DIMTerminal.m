@@ -102,13 +102,9 @@
     // 2. verify it with sender's meta.key
     DIMSecureMessage *sMsg = [messenger verifyMessage:rMsg];
     if (!sMsg) {
-        // check meta
-        DIMMeta *meta = DIMMetaForID(sender);
-        if (!meta) {
-            NSLog(@"meta for %@ not found, query from the network...", sender);
-            [self queryMetaForID:sender];
-            // TODO: insert the message to a temporary queue to waiting meta
-        }
+        // NOTICE: if meta for sender not found,
+        //         the client will query it automatically
+        // TODO: insert the message to a temporary queue to waiting meta
         return ;
     }
     
@@ -208,7 +204,8 @@
         DIMMeta *meta = DIMMetaForID(ID);
         if (!meta) {
             NSLog(@"meta for %@ not found, query from the network...", ID);
-            [self queryMetaForID:ID];
+            // NOTICE: if meta for sender not found,
+            //         the client will query it automatically
             // TODO: insert the message to a temporary queue to waiting meta
             return;
         }
