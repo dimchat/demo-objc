@@ -80,6 +80,14 @@
     return [_dataSource conversation:self messageAtIndex:index];
 }
 
+- (nullable DIMInstantMessage *)lastMessage {
+    NSUInteger count = [_dataSource numberOfMessagesInConversation:self];
+    if (count == 0) {
+        return nil;
+    }
+    return [_dataSource conversation:self messageAtIndex:(count - 1)];
+}
+
 #pragma mark - Write via delegate
 
 - (BOOL)insertMessage:(DIMInstantMessage *)iMsg {

@@ -54,6 +54,13 @@ NS_DESIGNATED_INITIALIZER;
  */
 - (DIMInstantMessage *)messageAtIndex:(NSInteger)index;
 
+/**
+ *  Get last message
+ *
+ * @return instant message
+ */
+- (nullable DIMInstantMessage *)lastMessage;
+
 #pragma mark - Write
 
 /**
