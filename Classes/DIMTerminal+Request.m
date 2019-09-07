@@ -104,18 +104,17 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     // post current profile to station
     DIMProfile *profile = self.currentUser.profile;
     if (profile) {
-        [self postProfile:profile meta:nil];
+        [self postProfile:profile];
     }
 }
 
-- (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile
-                                       meta:(nullable DIMMeta *)meta {
+- (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile {
     DIMID *ID = self.currentUser.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return nil;
     }
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID meta:meta profile:profile];
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID profile:profile];
     return [self sendCommand:cmd];
 }
 
@@ -124,12 +123,12 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"cannot query meta for this station: %@", ID);
         return nil;
     }
-    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID meta:nil];
+    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];
 }
 
 - (nullable DIMInstantMessage *)queryProfileForID:(DIMID *)ID {
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID meta:nil profile:nil];
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];
 }
 

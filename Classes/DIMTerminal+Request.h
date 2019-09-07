@@ -30,8 +30,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 - (void)onHandshakeAccepted:(NSString *)session;
 
-- (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile
-                                       meta:(nullable DIMMeta *)meta;
+- (nullable DIMInstantMessage *)postProfile:(DIMProfile *)profile;
 
 - (nullable DIMInstantMessage *)queryMetaForID:(DIMID *)ID;
 - (nullable DIMInstantMessage *)queryProfileForID:(DIMID *)ID;

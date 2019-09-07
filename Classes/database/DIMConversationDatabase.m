@@ -72,7 +72,7 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
 - (DIMInstantMessage *)conversation:(DIMConversation *)chatBox messageAtIndex:(NSInteger)index {
     NSArray<DIMInstantMessage *> *messages;
     messages = [_messageTable messagesInConversation:chatBox.ID];
-    NSAssert(index < messages.count, @"out of data");
+    NSAssert(index < messages.count, @"out of data: %ld, %lu", index, messages.count);
     return [messages objectAtIndex:index];
 }
 
