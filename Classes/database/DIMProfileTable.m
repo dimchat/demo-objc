@@ -95,31 +95,17 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
 
 - (nullable DIMProfile *)profileForID:(DIMID *)ID {
     DIMProfile *profile = [_caches objectForKey:ID];
-    if (profile) {
-        // check timestamp
-        NSNumber *timestamp = [profile objectForKey:@"lastTime"];
-        if (timestamp) {
-            NSDate *lastTime = NSDateFromNumber(timestamp);
-            NSTimeInterval ti = [lastTime timeIntervalSinceNow];
-            if (fabs(ti) < 3600) {
-                // not expired yet
-                return profile;
-            }
-            NSLog(@"profile expired: %@", lastTime);
-            [_caches removeObjectForKey:ID];
+    if (!profile) {
+        // first access, try to load from local storage
+        profile = [self _loadProfileForID:ID];
+        if (profile) {
+            // verify and cache it
+            [self _cacheProfile:profile];
         } else {
-            // set last update time
-            NSDate *now = [[NSDate alloc] init];
-            [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
-            return profile;
+            // place an empty profile for cache
+            profile = [[DIMProfile alloc] initWithID:ID];
+            [_caches setObject:profile forKey:ID];
         }
-    }
-    profile = [self _loadProfileForID:ID];
-    // check and cache it
-    if (!profile || ![self _cacheProfile:profile]) {
-        // place an empty profile for cache
-        profile = [[DIMProfile alloc] initWithID:ID];
-        [_caches setObject:profile forKey:ID];
     }
     return profile;
 }
