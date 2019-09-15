@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E90E1EEA232EA5230012B23E /* DIMAddressNameTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E90E1EE5232EA5220012B23E /* DIMAddressNameTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E90E1EEB232EA5230012B23E /* DIMAddressNameTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E90E1EE9232EA5220012B23E /* DIMAddressNameTable.m */; };
 		E959903522F2CF5100C97D2D /* DIMKeyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E959903022F2CF5000C97D2D /* DIMKeyStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959903622F2CF5100C97D2D /* DIMKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E959903422F2CF5000C97D2D /* DIMKeyStore.m */; };
 		E96D14DB232270A900B5EA59 /* DIMStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14CF232270A900B5EA59 /* DIMStorage.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -148,6 +150,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E90E1EE5232EA5220012B23E /* DIMAddressNameTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAddressNameTable.h; sourceTree = "<group>"; };
+		E90E1EE9232EA5220012B23E /* DIMAddressNameTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMAddressNameTable.m; sourceTree = "<group>"; };
 		E959903022F2CF5000C97D2D /* DIMKeyStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMKeyStore.h; sourceTree = "<group>"; };
 		E959903422F2CF5000C97D2D /* DIMKeyStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMKeyStore.m; sourceTree = "<group>"; };
 		E96D14CF232270A900B5EA59 /* DIMStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMStorage.h; sourceTree = "<group>"; };
@@ -245,6 +249,8 @@
 			children = (
 				E96D14CF232270A900B5EA59 /* DIMStorage.h */,
 				E96D14D5232270A900B5EA59 /* DIMStorage.m */,
+				E90E1EE5232EA5220012B23E /* DIMAddressNameTable.h */,
+				E90E1EE9232EA5220012B23E /* DIMAddressNameTable.m */,
 				E96D14D1232270A900B5EA59 /* DIMMetaTable.h */,
 				E96D14D8232270A900B5EA59 /* DIMMetaTable.m */,
 				E96D14D4232270A900B5EA59 /* DIMProfileTable.h */,
@@ -407,6 +413,7 @@
 			files = (
 				E96D14FA23227E1300B5EA59 /* DIMConversationDatabase.h in Headers */,
 				E96D14F323227D7B00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */,
+				E90E1EEA232EA5230012B23E /* DIMAddressNameTable.h in Headers */,
 				E96D14EA232277DF00B5EA59 /* DIMMessageTable.h in Headers */,
 				E96D14E6232270A900B5EA59 /* DIMGroupTable.h in Headers */,
 				E96D14E3232270A900B5EA59 /* DIMUserTable.h in Headers */,
@@ -608,6 +615,7 @@
 				E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */,
 				E96D14DE232270A900B5EA59 /* DIMUserTable.m in Sources */,
 				E9E824B1224A70F400A029F1 /* NSObject+Extension.m in Sources */,
+				E90E1EEB232EA5230012B23E /* DIMAddressNameTable.m in Sources */,
 				E96D14EB232277DF00B5EA59 /* DIMMessageTable.m in Sources */,
 				E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */,
 				E9FC8E1722B9095D0013FCD3 /* DIMAmanuensis.m in Sources */,

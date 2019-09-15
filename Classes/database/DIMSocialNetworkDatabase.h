@@ -14,6 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
 
+// Address Name Service
+- (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name;
+- (DIMID *)ansRecordForName:(NSString *)name;
+- (NSArray<DIMID *> *)namesWithANSRecord:(NSString *)ID;
+
 - (nullable NSArray<DIMID *> *)allUsers;
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list;
 - (BOOL)saveUser:(DIMID *)user;

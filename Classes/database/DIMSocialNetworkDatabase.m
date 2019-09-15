@@ -6,6 +6,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMAddressNameTable.h"
 #import "DIMMetaTable.h"
 #import "DIMProfileTable.h"
 #import "DIMUserTable.h"
@@ -15,6 +16,7 @@
 
 @interface DIMSocialNetworkDatabase () {
     
+    DIMAddressNameTable *_ansTable;
     DIMMetaTable *_metaTable;
     DIMProfileTable *_profileTable;
     DIMUserTable *_userTable;
@@ -27,6 +29,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+        _ansTable = [[DIMAddressNameTable alloc] init];
         _metaTable = [[DIMMetaTable alloc] init];
         _profileTable = [[DIMProfileTable alloc] init];
         _userTable = [[DIMUserTable alloc] init];
@@ -35,12 +38,24 @@
     return self;
 }
 
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID {
-    return [key saveKeyWithIdentifier:ID.address];
-}
-
 - (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
     return [_metaTable IDWithAddress:address];
+}
+
+- (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name {
+    return [_ansTable saveRecord:ID forName:name];
+}
+
+- (DIMID *)ansRecordForName:(NSString *)name {
+    return [_ansTable recordForName:name];
+}
+
+- (NSArray<DIMID *> *)namesWithANSRecord:(NSString *)ID {
+    return [_ansTable namesWithRecord:ID];
+}
+
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID {
+    return [key saveKeyWithIdentifier:ID.address];
 }
 
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {

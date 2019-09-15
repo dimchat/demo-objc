@@ -56,6 +56,22 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 #pragma mark - DIMSocialNetworkDataSource
 
+- (nullable DIMID *)IDWithString:(NSString *)string {
+    if (!string) {
+        return nil;
+    } else if ([string isKindOfClass:[DIMID class]]) {
+        return (DIMID *)string;
+    }
+    // try ANS record
+    DIMID *ID = [_database ansRecordForName:string];
+    if (ID) {
+        NSAssert([ID isValid], @"ANS record error: %@ -> %@", string, ID);
+        return ID;
+    }
+    // get from barrack
+    return [super IDWithString:string];
+}
+
 - (nullable __kindof DIMUser *)userWithID:(DIMID *)ID {
     DIMUser *user = [super userWithID:ID];
     if (user) {
