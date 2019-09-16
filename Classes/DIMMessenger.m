@@ -86,6 +86,12 @@ SingletonImplementations(DIMMessenger, sharedInstance)
     // 1. encrypt 'content' to 'data' for receiver
     DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
     
+    // 1.1. check group
+    NSString *group = [iMsg group];
+    if (group) {
+        [sMsg setGroup:group];
+    }
+
     // 2. sign 'data' by sender
     DIMReliableMessage *rMsg = [self signMessage:sMsg];
     

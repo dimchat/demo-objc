@@ -198,16 +198,20 @@
         //return ;
     }
     
+    // check meta for new group ID
     NSString *group = iMsg.content.group;
     if (group) {
         DIMID *ID = DIMIDWithString(group);
-        DIMMeta *meta = DIMMetaForID(ID);
-        if (!meta) {
-            NSLog(@"meta for %@ not found, query from the network...", ID);
-            // NOTICE: if meta for sender not found,
-            //         the client will query it automatically
-            // TODO: insert the message to a temporary queue to waiting meta
-            return;
+        if (![ID isBroadcast]) {
+            // check meta
+            DIMMeta *meta = DIMMetaForID(ID);
+            if (!meta) {
+                NSLog(@"meta for %@ not found, query from the network...", ID);
+                // NOTICE: if meta for group not found,
+                //         the client will query it automatically
+                // TODO: insert the message to a temporary queue to waiting meta
+                return;
+            }
         }
     }
     
