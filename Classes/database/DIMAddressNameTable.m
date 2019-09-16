@@ -59,15 +59,17 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
         NSAssert([ID isValid], @"ID error: %@ -> %@", name, [dict objectForKey:name]);
         [caches setObject:ID forKey:name];
     }
-    // Reserved names
-    DIMID *moky = MKMIDFromString(@"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ");
+    // Constant IDs
+    static NSString *moky = @"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ";
+    DIMID *founder = MKMIDFromString(moky);
     DIMID *anyone = MKMAnyone();
     DIMID *everyone = MKMEveryone();
-    [caches setObject:everyone forKey:@"all"];
-    [caches setObject:everyone forKey:@"everyone"];
-    [caches setObject:anyone forKey:@"anyone"];
+    // Reserved names
+    [caches setObject:founder forKey:@"founder"];
     [caches setObject:anyone forKey:@"owner"];
-    [caches setObject:moky forKey:@"founder"];
+    [caches setObject:anyone forKey:@"anyone"];
+    [caches setObject:everyone forKey:@"everyone"];
+    [caches setObject:everyone forKey:@"all"];
     return caches;
 }
 

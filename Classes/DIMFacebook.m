@@ -78,9 +78,9 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         return user;
     }
     // check meta and private key
-    DIMMeta *meta = DIMMetaForID(ID);
+    DIMMeta *meta = [self metaForID:ID];
     if (!meta) {
-        NSLog(@"meta key not found: %@", ID);
+        NSLog(@"meta not found: %@", ID);
         return nil;
     }
     if (MKMNetwork_IsPerson(ID.type)) {
@@ -109,7 +109,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         return group;
     }
     // check meta
-    DIMMeta *meta = DIMMetaForID(ID);
+    DIMMeta *meta = [self metaForID:ID];
     if (!meta) {
         NSLog(@"meta not found: %@", ID);
         return nil;
@@ -183,27 +183,27 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 #pragma mark - MKMGroupDataSource
 
 - (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    DIMID *founder = [super founderOfGroup:group];
+    DIMID *founder = [_database founderOfGroup:group];
     if (founder) {
         return founder;
     }
-    return [_database founderOfGroup:group];
+    return [super founderOfGroup:group];
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    DIMID *owner = [super ownerOfGroup:group];
+    DIMID *owner = [_database ownerOfGroup:group];
     if (owner) {
         return owner;
     }
-    return [_database ownerOfGroup:group];
+    return [super ownerOfGroup:group];
 }
 
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
-    NSArray<DIMID *> *members = [super membersOfGroup:group];
+    NSArray<DIMID *> *members = [_database membersOfGroup:group];
     if (members) {
         return members;
     }
-    return [_database membersOfGroup:group];
+    return [super membersOfGroup:group];
 }
 
 @end

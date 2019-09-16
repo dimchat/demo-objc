@@ -81,6 +81,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
+    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
     NSArray<DIMID *> *members = [_caches objectForKey:group];
     if (!members) {
         members = [self _loadMembersOfGroup:group];
@@ -93,6 +94,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group {
+    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
     NSAssert(members.count > 0, @"group members cannot be empty");
     // update cache
     [_caches setObject:members forKey:group];
@@ -102,30 +104,13 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return [self array:members writeToFile:path];
 }
 
-#pragma mark -
-
 - (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    // check each member's public key with group meta
-    DIMMeta *gMeta = DIMMetaForID(group);
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
-    DIMMeta *meta;
-    for (DIMID *member in members) {
-        // if the user's public key matches with the group's meta,
-        // it means this meta was generate by the user's private key
-        meta = DIMMetaForID(member);
-        if ([gMeta matchPublicKey:meta.key]) {
-            return member;
-        }
-    }
+    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
     return nil;
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    if (group.type == MKMNetwork_Polylogue) {
-        // the polylogue's owner is its founder
-        return [self founderOfGroup:group];
-    }
-    NSAssert(false, @"group owner not support yet: %@", group);
+    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
     return nil;
 }
 

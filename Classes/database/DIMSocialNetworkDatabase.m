@@ -128,7 +128,40 @@
 }
 
 - (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    return [_groupTable founderOfGroup:group];
+    DIMID *founder = [_groupTable founderOfGroup:group];
+    if ([founder isValid]) {
+        return founder;
+    }
+    // broadcast
+    if ([group isBroadcast]) {
+        NSString *founder;
+        NSString *name = [group name];
+        NSUInteger length = [name length];
+        if (length == 0 || (length == 8 && [name isEqualToString:@"everyone"])) {
+            // Consensus: the founder of group 'everyone@everywhere'
+            //            'Albert Moky'
+            founder = @"founder";
+        } else {
+            // DISCUSS: who should be the founder of group 'xxx@everywhere'?
+            //          'anyone@anywhere', or 'xxx.founder@anywhere'
+            founder = @"anyone";
+        }
+        return [self ansRecordForName:founder];
+    }
+    // check each member's public key with group meta
+    DIMMeta *gMeta = [self metaForID:group];
+    NSArray<DIMID *> *members = [self membersOfGroup:group];
+    DIMMeta *meta;
+    for (DIMID *member in members) {
+        // if the user's public key matches with the group's meta,
+        // it means this meta was generate by the user's private key
+        meta = [self metaForID:member];
+        if ([gMeta matchPublicKey:meta.key]) {
+            return member;
+        }
+    }
+    //NSAssert(false, @"failed to get founder: %@", group);
+    return nil;
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
