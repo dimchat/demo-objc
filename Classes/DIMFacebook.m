@@ -59,8 +59,6 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 - (nullable DIMID *)IDWithString:(NSString *)string {
     if (!string) {
         return nil;
-    } else if ([string isKindOfClass:[DIMID class]]) {
-        return (DIMID *)string;
     }
     // try ANS record
     DIMID *ID = [_database ansRecordForName:string];
