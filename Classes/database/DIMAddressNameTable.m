@@ -59,13 +59,15 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
         NSAssert([ID isValid], @"ID error: %@ -> %@", name, [dict objectForKey:name]);
         [caches setObject:ID forKey:name];
     }
-    // Reversed names
-    NSString *moky = @"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ";
-    [caches setObject:MKMEveryone() forKey:@"all"];
-    [caches setObject:MKMEveryone() forKey:@"everyone"];
-    [caches setObject:MKMAnyone() forKey:@"anyone"];
-    [caches setObject:MKMAnyone() forKey:@"owner"];
-    [caches setObject:MKMIDFromString(moky) forKey:@"founder"];
+    // Reserved names
+    DIMID *moky = MKMIDFromString(@"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ");
+    DIMID *anyone = MKMAnyone();
+    DIMID *everyone = MKMEveryone();
+    [caches setObject:everyone forKey:@"all"];
+    [caches setObject:everyone forKey:@"everyone"];
+    [caches setObject:anyone forKey:@"anyone"];
+    [caches setObject:anyone forKey:@"owner"];
+    [caches setObject:moky forKey:@"founder"];
     return caches;
 }
 
