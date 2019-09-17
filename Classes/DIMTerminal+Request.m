@@ -26,7 +26,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         // TODO: save the message content in waiting queue
         return nil;
     }
-    if (!DIMMetaForID(receiver)) {
+    if (![receiver isBroadcast] && !DIMMetaForID(receiver)) {
         // TODO: check profile.key
         NSLog(@"cannot get public key for receiver: %@", receiver);
         // NOTICE: if meta for sender not found,
@@ -82,9 +82,11 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         // TODO: save the command in waiting queue
         return ;
     }
-    // broadcast ID
-    [content setGroup:DIMIDWithString(@"everyone@everywhere")];
-    [self sendContent:content to:_currentStation.ID];
+    // broadcast IDs
+    DIMID *everyone = DIMIDWithString(@"everyone@everywhere");
+    DIMID *anyone = DIMIDWithString(@"anyone@anywhere");
+    [content setGroup:everyone];
+    [self sendContent:content to:anyone];
 }
 
 @end
