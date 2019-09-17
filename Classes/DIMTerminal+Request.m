@@ -76,6 +76,17 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     [self sendContent:cmd to:_currentStation.ID];
 }
 
+- (void)broadcastContent:(DIMContent *)content {
+    if (!_currentStation) {
+        NSLog(@"not connect, drop content: %@", content);
+        // TODO: save the command in waiting queue
+        return ;
+    }
+    // broadcast ID
+    [content setGroup:DIMIDWithString(@"everyone@everywhere")];
+    [self sendContent:content to:_currentStation.ID];
+}
+
 @end
 
 @implementation DIMTerminal (Request)

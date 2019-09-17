@@ -22,6 +22,9 @@ extern NSString * const kNotificationName_SendMessageFailed;
 // pack and send command to station
 - (void)sendCommand:(DIMCommand *)cmd;
 
+// broadcast message content to everyone@everywhere
+- (void)broadcastContent:(DIMContent *)content;
+
 @end
 
 @interface DIMTerminal (Request)
