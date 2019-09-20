@@ -232,6 +232,19 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 
 @implementation DIMFacebook (Relationship)
 
+-(BOOL)user:(DIMLocalUser *)user hasContact:(DIMID *)contact{
+    
+    NSArray<DIMID *> *contacts = [self contactsOfUser:user.ID];
+    if (contacts) {
+        if ([contacts containsObject:contact]) {
+            NSLog(@"contact %@ already exists, user: %@", contact, user.ID);
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
 - (BOOL)user:(DIMLocalUser *)user addContact:(DIMID *)contact {
     NSLog(@"user %@ add contact %@", user, contact);
     NSArray<DIMID *> *contacts = [self contactsOfUser:user.ID];

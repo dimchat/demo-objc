@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFacebook (Relationship)
 
+- (BOOL)user:(DIMLocalUser *)user hasContact:(DIMID *)contact;
 - (BOOL)user:(DIMLocalUser *)user addContact:(DIMID *)contact;
 - (BOOL)user:(DIMLocalUser *)user removeContact:(DIMID *)contact;
 
