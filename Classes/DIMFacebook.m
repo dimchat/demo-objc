@@ -12,17 +12,12 @@
 #import "MKMECCPublicKey.h"
 #import "MKMAddressETH.h"
 #import "MKMMetaETH.h"
-
 #import "DIMSocialNetworkDatabase.h"
-
 #import "DIMServer.h"
-
 #import "DIMFacebook.h"
 
 @interface DIMFacebook () {
     
-    // delegates
-    __weak __kindof id<DIMSocialNetworkDatabase> _database;
 }
 
 @end
