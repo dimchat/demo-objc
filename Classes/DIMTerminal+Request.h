@@ -36,6 +36,8 @@ extern NSString * const kNotificationName_SendMessageFailed;
 - (void)postProfile:(DIMProfile *)profile; // to station
 - (void)broadcastProfile:(DIMProfile *)profile; // to all contacts
 
+- (void)postContacts:(NSArray<DIMID *> *)contacts;
+
 - (void)queryMetaForID:(DIMID *)ID;
 - (void)queryProfileForID:(DIMID *)ID;
 

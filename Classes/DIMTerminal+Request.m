@@ -6,6 +6,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "NSObject+JsON.h"
+#import "NSData+Crypto.h"
 #import "NSNotificationCenter+Extension.h"
 
 #import "DIMFacebook.h"
@@ -119,6 +121,11 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     if (profile) {
         [self postProfile:profile];
     }
+    // post contacts(encrypted) to station
+    NSArray<DIMID *> *contacts = self.currentUser.contacts;
+    if (contacts) {
+        [self postContacts:contacts];
+    }
 }
 
 - (void)postProfile:(DIMProfile *)profile {
@@ -146,6 +153,27 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     for (DIMID *contact in contacts) {
         [self sendContent:cmd to:contact];
     }
+}
+
+- (void)postContacts:(NSArray<DIMID *> *)contacts {
+    DIMLocalUser *user = [self currentUser];
+    DIMID *ID = user.ID;
+    NSAssert([contacts count] > 0, @"contacts cannot be empty");
+    // generate password
+    DIMSymmetricKey *password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
+    // encrypt contacts
+    NSData *data = [contacts jsonData];
+    data = [password encrypt:data];
+    // encrypt key
+    NSData *key = [password jsonData];
+    key = [user encrypt:key];
+    // pack 'contacts' command
+    DIMCommand *cmd = [[DIMCommand alloc] initWithCommand:@"contacts"];
+    [cmd setObject:ID forKey:@"ID"];
+    [cmd setObject:[data base64Encode] forKey:@"data"];
+    [cmd setObject:[key base64Encode] forKey:@"key"];
+    // send to station
+    [self sendCommand:cmd];
 }
 
 - (void)queryMetaForID:(DIMID *)ID {
