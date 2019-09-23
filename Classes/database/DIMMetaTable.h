@@ -18,10 +18,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMMetaTable (ID)
-
-- (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
-
-@end
-
 NS_ASSUME_NONNULL_END

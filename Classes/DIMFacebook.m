@@ -46,7 +46,15 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 }
 
 - (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
-    return [_database IDWithAddress:address];
+    DIMID *ID = [[DIMID alloc] initWithAddress:address];
+    DIMMeta *meta = [_database metaForID:ID];
+    NSString *seed = [meta seed];
+    if ([seed length] == 0) {
+        return ID;
+    }
+    ID = [[DIMID alloc] initWithName:seed address:address];
+    [self cacheID:ID];
+    return ID;
 }
 
 #pragma mark - DIMSocialNetworkDataSource

@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMSocialNetworkDatabase <DIMUserDataSource, DIMGroupDataSource>
 
-- (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
-
 // Address Name Service
 - (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name;
 - (DIMID *)ansRecordForName:(NSString *)name;

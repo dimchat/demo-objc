@@ -108,23 +108,3 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
 }
 
 @end
-
-@implementation DIMMetaTable (ID)
-
-- (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
-    DIMID *ID = nil;
-    NSString *path = [self _filePathWithAddress:address];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-        NSString *seed = [dict objectForKey:@"seed"];
-        NSString *idstr = [NSString stringWithFormat:@"%@@%@", seed, address];
-        ID = DIMIDWithString(idstr);
-        NSLog(@"Address: %@ -> ID: %@", address, ID);
-    } else {
-        NSLog(@"meta file not exists: %@", path);
-    }
-    return ID;
-}
-
-@end

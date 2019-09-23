@@ -38,10 +38,6 @@
     return self;
 }
 
-- (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
-    return [_metaTable IDWithAddress:address];
-}
-
 - (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name {
     return [_ansTable saveRecord:ID forName:name];
 }
