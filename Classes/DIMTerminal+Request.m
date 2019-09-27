@@ -177,12 +177,20 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (void)queryMetaForID:(DIMID *)ID {
-    NSAssert(![ID isEqual:_currentStation.ID], @"should not query meta for this station: %@", ID);
+    NSAssert(![ID isEqual:_currentStation.ID], @"should not query meta: %@", ID);
+    if ([ID isBroadcast]) {
+        //NSAssert(false, @"should not query meta for broadcast ID: %@", ID);
+        return;
+    }
     DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
     [self sendCommand:cmd];
 }
 
 - (void)queryProfileForID:(DIMID *)ID {
+    if ([ID isBroadcast]) {
+        //NSAssert(false, @"should not query profile for broadcast ID: %@", ID);
+        return;
+    }
     DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
     [self sendCommand:cmd];
 }

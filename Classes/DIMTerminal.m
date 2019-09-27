@@ -207,8 +207,8 @@
             DIMMeta *meta = DIMMetaForID(ID);
             if (!meta) {
                 NSLog(@"meta for %@ not found, query from the network...", ID);
-                // NOTICE: if meta for group not found,
-                //         the client will query it automatically
+                [self queryMetaForID:ID];
+                
                 // TODO: insert the message to a temporary queue to waiting meta
                 return;
             }
