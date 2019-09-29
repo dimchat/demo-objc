@@ -168,6 +168,9 @@
         } else if ([command isEqualToString:@"search"]) {
             // search users response
             return [self processSearchUsersCommand:cmd];
+        } else if ([command isEqualToString:@"contacts"]) {
+            // get contacts response
+            return [self processContactsCommand:cmd];
         } else if ([command isEqualToString:DIMSystemCommand_Receipt]) {
             // receipt
             DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];

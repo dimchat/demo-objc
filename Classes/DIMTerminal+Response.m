@@ -9,15 +9,16 @@
 #import "NSNotificationCenter+Extension.h"
 
 #import "DIMFacebook.h"
-
+#import "NSObject+JsON.h"
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
-
+#import "NSString+Crypto.h"
 #import "DIMTerminal+Response.h"
 
 NSString * const kNotificationName_ProfileUpdated     = @"ProfileUpdated";
 NSString * const kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
 NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
+NSString * const kNotificationName_ContactsUpdated = @"ContactsUpdated";
 
 @implementation DIMTerminal (Response)
 
@@ -83,6 +84,27 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         [mDict setObject:results forKey:@"results"];
     }
     [NSNotificationCenter postNotificationName:kNotificationName_SearchUsersUpdated object:self userInfo:mDict];
+}
+
+- (void)processContactsCommand:(DIMCommand *)cmd{
+    
+    DIMLocalUser *user = [self currentUser];
+    
+    NSString *dataStr = [cmd objectForKey:@"data"];
+    NSString *keyStr = [cmd objectForKey:@"key"];
+    
+    NSData *data = [dataStr base64Decode];
+    NSData *key = [keyStr base64Decode];
+    
+    key = [user decrypt:key];
+    DIMSymmetricKey *password = MKMSymmetricKeyFromDictionary([key jsonDictionary]);
+    
+    data = [password decrypt:data];
+    NSArray *contacts = [data jsonArray];
+    
+    NSDictionary *mDict = @{@"contacts": contacts};
+    
+    [NSNotificationCenter postNotificationName:kNotificationName_ContactsUpdated object:self userInfo:mDict];
 }
 
 @end

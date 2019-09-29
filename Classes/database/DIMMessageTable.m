@@ -7,7 +7,7 @@
 //
 
 #import "DIMFacebook.h"
-
+#import "LocalDatabaseManager.h"
 #import "DIMMessageTable.h"
 
 typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
@@ -31,55 +31,51 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return self;
 }
 
-/**
- *  Get base directory for conversations
- *
- * @return "Documents/.dim"
- */
-- (NSString *)_baseDir {
-    NSString *dir = self.documentDirectory;
-    dir = [dir stringByAppendingPathComponent:@".dim"];
-    return dir;
-}
-
 - (NSMutableArray<DIMID *> *)allConversations {
-    if (_conversations) {
-        return _conversations;
-    }
-    _conversations = [[NSMutableArray alloc] init];
     
-    NSString *dir = [self _baseDir];
-    
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSDirectoryEnumerator *de = [fm enumeratorAtPath:dir];
-    
-    DIMID *ID;
-    DIMAddress *address;
-    NSString *string;
-
-    NSString *path;
-    while (path = [de nextObject]) {
-        if (![path hasSuffix:@"/messages.plist"]) {
-            // no messages
-            continue;
-        }
-        string = [path substringToIndex:(path.length - 15)];
-        address = MKMAddressFromString(string);
-//        if (MKMNetwork_IsStation(address.network)) {
-//            // ignore station history
-//            continue;
-//        }
-        
-        ID = DIMIDWithAddress(address);
-        if ([ID isValid]) {
-            NSLog(@"ID: %@", ID);
-            [_conversations addObject:ID];
-        } else {
-            NSLog(@"failed to load message in path: %@", path);
-        }
+    if(_conversations == nil || _conversations.count == 0){
+        _conversations = [[LocalDatabaseManager sharedInstance] loadAllConversations];
     }
     
     return _conversations;
+    
+//    if (_conversations) {
+//        return _conversations;
+//    }
+//    _conversations = [[NSMutableArray alloc] init];
+//
+//    NSString *dir = [self _baseDir];
+//
+//    NSFileManager *fm = [NSFileManager defaultManager];
+//    NSDirectoryEnumerator *de = [fm enumeratorAtPath:dir];
+//
+//    DIMID *ID;
+//    DIMAddress *address;
+//    NSString *string;
+//
+//    NSString *path;
+//    while (path = [de nextObject]) {
+//        if (![path hasSuffix:@"/messages.plist"]) {
+//            // no messages
+//            continue;
+//        }
+//        string = [path substringToIndex:(path.length - 15)];
+//        address = MKMAddressFromString(string);
+////        if (MKMNetwork_IsStation(address.network)) {
+////            // ignore station history
+////            continue;
+////        }
+//
+//        ID = DIMIDWithAddress(address);
+//        if ([ID isValid]) {
+//            NSLog(@"ID: %@", ID);
+//            [_conversations addObject:ID];
+//        } else {
+//            NSLog(@"failed to load message in path: %@", path);
+//        }
+//    }
+//
+//    return _conversations;
 }
 
 - (void)_updateCache:(NSArray *)messages conversation:(DIMID *)ID {
@@ -114,25 +110,28 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (nullable NSArray<DIMInstantMessage *> *)_loadMessages:(DIMID *)ID {
-    NSString *path = [self _filePathWithID:ID];
-    NSArray *array = [self arrayWithContentsOfFile:path];
-    if (!array) {
-        NSLog(@"messages not found: %@", path);
-        return nil;
-    }
-    NSLog(@"messages from %@", path);
-    NSMutableArray<DIMInstantMessage *> *messages;
-    DIMInstantMessage *msg;
-    messages = [[NSMutableArray alloc] initWithCapacity:array.count];
-    for (NSDictionary *item in array) {
-        msg = DKDInstantMessageFromDictionary(item);
-        if (!msg) {
-            NSAssert(false, @"message invalid: %@", item);
-            continue;
-        }
-        [messages addObject:msg];
-    }
-    return messages;
+    
+    return [[LocalDatabaseManager sharedInstance] loadMessagesInConversation:ID limit:-1 offset:-1];
+    
+//    NSString *path = [self _filePathWithID:ID];
+//    NSArray *array = [self arrayWithContentsOfFile:path];
+//    if (!array) {
+//        NSLog(@"messages not found: %@", path);
+//        return nil;
+//    }
+//    NSLog(@"messages from %@", path);
+//    NSMutableArray<DIMInstantMessage *> *messages;
+//    DIMInstantMessage *msg;
+//    messages = [[NSMutableArray alloc] initWithCapacity:array.count];
+//    for (NSDictionary *item in array) {
+//        msg = DKDInstantMessageFromDictionary(item);
+//        if (!msg) {
+//            NSAssert(false, @"message invalid: %@", item);
+//            continue;
+//        }
+//        [messages addObject:msg];
+//    }
+//    return messages;
 }
 
 - (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)ID {
@@ -142,6 +141,21 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
         [self _updateCache:messages conversation:ID];
     }
     return messages;
+}
+
+- (BOOL)addMessage:(DIMInstantMessage *)message toConversation:(DIMID *)ID{
+    
+    //Update cache
+    NSMutableArray *currentMessages = [[NSMutableArray alloc] initWithArray:[_caches objectForKey:ID]];
+    [currentMessages addObject:message];
+    [self _updateCache:currentMessages conversation:ID];
+    
+    return [[LocalDatabaseManager sharedInstance] addMessage:message toConversation:ID];
+}
+
+- (BOOL)clearConversation:(DIMID *)ID{
+    [self _updateCache:[NSArray array] conversation:ID];
+    return [[LocalDatabaseManager sharedInstance] clearConversation:ID];
 }
 
 - (BOOL)saveMessages:(NSArray<DIMInstantMessage *> *)list conversation:(DIMID *)ID {
@@ -161,9 +175,11 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (BOOL)removeConversation:(DIMID *)ID {
-    NSString *path = [self _filePathWithID:ID];
-    NSLog(@"removing conversation: %@", path);
-    return [self removeItemAtPath:path];
+    return [[LocalDatabaseManager sharedInstance] deleteConversation:ID];
+    
+//    NSString *path = [self _filePathWithID:ID];
+//    NSLog(@"removing conversation: %@", path);
+//    return [self removeItemAtPath:path];
 }
 
 @end

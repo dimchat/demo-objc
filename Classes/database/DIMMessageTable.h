@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)ID;
 
 - (BOOL)saveMessages:(NSArray<DIMInstantMessage *> *)list conversation:(DIMID *)ID;
+- (BOOL)addMessage:(DIMInstantMessage *)message toConversation:(DIMID *)ID;
+- (BOOL)clearConversation:(DIMID *)ID;
 
 @end
 

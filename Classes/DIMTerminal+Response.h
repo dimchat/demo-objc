@@ -24,6 +24,8 @@ extern NSString * const kNotificationName_SearchUsersUpdated;
 - (void)processOnlineUsersCommand:(DIMCommand *)cmd;
 - (void)processSearchUsersCommand:(DIMCommand *)cmd;
 
+- (void)processContactsCommand:(DIMCommand *)cmd;
+
 @end
 
 NS_ASSUME_NONNULL_END

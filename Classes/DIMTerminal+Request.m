@@ -176,6 +176,18 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     [self sendCommand:cmd];
 }
 
+-(void)getContacts{
+    
+    DIMLocalUser *user = [self currentUser];
+    DIMID *ID = user.ID;
+    
+    // pack 'contacts' command
+    DIMCommand *cmd = [[DIMCommand alloc] initWithCommand:@"contacts"];
+    [cmd setObject:ID forKey:@"ID"];
+    // send to station
+    [self sendCommand:cmd];
+}
+
 - (void)queryMetaForID:(DIMID *)ID {
     NSAssert(![ID isEqual:_currentStation.ID], @"should not query meta: %@", ID);
     if ([ID isBroadcast]) {

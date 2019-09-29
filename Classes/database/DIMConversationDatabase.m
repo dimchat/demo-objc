@@ -53,8 +53,11 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
 }
 
 - (BOOL)clearConversation:(DIMConversation *)chatBox {
-    NSArray<DIMInstantMessage *> *list = [[NSMutableArray alloc] init];
-    return [_messageTable saveMessages:list conversation:chatBox.ID];
+    
+    return [_messageTable clearConversation:chatBox.ID];
+    
+//    NSArray<DIMInstantMessage *> *list = [[NSMutableArray alloc] init];
+//    return [_messageTable saveMessages:list conversation:chatBox.ID];
 }
 
 - (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMConversation *)chatBox {
@@ -126,17 +129,18 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
             }
         }
     }
-
-    NSArray<DIMInstantMessage *> *messages;
-    messages = [_messageTable messagesInConversation:chatBox.ID];
-    if (!messages) {
-        messages = [[NSMutableArray alloc] initWithCapacity:1];
-    }
-    [(NSMutableArray *)messages addObject:iMsg];
     
-    // TODO: Burn After Reading
+    return [_messageTable addMessage:iMsg toConversation:chatBox.ID];
     
-    return [_messageTable saveMessages:messages conversation:chatBox.ID];
+//    NSArray<DIMInstantMessage *> *messages;
+//    messages = [_messageTable messagesInConversation:chatBox.ID];
+//    if (!messages) {
+//        messages = [[NSMutableArray alloc] initWithCapacity:1];
+//    }
+//    [(NSMutableArray *)messages addObject:iMsg];
+//
+//    // TODO: Burn After Reading
+//    return [_messageTable saveMessages:messages conversation:chatBox.ID];
 }
 
 @end
