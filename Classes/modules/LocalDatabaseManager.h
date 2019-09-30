@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
     
 -(BOOL)addMessage:(DIMInstantMessage *)msg toConversation:(DIMID *)conversationID;
 -(NSMutableArray<DIMInstantMessage *> *)loadMessagesInConversation:(DIMID *)conversationID limit:(NSInteger)limit offset:(NSInteger)offset;
+-(BOOL)markMessageRead:(DIMID *)conversationID;
+-(NSInteger)getUnreadMessageCount:(nullable DIMID *)conversationID;
 
 @end
 

@@ -118,11 +118,13 @@
 
 -(BOOL)addMessage:(DIMInstantMessage *)msg toConversation:(DIMID *)conversationID{
     
+    [self insertConversation:conversationID];
+    
     NSString *content_text = [msg.content jsonString];
     //NSTimeInterval receiveTime = [msg.envelope.time timeIntervalSince1970];
     NSTimeInterval receiveTime = [[NSDate date] timeIntervalSince1970];
     
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, [msg.content objectForKey:@"text"], content_text, msg.envelope.sender, msg.envelope.receiver, receiveTime, 0];
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, [msg.content objectForKey:@"text"], content_text, msg.envelope.sender, msg.envelope.receiver, receiveTime, msg.state];
     BOOL success = [self.db executeStatements:sql];
     
     if(!success){
@@ -183,6 +185,37 @@
     }
     
     return messages;
+}
+
+-(BOOL)markMessageRead:(DIMID *)conversationID{
+    
+    NSString *sql = [NSString stringWithFormat:@"UPDATE messages SET status=%d WHERE conversation_id='%@'", DIMMessageState_Read, conversationID];
+    
+    BOOL success = [self.db executeStatements:sql];
+    if(!success){
+        NSLog(@"Can not update conversation : %@", self.db.lastError.localizedDescription);
+    }
+    return success;
+}
+
+-(NSInteger)getUnreadMessageCount:(nullable DIMID *)conversationID{
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT count(*) AS mc FROM messages WHERE status!=%d AND type IN (1, 16, 18, 20, 22)", DIMMessageState_Read, conversationID];
+    
+    if(conversationID != nil){
+        sql = [NSString stringWithFormat:@"%@ AND conversation_id='%@'", sql, conversationID];
+    }
+    
+    NSLog(@"%@", sql);
+    
+    FMResultSet *s = [self.db executeQuery:sql];
+    
+    NSInteger count = 0;
+    if([s next]){
+        count = [s intForColumn:@"mc"];
+    }
+    
+    return count;
 }
 
 @end

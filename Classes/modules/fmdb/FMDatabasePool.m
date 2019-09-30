@@ -235,7 +235,7 @@
     }];
 }
 
-- (void)inDatabase:(void (^)(FMDatabase *db))block {
+- (void)inDatabase:(__attribute__((noescape)) void (^)(FMDatabase *db))block {
     
     FMDatabase *db = [self db];
     
@@ -270,15 +270,15 @@
     [self pushDatabaseBackInPool:db];
 }
 
-- (void)inDeferredTransaction:(void (^)(FMDatabase *db, BOOL *rollback))block {
+- (void)inDeferredTransaction:(__attribute__((noescape)) void (^)(FMDatabase *db, BOOL *rollback))block {
     [self beginTransaction:YES withBlock:block];
 }
 
-- (void)inTransaction:(void (^)(FMDatabase *db, BOOL *rollback))block {
+- (void)inTransaction:(__attribute__((noescape)) void (^)(FMDatabase *db, BOOL *rollback))block {
     [self beginTransaction:NO withBlock:block];
 }
 
-- (NSError*)inSavePoint:(void (^)(FMDatabase *db, BOOL *rollback))block {
+- (NSError*)inSavePoint:(__attribute__((noescape)) void (^)(FMDatabase *db, BOOL *rollback))block {
 #if SQLITE_VERSION_NUMBER >= 3007000
     static unsigned long savePointIdx = 0;
     
