@@ -27,8 +27,6 @@
     
     NSFileManager *fm = [NSFileManager defaultManager];
     
-    //DLog(@"Now looking for the folder path : %@", folderPath);
-    
     if(![fm fileExistsAtPath:folderPath]){
         
         NSError *error;

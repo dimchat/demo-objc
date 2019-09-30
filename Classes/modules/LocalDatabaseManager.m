@@ -42,6 +42,9 @@
         
         NSString *documentPath = [[FolderUtility sharedInstance] applicationDocumentsDirectory];
         documentPath = [documentPath stringByAppendingPathComponent:@".dim"];
+        
+        [[FolderUtility sharedInstance] createFolder:documentPath];
+        
         NSString *path = [documentPath stringByAppendingPathComponent:@"sechat.db"];
         NSLog(@"The database path is : %@", path);
         self.db = [FMDatabase databaseWithPath:path];
@@ -200,7 +203,7 @@
 
 -(NSInteger)getUnreadMessageCount:(nullable DIMID *)conversationID{
     
-    NSString *sql = [NSString stringWithFormat:@"SELECT count(*) AS mc FROM messages WHERE status!=%d AND type IN (1, 16, 18, 20, 22)", DIMMessageState_Read, conversationID];
+    NSString *sql = [NSString stringWithFormat:@"SELECT count(*) AS mc FROM messages WHERE status!=%d AND type IN (1, 16, 18, 20, 22)", DIMMessageState_Read];
     
     if(conversationID != nil){
         sql = [NSString stringWithFormat:@"%@ AND conversation_id='%@'", sql, conversationID];
