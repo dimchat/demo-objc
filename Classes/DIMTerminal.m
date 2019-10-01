@@ -87,6 +87,60 @@
     }
 }
 
+- (BOOL)_processCommand:(DIMCommand *)cmd commander:(DIMID *)sender {
+    // group commands
+    if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
+        NSAssert(cmd.group, @"group command error: %@", cmd);
+        if ([self checkGroupCommand:(DIMGroupCommand *)cmd commander:sender]) {
+            return YES;
+        }
+        NSLog(@"!!! error group command from %@: %@", sender, cmd);
+        return NO;
+    }
+    // history command
+    if ([cmd isKindOfClass:[DIMHistoryCommand class]]) {
+        NSAssert(false, @"history command not supported yet: %@", cmd);
+        return NO;
+    }
+    
+    // system commands
+    if ([cmd isKindOfClass:[DIMHandshakeCommand class]]) {
+        // handshake
+        [self processHandshakeCommand:(DIMHandshakeCommand *)cmd];
+        return NO;
+    }
+    if ([cmd isKindOfClass:[DIMProfileCommand class]]) {
+        // query profile response
+        [self processProfileCommand:(DIMProfileCommand *)cmd];
+        return NO;
+    }
+    if ([cmd isKindOfClass:[DIMMetaCommand class]]) {
+        // query meta response
+        [self processMetaCommand:(DIMMetaCommand *)cmd];
+        return NO;
+    }
+    
+    // other commands
+    NSString *command = cmd.command;
+    if ([command isEqualToString:@"users"]) {
+        // query online users response
+        [self processOnlineUsersCommand:cmd];
+        return NO;
+    }
+    if ([command isEqualToString:@"search"]) {
+        // search users response
+        [self processSearchUsersCommand:cmd];
+        return NO;
+    }
+    if ([command isEqualToString:@"contacts"]) {
+        // get contacts response
+        [self processContactsCommand:cmd];
+        return NO;
+    }
+    // NOTE: let the message processor to do the job
+    return YES;
+}
+
 #pragma mark DIMStationDelegate
 
 - (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
@@ -147,75 +201,44 @@
         NSLog(@"failed to decrypt message: %@", sMsg);
         return ;
     }
-    
-    // 5. process commands
     DIMContent *content = iMsg.content;
-    if (content.type == DKDContentType_Command) {
-        DIMCommand *cmd = (DIMCommand *)content;
-        NSString *command = cmd.command;
-        if ([command isEqualToString:DIMSystemCommand_Handshake]) {
-            // handshake
-            return [self processHandshakeCommand:(DIMHandshakeCommand *)cmd];
-        } else if ([command isEqualToString:DIMSystemCommand_Meta]) {
-            // query meta response
-            return [self processMetaCommand:(DIMMetaCommand *)cmd];
-        } else if ([command isEqualToString:DIMSystemCommand_Profile]) {
-            // query profile response
-            return [self processProfileCommand:(DIMProfileCommand *)cmd];
-        } else if ([command isEqualToString:@"users"]) {
-            // query online users response
-            return [self processOnlineUsersCommand:cmd];
-        } else if ([command isEqualToString:@"search"]) {
-            // search users response
-            return [self processSearchUsersCommand:cmd];
-        } else if ([command isEqualToString:@"contacts"]) {
-            // get contacts response
-            return [self processContactsCommand:cmd];
-        } else if ([command isEqualToString:DIMSystemCommand_Receipt]) {
-            // receipt
-            DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
-            if ([clerk saveReceipt:iMsg]) {
-                NSLog(@"target message state updated with receipt: %@", cmd);
-            }
-            return ;
-        }
-        NSLog(@"!!! unknown command: %@, sender: %@, message content: %@",
-              command, sender, content);
-        // NOTE: let the message processor to do the job
-        //return ;
-    } else if (content.type == DKDContentType_History) {
-        DIMID *groupID = DIMIDWithString(content.group);
-        if (groupID) {
-            DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-            if (![self checkGroupCommand:cmd commander:sender]) {
-                NSLog(@"!!! error group command from %@: %@", sender, content);
-                return ;
-            }
-        }
-        // NOTE: let the message processor to do the job
-        //return ;
-    }
-    
-    if (MKMNetwork_IsStation(sender.type)) {
-        NSLog(@"*** message from station: %@", content);
-        //return ;
-    }
-    
     // check meta for new group ID
-    NSString *group = iMsg.content.group;
+    NSString *group = content.group;
     if (group) {
         DIMID *ID = DIMIDWithString(group);
         if (![ID isBroadcast]) {
             // check meta
             DIMMeta *meta = DIMMetaForID(ID);
             if (!meta) {
-                NSLog(@"meta for %@ not found, query from the network...", ID);
-                [self queryMetaForID:ID];
-                
+                // NOTICE: if meta for group not found,
+                //         the client will query it automatically
                 // TODO: insert the message to a temporary queue to waiting meta
                 return;
             }
         }
+    }
+
+    // 5. process commands
+    if ([content isKindOfClass:[DIMCommand class]]) {
+        DIMCommand *cmd = (DIMCommand *)content;
+        if (![self _processCommand:cmd commander:sender]) {
+            NSLog(@"command processed: %@", content);
+            return;
+        }
+        NSString *command = cmd.command;
+        if ([command isEqualToString:DIMSystemCommand_Receipt]) {
+            // receipt
+            DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
+            if ([clerk saveReceipt:iMsg]) {
+                NSLog(@"target message state updated with receipt: %@", cmd);
+            }
+            return;
+        }
+    }
+    
+    if (MKMNetwork_IsStation(sender.type)) {
+        NSLog(@"*** message from station: %@", content);
+        //return ;
     }
     
     // normal message, let the clerk to deliver it
