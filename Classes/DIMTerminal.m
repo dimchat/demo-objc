@@ -148,9 +148,7 @@
     // 1. decode to reliable message
     NSDictionary *dict = [data jsonDictionary];
     DIMReliableMessage *rMsg = DKDReliableMessageFromDictionary(dict);
-    
-    DIMID *sender = DIMIDWithString(rMsg.envelope.sender);
-    DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
+    NSAssert(rMsg, @"failed to decode message: %@", dict);
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
 
     // 2. verify it with sender's meta.key
@@ -164,6 +162,7 @@
     
     // 3. check receiver
     DIMLocalUser *user = nil;
+    DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group message
         NSAssert(sMsg.group == nil || [DIMIDWithString(sMsg.group) isEqual:receiver],
@@ -201,7 +200,9 @@
         NSLog(@"failed to decrypt message: %@", sMsg);
         return ;
     }
+    DIMID *sender = DIMIDWithString(rMsg.envelope.sender);
     DIMContent *content = iMsg.content;
+    
     // check meta for new group ID
     NSString *gid = content.group;
     if (gid) {
@@ -218,7 +219,6 @@
         }
         // check whether the group members info needs update
         DIMGroup *group = DIMGroupWithID(ID);
-        DIMContent *content = iMsg.content;
         // if the group info not found, and this is not an 'invite' command
         //     query group info from the sender
         BOOL needsUpdate = group.founder == nil;
@@ -231,16 +231,14 @@
             needsUpdate = NO;
         }
         if (needsUpdate) {
-            DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
-            NSAssert(sender != nil, @"sender error: %@", iMsg);
-            
             DIMQueryGroupCommand *query;
             query = [[DIMQueryGroupCommand alloc] initWithGroup:ID];
-            
             [self sendContent:query to:sender];
         }
     }
 
+    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
+    
     // 5. process commands
     if ([content isKindOfClass:[DIMCommand class]]) {
         DIMCommand *cmd = (DIMCommand *)content;
@@ -251,12 +249,13 @@
         NSString *command = cmd.command;
         if ([command isEqualToString:DIMSystemCommand_Receipt]) {
             // receipt
-            DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
             if ([clerk saveReceipt:iMsg]) {
                 NSLog(@"target message state updated with receipt: %@", cmd);
             }
             return;
         }
+        // NOTE: let the message processor to do the job
+        //return;
     }
     
     if (MKMNetwork_IsStation(sender.type)) {
@@ -265,7 +264,6 @@
     }
     
     // normal message, let the clerk to deliver it
-    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     [clerk saveMessage:iMsg];
 }
 
