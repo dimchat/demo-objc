@@ -203,9 +203,9 @@
     }
     DIMContent *content = iMsg.content;
     // check meta for new group ID
-    NSString *group = content.group;
-    if (group) {
-        DIMID *ID = DIMIDWithString(group);
+    NSString *gid = content.group;
+    if (gid) {
+        DIMID *ID = DIMIDWithString(gid);
         if (![ID isBroadcast]) {
             // check meta
             DIMMeta *meta = DIMMetaForID(ID);
@@ -215,6 +215,29 @@
                 // TODO: insert the message to a temporary queue to waiting meta
                 return;
             }
+        }
+        // check whether the group members info needs update
+        DIMGroup *group = DIMGroupWithID(ID);
+        DIMContent *content = iMsg.content;
+        // if the group info not found, and this is not an 'invite' command
+        //     query group info from the sender
+        BOOL needsUpdate = group.founder == nil;
+        if ([content isKindOfClass:[DIMInviteCommand class]]) {
+            // FIXME: can we trust this stranger?
+            //        may be we should keep this members list temporary,
+            //        and send 'query' to the founder immediately.
+            // TODO: check whether the members list is a full list,
+            //       it should contain the group owner(founder)
+            needsUpdate = NO;
+        }
+        if (needsUpdate) {
+            DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
+            NSAssert(sender != nil, @"sender error: %@", iMsg);
+            
+            DIMQueryGroupCommand *query;
+            query = [[DIMQueryGroupCommand alloc] initWithGroup:ID];
+            
+            [self sendContent:query to:sender];
         }
     }
 
