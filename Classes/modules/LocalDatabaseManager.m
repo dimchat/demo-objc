@@ -50,6 +50,8 @@
         self.db = [FMDatabase databaseWithPath:path];
         self.db.logsErrors = NO;
         [self.db open];
+        
+        [self createTables];
     }
     
     return self;
