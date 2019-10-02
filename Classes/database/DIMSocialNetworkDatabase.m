@@ -128,22 +128,6 @@
     if ([founder isValid]) {
         return founder;
     }
-    // broadcast
-    if ([group isBroadcast]) {
-        NSString *founder;
-        NSString *name = [group name];
-        NSUInteger length = [name length];
-        if (length == 0 || (length == 8 && [name isEqualToString:@"everyone"])) {
-            // Consensus: the founder of group 'everyone@everywhere'
-            //            'Albert Moky'
-            founder = @"founder";
-        } else {
-            // DISCUSS: who should be the founder of group 'xxx@everywhere'?
-            //          'anyone@anywhere', or 'xxx.founder@anywhere'
-            founder = @"anyone";
-        }
-        return [self ansRecordForName:founder];
-    }
     // check each member's public key with group meta
     DIMMeta *gMeta = [self metaForID:group];
     NSArray<DIMID *> *members = [self membersOfGroup:group];
@@ -156,12 +140,19 @@
             return member;
         }
     }
-    //NSAssert(false, @"failed to get founder: %@", group);
     return nil;
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    return [_groupTable ownerOfGroup:group];
+    DIMID *owner = [_groupTable ownerOfGroup:group];
+    if ([owner isValid]) {
+        return owner;
+    }
+    if ([group type] == MKMNetwork_Polylogue) {
+        // Polylogue's owner is its founder
+        return [self founderOfGroup:group];
+    }
+    return nil;
 }
 
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {

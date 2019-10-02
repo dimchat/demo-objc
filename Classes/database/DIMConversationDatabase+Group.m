@@ -42,7 +42,7 @@ static inline NSString *readable_name(DIMID *ID) {
     }
     
     // 2. build message
-    NSString *format = NSLocalizedString(@"%@ was querying group info, responsing...", nil);
+    NSString *format = NSLocalizedString(@"%@ was querying group info, responding...", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(sender)];
     NSAssert(![gCmd objectForKey:@"text"], @"text should be empty here: %@", gCmd);
     [gCmd setObject:text forKey:@"text"];
@@ -97,6 +97,7 @@ static inline NSString *readable_name(DIMID *ID) {
         
         // 3. save new members list
         if (![[DIMFacebook sharedInstance] saveMembers:newMembers group:group.ID]) {
+            NSLog(@"failed to save members of group: %@", group.ID);
             return NO;
         }
     }
@@ -186,6 +187,7 @@ static inline NSString *readable_name(DIMID *ID) {
         
         // 3. save new members list
         if (![[DIMFacebook sharedInstance] saveMembers:newMembers group:group.ID]) {
+            NSLog(@"failed to save members of group: %@", group.ID);
             return NO;
         }
     }
@@ -249,6 +251,7 @@ static inline NSString *readable_name(DIMID *ID) {
         
         // 3. save new members list
         if (![[DIMFacebook sharedInstance] saveMembers:newMembers group:group.ID]) {
+            NSLog(@"failed to save members of group: %@", group.ID);
             return NO;
         }
     }
@@ -284,6 +287,7 @@ static inline NSString *readable_name(DIMID *ID) {
     
     // 2. remove member
     if (![[DIMFacebook sharedInstance] group:group removeMember:sender]) {
+        NSLog(@"failed to remove member of group: %@", group.ID);
         return NO;
     }
     
