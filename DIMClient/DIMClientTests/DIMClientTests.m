@@ -8,6 +8,8 @@
 
 #import <XCTest/XCTest.h>
 
+#import <DIMClient/DIMClient.h>
+
 @interface DIMClientTests : XCTestCase
 
 @end
@@ -32,6 +34,27 @@
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
     }];
+}
+
+- (void)testPassword {
+    
+    NSString *string = @"Hello world!";
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    
+    DIMSymmetricKey *key1 = DIMPasswordFromString(@"12345");
+    NSData *ct = [key1 encrypt:data];
+    
+    DIMSymmetricKey *key2 = DIMPasswordFromString(@"12345");
+    NSData *pt = [key2 decrypt:ct];
+    
+    NSAssert([key1 isEqual:key2], @"keys not equal: %@, %@", key1, key2);
+    
+    NSLog(@"key1: %@", key1);
+    NSLog(@"key2: %@", key2);
+    
+    NSString *base64 = [ct base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];
+    NSString *res = [NSString stringWithCString:[pt bytes] encoding:NSUTF8StringEncoding];
+    NSLog(@"%@ -> %@ -> %@", string, base64, res);
 }
 
 @end
