@@ -34,6 +34,7 @@ SingletonImplementations(DIMFacebook, sharedInstance)
         [MKMPublicKey registerClass:[MKMECCPublicKey class] forAlgorithm:ACAlgorithmECC];
         
         // register new address classes
+        //[MKMAddress registerClass:[MKMAddressBTC class]];
         //[MKMAddress registerClass:[MKMAddressETH class]];
         
         // register new meta classes

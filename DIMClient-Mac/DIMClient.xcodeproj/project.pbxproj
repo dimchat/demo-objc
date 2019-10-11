@@ -30,14 +30,6 @@
 		E96D15012322932700B5EA59 /* DIMConversationDatabase+Group.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D15002322932700B5EA59 /* DIMConversationDatabase+Group.m */; };
 		E97907DE22573C930024C830 /* DIMFileServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E97907D922573C930024C830 /* DIMFileServer.m */; };
 		E97907DF22573C930024C830 /* DIMFileServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E97907DD22573C930024C830 /* DIMFileServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9B2FC8922FB3D6200E153EE /* MKMECCPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8122FB3D6100E153EE /* MKMECCPublicKey.m */; };
-		E9B2FC8A22FB3D6200E153EE /* MKMAddressETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8222FB3D6100E153EE /* MKMAddressETH.m */; };
-		E9B2FC8B22FB3D6200E153EE /* MKMECCPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8322FB3D6100E153EE /* MKMECCPrivateKey.m */; };
-		E9B2FC8C22FB3D6200E153EE /* MKMAddressETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8422FB3D6100E153EE /* MKMAddressETH.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E9B2FC8D22FB3D6200E153EE /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8522FB3D6100E153EE /* MKMMetaETH.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E9B2FC8E22FB3D6200E153EE /* MKMMetaETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FC8622FB3D6100E153EE /* MKMMetaETH.m */; };
-		E9B2FC8F22FB3D6200E153EE /* MKMECCPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8722FB3D6200E153EE /* MKMECCPublicKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E9B2FC9022FB3D6200E153EE /* MKMECCPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FC8822FB3D6200E153EE /* MKMECCPrivateKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E9BBC2F322429D6C00E6ACDA /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */; };
 		E9BBC2F822429D6C00E6ACDA /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBC2F722429D6C00E6ACDA /* DIMClientTests.m */; };
 		E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBC30822429D9500E6ACDA /* NSDate+Extension.h */; };
@@ -77,6 +69,14 @@
 		E9CEA12E234EAD8200EC507C /* FolderUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA11C234EAD8200EC507C /* FolderUtility.h */; };
 		E9CEA131234EADF100EC507C /* DIMPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA12F234EADF000EC507C /* DIMPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9CEA132234EADF100EC507C /* DIMPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA130234EADF100EC507C /* DIMPassword.m */; };
+		E9CEA14D2350B05500EC507C /* MKMECCPrivateKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA1452350B05500EC507C /* MKMECCPrivateKey.m */; };
+		E9CEA14E2350B05500EC507C /* MKMAddressETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA1462350B05500EC507C /* MKMAddressETH.h */; };
+		E9CEA14F2350B05500EC507C /* MKMMetaETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA1472350B05500EC507C /* MKMMetaETH.m */; };
+		E9CEA1502350B05500EC507C /* MKMECCPublicKey.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA1482350B05500EC507C /* MKMECCPublicKey.m */; };
+		E9CEA1512350B05500EC507C /* MKMECCPrivateKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA1492350B05500EC507C /* MKMECCPrivateKey.h */; };
+		E9CEA1522350B05500EC507C /* MKMAddressETH.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA14A2350B05500EC507C /* MKMAddressETH.m */; };
+		E9CEA1532350B05500EC507C /* MKMMetaETH.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA14B2350B05500EC507C /* MKMMetaETH.h */; };
+		E9CEA1542350B05500EC507C /* MKMECCPublicKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA14C2350B05500EC507C /* MKMECCPublicKey.h */; };
 		E9D0D8FB22C370B900EEBF8B /* MKMGroup+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D0D8F522C370B800EEBF8B /* MKMGroup+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9D0D8FD22C370B900EEBF8B /* MKMGroup+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0D8F722C370B900EEBF8B /* MKMGroup+Extension.m */; };
 		E9D0D91522C3B61600EEBF8B /* DIMFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D0D91322C3B61600EEBF8B /* DIMFacebook.m */; };
@@ -190,14 +190,6 @@
 		E96D15002322932700B5EA59 /* DIMConversationDatabase+Group.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMConversationDatabase+Group.m"; sourceTree = "<group>"; };
 		E97907D922573C930024C830 /* DIMFileServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMFileServer.m; sourceTree = "<group>"; };
 		E97907DD22573C930024C830 /* DIMFileServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMFileServer.h; sourceTree = "<group>"; };
-		E9B2FC8122FB3D6100E153EE /* MKMECCPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMECCPublicKey.m; sourceTree = "<group>"; };
-		E9B2FC8222FB3D6100E153EE /* MKMAddressETH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAddressETH.m; sourceTree = "<group>"; };
-		E9B2FC8322FB3D6100E153EE /* MKMECCPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMECCPrivateKey.m; sourceTree = "<group>"; };
-		E9B2FC8422FB3D6100E153EE /* MKMAddressETH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMAddressETH.h; sourceTree = "<group>"; };
-		E9B2FC8522FB3D6100E153EE /* MKMMetaETH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMetaETH.h; sourceTree = "<group>"; };
-		E9B2FC8622FB3D6100E153EE /* MKMMetaETH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaETH.m; sourceTree = "<group>"; };
-		E9B2FC8722FB3D6200E153EE /* MKMECCPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMECCPublicKey.h; sourceTree = "<group>"; };
-		E9B2FC8822FB3D6200E153EE /* MKMECCPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMECCPrivateKey.h; sourceTree = "<group>"; };
 		E9BBC2E922429D6C00E6ACDA /* DIMClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIMClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9BBC2ED22429D6C00E6ACDA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E9BBC2F222429D6C00E6ACDA /* DIMClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -240,6 +232,14 @@
 		E9CEA11C234EAD8200EC507C /* FolderUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderUtility.h; sourceTree = "<group>"; };
 		E9CEA12F234EADF000EC507C /* DIMPassword.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMPassword.h; sourceTree = "<group>"; };
 		E9CEA130234EADF100EC507C /* DIMPassword.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMPassword.m; sourceTree = "<group>"; };
+		E9CEA1452350B05500EC507C /* MKMECCPrivateKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMECCPrivateKey.m; sourceTree = "<group>"; };
+		E9CEA1462350B05500EC507C /* MKMAddressETH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMAddressETH.h; sourceTree = "<group>"; };
+		E9CEA1472350B05500EC507C /* MKMMetaETH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMMetaETH.m; sourceTree = "<group>"; };
+		E9CEA1482350B05500EC507C /* MKMECCPublicKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMECCPublicKey.m; sourceTree = "<group>"; };
+		E9CEA1492350B05500EC507C /* MKMECCPrivateKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMECCPrivateKey.h; sourceTree = "<group>"; };
+		E9CEA14A2350B05500EC507C /* MKMAddressETH.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMAddressETH.m; sourceTree = "<group>"; };
+		E9CEA14B2350B05500EC507C /* MKMMetaETH.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMMetaETH.h; sourceTree = "<group>"; };
+		E9CEA14C2350B05500EC507C /* MKMECCPublicKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMECCPublicKey.h; sourceTree = "<group>"; };
 		E9D0D8F522C370B800EEBF8B /* MKMGroup+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMGroup+Extension.h"; sourceTree = "<group>"; };
 		E9D0D8F722C370B900EEBF8B /* MKMGroup+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMGroup+Extension.m"; sourceTree = "<group>"; };
 		E9D0D91322C3B61600EEBF8B /* DIMFacebook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMFacebook.m; sourceTree = "<group>"; };
@@ -350,10 +350,11 @@
 				E9CEA10B234EAD8200EC507C /* modules */,
 				E9BBC30422429D9500E6ACDA /* extends */,
 				E96D14CE232270A900B5EA59 /* database */,
-				E9BBC31F22429D9500E6ACDA /* DIMServer.h */,
-				E9BBC31922429D9500E6ACDA /* DIMServer.m */,
+				E9CEA1442350B05500EC507C /* plugins */,
 				E9BBC31B22429D9500E6ACDA /* DIMServerState.h */,
 				E9BBC32022429D9500E6ACDA /* DIMServerState.m */,
+				E9BBC31F22429D9500E6ACDA /* DIMServer.h */,
+				E9BBC31922429D9500E6ACDA /* DIMServer.m */,
 				E97907DD22573C930024C830 /* DIMFileServer.h */,
 				E97907D922573C930024C830 /* DIMFileServer.m */,
 				E9FC8E1122B9095D0013FCD3 /* DIMAmanuensis.h */,
@@ -393,14 +394,6 @@
 				E9D0D8F722C370B900EEBF8B /* MKMGroup+Extension.m */,
 				E9EAF9D323018CC300566755 /* MKMUser+Extension.h */,
 				E9EAF9D423018CC300566755 /* MKMUser+Extension.m */,
-				E9B2FC8822FB3D6200E153EE /* MKMECCPrivateKey.h */,
-				E9B2FC8322FB3D6100E153EE /* MKMECCPrivateKey.m */,
-				E9B2FC8722FB3D6200E153EE /* MKMECCPublicKey.h */,
-				E9B2FC8122FB3D6100E153EE /* MKMECCPublicKey.m */,
-				E9B2FC8422FB3D6100E153EE /* MKMAddressETH.h */,
-				E9B2FC8222FB3D6100E153EE /* MKMAddressETH.m */,
-				E9B2FC8522FB3D6100E153EE /* MKMMetaETH.h */,
-				E9B2FC8622FB3D6100E153EE /* MKMMetaETH.m */,
 				E9CEA12F234EADF000EC507C /* DIMPassword.h */,
 				E9CEA130234EADF100EC507C /* DIMPassword.m */,
 			);
@@ -479,6 +472,21 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
+		E9CEA1442350B05500EC507C /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				E9CEA1462350B05500EC507C /* MKMAddressETH.h */,
+				E9CEA14A2350B05500EC507C /* MKMAddressETH.m */,
+				E9CEA1492350B05500EC507C /* MKMECCPrivateKey.h */,
+				E9CEA1452350B05500EC507C /* MKMECCPrivateKey.m */,
+				E9CEA14C2350B05500EC507C /* MKMECCPublicKey.h */,
+				E9CEA1482350B05500EC507C /* MKMECCPublicKey.m */,
+				E9CEA14B2350B05500EC507C /* MKMMetaETH.h */,
+				E9CEA1472350B05500EC507C /* MKMMetaETH.m */,
+			);
+			path = plugins;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -506,19 +514,18 @@
 				E9FC8E1522B9095D0013FCD3 /* DIMAmanuensis.h in Headers */,
 				E9FC8E1622B9095D0013FCD3 /* DIMConversation.h in Headers */,
 				E9CEA125234EAD8200EC507C /* FMDatabasePool.h in Headers */,
+				E9CEA14E2350B05500EC507C /* MKMAddressETH.h in Headers */,
 				E9BBC33222429D9500E6ACDA /* DIMClient.h in Headers */,
 				E9CEA122234EAD8200EC507C /* FMDatabase.h in Headers */,
 				E9BBC33322429D9500E6ACDA /* DIMTerminal+Response.h in Headers */,
 				E9E824B2224A70F400A029F1 /* NSObject+Extension.h in Headers */,
 				E97907DF22573C930024C830 /* DIMFileServer.h in Headers */,
 				E9BBC33C22429D9500E6ACDA /* DIMServer.h in Headers */,
-				E9B2FC9022FB3D6200E153EE /* MKMECCPrivateKey.h in Headers */,
 				E9BBC33422429D9500E6ACDA /* DIMTerminal+Request.h in Headers */,
-				E9B2FC8F22FB3D6200E153EE /* MKMECCPublicKey.h in Headers */,
 				E9FAD215231AF65200EC9EED /* DIMMessenger.h in Headers */,
-				E9B2FC8C22FB3D6200E153EE /* MKMAddressETH.h in Headers */,
 				E9BBC33822429D9500E6ACDA /* DIMServerState.h in Headers */,
-				E9B2FC8D22FB3D6200E153EE /* MKMMetaETH.h in Headers */,
+				E9CEA1532350B05500EC507C /* MKMMetaETH.h in Headers */,
+				E9CEA1512350B05500EC507C /* MKMECCPrivateKey.h in Headers */,
 				E9CEA129234EAD8200EC507C /* FMDB.h in Headers */,
 				E9BBC33522429D9500E6ACDA /* DIMTerminal.h in Headers */,
 				E9CEA128234EAD8200EC507C /* FMDatabaseQueue.h in Headers */,
@@ -526,6 +533,7 @@
 				E9BBC33E22429D9500E6ACDA /* DIMTerminal+Group.h in Headers */,
 				E9BBC32522429D9500E6ACDA /* NSDate+Extension.h in Headers */,
 				E9BBC32922429D9500E6ACDA /* NSNotificationCenter+Extension.h in Headers */,
+				E9CEA1542350B05500EC507C /* MKMECCPublicKey.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,19 +701,19 @@
 				E96D14DF232270A900B5EA59 /* DIMGroupTable.m in Sources */,
 				E9CEA127234EAD8200EC507C /* FMDatabase.m in Sources */,
 				E96D14E4232270A900B5EA59 /* DIMMetaTable.m in Sources */,
-				E9B2FC8B22FB3D6200E153EE /* MKMECCPrivateKey.m in Sources */,
+				E9CEA14F2350B05500EC507C /* MKMMetaETH.m in Sources */,
 				E96D14FB23227E1300B5EA59 /* DIMConversationDatabase.m in Sources */,
-				E9B2FC8A22FB3D6200E153EE /* MKMAddressETH.m in Sources */,
-				E9B2FC8922FB3D6200E153EE /* MKMECCPublicKey.m in Sources */,
 				E9CEA123234EAD8200EC507C /* FMDatabaseQueue.m in Sources */,
 				E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */,
 				E96D14DE232270A900B5EA59 /* DIMUserTable.m in Sources */,
 				E9E824B1224A70F400A029F1 /* NSObject+Extension.m in Sources */,
+				E9CEA1522350B05500EC507C /* MKMAddressETH.m in Sources */,
 				E9CEA12B234EAD8200EC507C /* FMDatabasePool.m in Sources */,
 				E90E1EEB232EA5230012B23E /* DIMAddressNameTable.m in Sources */,
 				E9CEA120234EAD8200EC507C /* LocalDatabaseManager.m in Sources */,
 				E96D14EB232277DF00B5EA59 /* DIMMessageTable.m in Sources */,
 				E9CEA132234EADF100EC507C /* DIMPassword.m in Sources */,
+				E9CEA1502350B05500EC507C /* MKMECCPublicKey.m in Sources */,
 				E9CEA12C234EAD8200EC507C /* FMResultSet.m in Sources */,
 				E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */,
 				E9FC8E1722B9095D0013FCD3 /* DIMAmanuensis.m in Sources */,
@@ -719,8 +727,8 @@
 				E97907DE22573C930024C830 /* DIMFileServer.m in Sources */,
 				E96D14E5232270A900B5EA59 /* DIMProfileTable.m in Sources */,
 				E96D14F223227D7B00B5EA59 /* DIMSocialNetworkDatabase.m in Sources */,
-				E9B2FC8E22FB3D6200E153EE /* MKMMetaETH.m in Sources */,
 				E96D15012322932700B5EA59 /* DIMConversationDatabase+Group.m in Sources */,
+				E9CEA14D2350B05500EC507C /* MKMECCPrivateKey.m in Sources */,
 				E9BBC33A22429D9500E6ACDA /* DIMTerminal+Request.m in Sources */,
 				E9BBC33022429D9500E6ACDA /* NSNotificationCenter+Extension.m in Sources */,
 				E9CEA12D234EAD8200EC507C /* FolderUtility.m in Sources */,

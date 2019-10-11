@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MKMAddressBTC MKMAddressDefault
+
 @interface MKMAddressETH : MKMAddress
 
 /**
