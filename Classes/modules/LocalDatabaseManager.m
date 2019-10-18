@@ -134,7 +134,7 @@
     BOOL success = [self.db executeStatements:sql];
     
     if(!success){
-        NSLog(@"Can not insert message : %@", self.db.lastError.localizedDescription);
+        NSLog(@"Can not insert message : %@ %@", self.db.lastError.localizedDescription, content_text);
     }
     
     return success;

@@ -145,12 +145,16 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 
 - (BOOL)addMessage:(DIMInstantMessage *)message toConversation:(DIMID *)ID{
     
-    //Update cache
-    NSMutableArray *currentMessages = [[NSMutableArray alloc] initWithArray:[_caches objectForKey:ID]];
-    [currentMessages addObject:message];
-    [self _updateCache:currentMessages conversation:ID];
+    BOOL insertSuccess = [[LocalDatabaseManager sharedInstance] addMessage:message toConversation:ID];
     
-    return [[LocalDatabaseManager sharedInstance] addMessage:message toConversation:ID];
+    if(insertSuccess){
+        //Update cache
+        NSMutableArray *currentMessages = [[NSMutableArray alloc] initWithArray:[_caches objectForKey:ID]];
+        [currentMessages addObject:message];
+        [self _updateCache:currentMessages conversation:ID];
+    }
+    
+    return insertSuccess;
 }
 
 - (BOOL)clearConversation:(DIMID *)ID{
