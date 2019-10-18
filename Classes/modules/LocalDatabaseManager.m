@@ -11,6 +11,7 @@
 #import "FMDB.h"
 #import "NSObject+JsON.h"
 #import "DIMFacebook.h"
+#import <sqlite3.h>
 
 @interface LocalDatabaseManager()
 
@@ -49,7 +50,7 @@
         NSLog(@"The database path is : %@", path);
         self.db = [FMDatabase databaseWithPath:path];
         self.db.logsErrors = NO;
-        [self.db open];
+        [self.db openWithFlags:SQLITE_OPEN_CREATE|SQLITE_OPEN_READWRITE|SQLITE_OPEN_FULLMUTEX];
         
         [self createTables];
     }
