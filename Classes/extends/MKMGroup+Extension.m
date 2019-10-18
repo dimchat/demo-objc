@@ -12,6 +12,12 @@
 
 @implementation MKMGroup (Extension)
 
+- (NSArray<DIMID *> *)assistants {
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    NSArray *list = [facebook assistantsOfGroup:self.ID];
+    return [list copy];
+}
+
 - (BOOL)isFounder:(DIMID *)ID {
     DIMID *founder = [self founder];
     if (founder) {
@@ -22,6 +28,20 @@
         NSAssert(PK, @"failed to get meta for ID: %@", ID);
         return [meta matchPublicKey:PK];
     }
+}
+
+- (BOOL)isOwner:(DIMID *)ID {
+    if (self.ID.type == MKMNetwork_Polylogue) {
+        return [self isFounder:ID];
+    }
+    // check owner
+    DIMID *owner = [self owner];
+    return [owner isEqual:ID];
+}
+
+- (BOOL)existsAssistant:(DIMID *)ID {
+    NSArray<DIMID *> *assistants = [self assistants];
+    return [assistants containsObject:ID];
 }
 
 - (BOOL)existsMember:(DIMID *)ID {
@@ -38,8 +58,7 @@
         }
     }
     // check owner
-    DIMID *owner = [self owner];
-    return [owner isEqual:ID];
+    return [self isOwner:ID];
 }
 
 @end

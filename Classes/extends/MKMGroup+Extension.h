@@ -12,7 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MKMGroup (Extension)
 
+@property (readonly, copy, nonatomic) NSArray<MKMID *> *assistants;
+
 - (BOOL)isFounder:(MKMID *)ID;
+
+- (BOOL)isOwner:(MKMID *)ID;
+
+- (BOOL)existsAssistant:(MKMID *)ID;
 
 - (BOOL)existsMember:(MKMID *)ID;
 

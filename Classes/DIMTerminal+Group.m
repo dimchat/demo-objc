@@ -104,20 +104,40 @@
         [self sendContent:cmd to:ID];
     }
     
-    // 2. send expel command to all old members
-    if (members.count > 0) {
-        if (expels.count > 0) {
-            cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
+    // checking assistants
+    NSArray<DIMID *> *assistants = group.assistants;
+    NSLog(@"group(%@) assistants: %@", groupID, assistants);
+    
+    // 2. send expel command
+    if (expels.count > 0) {
+        cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
+        // 2.1. send expel command to all old members
+        if (members.count > 0) {
             for (DIMID *ID in members) {
+                [self sendContent:cmd to:ID];
+            }
+        }
+        // 2.2. send expel command to all assistants
+        if (assistants.count > 0) {
+            for (DIMID *ID in assistants) {
                 [self sendContent:cmd to:ID];
             }
         }
     }
     
-    // 3. send invite command to all new members
-    cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
-    for (DIMID *ID in newMembers) {
-        [self sendContent:cmd to:ID];
+    // 3. send invite command
+    if (newMembers.count > 0) {
+        cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
+        // 3.1. send invite command to all new members
+        for (DIMID *ID in newMembers) {
+            [self sendContent:cmd to:ID];
+        }
+        // 3.2. send invite command to all assistants
+        if (assistants.count > 0) {
+            for (DIMID *ID in assistants) {
+                [self sendContent:cmd to:ID];
+            }
+        }
     }
     
     return YES;
@@ -182,12 +202,15 @@
     DIMGroup *group = DIMGroupWithID(groupID);
     NSString *command = cmd.command;
     
-    // check founder
-    BOOL isFounder = [group isFounder:sender];
+    // check owner
+    BOOL isOwner = [group isOwner:sender];
     
     // check membership
-    BOOL isMember = [group existsMember:sender];
+    BOOL isMember = isOwner || [group existsMember:sender];
     
+    // check assistant
+    BOOL isAssistant = !isOwner && !isMember && [group existsAssistant:sender];
+
     if ([command isEqualToString:DIMGroupCommand_Invite]) {
         if (group.founder == nil && group.members.count == 0) {
             // FIXME: group profile lost?
@@ -195,7 +218,7 @@
             return YES;
         }
         // add member(s)
-        if (isFounder || isMember) {
+        if (isOwner || isMember || isAssistant) {
             return YES;
         } else {
             NSLog(@"!!! only the founder or member can invite other members");
@@ -203,7 +226,7 @@
         }
     } else if ([command isEqualToString:DIMGroupCommand_Expel]) {
         // remove member(s)
-        if (isFounder) {
+        if (isOwner || isAssistant) {
             return YES;
         } else {
             NSLog(@"!!! only the founder(owner) can expel members");
@@ -211,7 +234,7 @@
         }
     } else if ([command isEqualToString:DIMGroupCommand_Quit]) {
         // remove member
-        if (isFounder) {
+        if (isOwner) {
             NSLog(@"founder can not quit from polylogue: %@", group);
             return NO;
         } else if (isMember) {
@@ -222,7 +245,7 @@
         }
     } else if ([command isEqualToString:@"reset"]) {
         // reset group members
-        if (isFounder) {
+        if (isOwner || isAssistant) {
             return YES;
         } else {
             NSLog(@"!!! only the founder(owner) can reset members");
@@ -230,7 +253,7 @@
         }
     } else if ([command isEqualToString:@"query"]) {
         // query group members
-        if (isMember) {
+        if (isMember || isAssistant) {
             return YES;
         } else {
             NSLog(@"!!! only the member can query members");

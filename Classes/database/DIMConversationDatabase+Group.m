@@ -36,8 +36,8 @@ static inline NSString *readable_name(DIMID *ID) {
                   polylogue:(DIMPolylogue *)group {
     
     // 1. check permission
-    if (![group existsMember:sender]) {
-        NSAssert(false, @"%@ is not a member of polylogue: %@, cannot query.", sender, group);
+    if (![group existsMember:sender] && ![group existsAssistant:sender]) {
+        NSAssert(false, @"%@ is not a member/assistant of polylogue: %@, cannot query.", sender, group);
         return NO;
     }
     
@@ -55,8 +55,8 @@ static inline NSString *readable_name(DIMID *ID) {
                   polylogue:(DIMPolylogue *)group {
     
     // 0. check permission
-    if (![group isFounder:sender]) {
-        NSAssert(false, @"%@ is not the founder of polylogue: %@, cannot reset members.", sender, group);
+    if (![group isOwner:sender] && ![group existsAssistant:sender]) {
+        NSAssert(false, @"%@ is not the owner/assistant of polylogue: %@, cannot reset members.", sender, group);
         return NO;
     }
     
@@ -137,8 +137,8 @@ static inline NSString *readable_name(DIMID *ID) {
     if (group.founder == nil && group.members.count == 0) {
         // FIXME: group profile lost?
         // FIXME: how to avoid strangers impersonating group members?
-    } else if (![group existsMember:sender]) {
-        NSAssert(false, @"%@ is not a member of polylogue: %@, cannot invite.", sender, group);
+    } else if (![group existsMember:sender] && ![group existsAssistant:sender]) {
+        NSAssert(false, @"%@ is not a member/assistant of polylogue: %@, cannot invite.", sender, group);
         return NO;
     }
     
@@ -156,11 +156,11 @@ static inline NSString *readable_name(DIMID *ID) {
         invites = mArray;
     }
     
-    // 1. check founder for reset command
-    if ([group isFounder:sender]) {
+    // 1. check owner(founder) for reset command
+    if ([group isOwner:sender] || [group existsAssistant:sender]) {
         for (DIMID *item in invites) {
-            if ([group isFounder:item]) {
-                // invite founder? it means this should be a 'reset' command
+            if ([group isOwner:item]) {
+                // invite owner(founder)? it means this should be a 'reset' command
                 return [self processResetCommand:gCmd commander:sender polylogue:group];
             }
         }
@@ -212,8 +212,8 @@ static inline NSString *readable_name(DIMID *ID) {
                   polylogue:(DIMPolylogue *)group {
     
     // 1. check permission
-    if (![group isFounder:sender]) {
-        NSAssert(false, @"%@ is not the founder of polylogue: %@, cannot expel.", sender, group);
+    if (![group isOwner:sender] && ![group existsAssistant:sender]) {
+        NSAssert(false, @"%@ is not the owner/assistant of polylogue: %@, cannot expel.", sender, group);
         return NO;
     }
     
@@ -276,8 +276,8 @@ static inline NSString *readable_name(DIMID *ID) {
                  polylogue:(DIMPolylogue *)group {
     
     // 1. check permission
-    if ([group isFounder:sender]) {
-        NSAssert(false, @"%@ is the founder of polylogue: %@, cannot quit.", sender, group);
+    if ([group isOwner:sender] || [group existsAssistant:sender]) {
+        NSAssert(false, @"%@ is the owner/assistant of polylogue: %@, cannot quit.", sender, group);
         return NO;
     }
     if (![group existsMember:sender]) {

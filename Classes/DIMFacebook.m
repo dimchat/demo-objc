@@ -312,4 +312,15 @@ SingletonImplementations(DIMFacebook, sharedInstance)
     return [self saveMembers:members group:group.ID];
 }
 
+#pragma mark Group Assistants
+
+- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
+    DIMID *assistant = [self IDWithString:@"assistant"];
+    if ([assistant isValid]) {
+        return @[assistant];
+    } else {
+        return nil;
+    }
+}
+
 @end

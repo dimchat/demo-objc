@@ -50,6 +50,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)group:(DIMGroup *)group addMember:(DIMID *)member;
 - (BOOL)group:(DIMGroup *)group removeMember:(DIMID *)member;
 
+/**
+ *  Get group assistants
+ *
+ * @param group - group ID
+ * @return owner ID
+ */
+- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group;
+
 @end
 
 NS_ASSUME_NONNULL_END
