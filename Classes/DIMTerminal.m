@@ -233,6 +233,12 @@
         if (needsUpdate) {
             DIMQueryGroupCommand *query;
             query = [[DIMQueryGroupCommand alloc] initWithGroup:ID];
+            // query assistant
+            NSArray<DIMID *> *assistants = group.assistants;
+            for (DIMID *ass in assistants) {
+                [self sendContent:query to:ass];
+            }
+            // query sender
             [self sendContent:query to:sender];
         }
     }
