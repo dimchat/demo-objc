@@ -127,13 +127,17 @@
     [self insertConversation:conversationID];
     
     NSString *content_text = [msg.content jsonString];
-    //NSTimeInterval receiveTime = [msg.envelope.time timeIntervalSince1970];
     NSTimeInterval receiveTime = [[NSDate date] timeIntervalSince1970];
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, [msg.content objectForKey:@"text"], content_text, msg.envelope.sender, msg.envelope.receiver, receiveTime, msg.state];
     BOOL success = [self.db executeStatements:sql];
     
-    if(!success){
+    if(success){
+        
+        //Update conversation last message
+        [self updateConversation:conversationID name:@"" image:@"" lastMessage:msg];
+        
+    }else{
         NSLog(@"Can not insert message : %@ %@", self.db.lastError.localizedDescription, content_text);
     }
     
@@ -144,7 +148,7 @@
     
     NSMutableArray *array = [[NSMutableArray alloc] init];
     
-    NSString *sql = @"SELECT * FROM conversation";
+    NSString *sql = @"SELECT * FROM conversation where last_time > 0";
     FMResultSet *s = [self.db executeQuery:sql];
     while ([s next]) {
         
@@ -160,7 +164,7 @@
     NSMutableArray<DIMInstantMessage *> *messages = [[NSMutableArray alloc] init];
     
     NSString *sql = [NSString stringWithFormat:@"SELECT * FROM messages WHERE conversation_id='%@' ORDER BY time", conversationID];
-    NSLog(@"%@", sql);
+    //NSLog(@"%@", sql);
     
     FMResultSet *s = [self.db executeQuery:sql];
     
