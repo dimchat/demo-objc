@@ -7,6 +7,8 @@
 //
 
 #import "NSObject+Singleton.h"
+#import "DKDInstantMessage+Extension.h"
+#import "DIMReceiptCommand.h"
 
 #import "DIMFacebook.h"
 

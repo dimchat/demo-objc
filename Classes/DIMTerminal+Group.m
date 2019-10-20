@@ -243,7 +243,7 @@
             NSLog(@"!!! you are not a member yet");
             return NO;
         }
-    } else if ([command isEqualToString:@"reset"]) {
+    } else if ([command isEqualToString:DIMGroupCommand_Reset]) {
         // reset group members
         if (isOwner || isAssistant) {
             return YES;
@@ -251,7 +251,7 @@
             NSLog(@"!!! only the founder(owner) can reset members");
             return NO;
         }
-    } else if ([command isEqualToString:@"query"]) {
+    } else if ([command isEqualToString:DIMGroupCommand_Query]) {
         // query group members
         if (isMember || isAssistant) {
             return YES;

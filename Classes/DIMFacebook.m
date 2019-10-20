@@ -12,15 +12,31 @@
 #import "MKMECCPublicKey.h"
 #import "MKMAddressETH.h"
 #import "MKMMetaETH.h"
+
 #import "DIMSocialNetworkDatabase.h"
 #import "DIMServer.h"
+
 #import "DIMFacebook.h"
 
-@interface DIMFacebook () {
-    
+static inline void loadKeyClasses(void) {
+    // register new asymmetric cryptography key classes
+    [MKMPrivateKey registerClass:[MKMECCPrivateKey class] forAlgorithm:ACAlgorithmECC];
+    [MKMPublicKey registerClass:[MKMECCPublicKey class] forAlgorithm:ACAlgorithmECC];
 }
 
-@end
+static inline void loadAddressClasses(void) {
+    // register new address classes
+    //[MKMAddress registerClass:[MKMAddressBTC class]];
+    //[MKMAddress registerClass:[MKMAddressETH class]];
+}
+
+static inline void loadMetaClasses(void) {
+    // register new meta classes
+    [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_BTC];
+    [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_ExBTC];
+    [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ETH];
+    [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
+}
 
 @implementation DIMFacebook
 
@@ -29,19 +45,14 @@ SingletonImplementations(DIMFacebook, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         
-        // register new asymmetric cryptography key classes
-        [MKMPrivateKey registerClass:[MKMECCPrivateKey class] forAlgorithm:ACAlgorithmECC];
-        [MKMPublicKey registerClass:[MKMECCPublicKey class] forAlgorithm:ACAlgorithmECC];
+        // extend new keys for new algorithms
+        loadKeyClasses();
         
-        // register new address classes
-        //[MKMAddress registerClass:[MKMAddressBTC class]];
-        //[MKMAddress registerClass:[MKMAddressETH class]];
+        // extend new addresses
+        loadAddressClasses();
         
-        // register new meta classes
-        [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_BTC];
-        [MKMMeta registerClass:[MKMMetaBTC class] forVersion:MKMMetaVersion_ExBTC];
-        [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ETH];
-        [MKMMeta registerClass:[MKMMetaETH class] forVersion:MKMMetaVersion_ExETH];
+        // extend new metas for new addresses
+        loadMetaClasses();
     }
     return self;
 }

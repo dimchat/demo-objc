@@ -9,6 +9,7 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 #import "NSNotificationCenter+Extension.h"
+#import "DKDInstantMessage+Extension.h"
 
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"

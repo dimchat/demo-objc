@@ -7,13 +7,19 @@
 //
 
 #import "NSObject+JsON.h"
-
 #import "NSObject+Singleton.h"
+#import "DKDInstantMessage+Extension.h"
+#import "DIMReceiptCommand.h"
 
 #import "DIMFacebook.h"
 #import "DIMKeyStore.h"
 
 #import "DIMMessenger.h"
+
+static inline void loadCommandClasses(void) {
+    // register new command classes
+    [DIMCommand registerClass:[DIMReceiptCommand class] forCommand:DIMSystemCommand_Receipt];
+}
 
 @implementation DIMMessenger
 
@@ -24,6 +30,9 @@ SingletonImplementations(DIMMessenger, sharedInstance)
         // delegates
         _barrack = [DIMFacebook sharedInstance];
         _keyCache = [DIMKeyStore sharedInstance];
+        
+        // extend new commands
+        loadCommandClasses();
     }
     return self;
 }

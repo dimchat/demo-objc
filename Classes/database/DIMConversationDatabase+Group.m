@@ -317,9 +317,9 @@ static inline NSString *readable_name(DIMID *ID) {
             OK = [self processExpelCommand:gCmd commander:sender polylogue:group];
         } else if ([command isEqualToString:DIMGroupCommand_Quit]) {
             OK = [self processQuitCommand:gCmd commander:sender polylogue:group];
-        } else if ([command isEqualToString:@"reset"]) {
+        } else if ([command isEqualToString:DIMGroupCommand_Reset]) {
             OK = [self processResetCommand:gCmd commander:sender polylogue:group];
-        } else if ([command isEqualToString:@"query"]) {
+        } else if ([command isEqualToString:DIMGroupCommand_Query]) {
             OK = [self processQueryCommand:gCmd commander:sender polylogue:group];
         } else {
             NSAssert(false, @"unknown polylogue command: %@", gCmd);

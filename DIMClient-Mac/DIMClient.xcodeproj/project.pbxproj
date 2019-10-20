@@ -52,6 +52,10 @@
 		E9BBC35D2242A1C900E6ACDA /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC34722429DAA00E6ACDA /* DIMCore.framework */; };
 		E9BBC3602242A1F600E6ACDA /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC35022429E3E00E6ACDA /* MarsGate.framework */; };
 		E9BBC3612242A1FA00E6ACDA /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9BBC35922429EA300E6ACDA /* FiniteStateMachine.framework */; };
+		E9BBCA8B235CFA4A00231A16 /* DKDInstantMessage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBCA86235CFA4A00231A16 /* DKDInstantMessage+Extension.m */; };
+		E9BBCA8C235CFA4A00231A16 /* DKDInstantMessage+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBCA8A235CFA4A00231A16 /* DKDInstantMessage+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BBCA8F235CFA5D00231A16 /* DIMReceiptCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBCA8D235CFA5C00231A16 /* DIMReceiptCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9BBCA90235CFA5D00231A16 /* DIMReceiptCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBCA8E235CFA5C00231A16 /* DIMReceiptCommand.m */; };
 		E9CEA120234EAD8200EC507C /* LocalDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA10C234EAD8200EC507C /* LocalDatabaseManager.m */; };
 		E9CEA121234EAD8200EC507C /* LocalDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA10D234EAD8200EC507C /* LocalDatabaseManager.h */; };
 		E9CEA122234EAD8200EC507C /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA10F234EAD8200EC507C /* FMDatabase.h */; };
@@ -215,6 +219,10 @@
 		E9BBC33F22429DAA00E6ACDA /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore-Mac/DIMCore.xcodeproj"; sourceTree = "<group>"; };
 		E9BBC34A22429E3E00E6ACDA /* MarsGate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MarsGate.xcodeproj; path = "../../../moky/StarGate/MarsGate-Mac/MarsGate.xcodeproj"; sourceTree = "<group>"; };
 		E9BBC35322429EA200E6ACDA /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = "../../../moky/FiniteStateMachine/FiniteStateMachine-Mac/FiniteStateMachine.xcodeproj"; sourceTree = "<group>"; };
+		E9BBCA86235CFA4A00231A16 /* DKDInstantMessage+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DKDInstantMessage+Extension.m"; sourceTree = "<group>"; };
+		E9BBCA8A235CFA4A00231A16 /* DKDInstantMessage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DKDInstantMessage+Extension.h"; sourceTree = "<group>"; };
+		E9BBCA8D235CFA5C00231A16 /* DIMReceiptCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMReceiptCommand.h; sourceTree = "<group>"; };
+		E9BBCA8E235CFA5C00231A16 /* DIMReceiptCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMReceiptCommand.m; sourceTree = "<group>"; };
 		E9CEA10C234EAD8200EC507C /* LocalDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalDatabaseManager.m; sourceTree = "<group>"; };
 		E9CEA10D234EAD8200EC507C /* LocalDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalDatabaseManager.h; sourceTree = "<group>"; };
 		E9CEA10F234EAD8200EC507C /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
@@ -394,6 +402,8 @@
 				E9D0D8F722C370B900EEBF8B /* MKMGroup+Extension.m */,
 				E9EAF9D323018CC300566755 /* MKMUser+Extension.h */,
 				E9EAF9D423018CC300566755 /* MKMUser+Extension.m */,
+				E9BBCA8A235CFA4A00231A16 /* DKDInstantMessage+Extension.h */,
+				E9BBCA86235CFA4A00231A16 /* DKDInstantMessage+Extension.m */,
 				E9CEA12F234EADF000EC507C /* DIMPassword.h */,
 				E9CEA130234EADF100EC507C /* DIMPassword.m */,
 			);
@@ -483,6 +493,8 @@
 				E9CEA1482350B05500EC507C /* MKMECCPublicKey.m */,
 				E9CEA14B2350B05500EC507C /* MKMMetaETH.h */,
 				E9CEA1472350B05500EC507C /* MKMMetaETH.m */,
+				E9BBCA8D235CFA5C00231A16 /* DIMReceiptCommand.h */,
+				E9BBCA8E235CFA5C00231A16 /* DIMReceiptCommand.m */,
 			);
 			path = plugins;
 			sourceTree = "<group>";
@@ -494,6 +506,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9BBCA8F235CFA5D00231A16 /* DIMReceiptCommand.h in Headers */,
 				E9CEA131234EADF100EC507C /* DIMPassword.h in Headers */,
 				E96D14FA23227E1300B5EA59 /* DIMConversationDatabase.h in Headers */,
 				E9CEA124234EAD8200EC507C /* FMResultSet.h in Headers */,
@@ -509,6 +522,7 @@
 				E96D14E0232270A900B5EA59 /* DIMProfileTable.h in Headers */,
 				E9EAF9D523018CC300566755 /* MKMUser+Extension.h in Headers */,
 				E959903522F2CF5100C97D2D /* DIMKeyStore.h in Headers */,
+				E9BBCA8C235CFA4A00231A16 /* DKDInstantMessage+Extension.h in Headers */,
 				E9D0D91622C3B61600EEBF8B /* DIMFacebook.h in Headers */,
 				E9D0D8FB22C370B900EEBF8B /* MKMGroup+Extension.h in Headers */,
 				E9FC8E1522B9095D0013FCD3 /* DIMAmanuensis.h in Headers */,
@@ -707,12 +721,14 @@
 				E9BBC33622429D9500E6ACDA /* DIMServer.m in Sources */,
 				E96D14DE232270A900B5EA59 /* DIMUserTable.m in Sources */,
 				E9E824B1224A70F400A029F1 /* NSObject+Extension.m in Sources */,
+				E9BBCA90235CFA5D00231A16 /* DIMReceiptCommand.m in Sources */,
 				E9CEA1522350B05500EC507C /* MKMAddressETH.m in Sources */,
 				E9CEA12B234EAD8200EC507C /* FMDatabasePool.m in Sources */,
 				E90E1EEB232EA5230012B23E /* DIMAddressNameTable.m in Sources */,
 				E9CEA120234EAD8200EC507C /* LocalDatabaseManager.m in Sources */,
 				E96D14EB232277DF00B5EA59 /* DIMMessageTable.m in Sources */,
 				E9CEA132234EADF100EC507C /* DIMPassword.m in Sources */,
+				E9BBCA8B235CFA4A00231A16 /* DKDInstantMessage+Extension.m in Sources */,
 				E9CEA1502350B05500EC507C /* MKMECCPublicKey.m in Sources */,
 				E9CEA12C234EAD8200EC507C /* FMResultSet.m in Sources */,
 				E9BBC33722429D9500E6ACDA /* DIMTerminal+Group.m in Sources */,

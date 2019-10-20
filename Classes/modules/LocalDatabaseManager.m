@@ -10,6 +10,7 @@
 #import "FolderUtility.h"
 #import "FMDB.h"
 #import "NSObject+JsON.h"
+#import "DKDInstantMessage+Extension.h"
 #import "DIMFacebook.h"
 #import <sqlite3.h>
 
