@@ -15,10 +15,8 @@
 #import "NSString+Crypto.h"
 #import "DIMTerminal+Response.h"
 
-NSString * const kNotificationName_ProfileUpdated     = @"ProfileUpdated";
 NSString * const kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
 NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
-NSString * const kNotificationName_ContactsUpdated = @"ContactsUpdated";
 
 @implementation DIMTerminal (Response)
 
@@ -63,7 +61,10 @@ NSString * const kNotificationName_ContactsUpdated = @"ContactsUpdated";
     if (profile) {
         NSAssert([profile.ID isEqual:cmd.ID], @"profile not match ID: %@", cmd);
         NSLog(@"got new profile for %@", cmd.ID);
-        [NSNotificationCenter postNotificationName:kNotificationName_ProfileUpdated object:self userInfo:cmd];
+        
+        // update local profile
+        DIMFacebook *facebook = [DIMFacebook sharedInstance];
+        [facebook saveProfile:profile];
     }
 }
 
@@ -102,9 +103,40 @@ NSString * const kNotificationName_ContactsUpdated = @"ContactsUpdated";
     data = [password decrypt:data];
     NSArray *contacts = [data jsonArray];
     
-    NSDictionary *mDict = @{@"contacts": contacts};
+    for(NSString *address in contacts){
+        
+        DIMID *ID = DIMIDWithString(address);
+        
+        if(ID.type == MKMNetwork_Group){
+            
+            //Request Group Meta and save to local
+            DIMMetaForID(ID);
+            [[DIMFacebook sharedInstance] user:user addContact:ID];
+        }else{
+            [self addUserToContact:address];
+        }
+    }
+}
+
+-(void)addUserToContact:(NSString *)itemString{
     
-    [NSNotificationCenter postNotificationName:kNotificationName_ContactsUpdated object:self userInfo:mDict];
+    DIMID *ID = DIMIDWithString(itemString);
+    
+    DIMLocalUser *user = self.currentUser;
+    DIMMeta *meta = DIMMetaForID(user.ID);
+    DIMProfile *profile = user.profile;
+    DIMCommand *cmd;
+    if (profile) {
+        cmd = [[DIMProfileCommand alloc] initWithID:user.ID
+                                               meta:meta
+                                            profile:profile];
+    } else {
+        cmd = [[DIMMetaCommand alloc] initWithID:user.ID meta:meta];
+    }
+    [self sendContent:cmd to:ID];
+    
+    // add to contacts
+    [[DIMFacebook sharedInstance] user:user addContact:ID];
 }
 
 @end

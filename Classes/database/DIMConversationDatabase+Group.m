@@ -7,9 +7,8 @@
 //
 
 #import "MKMGroup+Extension.h"
-
 #import "DIMFacebook.h"
-
+#import "DIMClientConstants.h"
 #import "DIMConversationDatabase.h"
 
 static inline NSString *readable_name(DIMID *ID) {
@@ -326,6 +325,14 @@ static inline NSString *readable_name(DIMID *ID) {
         }
     } else {
         NSAssert(false, @"unsupport group command: %@", gCmd);
+    }
+    
+    if(OK){
+        
+        DIMID *groupID = DIMIDWithString(gCmd.group);
+        NSString *name = kNotificationName_GroupMembersUpdated;
+        NSDictionary *info = @{@"group": groupID};
+        [[NSNotificationCenter defaultCenter] postNotificationName:name object:self userInfo:info];
     }
     
     return OK;

@@ -7,7 +7,7 @@
 //
 
 #import "DIMFacebook.h"
-
+#import "DIMClientConstants.h"
 #import "DIMGroupTable.h"
 
 typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
@@ -101,7 +101,8 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     
     NSString *path = [self _filePathWithID:group];
     NSLog(@"saving members into: %@", path);
-    return [self array:members writeToFile:path];
+    BOOL result = [self array:members writeToFile:path];
+    return result;
 }
 
 - (nullable DIMID *)founderOfGroup:(DIMID *)group {

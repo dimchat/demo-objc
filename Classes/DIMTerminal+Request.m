@@ -136,6 +136,12 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return ;
     }
+    
+    DIMMeta *meta = user.meta;
+    if (![profile verify:meta.key]){
+        return ;
+    }
+    
     DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:profile.ID
                                                     profile:profile];
     [self sendCommand:cmd];

@@ -8,7 +8,7 @@
 
 #import "DIMFacebook.h"
 #import "DIMMessageTable.h"
-
+#import "DIMClientConstants.h"
 #import "DIMConversationDatabase.h"
 
 typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
@@ -49,19 +49,31 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
 
 - (BOOL)removeConversation:(DIMConversation *)chatBox {
     [_conversationTable removeObjectForKey:chatBox.ID];
-    return [_messageTable removeConversation:chatBox.ID];
+    BOOL result = [_messageTable removeConversation:chatBox.ID];
+    
+    if(result){
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_MessageCleaned object:nil userInfo:@{@"ID": chatBox.ID}];
+    }
+    
+    return result;
 }
 
 - (BOOL)clearConversation:(DIMConversation *)chatBox {
-    
     return [_messageTable clearConversation:chatBox.ID];
-    
-//    NSArray<DIMInstantMessage *> *list = [[NSMutableArray alloc] init];
-//    return [_messageTable saveMessages:list conversation:chatBox.ID];
 }
 
 - (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMConversation *)chatBox {
     return [_messageTable messagesInConversation:chatBox.ID];
+}
+
+-(BOOL)markConversationMessageRead:(DIMConversation *)chatBox{
+    BOOL result = [_messageTable markConversationMessageRead:chatBox.ID];
+    
+    if(result){
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ConversationUpdated object:nil userInfo:@{@"ID": chatBox.ID}];
+    }
+    
+    return result;
 }
 
 #pragma mark DIMConversationDataSource
@@ -98,8 +110,11 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
         chatBox = [[DIMConversation alloc] initWithEntity:entity];
         chatBox.dataSource = self;
         chatBox.delegate = self;
-        // cache it
-        [_conversationTable setObject:chatBox forKey:ID];
+        
+        if(chatBox.numberOfMessage > 0){
+            // cache it
+            [_conversationTable setObject:chatBox forKey:ID];
+        }
         return chatBox;
     }
     NSAssert(false, @"failed to create conversation with ID: %@", ID);
@@ -130,7 +145,17 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
         }
     }
     
-    return [_messageTable addMessage:iMsg toConversation:chatBox.ID];
+    BOOL result = [_messageTable addMessage:iMsg toConversation:chatBox.ID];
+    
+    if(result){
+        [_conversationTable setObject:chatBox forKey:chatBox.ID];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ConversationUpdated object:nil userInfo:@{@"ID": chatBox.ID}];
+        NSDictionary *userInfo = @{@"Conversation": chatBox.ID, @"Message": iMsg};
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_MessageInserted object:nil userInfo:userInfo];
+    }
+    
+    return result;
     
 //    NSArray<DIMInstantMessage *> *messages;
 //    messages = [_messageTable messagesInConversation:chatBox.ID];

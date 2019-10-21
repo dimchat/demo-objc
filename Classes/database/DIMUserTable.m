@@ -7,7 +7,7 @@
 //
 
 #import "DIMFacebook.h"
-
+#import "DIMClientConstants.h"
 #import "DIMUserTable.h"
 
 typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
@@ -125,7 +125,13 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     
     NSString *path = [self _filePathWithID:user];
     NSLog(@"saving contacts into: %@", path);
-    return [self array:contacts writeToFile:path];
+    BOOL result = [self array:contacts writeToFile:path];
+    
+    if(result){
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ContactsUpdated object:nil userInfo:@{@"ID":user}];
+    }
+    
+    return result;
 }
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "DIMConversation.h"
+#import "DIMClientConstants.h"
 
 @interface DIMConversation ()
 
@@ -92,7 +93,8 @@
 
 - (BOOL)insertMessage:(DIMInstantMessage *)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    return [_delegate conversation:self insertMessage:iMsg];
+    BOOL result = [_delegate conversation:self insertMessage:iMsg];
+    return result;
 }
 
 - (BOOL)removeMessage:(DIMInstantMessage *)iMsg {
@@ -102,7 +104,9 @@
         NSAssert(false, @"delegate error");
         return NO;
     }
-    return [_delegate conversation:self removeMessage:iMsg];
+    
+    BOOL result = [_delegate conversation:self removeMessage:iMsg];
+    return result;
 }
 
 - (BOOL)withdrawMessage:(DIMInstantMessage *)iMsg {
@@ -112,7 +116,8 @@
         NSAssert(false, @"delegate error");
         return NO;
     }
-    return [_delegate conversation:self withdrawMessage:iMsg];
+    BOOL result = [_delegate conversation:self withdrawMessage:iMsg];
+    return result;
 }
 
 @end

@@ -25,7 +25,7 @@
     } else {
         DIMMeta *meta = [self meta];
         DIMPublicKey *PK = [DIMMetaForID(ID) key];
-        NSAssert(PK, @"failed to get meta for ID: %@", ID);
+        //NSAssert(PK, @"failed to get meta for ID: %@", ID);
         return [meta matchPublicKey:PK];
     }
 }

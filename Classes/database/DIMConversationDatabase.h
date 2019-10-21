@@ -13,12 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol DIMConversationDatabase <DIMConversationDataSource, DIMConversationDelegate>
 
 - (NSArray<DIMConversation *> *)allConversations;
-
 - (BOOL)removeConversation:(DIMConversation *)chatBox;
-
 - (BOOL)clearConversation:(DIMConversation *)chatBox;
-
 - (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMConversation *)chatBox;
+
+-(BOOL)markConversationMessageRead:(DIMConversation *)chatBox;
 
 @end
 

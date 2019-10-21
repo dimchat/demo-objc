@@ -7,9 +7,8 @@
 //
 
 #import "NSDate+Timestamp.h"
-
 #import "DIMFacebook.h"
-
+#import "DIMClientConstants.h"
 #import "DIMProfileTable.h"
 
 typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
@@ -111,12 +110,22 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
 }
 
 - (BOOL)saveProfile:(DIMProfile *)profile {
+    
+    NSDate *now = [[NSDate alloc] init];
+    [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
+    
     if (![self _cacheProfile:profile]) {
         return NO;
     }
     NSString *path = [self _filePathWithID:profile.ID];
     NSLog(@"saving profile into: %@", path);
-    return [self dictionary:profile writeToBinaryFile:path];
+    BOOL result = [self dictionary:profile writeToBinaryFile:path];
+    
+    if(result){
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ProfileUpdated object:nil userInfo:@{@"ID":profile.ID}];
+    }
+    
+    return result;
 }
 
 @end
