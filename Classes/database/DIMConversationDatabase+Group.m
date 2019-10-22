@@ -11,23 +11,6 @@
 #import "DIMClientConstants.h"
 #import "DIMConversationDatabase.h"
 
-static inline NSString *readable_name(DIMID *ID) {
-    DIMProfile *profile = DIMProfileForID(ID);
-    NSString *nickname = profile.name;
-    NSString *username = ID.name;
-    if (nickname) {
-        if (username && MKMNetwork_IsUser(ID.type)) {
-            return [NSString stringWithFormat:@"%@ (%@)", nickname, username];
-        }
-        return nickname;
-    } else if (username) {
-        return username;
-    } else {
-        // BTC Address
-        return (NSString *)ID.address;
-    }
-}
-
 @implementation DIMConversationDatabase (GroupCommand)
 
 - (BOOL)processQueryCommand:(DIMGroupCommand *)gCmd
@@ -40,12 +23,7 @@ static inline NSString *readable_name(DIMID *ID) {
         return NO;
     }
     
-    // 2. build message
-    NSString *format = NSLocalizedString(@"%@ was querying group info, responding...", nil);
-    NSString *text = [NSString stringWithFormat:format, readable_name(sender)];
-    NSAssert(![gCmd objectForKey:@"text"], @"text should be empty here: %@", gCmd);
-    [gCmd setObject:text forKey:@"text"];
-    
+    // 2. respond here?
     return YES;
 }
 
@@ -101,29 +79,13 @@ static inline NSString *readable_name(DIMID *ID) {
         }
     }
     
-    // 4. build message
-    NSString *format = NSLocalizedString(@"%@ has updated group members", nil);
-    NSString *text = [NSString stringWithFormat:format, readable_name(sender)];
+    // 4. store 'added' & 'removed' lists
     if (removeds.count > 0) {
-        NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:removeds.count];
-        for (DIMID *item in removeds) {
-            [mArr addObject:readable_name(item)];
-        }
-        NSString *str = [mArr componentsJoinedByString:@",\n"];
-        text = [text stringByAppendingFormat:@", %@ %@", NSLocalizedString(@"removed", nil), str];
         [gCmd setObject:removeds forKey:@"removed"];
     }
     if (addeds.count > 0) {
-        NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:addeds.count];
-        for (DIMID *item in addeds) {
-            [mArr addObject:readable_name(item)];
-        }
-        NSString *str = [mArr componentsJoinedByString:@",\n"];
-        text = [text stringByAppendingFormat:@", %@ %@", NSLocalizedString(@"invited", nil), str];
         [gCmd setObject:addeds forKey:@"added"];
     }
-    NSAssert(![gCmd objectForKey:@"text"], @"text should be empty here: %@", gCmd);
-    [gCmd setObject:text forKey:@"text"];
     
     return YES;
 }
@@ -191,17 +153,10 @@ static inline NSString *readable_name(DIMID *ID) {
         }
     }
     
-    // 4. build message
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:invites.count];
-    for (DIMID *item in addeds) {
-        [mArr addObject:readable_name(DIMIDWithString(item))];
+    // 4. stored 'added' list
+    if (addeds.count > 0) {
+        [gCmd setObject:addeds forKey:@"added"];
     }
-    NSString *str = [mArr componentsJoinedByString:@",\n"];
-    NSString *format = NSLocalizedString(@"%@ has invited member(s):\n%@.", nil);
-    NSString *text = [NSString stringWithFormat:format, readable_name(sender), str];
-    NSAssert(![gCmd objectForKey:@"text"], @"text should be empty here: %@", gCmd);
-    [gCmd setObject:text forKey:@"text"];
-    [gCmd setObject:addeds forKey:@"added"];
     
     return YES;
 }
@@ -255,17 +210,10 @@ static inline NSString *readable_name(DIMID *ID) {
         }
     }
     
-    // 4. build message
-    NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:expels.count];
-    for (DIMID *item in expels) {
-        [mArr addObject:readable_name(DIMIDWithString(item))];
+    // 4. stored 'removed' list
+    if (removeds.count > 0) {
+        [gCmd setObject:removeds forKey:@"removed"];
     }
-    NSString *str = [mArr componentsJoinedByString:@",\n"];
-    NSString *format = NSLocalizedString(@"%@ has removed member(s):\n%@.", nil);
-    NSString *text = [NSString stringWithFormat:format, readable_name(sender), str];
-    NSAssert(![gCmd objectForKey:@"text"], @"text should be empty here: %@", gCmd);
-    [gCmd setObject:text forKey:@"text"];
-    [gCmd setObject:removeds forKey:@"removed"];
     
     return YES;
 }
@@ -289,12 +237,6 @@ static inline NSString *readable_name(DIMID *ID) {
         NSLog(@"failed to remove member of group: %@", group.ID);
         return NO;
     }
-    
-    // 3. build message
-    NSString *format = NSLocalizedString(@"%@ has quitted group chat.", nil);
-    NSString *text = [NSString stringWithFormat:format, readable_name(sender)];
-    NSAssert(![gCmd objectForKey:@"text"], @"text should be empty here: %@", gCmd);
-    [gCmd setObject:text forKey:@"text"];
     
     return YES;
 }

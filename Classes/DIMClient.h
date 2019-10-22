@@ -44,6 +44,7 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMReceiptCommand.h>
 
 // Database
+#import <DIMClient/DIMClientConstants.h>
 #import <DIMClient/DIMStorage.h>
 #import <DIMClient/DIMAddressNameTable.h>
 #import <DIMClient/DIMMetaTable.h>

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		520ECCB1235D5CAE00822B97 /* DIMClientConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 520ECCAF235D5CAE00822B97 /* DIMClientConstants.h */; };
+		520ECCB1235D5CAE00822B97 /* DIMClientConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 520ECCAF235D5CAE00822B97 /* DIMClientConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		520ECCB2235D5CAE00822B97 /* DIMClientConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 520ECCB0235D5CAE00822B97 /* DIMClientConstants.m */; };
 		52DBA3082340372C0000C2B4 /* LocalDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52DBA2F72340372C0000C2B4 /* LocalDatabaseManager.m */; };
 		52DBA3092340372C0000C2B4 /* LocalDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 52DBA2F82340372C0000C2B4 /* LocalDatabaseManager.h */; };
