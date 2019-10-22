@@ -7,7 +7,6 @@
 //
 
 #import "DIMConversation.h"
-#import "DIMClientConstants.h"
 
 @interface DIMConversation ()
 

@@ -87,14 +87,16 @@
     }
 }
 
+/**
+ *  Process system command
+ *
+ * @return NO to let MessageProcessor(DB) finish the rest of the job
+ */
 - (BOOL)_processCommand:(DIMCommand *)cmd commander:(DIMID *)sender {
     // group commands
     if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
         NSAssert(cmd.group, @"group command error: %@", cmd);
-        if ([self checkGroupCommand:(DIMGroupCommand *)cmd commander:sender]) {
-            return YES;
-        }
-        NSLog(@"!!! error group command from %@: %@", sender, cmd);
+        // NOTICE: let MessageProcessor(DB) to parse group command
         return NO;
     }
     // history command
@@ -103,21 +105,23 @@
         return NO;
     }
     
-    // system commands
+    //
+    //  system commands
+    //
     if ([cmd isKindOfClass:[DIMHandshakeCommand class]]) {
         // handshake
         [self processHandshakeCommand:(DIMHandshakeCommand *)cmd];
-        return NO;
+        return YES;
     }
     if ([cmd isKindOfClass:[DIMProfileCommand class]]) {
         // query profile response
         [self processProfileCommand:(DIMProfileCommand *)cmd];
-        return NO;
+        return YES;
     }
     if ([cmd isKindOfClass:[DIMMetaCommand class]]) {
         // query meta response
         [self processMetaCommand:(DIMMetaCommand *)cmd];
-        return NO;
+        return YES;
     }
     
     // other commands
@@ -125,20 +129,21 @@
     if ([command isEqualToString:@"users"]) {
         // query online users response
         [self processOnlineUsersCommand:cmd];
-        return NO;
+        return YES;
     }
     if ([command isEqualToString:@"search"]) {
         // search users response
         [self processSearchUsersCommand:cmd];
-        return NO;
+        return YES;
     }
     if ([command isEqualToString:@"contacts"]) {
         // get contacts response
         [self processContactsCommand:cmd];
-        return NO;
+        return YES;
     }
-    // NOTE: let the message processor to do the job
-    return YES;
+    
+    // NOTE: let the MessageProcessor(DB) to do the job
+    return NO;
 }
 
 #pragma mark DIMStationDelegate
@@ -243,21 +248,11 @@
         }
     }
 
-    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
-    
     // 5. process commands
     if ([content isKindOfClass:[DIMCommand class]]) {
         DIMCommand *cmd = (DIMCommand *)content;
-        if (![self _processCommand:cmd commander:sender]) {
+        if ([self _processCommand:cmd commander:sender]) {
             NSLog(@"command processed: %@", content);
-            return;
-        }
-        NSString *command = cmd.command;
-        if ([command isEqualToString:DIMSystemCommand_Receipt]) {
-            // receipt
-            if ([clerk saveReceipt:iMsg]) {
-                NSLog(@"target message state updated with receipt: %@", cmd);
-            }
             return;
         }
         // NOTE: let the message processor to do the job
@@ -269,7 +264,10 @@
         //return ;
     }
     
-    // normal message, let the clerk to deliver it
+    // 6. save the message
+    //    it may be a normal message content,
+    //    or a group command, or a receipt, ...
+    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     [clerk saveMessage:iMsg];
 }
 

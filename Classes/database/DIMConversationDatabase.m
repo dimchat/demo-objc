@@ -125,24 +125,30 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     
     // preprocess
     DIMContent *content = iMsg.content;
-    if (content.type == DKDContentType_Command) {
+    if ([content isKindOfClass:[DIMGroupCommand class]]) {
+        // group command
+        DIMGroupCommand *cmd = (DIMGroupCommand *)content;
+        DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
+        if (![self processGroupCommand:cmd commander:sender]) {
+            NSLog(@"group comment error: %@", content);
+            return NO;
+        }
+    } else if ([content isKindOfClass:[DIMHistoryCommand class]]) {
+        // history command
+        NSAssert(content.type == DKDContentType_History, @"error: %@", content);
+        DIMHistoryCommand *cmd = (DIMHistoryCommand *)content;
+        NSLog(@"history command: %@", cmd.command);
+        // TODO: history command not support yet
+        // ...
+        return NO;
+    } else if ([content isKindOfClass:[DIMCommand class]]) {
         // system command
+        NSAssert(content.type == DKDContentType_Command, @"error: %@", content);
         DIMCommand *cmd = (DIMCommand *)content;
         NSLog(@"command: %@", cmd.command);
-        
         // TODO: parse & execute system command
         // ...
-    } else if (content.type == DKDContentType_History) {
-        DIMID *groupID = DIMIDWithString(content.group);
-        if (groupID) {
-            // group command
-            DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-            DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
-            if (![self processGroupCommand:cmd commander:sender]) {
-                NSLog(@"group comment error: %@", content);
-                return NO;
-            }
-        }
+        return NO;
     }
     
     BOOL result = [_messageTable addMessage:iMsg toConversation:chatBox.ID];

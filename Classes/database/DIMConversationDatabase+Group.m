@@ -8,7 +8,6 @@
 
 #import "MKMGroup+Extension.h"
 #import "DIMFacebook.h"
-#import "DIMClientConstants.h"
 #import "DIMConversationDatabase.h"
 
 @implementation DIMConversationDatabase (GroupCommand)
@@ -18,12 +17,14 @@
                   polylogue:(DIMPolylogue *)group {
     
     // 1. check permission
-    if (![group existsMember:sender] && ![group existsAssistant:sender]) {
+    if (![group existsMember:sender] &&
+        ![group existsAssistant:sender]) {
         NSAssert(false, @"%@ is not a member/assistant of polylogue: %@, cannot query.", sender, group);
         return NO;
     }
     
-    // 2. respond here?
+    // 2. respond with 'invite' command
+    //    NOTICE: set the subclass to do the job
     return YES;
 }
 
@@ -98,7 +99,9 @@
     if (group.founder == nil && group.members.count == 0) {
         // FIXME: group profile lost?
         // FIXME: how to avoid strangers impersonating group members?
-    } else if (![group existsMember:sender] && ![group existsAssistant:sender]) {
+    } else if (![group isOwner:sender] &&
+               ![group existsMember:sender] &&
+               ![group existsAssistant:sender]) {
         NSAssert(false, @"%@ is not a member/assistant of polylogue: %@, cannot invite.", sender, group);
         return NO;
     }
@@ -166,7 +169,8 @@
                   polylogue:(DIMPolylogue *)group {
     
     // 1. check permission
-    if (![group isOwner:sender] && ![group existsAssistant:sender]) {
+    if (![group isOwner:sender] &&
+        ![group existsAssistant:sender]) {
         NSAssert(false, @"%@ is not the owner/assistant of polylogue: %@, cannot expel.", sender, group);
         return NO;
     }
@@ -267,14 +271,6 @@
         }
     } else {
         NSAssert(false, @"unsupport group command: %@", gCmd);
-    }
-    
-    if(OK){
-        
-        DIMID *groupID = DIMIDWithString(gCmd.group);
-        NSString *name = kNotificationName_GroupMembersUpdated;
-        NSDictionary *info = @{@"group": groupID};
-        [[NSNotificationCenter defaultCenter] postNotificationName:name object:self userInfo:info];
     }
     
     return OK;

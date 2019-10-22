@@ -22,11 +22,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMTerminal (GroupHistory)
-
-// group history command
-- (BOOL)checkGroupCommand:(DIMGroupCommand *)cmd commander:(DIMID *)sender;
-
-@end
-
 NS_ASSUME_NONNULL_END

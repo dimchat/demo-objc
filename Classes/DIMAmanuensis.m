@@ -115,6 +115,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 @implementation DIMAmanuensis (Message)
 
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
+    DIMContent *content = iMsg.content;
+    if ([content isKindOfClass:[DIMReceiptCommand class]]) {
+        // it's a receipt
+        NSLog(@"update target msg.state with receipt: %@", content);
+        return [self saveReceipt:iMsg];
+    }
     NSLog(@"saving message: %@", iMsg);
     
     DIMConversation *chatBox = nil;
@@ -140,14 +146,14 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (BOOL)saveReceipt:(DIMInstantMessage *)iMsg {
-    DIMReceiptCommand *receipt = (DIMReceiptCommand *)iMsg.content;
-    if (receipt.type != DKDContentType_Command ||
-        ![receipt.command isEqualToString:DIMSystemCommand_Receipt]) {
+    DIMContent *content = iMsg.content;
+    if (![content isKindOfClass:[DIMReceiptCommand class]]) {
         NSAssert(false, @"this is not a receipt: %@", iMsg);
         return NO;
     }
-    NSLog(@"saving receipt: %@", receipt);
-    
+    DIMReceiptCommand *receipt = (DIMReceiptCommand *)content;
+    NSLog(@"saving receipt: %@", iMsg);
+
     DIMConversation *chatBox = nil;
     
     // NOTE: this is the receipt's commander,

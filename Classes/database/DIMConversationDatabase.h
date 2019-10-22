@@ -30,30 +30,30 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)processGroupCommand:(DIMGroupCommand *)cmd
                   commander:(DIMID *)sender;
 
-// invite
-- (BOOL)processInviteCommand:(DIMGroupCommand *)gCmd
-                   commander:(DIMID *)sender
-                   polylogue:(DIMPolylogue *)group;
-
-// expel
-- (BOOL)processExpelCommand:(DIMGroupCommand *)gCmd
-                  commander:(DIMID *)sender
-                  polylogue:(DIMPolylogue *)group;
-
-// quit
-- (BOOL)processQuitCommand:(DIMGroupCommand *)gCmd
-                 commander:(DIMID *)sender
-                 polylogue:(DIMPolylogue *)group;
-
 // query
 - (BOOL)processQueryCommand:(DIMGroupCommand *)gCmd
                   commander:(DIMID *)sender
                   polylogue:(DIMPolylogue *)group;
 
-// reset
-- (BOOL)processResetCommand:(DIMGroupCommand *)gCmd
-                  commander:(DIMID *)sender
-                  polylogue:(DIMPolylogue *)group;
+//// reset
+//- (BOOL)processResetCommand:(DIMGroupCommand *)gCmd
+//                  commander:(DIMID *)sender
+//                  polylogue:(DIMPolylogue *)group;
+//
+//// invite
+//- (BOOL)processInviteCommand:(DIMGroupCommand *)gCmd
+//                   commander:(DIMID *)sender
+//                   polylogue:(DIMPolylogue *)group;
+//
+//// expel
+//- (BOOL)processExpelCommand:(DIMGroupCommand *)gCmd
+//                  commander:(DIMID *)sender
+//                  polylogue:(DIMPolylogue *)group;
+//
+//// quit
+//- (BOOL)processQuitCommand:(DIMGroupCommand *)gCmd
+//                 commander:(DIMID *)sender
+//                 polylogue:(DIMPolylogue *)group;
 
 @end
 
