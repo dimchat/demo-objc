@@ -170,8 +170,8 @@
     DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group message
-        NSAssert(sMsg.group == nil || [DIMIDWithString(sMsg.group) isEqual:receiver],
-                 @"group error: %@ != %@", receiver, sMsg.group);
+        NSAssert(sMsg.envelope.group == nil || [DIMIDWithString(sMsg.envelope.group) isEqual:receiver],
+                 @"group error: %@ != %@", receiver, sMsg.envelope.group);
         // check group membership
         DIMGroup *group = DIMGroupWithID(receiver);
         for (DIMLocalUser *item in self.users) {

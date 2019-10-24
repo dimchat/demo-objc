@@ -33,9 +33,7 @@
     NSString *sender = [_storeDictionary objectForKey:@"sender"];
     NSString *receiver = [_storeDictionary objectForKey:@"receiver"];
     if (sender && receiver) {
-        NSNumber *number = [_storeDictionary objectForKey:@"time"];
-        NSDate *time = NSDateFromNumber(number);
-        return DKDEnvelopeCreate(sender, receiver, time);
+        return DKDEnvelopeFromDictionary(_storeDictionary);
     } else {
         return nil;
     }

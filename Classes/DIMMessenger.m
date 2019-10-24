@@ -96,9 +96,9 @@ SingletonImplementations(DIMMessenger, sharedInstance)
     DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
     
     // 1.1. check group
-    NSString *group = [iMsg group];
+    NSString *group = iMsg.content.group;
     if (group) {
-        [sMsg setGroup:group];
+        sMsg.envelope.group = group;
     }
 
     // 2. sign 'data' by sender
