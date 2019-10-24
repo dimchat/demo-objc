@@ -11,13 +11,13 @@
 #import "DIMClientConstants.h"
 #import "DIMConversationDatabase.h"
 
+NSString * const DIMConversationUpdatedNotification = @"DIMConversationUpdatedNotification";
+
 typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
 
 @interface DIMConversationDatabase () {
     
     DIMMessageTable *_messageTable;
-    
-    // memory cache
     ConversationTableM *_conversationTable;
 }
 
@@ -70,7 +70,7 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     BOOL result = [_messageTable markConversationMessageRead:chatBox.ID];
     
     if(result){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ConversationUpdated object:nil userInfo:@{@"ID": chatBox.ID}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DIMConversationUpdatedNotification object:nil userInfo:@{@"ID": chatBox.ID}];
     }
     
     return result;
@@ -156,9 +156,9 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     if(result){
         [_conversationTable setObject:chatBox forKey:chatBox.ID];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ConversationUpdated object:nil userInfo:@{@"ID": chatBox.ID}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DIMConversationUpdatedNotification object:nil userInfo:@{@"ID": chatBox.ID}];
         NSDictionary *userInfo = @{@"Conversation": chatBox.ID, @"Message": iMsg};
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_MessageInserted object:nil userInfo:userInfo];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DIMMessageInsertedNotifiation object:nil userInfo:userInfo];
     }
     
     return result;

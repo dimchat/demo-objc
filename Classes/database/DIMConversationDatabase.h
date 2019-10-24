@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString * const DIMConversationUpdatedNotification;
+
 @protocol DIMConversationDatabase <DIMConversationDataSource, DIMConversationDelegate>
 
 - (NSArray<DIMConversation *> *)allConversations;
@@ -34,26 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)processQueryCommand:(DIMGroupCommand *)gCmd
                   commander:(DIMID *)sender
                   polylogue:(DIMPolylogue *)group;
-
-//// reset
-//- (BOOL)processResetCommand:(DIMGroupCommand *)gCmd
-//                  commander:(DIMID *)sender
-//                  polylogue:(DIMPolylogue *)group;
-//
-//// invite
-//- (BOOL)processInviteCommand:(DIMGroupCommand *)gCmd
-//                   commander:(DIMID *)sender
-//                   polylogue:(DIMPolylogue *)group;
-//
-//// expel
-//- (BOOL)processExpelCommand:(DIMGroupCommand *)gCmd
-//                  commander:(DIMID *)sender
-//                  polylogue:(DIMPolylogue *)group;
-//
-//// quit
-//- (BOOL)processQuitCommand:(DIMGroupCommand *)gCmd
-//                 commander:(DIMID *)sender
-//                 polylogue:(DIMPolylogue *)group;
 
 @end
 
