@@ -95,11 +95,18 @@ SingletonImplementations(DIMMessenger, sharedInstance)
     // 1. encrypt 'content' to 'data' for receiver
     DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
     
-    // 1.1. check group
+    // 1.1. check and copy group to envelope
     NSString *group = iMsg.content.group;
     if (group) {
+        // NOTICE: this help the receiver knows the group ID
+        //         when the group message separated to multi-messages,
+        //         if don't want the others know you are the group members,
+        //         remove it.
         sMsg.envelope.group = group;
     }
+    // 1.2. copy content type to envelope
+    //      NOTICE: this help the intermediate nodes to recognize message type
+    sMsg.envelope.type = iMsg.content.type;
 
     // 2. sign 'data' by sender
     DIMReliableMessage *rMsg = [self signMessage:sMsg];
