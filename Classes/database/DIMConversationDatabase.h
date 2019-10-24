@@ -10,8 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const DIMConversationUpdatedNotification;
-
 @protocol DIMConversationDatabase <DIMConversationDataSource, DIMConversationDelegate>
 
 - (NSArray<DIMConversation *> *)allConversations;

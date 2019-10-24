@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString * const DIMConversationUpdatedNotification;
 extern NSString * const DIMMessageInsertedNotifiation;
 extern NSString * const kNotificationName_MessageRemoved;
 extern NSString * const kNotificationName_MessageWithdrawed;

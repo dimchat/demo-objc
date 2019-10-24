@@ -11,8 +11,6 @@
 #import "DIMClientConstants.h"
 #import "DIMConversationDatabase.h"
 
-NSString * const DIMConversationUpdatedNotification = @"DIMConversationUpdatedNotification";
-
 typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
 
 @interface DIMConversationDatabase () {

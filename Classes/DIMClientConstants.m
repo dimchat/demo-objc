@@ -8,6 +8,7 @@
 
 #import "DIMClientConstants.h"
 
+NSString * const DIMConversationUpdatedNotification = @"DIMConversationUpdatedNotification";
 NSString * const DIMMessageInsertedNotifiation = @"DIMMessageInsertedNotifiation";
 NSString * const kNotificationName_MessageRemoved = @"DIM_MessageRemoved";
 NSString * const kNotificationName_MessageWithdrawed = @"DIM_MessageWithdrawed";
