@@ -42,6 +42,8 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 
 // Plug-Ins
 #import <DIMClient/DIMReceiptCommand.h>
+#import <DIMClient/DIMBlockCommand.h>
+#import <DIMClient/DIMMuteCommand.h>
 
 // Database
 #import <DIMClient/DIMClientConstants.h>
