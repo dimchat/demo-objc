@@ -74,6 +74,49 @@
     if(!success){
         NSLog(@"Can not create conversation table");
     }
+    
+    sql = @"CREATE TABLE IF NOT EXISTS mute_list (conversation_id text, user text, PRIMARY KEY(conversation_id, user));";
+    success = [self.db executeStatements:sql];
+    
+    if(!success){
+        NSLog(@"Can not create mute_list table");
+    }
+}
+
+-(NSArray <DIMID *>*)muteListForUser:(DIMID *)user{
+    
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT * FROM mute_list where user = '%@'", user];
+    FMResultSet *s = [self.db executeQuery:sql];
+    while ([s next]) {
+        
+        NSString *IDString = [s stringForColumnIndex:0];
+        DIMID *ID = DIMIDWithString(IDString);
+        [array addObject:ID];
+    }
+    return array;
+}
+
+-(BOOL)isConversation:(DIMID *)conversation forUser:(DIMID *)user{
+    
+    NSString *sql = [NSString stringWithFormat:@"SELECT * FROM mute_list where user = '%@' and conversation_id='%@'", user, conversation];
+    FMResultSet *s = [self.db executeQuery:sql];
+    return [s next];
+}
+
+-(BOOL)muteConversation:(DIMID *)conversation forUser:(DIMID *)user{
+    
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO mute_list (conversation_id, user)  VALUES ('%@', '%@');", conversation, user];
+    BOOL success = [self.db executeStatements:sql];
+    return success;
+}
+
+-(BOOL)unmuteConversation:(DIMID *)conversation forUser:(DIMID *)user{
+    
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM mute_list WHERE conversation_id='%@' AND user='%@';", conversation, user];
+    BOOL success = [self.db executeStatements:sql];
+    return success;
 }
 
 -(BOOL)insertConversation:(DIMID *)conversationID{

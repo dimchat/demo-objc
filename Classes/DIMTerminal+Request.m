@@ -13,7 +13,7 @@
 
 #import "DIMFacebook.h"
 #import "DIMMessenger.h"
-
+#import <DIMClient/DIMClient.h>
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 
@@ -192,6 +192,12 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     DIMCommand *cmd = [[DIMCommand alloc] initWithCommand:@"contacts"];
     [cmd setObject:ID forKey:@"ID"];
     // send to station
+    [self sendCommand:cmd];
+}
+
+-(void)getMuteList{
+    
+    DIMCommand *cmd = [[DIMMuteCommand alloc] initWithList:nil];
     [self sendCommand:cmd];
 }
 

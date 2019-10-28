@@ -7,7 +7,6 @@
 //
 
 #import <DIMClient/DIMClient.h>
-
 #import "DIMMuteCommand.h"
 
 @interface DIMMuteCommand () {

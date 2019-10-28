@@ -141,6 +141,10 @@
         [self processContactsCommand:cmd];
         return YES;
     }
+    if([command isEqualToString:@"mute"]){
+        [self processMuteCommand:cmd];
+        return YES;
+    }
     
     // NOTE: let the MessageProcessor(DB) to do the job
     return NO;

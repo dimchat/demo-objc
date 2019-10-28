@@ -22,7 +22,7 @@ extern NSString * const kNotificationName_SearchUsersUpdated;
 - (void)processOnlineUsersCommand:(DIMCommand *)cmd;
 - (void)processSearchUsersCommand:(DIMCommand *)cmd;
 - (void)processContactsCommand:(DIMCommand *)cmd;
-
+-(void)processMuteCommand:(DIMCommand *)cmd;
 - (void)addUserToContact:(NSString *)itemString;
 
 @end

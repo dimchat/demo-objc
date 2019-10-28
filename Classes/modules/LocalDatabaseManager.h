@@ -28,6 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 -(BOOL)markMessageRead:(DIMID *)conversationID;
 -(NSInteger)getUnreadMessageCount:(nullable DIMID *)conversationID;
 
+-(NSArray <DIMID *>*)muteListForUser:(DIMID *)user;
+-(BOOL)isConversation:(DIMID *)conversation forUser:(DIMID *)user;
+-(BOOL)muteConversation:(DIMID *)conversation forUser:(DIMID *)user;
+-(BOOL)unmuteConversation:(DIMID *)conversation forUser:(DIMID *)user;
+
 @end
 
 NS_ASSUME_NONNULL_END
