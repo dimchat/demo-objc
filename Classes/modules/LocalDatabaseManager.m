@@ -119,6 +119,13 @@
     return success;
 }
 
+-(BOOL)unmuteAllConversationForUser:(DIMID *)user{
+    
+    NSString *sql = [NSString stringWithFormat:@"DELETE FROM mute_list WHERE user='%@';", user];
+    BOOL success = [self.db executeStatements:sql];
+    return success;
+}
+
 -(BOOL)insertConversation:(DIMID *)conversationID{
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO conversation (conversation_id, name, image, last_message, last_time) VALUES ('%@', '', '', '', 0);", conversationID];

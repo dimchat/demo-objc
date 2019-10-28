@@ -130,7 +130,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
         _uploadAPI = nil;
         _downloadAPI = nil;
         
-        _uploadings = [[NSMutableDictionary alloc] init];
+       _uploadings  = [[NSMutableDictionary alloc] init];
         _downloadings = [[NSMutableDictionary alloc] init];
     }
     return self;

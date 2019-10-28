@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(BOOL)isConversation:(DIMID *)conversation forUser:(DIMID *)user;
 -(BOOL)muteConversation:(DIMID *)conversation forUser:(DIMID *)user;
 -(BOOL)unmuteConversation:(DIMID *)conversation forUser:(DIMID *)user;
+-(BOOL)unmuteAllConversationForUser:(DIMID *)user;
 
 @end
 

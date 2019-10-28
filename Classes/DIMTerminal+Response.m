@@ -14,6 +14,8 @@
 #import "DIMTerminal+Request.h"
 #import "NSString+Crypto.h"
 #import "DIMTerminal+Response.h"
+#import "DIMMuteCommand.h"
+#import "LocalDatabaseManager.h"
 
 NSString * const kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
 NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
@@ -90,6 +92,19 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 -(void)processMuteCommand:(DIMCommand *)cmd{
     
     NSLog(@"%@", cmd);
+    
+    DIMMuteCommand *muteCommand = (DIMMuteCommand *)cmd;
+    NSArray *muteList = muteCommand.list;
+    
+    DIMLocalUser *user = [self currentUser];
+    LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
+    [manager unmuteAllConversationForUser:user.ID];
+    
+    for(NSString *conversationString in muteList){
+        
+        DIMID *conversationID = DIMIDWithString(conversationString);
+        [manager muteConversation:conversationID forUser:user.ID];
+    }
 }
 
 - (void)processContactsCommand:(DIMCommand *)cmd{
