@@ -16,7 +16,7 @@
 @implementation DIMReceiptCommand
 
 - (instancetype)initWithMessage:(NSString *)message {
-    if (self = [self initWithCommand:DIMSystemCommand_Receipt]) {
+    if (self = [self initWithCommand:DIMCommand_Receipt]) {
         // message
         if (message) {
             [_storeDictionary setObject:message forKey:@"message"];

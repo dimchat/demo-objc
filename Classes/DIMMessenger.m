@@ -10,6 +10,8 @@
 #import "NSObject+Singleton.h"
 #import "DKDInstantMessage+Extension.h"
 #import "DIMReceiptCommand.h"
+#import "DIMMuteCommand.h"
+#import "DIMBlockCommand.h"
 
 #import "DIMFacebook.h"
 #import "DIMKeyStore.h"
@@ -18,7 +20,9 @@
 
 static inline void loadCommandClasses(void) {
     // register new command classes
-    [DIMCommand registerClass:[DIMReceiptCommand class] forCommand:DIMSystemCommand_Receipt];
+    [DIMCommand registerClass:[DIMReceiptCommand class] forCommand:DIMCommand_Receipt];
+    [DIMCommand registerClass:[DIMMuteCommand class] forCommand:DIMCommand_Mute];
+    [DIMCommand registerClass:[DIMBlockCommand class] forCommand:DIMCommand_Block];
 }
 
 @implementation DIMMessenger
