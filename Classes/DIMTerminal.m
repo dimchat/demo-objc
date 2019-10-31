@@ -19,7 +19,7 @@
 #import "DIMTerminal+Request.h"
 #import "DIMTerminal+Response.h"
 #import "DIMTerminal+Group.h"
-
+#import "DIMMuteCommand.h"
 #import "DIMTerminal.h"
 
 @interface DIMTerminal ()
@@ -101,7 +101,13 @@
     }
     // history command
     if ([cmd isKindOfClass:[DIMHistoryCommand class]]) {
-        NSAssert(false, @"history command not supported yet: %@", cmd);
+        //NSAssert(false, @"history command not supported yet: %@", cmd);
+        
+        if([cmd isKindOfClass:[DIMMuteCommand class]]){
+            [self processMuteCommand:(DIMMuteCommand *)cmd];
+            return YES;
+        }
+        
         return NO;
     }
     
@@ -139,10 +145,6 @@
     if ([command isEqualToString:@"contacts"]) {
         // get contacts response
         [self processContactsCommand:cmd];
-        return YES;
-    }
-    if([command isEqualToString:@"mute"]){
-        [self processMuteCommand:cmd];
         return YES;
     }
     

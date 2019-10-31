@@ -89,12 +89,9 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     [NSNotificationCenter postNotificationName:kNotificationName_SearchUsersUpdated object:self userInfo:mDict];
 }
 
--(void)processMuteCommand:(DIMCommand *)cmd{
+-(void)processMuteCommand:(DIMMuteCommand *)cmd{
     
-    NSLog(@"%@", cmd);
-    
-    DIMMuteCommand *muteCommand = (DIMMuteCommand *)cmd;
-    NSArray *muteList = muteCommand.list;
+    NSArray *muteList = cmd.list;
     
     DIMLocalUser *user = [self currentUser];
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];

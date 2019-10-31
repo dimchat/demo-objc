@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const kNotificationName_OnlineUsersUpdated;
 extern NSString * const kNotificationName_SearchUsersUpdated;
 
+@class DIMMuteCommand;
+
 @interface DIMTerminal (Response)
 
 - (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
@@ -22,7 +24,7 @@ extern NSString * const kNotificationName_SearchUsersUpdated;
 - (void)processOnlineUsersCommand:(DIMCommand *)cmd;
 - (void)processSearchUsersCommand:(DIMCommand *)cmd;
 - (void)processContactsCommand:(DIMCommand *)cmd;
-- (void)processMuteCommand:(DIMCommand *)cmd;
+- (void)processMuteCommand:(DIMMuteCommand *)cmd;
 - (void)addUserToContact:(NSString *)itemString;
 
 @end
