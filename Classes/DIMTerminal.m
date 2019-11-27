@@ -1,3 +1,32 @@
+// license: https://mit-license.org
+//
+//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//
+//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//
+// =============================================================================
+// The MIT License (MIT)
+//
+// Copyright (c) 2019 Albert Moky
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// =============================================================================
 //
 //  DIMTerminal.m
 //  DIMClient
@@ -46,15 +75,15 @@
 
 #pragma mark - User(s)
 
-- (NSArray<DIMLocalUser *> *)users {
+- (NSArray<DIMUser *> *)users {
     return [_users copy];
 }
 
-- (DIMLocalUser *)currentUser {
+- (DIMUser *)currentUser {
     return _currentStation.currentUser;
 }
 
-- (void)setCurrentUser:(DIMLocalUser *)user {
+- (void)setCurrentUser:(DIMUser *)user {
     _currentStation.currentUser = user;
     if (user && ![_users containsObject:user]) {
         // insert the user to the first
@@ -66,7 +95,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)addUser:(DIMLocalUser *)user {
+- (void)addUser:(DIMUser *)user {
     NSAssert([user.ID isValid], @"invalid user: %@", user);
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
@@ -77,7 +106,7 @@
     }
 }
 
-- (void)removeUser:(DIMLocalUser *)user {
+- (void)removeUser:(DIMUser *)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }
@@ -172,7 +201,7 @@
     }
     
     // 3. check receiver
-    DIMLocalUser *user = nil;
+    DIMUser *user = nil;
     DIMID *receiver = DIMIDWithString(rMsg.envelope.receiver);
     if (MKMNetwork_IsGroup(receiver.type)) {
         // group message
@@ -180,7 +209,7 @@
                  @"group error: %@ != %@", receiver, sMsg.envelope.group);
         // check group membership
         DIMGroup *group = DIMGroupWithID(receiver);
-        for (DIMLocalUser *item in self.users) {
+        for (DIMUser *item in self.users) {
             if ([group existsMember:item.ID]) {
                 user = item;
                 NSLog(@"got new message for: %@", item.ID);
@@ -192,7 +221,7 @@
             sMsg = [sMsg trimForMember:user.ID];
         }
     } else {
-        for (DIMLocalUser *item in self.users) {
+        for (DIMUser *item in self.users) {
             if ([item.ID isEqual:receiver]) {
                 user = item;
                 NSLog(@"got new message for: %@", item.ID);
