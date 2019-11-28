@@ -28,44 +28,41 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMServer.h
+//  DIMAddressNameService.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/3/1.
+//  Created by Albert Moky on 2019/11/28.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <MarsGate/StarGate.h>
 #import <DIMCore/DIMCore.h>
-
-#import "DIMMessenger.h"
-#import "DIMServerState.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const kNotificationName_ServerStateChanged;
+@class DIMID;
 
-@interface DIMServer : DIMStation <DIMMessengerDelegate, SGStarDelegate, FSMDelegate> {
-    
-    DIMUser *_currentUser;
-    
-    DIMServerStateMachine *_fsm;
-}
+@protocol DIMAddressNameService <NSObject>
 
-@property (strong, nonatomic) DIMUser *currentUser;
+- (nullable DIMID *)IDWithName:(NSString *)username;
 
-@property (readonly, strong, nonatomic) id<SGStar> star;
+- (nullable NSArray<NSString *> *)namesWithID:(DIMID *)ID;
 
-- (void)handshakeWithSession:(nullable NSString *)session;
-- (void)handshakeAccepted:(BOOL)success session:(nullable NSString *)session;
+@end
 
-#pragma mark -
+@interface DIMAddressNameService : NSObject <DIMAddressNameService>
 
-- (void)startWithOptions:(nullable NSDictionary *)launchOptions;
-- (void)end;
+- (BOOL)isReservedName:(NSString *)username;
 
-- (void)pause;
-- (void)resume;
+- (BOOL)cacheID:(DIMID *)ID withName:(NSString *)username;
+
+/**
+ *  Save ANS record
+ *
+ * @param username - short name for user ID
+ * @param ID - user ID; if empty, means delete this name
+ * @return true on success
+ */
+- (BOOL)saveID:(DIMID *)ID withName:(NSString *)username;
 
 @end
 

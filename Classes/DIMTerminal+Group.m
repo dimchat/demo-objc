@@ -179,7 +179,7 @@
     DIMUser *user = self.currentUser;
     
     // generate group meta with current user's private key
-    DIMPrivateKey *SK = [facebook privateKeyForSignatureOfUser:user.ID];
+    id<MKMPrivateKey> SK = (id)[facebook privateKeyForSignature:user.ID];
     DIMMeta *meta = MKMMetaGenerate(MKMMetaDefaultVersion, SK, seed);
     // generate group ID
     DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
@@ -190,7 +190,7 @@
     NSData *data = [dict jsonData];
     NSData *signature = [user sign:data];
     DIMProfile *profile = [[DIMProfile alloc] initWithID:ID
-                                                    data:[data UTF8String]
+                                                    data:data
                                                signature:signature];
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
     

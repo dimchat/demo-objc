@@ -157,7 +157,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
             
             //Request Group Meta and save to local
             DIMMetaForID(ID);
-            [[DIMFacebook sharedInstance] user:user addContact:ID];
+            [[DIMFacebook sharedInstance] user:user.ID addContact:ID];
         }else{
             [self addUserToContact:address];
         }
@@ -182,7 +182,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     [self sendContent:cmd to:ID];
     
     // add to contacts
-    [[DIMFacebook sharedInstance] user:user addContact:ID];
+    [[DIMFacebook sharedInstance] user:user.ID addContact:ID];
 }
 
 @end

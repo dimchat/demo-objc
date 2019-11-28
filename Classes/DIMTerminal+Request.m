@@ -71,7 +71,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     // make instant message
     DIMInstantMessage *iMsg = DKDInstantMessageCreate(content, sender, receiver, nil);
     // callback
-    DIMTransceiverCallback callback;
+    DIMMessengerCallback callback;
     callback = ^(DIMReliableMessage *rMsg, NSError *error) {
         NSString *name = nil;
         if (error) {
@@ -171,7 +171,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         return ;
     }
     
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:profile.ID
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
                                                     profile:profile];
     [self sendCommand:cmd];
 }
@@ -183,7 +183,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return ;
     }
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:profile.ID
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
                                                     profile:profile];
     NSArray<DIMID *> *contacts = user.contacts;
     for (DIMID *contact in contacts) {

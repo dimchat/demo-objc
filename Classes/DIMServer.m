@@ -55,9 +55,9 @@
 @interface PackageHandler : NSObject
 
 @property (strong, nonatomic) NSData *data;
-@property (nonatomic) DIMTransceiverCompletionHandler handler;
+@property (nonatomic) DIMMessengerCompletionHandler handler;
 
-- (instancetype)initWithData:(NSData *)data handler:(DIMTransceiverCompletionHandler)handler;
+- (instancetype)initWithData:(NSData *)data handler:(DIMMessengerCompletionHandler)handler;
 
 + (id<NSCopying>)keyWithData:(NSData *)data;
 
@@ -66,7 +66,7 @@
 @implementation PackageHandler
 
 - (instancetype)initWithData:(NSData *)data
-                     handler:(DIMTransceiverCompletionHandler)handler {
+                     handler:(DIMMessengerCompletionHandler)handler {
     if (self = [self init]) {
         _data = data;
         _handler = handler;
@@ -141,13 +141,14 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         NSLog(@"star status error: %d", _star.status);
         return ;
     }
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
     
     DIMHandshakeCommand *cmd;
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
     NSLog(@"handshake command: %@", cmd);
     
     DIMInstantMessage *iMsg = DKDInstantMessageCreate(cmd, _currentUser.ID, _ID, nil);
-    DIMReliableMessage *rMsg = [[DIMMessenger sharedInstance] encryptAndSignMessage:iMsg];
+    DIMReliableMessage *rMsg = [messenger signMessage:[messenger encryptMessage:iMsg]];
     if (!rMsg) {
         NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
         return ;
@@ -251,7 +252,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (void)star:(id<SGStar>)star onFinishSend:(NSData *)requestData withError:(NSError *)error {
-    DIMTransceiverCompletionHandler handler = NULL;
+    DIMMessengerCompletionHandler handler = NULL;
     
     id key = [PackageHandler keyWithData:requestData];
     PackageHandler *wrapper = [_sendingTable objectForKey:key];
@@ -283,7 +284,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 #pragma mark DKDTransceiverDelegate
 
-- (BOOL)sendPackage:(NSData *)data completionHandler:(nullable DIMTransceiverCompletionHandler)handler {
+- (BOOL)sendPackage:(NSData *)data completionHandler:(nullable DIMMessengerCompletionHandler)handler {
     NSLog(@"sending data len: %ld", data.length);
     NSAssert(_star, @"star not found");
     

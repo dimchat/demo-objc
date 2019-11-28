@@ -47,11 +47,11 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMUserWithID(ID)        [[DIMFacebook sharedInstance] userWithID:(ID)]
 #define DIMGroupWithID(ID)       [[DIMFacebook sharedInstance] groupWithID:(ID)]
 
-@protocol DIMSocialNetworkDatabase;
+@protocol DIMAddressNameService;
 
 @interface DIMFacebook : DIMBarrack
 
-@property (weak, nonatomic, nullable) id<DIMSocialNetworkDatabase> database;
+@property (weak, nonatomic) id<DIMAddressNameService> ans;
 
 + (instancetype)sharedInstance;
 
@@ -61,31 +61,133 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFacebook (Storage)
 
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID;
+#pragma mark Meta
+
+- (BOOL)verifyMeta:(DIMMeta *)meta forID:(DIMID *)ID;
+
+/**
+ *  Save meta for entity ID (must verify first)
+ *
+ * @param meta - entity meta
+ * @param ID - entity ID
+ * @return true on success
+ */
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
+
+/**
+ *  Load meta for entity ID
+ *
+ * @param ID - entity ID
+ * @return Meta object on success
+ */
+- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID;
+
+#pragma mark Profile
+
+- (BOOL)verifyProfile:(DIMProfile *)profile forID:(DIMID *)ID;
+- (BOOL)verifyProfile:(DIMProfile *)profile;
+
+- (BOOL)cacheProfile:(DIMProfile *)profile forID:(DIMID *)ID;
+- (BOOL)cacheProfile:(DIMProfile *)profile;
+
+/**
+ *  Save profile with entity ID (must verify first)
+ *
+ * @param profile - entity profile
+ * @return true on success
+ */
 - (BOOL)saveProfile:(DIMProfile *)profile;
 
-- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user;
-- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group;
+/**
+ *  Load profile for entity ID
+ *
+ * @param ID - entity ID
+ * @return Profile object on success
+ */
+- (nullable DIMProfile *)loadProfileForID:(DIMID *)ID;
+
+#pragma mark Private Key
+
+- (BOOL)cachePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
+
+/**
+ *  Save private key for user ID
+ *
+ * @param key - private key
+ * @param ID - user ID
+ * @return true on success
+ */
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
+
+/**
+ *  Load private key for user ID
+ *
+ * @param ID - user ID
+ * @return PrivateKey object on success
+ */
+- (nullable DIMPrivateKey *)loadPrivateKey:(DIMID *)ID;
+
+#pragma mark User Contacts
+
+- (BOOL)cacheContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;
+
+/**
+ *  Save contacts for user
+ *
+ * @param contacts - contact ID list
+ * @param ID - user ID
+ * @return true on success
+ */
+- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;
+
+/**
+ *  Load contacts for user
+ *
+ * @param ID - user ID
+ * @return contact ID list on success
+ */
+- (nullable NSArray<DIMID *> *)loadContacts:(DIMID *)ID;
+
+#pragma mark Group Members
+
+- (BOOL)cacheMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID;
+
+/**
+ *  Save members of group
+ *
+ * @param members - member ID list
+ * @param ID - group ID
+ * @return true on success
+ */
+- (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID;
+
+/**
+ *  Load members of group
+ *
+ * @param ID - group ID
+ * @return member ID list on success
+ */
+- (nullable NSArray<DIMID *> *)loadMembers:(DIMID *)ID;
 
 @end
 
 @interface DIMFacebook (Relationship)
 
-- (BOOL)user:(DIMUser *)user hasContact:(DIMID *)contact;
-- (BOOL)user:(DIMUser *)user addContact:(DIMID *)contact;
-- (BOOL)user:(DIMUser *)user removeContact:(DIMID *)contact;
+- (BOOL)user:(DIMID *)user hasContact:(DIMID *)contact;
+- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact;
+- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact;
 
-- (BOOL)group:(DIMGroup *)group addMember:(DIMID *)member;
-- (BOOL)group:(DIMGroup *)group removeMember:(DIMID *)member;
+- (BOOL)group:(DIMID *)group isFounder:(DIMID *)member;
+- (BOOL)group:(DIMID *)group isOwner:(DIMID *)member;
 
-/**
- *  Get group assistants
- *
- * @param group - group ID
- * @return owner ID
- */
+- (BOOL)group:(DIMID *)group hasMember:(DIMID *)member;
+- (BOOL)group:(DIMID *)group addMember:(DIMID *)member;
+- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member;
+
+#pragma mark Assistant
+
 - (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group;
+- (BOOL)group:(DIMGroup *)group hasAssistant:(DIMID *)assistant;
 
 @end
 

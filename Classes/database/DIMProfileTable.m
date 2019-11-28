@@ -1,3 +1,32 @@
+// license: https://mit-license.org
+//
+//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//
+//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//
+// =============================================================================
+// The MIT License (MIT)
+//
+// Copyright (c) 2019 Albert Moky
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+// =============================================================================
 //
 //  DIMProfileTable.m
 //  DIMClient
@@ -42,38 +71,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
     return [dir stringByAppendingPathComponent:@"profile.plist"];
 }
 
-- (BOOL)_verifyProfile:(DIMProfile *)profile {
-    if (!profile) {
-        return NO;
-    } else if ([profile isValid]) {
-        // already verified
-        return YES;
-    }
-    DIMID *ID = profile.ID;
-    NSAssert([ID isValid], @"profile ID not valid: %@", profile);
-    DIMMeta *meta = nil;
-    // check signer
-    if (MKMNetwork_IsUser(ID.type)) {
-        // verify with user's meta.key
-        meta = DIMMetaForID(ID);
-    } else if (MKMNetwork_IsGroup(ID.type)) {
-        if (ID.type == MKMNetwork_Polylogue) {
-            // verify with group found's key (AKA meta.key)
-            meta = DIMMetaForID(ID);
-        } else {
-            // verify with group owner's meta.key
-            DIMGroup *group = DIMGroupWithID(ID);
-            DIMID *owner = group.owner;
-            if ([owner isValid]) {
-                meta = DIMMetaForID(owner);
-            }
-        }
-    }
-    return [profile verify:meta.key];
-}
-
 - (BOOL)_cacheProfile:(DIMProfile *)profile {
-    if (![self _verifyProfile:profile]) {
+    if (![profile isValid]) {
         //NSAssert(false, @"profile not valid: %@", profile);
         return NO;
     }
@@ -117,7 +116,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
     if (![self _cacheProfile:profile]) {
         return NO;
     }
-    NSString *path = [self _filePathWithID:profile.ID];
+    DIMID *ID = DIMIDWithString(profile.ID);
+    NSString *path = [self _filePathWithID:ID];
     NSLog(@"saving profile into: %@", path);
     BOOL result = [self dictionary:profile writeToBinaryFile:path];
     
