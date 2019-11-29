@@ -28,31 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal+Response.h
+//  DIMSearchCommandProcessor.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/28.
+//  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMTerminal.h"
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-//extern NSString * const kNotificationName_OnlineUsersUpdated;
-//extern NSString * const kNotificationName_SearchUsersUpdated;
-
-@class DIMMuteCommand;
-
-@interface DIMTerminal (Response)
-
-- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
-- (void)processOnlineUsersCommand:(DIMCommand *)cmd;
-- (void)processSearchUsersCommand:(DIMCommand *)cmd;
-- (void)processContactsCommand:(DIMCommand *)cmd;
-- (void)processMuteCommand:(DIMMuteCommand *)cmd;
-- (void)addUserToContact:(NSString *)itemString;
+@interface DIMSearchCommandProcessor : DIMCommandProcessor
 
 @end
 

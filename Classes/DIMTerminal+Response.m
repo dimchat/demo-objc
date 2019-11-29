@@ -47,49 +47,7 @@
 #import "DIMTerminal+Response.h"
 #import "LocalDatabaseManager.h"
 
-NSString * const kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";
-NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
-
 @implementation DIMTerminal (Response)
-
-- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd {
-    DIMHandshakeState state = cmd.state;
-    if (state == DIMHandshake_Success) {
-        // handshake OK
-        NSLog(@"handshake accepted: %@", self.currentUser);
-        NSLog(@"current station: %@", self);
-        [_currentStation handshakeAccepted:YES session:_session];
-        [self onHandshakeAccepted:_session];
-    } else if (state == DIMHandshake_Again) {
-        // update session and handshake again
-        NSString *session = cmd.sessionKey;
-        NSLog(@"session %@ -> %@", _session, session);
-        _session = session;
-        [_currentStation handshakeWithSession:session];
-    } else {
-        NSLog(@"handshake rejected: %@", cmd);
-        [_currentStation handshakeAccepted:NO session:nil];
-    }
-}
-
-- (void)processOnlineUsersCommand:(DIMCommand *)cmd {
-    NSArray *users = [cmd objectForKey:@"users"];
-    NSDictionary *info = @{@"users": users};
-    [NSNotificationCenter postNotificationName:kNotificationName_OnlineUsersUpdated object:self userInfo:info];
-}
-
-- (void)processSearchUsersCommand:(DIMCommand *)cmd {
-    NSArray *users = [cmd objectForKey:@"users"];
-    NSDictionary *results = [cmd objectForKey:@"results"];
-    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:2];
-    if (users) {
-        [mDict setObject:users forKey:@"users"];
-    }
-    if (results) {
-        [mDict setObject:results forKey:@"results"];
-    }
-    [NSNotificationCenter postNotificationName:kNotificationName_SearchUsersUpdated object:self userInfo:mDict];
-}
 
 -(void)processMuteCommand:(DIMMuteCommand *)cmd{
     

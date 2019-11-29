@@ -37,14 +37,26 @@
 
 #import "NSObject+Singleton.h"
 
+#import "DIMSearchCommand.h"
+
 #import "DIMHandshakeCommandProcessor.h"
+#import "DIMSearchCommandProcessor.h"
 
 #import "DIMAmanuensis.h"
 
 #import "DIMSharedMessenger.h"
 
+static inline void load_cmd_classes(void) {
+    [DIMCommand registerClass:[DIMSearchCommand class] forCommand:DIMCommand_Search];
+    [DIMCommand registerClass:[DIMSearchCommand class] forCommand:DIMCommand_OnlineUsers];
+}
+
 static inline void load_cpu_classes(void) {
+    
     [DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class] forCommand:DIMCommand_Handshake];
+    
+    [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_Search];
+    [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_OnlineUsers];
 }
 
 @implementation DIMSharedMessenger
@@ -55,6 +67,7 @@ SingletonImplementations(DIMSharedMessenger, sharedInstance)
     if (self = [super init]) {
         // register CPU classes
         SingletonDispatchOnce(^{
+            load_cmd_classes();
             load_cpu_classes();
         });
     }

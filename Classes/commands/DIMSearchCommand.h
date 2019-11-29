@@ -28,31 +28,36 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal+Response.h
+//  DIMSearchCommand.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/28.
+//  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMTerminal.h"
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define DIMCommand_Search      @"search"
+#define DIMCommand_OnlineUsers @"users"
 
-//extern NSString * const kNotificationName_OnlineUsersUpdated;
-//extern NSString * const kNotificationName_SearchUsersUpdated;
+@interface DIMSearchCommand : DIMCommand
 
-@class DIMMuteCommand;
+@property (readonly, strong, nonatomic, nullable) NSArray *users;
+@property (readonly, strong, nonatomic, nullable) NSDictionary *results;
 
-@interface DIMTerminal (Response)
-
-- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
-- (void)processOnlineUsersCommand:(DIMCommand *)cmd;
-- (void)processSearchUsersCommand:(DIMCommand *)cmd;
-- (void)processContactsCommand:(DIMCommand *)cmd;
-- (void)processMuteCommand:(DIMMuteCommand *)cmd;
-- (void)addUserToContact:(NSString *)itemString;
+/*
+*  Command message: {
+*      type : 0x88,
+*      sn   : 123,
+*
+*      command : "search",        // "users"
+*      users   : ["ID"],          // user ID list
+*      results : {"ID": {meta}, } // user's meta
+*  }
+*/
+- (instancetype)initWithKeywords:(NSString *)string;
 
 @end
 

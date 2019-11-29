@@ -28,32 +28,39 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal+Response.h
+//  DIMSearchCommand.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/28.
+//  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMTerminal.h"
+#import "DIMSearchCommand.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation DIMSearchCommand
 
+- (instancetype)initWithKeywords:(NSString *)string {
+    NSString *command;
+    if ([string isEqualToString:DIMCommand_OnlineUsers]) {
+        command = DIMCommand_OnlineUsers;
+        string = nil;
+    } else {
+        command = DIMCommand_Search;
+    }
+    if (self = [self initWithCommand:command]) {
+        if (string) {
+            [_storeDictionary setObject:string forKey:@"keywords"];
+        }
+    }
+    return self;
+}
 
-//extern NSString * const kNotificationName_OnlineUsersUpdated;
-//extern NSString * const kNotificationName_SearchUsersUpdated;
+- (nullable NSArray *)users {
+    return [_storeDictionary objectForKey:@"users"];
+}
 
-@class DIMMuteCommand;
-
-@interface DIMTerminal (Response)
-
-- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
-- (void)processOnlineUsersCommand:(DIMCommand *)cmd;
-- (void)processSearchUsersCommand:(DIMCommand *)cmd;
-- (void)processContactsCommand:(DIMCommand *)cmd;
-- (void)processMuteCommand:(DIMMuteCommand *)cmd;
-- (void)addUserToContact:(NSString *)itemString;
+- (nullable NSDictionary *)results {
+    return [_storeDictionary objectForKey:@"result"];
+}
 
 @end
-
-NS_ASSUME_NONNULL_END
