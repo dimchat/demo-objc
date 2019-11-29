@@ -47,9 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTerminal (Response)
 
-- (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
-- (void)processOnlineUsersCommand:(DIMCommand *)cmd;
-- (void)processSearchUsersCommand:(DIMCommand *)cmd;
 - (void)processContactsCommand:(DIMCommand *)cmd;
 - (void)processMuteCommand:(DIMMuteCommand *)cmd;
 - (void)addUserToContact:(NSString *)itemString;

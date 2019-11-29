@@ -144,24 +144,9 @@
     //
     //  system commands
     //
-    if ([cmd isKindOfClass:[DIMHandshakeCommand class]]) {
-        // handshake
-        [self processHandshakeCommand:(DIMHandshakeCommand *)cmd];
-        return YES;
-    }
     
     // other commands
     NSString *command = cmd.command;
-    if ([command isEqualToString:@"users"]) {
-        // query online users response
-        [self processOnlineUsersCommand:cmd];
-        return YES;
-    }
-    if ([command isEqualToString:@"search"]) {
-        // search users response
-        [self processSearchUsersCommand:cmd];
-        return YES;
-    }
     if ([command isEqualToString:@"contacts"]) {
         // get contacts response
         [self processContactsCommand:cmd];

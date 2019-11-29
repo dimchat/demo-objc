@@ -35,9 +35,101 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMSharedFacebook.h"
+#import "NSObject+Singleton.h"
+
+#import "MKMImmortals.h"
+#import "DIMSocialNetworkDatabase.h"
+
+#import "DIMKeyStore+Extension.h"
+#import "DIMMessenger+Extension.h"
 
 #import "DIMFacebook+Extension.h"
+
+@interface DIMSharedFacebook : DIMFacebook {
+    
+    // ANS
+    DIMAddressNameService *_sharedANS;
+    
+    // Database
+    DIMSocialNetworkDatabase *_database;
+    
+    // Immortals
+    MKMImmortals *_immortals;
+}
+
+@end
+
+@implementation DIMSharedFacebook
+
+SingletonImplementations(DIMSharedFacebook, sharedInstance)
+
+- (instancetype)init {
+    if (self = [super init]) {
+        
+        // ANS
+        _sharedANS = [[DIMAddressNameService alloc] init];
+        self.ans = _sharedANS;
+        
+        _database = [[DIMSocialNetworkDatabase alloc] init];
+        
+        // Immortal accounts
+        _immortals = [[MKMImmortals alloc] init];
+        
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        messenger.barrack = self;
+        messenger.keyCache = [DIMKeyStore sharedInstance];
+    }
+    return self;
+}
+
+#pragma mark - Storage
+
+- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+    return [_database saveMeta:meta forID:ID];
+}
+
+- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
+    DIMMeta *meta = [_database metaForID:ID];
+    if (!meta) {
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        [messenger queryMetaForID:ID];
+    }
+    return meta;
+}
+
+- (BOOL)saveProfile:(DIMProfile *)profile {
+    return [_database saveProfile:profile];
+}
+
+- (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
+    return [_database profileForID:ID];
+}
+
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
+    return [_database savePrivateKey:key forID:ID];
+}
+
+- (nullable DIMPrivateKey *)loadPrivateKey:(DIMID *)ID {
+    return (DIMPrivateKey *)[_database privateKeyForSignature:ID];
+}
+
+- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
+    return [_database saveContacts:contacts user:ID];
+}
+
+- (nullable NSArray<DIMID *> *)loadContacts:(DIMID *)ID {
+    return [_database contactsOfUser:ID];
+}
+
+- (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
+    return [_database saveMembers:members group:ID];
+}
+
+- (nullable NSArray<DIMID *> *)loadMembers:(DIMID *)ID {
+    return [_database membersOfGroup:ID];
+}
+
+@end
 
 @implementation DIMFacebook (Extension)
 
