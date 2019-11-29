@@ -59,7 +59,6 @@
 		E96D15052322AECF00B5EA59 /* DIMUserTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D15032322AECF00B5EA59 /* DIMUserTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E978168A2223E7F200BCE3AD /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816802223E7F200BCE3AD /* DIMClient.framework */; };
 		E978168F2223E7F200BCE3AD /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E978168E2223E7F200BCE3AD /* DIMClientTests.m */; };
-		E97816C92223E97100BCE3AD /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816A62223E8B400BCE3AD /* DIMCore.framework */; };
 		E97816CC2223E97E00BCE3AD /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816AF2223E8C100BCE3AD /* MarsGate.framework */; };
 		E97816D02223EAFC00BCE3AD /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816CF2223EAFC00BCE3AD /* DIMClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816D12223EB4700BCE3AD /* DIMTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -106,26 +105,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E919B0022390F96C004F7FF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E919AFFA2390F96C004F7FF9 /* DIMSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E919AFD22390F8DD004F7FF9;
+			remoteInfo = DIMSDK;
+		};
+		E919B0042390F96C004F7FF9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E919AFFA2390F96C004F7FF9 /* DIMSDK.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E919AFDB2390F8DD004F7FF9;
+			remoteInfo = DIMSDKTests;
+		};
 		E978168B2223E7F200BCE3AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E97816772223E7F200BCE3AD /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E978167F2223E7F200BCE3AD;
 			remoteInfo = DIMClient;
-		};
-		E97816A52223E8B400BCE3AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E9F3AA3C21CBD02C009690F6;
-			remoteInfo = DIMCore;
-		};
-		E97816A72223E8B400BCE3AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E9F3AA4521CBD02C009690F6;
-			remoteInfo = DIMCoreTests;
 		};
 		E97816AE2223E8C100BCE3AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -140,13 +139,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = E9FAF5F1221EAC5F00DB6567;
 			remoteInfo = MarsGateTests;
-		};
-		E978171622254AD000BCE3AD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E9F3AA3B21CBD02C009690F6;
-			remoteInfo = DIMCore;
 		};
 		E978171822254AD300BCE3AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -204,6 +196,7 @@
 		E914292A2363114F001EE471 /* DIMMuteCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMuteCommand.m; sourceTree = "<group>"; };
 		E919AFA0238FFE0A004F7FF9 /* DIMAddressNameService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMAddressNameService.h; sourceTree = "<group>"; };
 		E919AFA1238FFE0A004F7FF9 /* DIMAddressNameService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMAddressNameService.m; sourceTree = "<group>"; };
+		E919AFFA2390F96C004F7FF9 /* DIMSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMSDK.xcodeproj; path = ../sdk/DIMSDK/DIMSDK.xcodeproj; sourceTree = "<group>"; };
 		E925E82E22F98F5700FC2F36 /* DIMMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMessenger.h; sourceTree = "<group>"; };
 		E925E82F22F98F5700FC2F36 /* DIMMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMessenger.m; sourceTree = "<group>"; };
 		E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAmanuensis.h; sourceTree = "<group>"; };
@@ -234,7 +227,6 @@
 		E97816892223E7F200BCE3AD /* DIMClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIMClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E978168E2223E7F200BCE3AD /* DIMClientTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMClientTests.m; sourceTree = "<group>"; };
 		E97816902223E7F200BCE3AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMCore.xcodeproj; path = "../../core-objc/DIMCore/DIMCore.xcodeproj"; sourceTree = "<group>"; };
 		E97816A92223E8C100BCE3AD /* MarsGate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MarsGate.xcodeproj; path = ../../../moky/StarGate/MarsGate/MarsGate.xcodeproj; sourceTree = "<group>"; };
 		E97816CF2223EAFC00BCE3AD /* DIMClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMClient.h; sourceTree = "<group>"; };
 		E97816D12223EB4700BCE3AD /* DIMTerminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMTerminal.h; sourceTree = "<group>"; };
@@ -287,7 +279,6 @@
 			files = (
 				E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */,
 				E97816CC2223E97E00BCE3AD /* MarsGate.framework in Frameworks */,
-				E97816C92223E97100BCE3AD /* DIMCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +331,15 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
+		E919AFFB2390F96C004F7FF9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E919B0032390F96C004F7FF9 /* DIMSDK.framework */,
+				E919B0052390F96C004F7FF9 /* DIMSDKTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		E96D14AF232244D600B5EA59 /* database */ = {
 			isa = PBXGroup;
 			children = (
@@ -369,9 +369,9 @@
 		E97816762223E7F200BCE3AD = {
 			isa = PBXGroup;
 			children = (
+				E919AFFA2390F96C004F7FF9 /* DIMSDK.xcodeproj */,
 				E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */,
 				E97816A92223E8C100BCE3AD /* MarsGate.xcodeproj */,
-				E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */,
 				E978169A2223E89D00BCE3AD /* Classes */,
 				E97816822223E7F200BCE3AD /* DIMClient */,
 				E978168D2223E7F200BCE3AD /* DIMClientTests */,
@@ -445,15 +445,6 @@
 			);
 			name = Classes;
 			path = ../Classes;
-			sourceTree = "<group>";
-		};
-		E978169F2223E8B400BCE3AD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E97816A62223E8B400BCE3AD /* DIMCore.framework */,
-				E97816A82223E8B400BCE3AD /* DIMCoreTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		E97816AA2223E8C100BCE3AD /* Products */ = {
@@ -596,7 +587,6 @@
 			dependencies = (
 				E9AFAADC22310B07001F95C6 /* PBXTargetDependency */,
 				E978171922254AD300BCE3AD /* PBXTargetDependency */,
-				E978171722254AD000BCE3AD /* PBXTargetDependency */,
 			);
 			name = DIMClient;
 			productName = DIMClient;
@@ -651,8 +641,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = E978169F2223E8B400BCE3AD /* Products */;
-					ProjectRef = E978169E2223E8B400BCE3AD /* DIMCore.xcodeproj */;
+					ProductGroup = E919AFFB2390F96C004F7FF9 /* Products */;
+					ProjectRef = E919AFFA2390F96C004F7FF9 /* DIMSDK.xcodeproj */;
 				},
 				{
 					ProductGroup = E9AFAACE22310A93001F95C6 /* Products */;
@@ -672,18 +662,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		E97816A62223E8B400BCE3AD /* DIMCore.framework */ = {
+		E919B0032390F96C004F7FF9 /* DIMSDK.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = DIMCore.framework;
-			remoteRef = E97816A52223E8B400BCE3AD /* PBXContainerItemProxy */;
+			path = DIMSDK.framework;
+			remoteRef = E919B0022390F96C004F7FF9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		E97816A82223E8B400BCE3AD /* DIMCoreTests.xctest */ = {
+		E919B0052390F96C004F7FF9 /* DIMSDKTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = DIMCoreTests.xctest;
-			remoteRef = E97816A72223E8B400BCE3AD /* PBXContainerItemProxy */;
+			path = DIMSDKTests.xctest;
+			remoteRef = E919B0042390F96C004F7FF9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		E97816AF2223E8C100BCE3AD /* MarsGate.framework */ = {
@@ -801,11 +791,6 @@
 			isa = PBXTargetDependency;
 			target = E978167F2223E7F200BCE3AD /* DIMClient */;
 			targetProxy = E978168B2223E7F200BCE3AD /* PBXContainerItemProxy */;
-		};
-		E978171722254AD000BCE3AD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = DIMCore;
-			targetProxy = E978171622254AD000BCE3AD /* PBXContainerItemProxy */;
 		};
 		E978171922254AD300BCE3AD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
