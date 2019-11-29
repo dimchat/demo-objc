@@ -37,6 +37,7 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMFacebook+Extension.h"
 #import "MKMGroup+Extension.h"
 
 @implementation MKMGroup (Extension)

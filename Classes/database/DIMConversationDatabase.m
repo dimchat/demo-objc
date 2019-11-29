@@ -37,8 +37,11 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMFacebook+Extension.h"
+
 #import "DIMMessageTable.h"
 #import "DIMClientConstants.h"
+
 #import "DIMConversationDatabase.h"
 
 typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;

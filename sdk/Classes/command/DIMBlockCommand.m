@@ -28,42 +28,64 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
+//  DIMBlockCommand.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/1.
+//  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMFacebook.h"
 
-#import "DIMKeyStore.h"
+#import "DIMBlockCommand.h"
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
+@interface DIMBlockCommand () {
+    
+    NSMutableArray *_list;
 }
 
-@implementation DIMKeyStore
+@end
 
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
+@implementation DIMBlockCommand
 
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
+- (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList {
+    if (self = [super initWithHistoryCommand:DIMCommand_Block]) {
+        // block-list
+        if (blockList) {
+            _list = [blockList mutableCopy];
+            [_storeDictionary setObject:_list forKey:@"list"];
+        } else {
+            _list = nil;
+        }
     }
-    return nil;
+    return self;
+}
+
+- (nullable NSArray<NSString *> *)list {
+    if (!_list) {
+        NSObject *array = [_storeDictionary objectForKey:@"list"];
+        if (![array isKindOfClass:[NSMutableArray class]]) {
+            _list = [array mutableCopy];
+        }
+    }
+    return _list;
+}
+
+- (void)addID:(DIMID *)ID {
+    if (![self list]) {
+        // create block-list
+        _list = [[NSMutableArray alloc] init];
+        [_storeDictionary setObject:_list forKey:@"list"];
+    } else if ([_list containsObject:ID]) {
+        NSAssert(false, @"ID already exists: %@", ID);
+        return;
+    }
+    [_list addObject:ID];
+}
+
+- (void)removeID:(DIMID *)ID {
+    NSAssert(_list, @"block-list not set yet");
+    [_list removeObject:ID];
 }
 
 @end

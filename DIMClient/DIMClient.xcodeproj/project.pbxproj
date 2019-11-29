@@ -31,6 +31,10 @@
 		E94E13EF2276EB0F009D5275 /* DIMAmanuensis.m in Sources */ = {isa = PBXBuildFile; fileRef = E94E13EB2276EB0F009D5275 /* DIMAmanuensis.m */; };
 		E94E13F02276EB0F009D5275 /* DIMConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = E94E13EC2276EB0F009D5275 /* DIMConversation.m */; };
 		E94E13F12276EB0F009D5275 /* DIMConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = E94E13ED2276EB0F009D5275 /* DIMConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E959652E239125CA00DAA870 /* DIMFacebook+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E959652F239125CA00DAA870 /* DIMFacebook+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */; };
+		E959656323916BB600DAA870 /* DIMMessenger+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E959656123916BB600DAA870 /* DIMMessenger+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E959656423916BB600DAA870 /* DIMMessenger+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E959656223916BB600DAA870 /* DIMMessenger+Extension.m */; };
 		E96D14B52322455E00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14B32322455E00B5EA59 /* DIMSocialNetworkDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E96D14B62322455E00B5EA59 /* DIMSocialNetworkDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14B42322455E00B5EA59 /* DIMSocialNetworkDatabase.m */; };
 		E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14B7232247F600B5EA59 /* DIMMetaTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -187,6 +191,10 @@
 		E94E13EB2276EB0F009D5275 /* DIMAmanuensis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMAmanuensis.m; sourceTree = "<group>"; };
 		E94E13EC2276EB0F009D5275 /* DIMConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMConversation.m; sourceTree = "<group>"; };
 		E94E13ED2276EB0F009D5275 /* DIMConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMConversation.h; sourceTree = "<group>"; };
+		E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMFacebook+Extension.h"; sourceTree = "<group>"; };
+		E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMFacebook+Extension.m"; sourceTree = "<group>"; };
+		E959656123916BB600DAA870 /* DIMMessenger+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMMessenger+Extension.h"; sourceTree = "<group>"; };
+		E959656223916BB600DAA870 /* DIMMessenger+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMMessenger+Extension.m"; sourceTree = "<group>"; };
 		E96D14B32322455E00B5EA59 /* DIMSocialNetworkDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMSocialNetworkDatabase.h; sourceTree = "<group>"; };
 		E96D14B42322455E00B5EA59 /* DIMSocialNetworkDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMSocialNetworkDatabase.m; sourceTree = "<group>"; };
 		E96D14B7232247F600B5EA59 /* DIMMetaTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMetaTable.h; sourceTree = "<group>"; };
@@ -445,6 +453,10 @@
 				E9B2FCBC230477E700E153EE /* MKMUser+Extension.m */,
 				E9D0D8DF22C3686F00EEBF8B /* MKMGroup+Extension.h */,
 				E9D0D8DE22C3686F00EEBF8B /* MKMGroup+Extension.m */,
+				E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */,
+				E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */,
+				E959656123916BB600DAA870 /* DIMMessenger+Extension.h */,
+				E959656223916BB600DAA870 /* DIMMessenger+Extension.m */,
 				E9CEA104234EA1EB00EC507C /* DIMPassword.h */,
 				E9CEA105234EA1EB00EC507C /* DIMPassword.m */,
 			);
@@ -482,6 +494,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E959652E239125CA00DAA870 /* DIMFacebook+Extension.h in Headers */,
+				E959656323916BB600DAA870 /* DIMMessenger+Extension.h in Headers */,
 				E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */,
 				E96D14F623227DD200B5EA59 /* DIMConversationDatabase.h in Headers */,
 				52DBA30C2340372C0000C2B4 /* FMResultSet.h in Headers */,
@@ -701,6 +715,7 @@
 				52DBA3142340372C0000C2B4 /* FMResultSet.m in Sources */,
 				E96D14EE232277EC00B5EA59 /* DIMMessageTable.m in Sources */,
 				520ECCB2235D5CAE00822B97 /* DIMClientConstants.m in Sources */,
+				E959656423916BB600DAA870 /* DIMMessenger+Extension.m in Sources */,
 				E9E8248622475AFD00A029F1 /* NSObject+Extension.m in Sources */,
 				E9AFAB452233A522001F95C6 /* DIMTerminal+Group.m in Sources */,
 				E96D14B62322455E00B5EA59 /* DIMSocialNetworkDatabase.m in Sources */,
@@ -708,6 +723,7 @@
 				E97816D82223F82F00BCE3AD /* DIMTerminal+Request.m in Sources */,
 				E9CEA1412350AE5B00EC507C /* MKMAddressETH.m in Sources */,
 				52DBA30E2340372C0000C2B4 /* FMDatabaseAdditions.m in Sources */,
+				E959652F239125CA00DAA870 /* DIMFacebook+Extension.m in Sources */,
 				E97926B72227DB1D005ED1F0 /* DIMTerminal+Response.m in Sources */,
 				E96D14CA2322614C00B5EA59 /* DIMGroupTable.m in Sources */,
 				E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */,

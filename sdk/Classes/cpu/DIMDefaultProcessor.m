@@ -28,42 +28,30 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
-//  DIMClient
+//  DIMDefaultProcessor.m
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMDefaultProcessor.h"
 
-#import "DIMKeyStore.h"
+@implementation DIMDefaultProcessor
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
-}
-
-@implementation DIMKeyStore
-
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
-
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSString *text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
+    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+    NSString *group = content.group;
+    if (group) {
+        res.group = group;
     }
-    return nil;
+    return res;
 }
 
 @end

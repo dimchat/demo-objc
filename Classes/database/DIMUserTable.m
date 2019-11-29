@@ -37,6 +37,8 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMFacebook+Extension.h"
+
 #import "DIMClientConstants.h"
 #import "DIMUserTable.h"
 

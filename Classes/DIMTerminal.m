@@ -38,7 +38,8 @@
 #import <DIMSDK/DIMSDK.h>
 
 #import "NSObject+JsON.h"
-
+#import "DIMFacebook+Extension.h"
+#import "DIMMessenger+Extension.h"
 #import "MKMGroup+Extension.h"
 
 #import "DIMAmanuensis.h"
@@ -146,16 +147,6 @@
     if ([cmd isKindOfClass:[DIMHandshakeCommand class]]) {
         // handshake
         [self processHandshakeCommand:(DIMHandshakeCommand *)cmd];
-        return YES;
-    }
-    if ([cmd isKindOfClass:[DIMProfileCommand class]]) {
-        // query profile response
-        [self processProfileCommand:(DIMProfileCommand *)cmd];
-        return YES;
-    }
-    if ([cmd isKindOfClass:[DIMMetaCommand class]]) {
-        // query meta response
-        [self processMetaCommand:(DIMMetaCommand *)cmd];
         return YES;
     }
     

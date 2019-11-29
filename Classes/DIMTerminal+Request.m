@@ -40,6 +40,8 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 #import "NSNotificationCenter+Extension.h"
+#import "DIMFacebook+Extension.h"
+#import "DIMMessenger+Extension.h"
 
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
@@ -89,7 +91,8 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
                                           userInfo:info];
     };
     // send out
-    if ([[DIMMessenger sharedInstance] sendInstantMessage:iMsg callback:callback dispersedly:YES]) {
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    if ([messenger sendInstantMessage:iMsg callback:callback dispersedly:YES]) {
         return iMsg;
     } else {
         NSLog(@"failed to send message: %@", iMsg);

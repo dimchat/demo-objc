@@ -28,42 +28,44 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
-//  DIMClient
+//  DIMQueryCommandProcessor.m
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMFacebook.h"
 
-#import "DIMKeyStore.h"
+#import "DIMQueryCommandProcessor.h"
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
-}
+@implementation DIMQueryGroupCommandProcessor
 
-@implementation DIMKeyStore
-
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
-
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSAssert([content isKindOfClass:[DIMQueryGroupCommand class]], @"query group command error: %@", content);
+    DIMID *group = [_facebook IDWithString:content.group];
+    // 1. check permission
+    if (![_facebook group:group hasMember:sender]) {
+        if (![_facebook group:group hasAssistant:sender]) {
+            NSAssert(false, @"%@ is not a member/assistant of group %@, cannot query", sender, group);
+            return nil;
+        }
     }
-    return nil;
+    // 2. get members
+    NSArray<DIMID *> *members = [_facebook membersOfGroup:group];
+    if ([members count] == 0) {
+        NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
+        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+        res.group = group;
+        return res;
+    }
+    // 3. response
+    return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
 }
 
 @end

@@ -43,6 +43,8 @@
 
 #import "NSObject+Extension.h"
 #import "NSNotificationCenter+Extension.h"
+#import "DIMFacebook+Extension.h"
+#import "DIMMessenger+Extension.h"
 
 #import "DIMFileServer.h"
 
@@ -198,7 +200,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     [_fsm start];
     
-    [DIMMessenger sharedInstance].delegate = self;
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    messenger.delegate = self;
     
     _star = [[MGMars alloc] initWithMessageHandler:self];
     [_star launchWithOptions:launchOptions];

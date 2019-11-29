@@ -83,7 +83,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @end
 
-@protocol ConnectionDelegate <NSObject>
+@protocol DIMConnectionDelegate <NSObject>
 
 /**
  *  Receive data package
@@ -97,19 +97,15 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 #pragma mark -
 
-@class DIMFacebook;
-
-@interface DIMMessenger : DIMTransceiver <ConnectionDelegate>
+@interface DIMMessenger : DIMTransceiver <DIMConnectionDelegate>
 
 @property (readonly, strong, nonatomic) NSDictionary *context;
 
-@property (readonly, strong, nonatomic) DIMFacebook *facebook;
+@property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 
 @property (strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
 @property (strong, nonatomic, nullable) DIMUser *currentUser;
-
-+ (instancetype)sharedInstance;
 
 - (nullable id)valueForContextName:(NSString *)key;
 - (void)setContextValue:(id)value forName:(NSString *)key;

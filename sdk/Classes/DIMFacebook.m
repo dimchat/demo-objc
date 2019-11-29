@@ -35,8 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
 #import "DIMAddressNameService.h"
 
 #import "DIMFacebook.h"
@@ -59,8 +57,6 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 @end
 
 @implementation DIMFacebook
-
-SingletonImplementations(DIMFacebook, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {

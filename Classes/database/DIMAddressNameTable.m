@@ -37,6 +37,8 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMFacebook+Extension.h"
+
 #import "DIMAddressNameTable.h"
 
 typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;

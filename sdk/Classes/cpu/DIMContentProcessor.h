@@ -28,42 +28,49 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
-//  DIMClient
+//  DIMContentProcessor.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import <DIMCore/DIMCore.h>
 
-#import "DIMKeyStore.h"
+NS_ASSUME_NONNULL_BEGIN
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
+@class DIMMessenger;
+@class DIMFacebook;
+
+@interface DIMContentProcessor : NSObject {
+    
+    __weak DIMMessenger *_messenger;
+    __weak DIMFacebook *_facebook;
 }
 
-@implementation DIMKeyStore
+@property (readonly, strong, nonatomic) NSDictionary *context;
 
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
+@property (readonly, weak, nonatomic) DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) DIMFacebook *facebook;
 
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
-    }
-    return nil;
-}
+- (instancetype)initWithMessenger:(DIMMessenger *)messenger;
+
+- (nullable id)valueForContextName:(NSString *)key;
+- (void)setContextValue:(id)value forName:(NSString *)key;
+
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg;
 
 @end
+
+@interface DIMContentProcessor (Runtime)
+
++ (void)registerClass:(nullable Class)contentClass forType:(DKDContentType)type;
+
+@end
+
+NS_ASSUME_NONNULL_END

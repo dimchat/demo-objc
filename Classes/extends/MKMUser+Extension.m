@@ -37,6 +37,7 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMFacebook+Extension.h"
 #import "MKMUser+Extension.h"
 
 @implementation MKMUser (Extension)

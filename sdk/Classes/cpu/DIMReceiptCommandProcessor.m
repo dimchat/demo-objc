@@ -28,41 +28,28 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
-//  DIMClient
+//  DIMReceiptCommandProcessor.m
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMFacebook.h"
+#import "DIMReceiptCommand.h"
 
-#import "DIMKeyStore.h"
+#import "DIMReceiptCommandProcessor.h"
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
-}
+@implementation DIMReceiptCommandProcessor
 
-@implementation DIMKeyStore
-
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
-
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
-    }
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSAssert([content isKindOfClass:[DIMReceiptCommand class]], @"receipt error: %@", content);
+    // no need to response receipt command
     return nil;
 }
 

@@ -9,6 +9,8 @@
 #import <sqlite3.h>
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMFacebook+Extension.h"
+
 #import "LocalDatabaseManager.h"
 #import "FolderUtility.h"
 #import "FMDB.h"

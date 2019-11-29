@@ -60,14 +60,31 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 // Extensions
 #import <DIMSDK/DKDInstantMessage+Extension.h>
 
-// Plug-Ins
+// Commands
 #import <DIMSDK/DIMBlockCommand.h>
 #import <DIMSDK/DIMMuteCommand.h>
 #import <DIMSDK/DIMReceiptCommand.h>
+
+// CPUs
+#import <DIMSDK/DIMContentProcessor.h>
+#import <DIMSDK/DIMDefaultProcessor.h>
+#import <DIMSDK/DIMCommandProcessor.h>
+#import <DIMSDK/DIMMetaCommandProcessor.h>
+#import <DIMSDK/DIMProfileCommandProcessor.h>
+#import <DIMSDK/DIMReceiptCommandProcessor.h>
+#import <DIMSDK/DIMHistoryProcessor.h>
+// GPUs
+#import <DIMSDK/DIMGroupCommandProcessor.h>
+#import <DIMSDK/DIMInviteCommandProcessor.h>
+#import <DIMSDK/DIMExpelCommandProcessor.h>
+#import <DIMSDK/DIMQuitCommandProcessor.h>
+#import <DIMSDK/DIMResetCommandProcessor.h>
+#import <DIMSDK/DIMQueryCommandProcessor.h>
 
 #import <DIMSDK/DIMAddressNameService.h>
 #import <DIMSDK/DIMFacebook.h>
 #import <DIMSDK/DIMKeyStore.h>
 #import <DIMSDK/DIMMessenger.h>
+#import <DIMSDK/DIMMessageProcessor.h>
 
 #endif /* ! __DIM_SDK__== */

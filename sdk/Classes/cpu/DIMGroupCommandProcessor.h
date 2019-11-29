@@ -28,42 +28,27 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
-//  DIMClient
+//  DIMGroupCommandProcessor.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMHistoryProcessor.h"
 
-#import "DIMKeyStore.h"
+NS_ASSUME_NONNULL_BEGIN
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
-}
+@interface DIMGroupCommandProcessor : DIMHistoryCommandProcessor
 
-@implementation DIMKeyStore
+- (nullable NSArray<DIMID *> *)membersFromCommand:(DIMGroupCommand *)cmd;
 
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
+- (nullable NSMutableArray<DIMID *> *)convertMembers:(NSArray *)members;
 
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
-    }
-    return nil;
-}
+- (BOOL)containsOwnerInMembers:(NSArray<DIMID *> *)members group:(DIMID *)group;
+
+- (BOOL)isEmpty:(DIMID *)group;
 
 @end
+
+NS_ASSUME_NONNULL_END

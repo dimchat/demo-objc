@@ -38,6 +38,7 @@
 #import <DIMSDK/DIMSDK.h>
 
 #import "NSNotificationCenter+Extension.h"
+#import "DIMFacebook+Extension.h"
 
 #import "NSObject+JsON.h"
 #import "DIMServer.h"
@@ -68,34 +69,6 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     } else {
         NSLog(@"handshake rejected: %@", cmd);
         [_currentStation handshakeAccepted:NO session:nil];
-    }
-}
-
-- (void)processMetaCommand:(DIMMetaCommand *)cmd {
-    // check meta
-    DIMMeta *meta = cmd.meta;
-    if ([meta matchID:cmd.ID]) {
-        NSLog(@"got new meta for %@", cmd.ID);
-        DIMFacebook *facebook = [DIMFacebook sharedInstance];
-        [facebook saveMeta:cmd.meta forID:cmd.ID];
-    } else {
-        NSAssert(meta == nil, @"meta error: %@", cmd);
-    }
-}
-
-- (void)processProfileCommand:(DIMProfileCommand *)cmd {
-    // check meta
-    [self processMetaCommand:cmd];
-    
-    // check profile
-    DIMProfile *profile = cmd.profile;
-    if (profile) {
-        NSAssert([profile.ID isEqual:cmd.ID], @"profile not match ID: %@", cmd);
-        NSLog(@"got new profile for %@", cmd.ID);
-        
-        // update local profile
-        DIMFacebook *facebook = [DIMFacebook sharedInstance];
-        [facebook saveProfile:profile];
     }
 }
 

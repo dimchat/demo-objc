@@ -28,42 +28,64 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
+//  DIMMuteCommand.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/1.
+//  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMFacebook.h"
 
-#import "DIMKeyStore.h"
+#import "DIMMuteCommand.h"
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
+@interface DIMMuteCommand () {
+    
+    NSMutableArray *_list;
 }
 
-@implementation DIMKeyStore
+@end
 
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
+@implementation DIMMuteCommand
 
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
+- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList {
+    if (self = [super initWithHistoryCommand:DIMCommand_Mute]) {
+        // mute-list
+        if (muteList) {
+            _list = [muteList mutableCopy];
+            [_storeDictionary setObject:_list forKey:@"list"];
+        } else {
+            _list = nil;
+        }
     }
-    return nil;
+    return self;
+}
+
+- (nullable NSArray<NSString *> *)list {
+    if (!_list) {
+        NSObject *array = [_storeDictionary objectForKey:@"list"];
+        if (![array isKindOfClass:[NSMutableArray class]]) {
+            _list = [array mutableCopy];
+        }
+    }
+    return _list;
+}
+
+- (void)addID:(DIMID *)ID {
+    if (![self list]) {
+        // create mute-list
+        _list = [[NSMutableArray alloc] init];
+        [_storeDictionary setObject:_list forKey:@"list"];
+    } else if ([_list containsObject:ID]) {
+        NSAssert(false, @"ID already exists: %@", ID);
+        return;
+    }
+    [_list addObject:ID];
+}
+
+- (void)removeID:(DIMID *)ID {
+    NSAssert(_list, @"mute-list not set yet");
+    [_list removeObject:ID];
 }
 
 @end

@@ -48,8 +48,6 @@ extern NSString * const kNotificationName_SearchUsersUpdated;
 @interface DIMTerminal (Response)
 
 - (void)processHandshakeCommand:(DIMHandshakeCommand *)cmd;
-- (void)processMetaCommand:(DIMMetaCommand *)cmd;
-- (void)processProfileCommand:(DIMProfileCommand *)cmd;
 - (void)processOnlineUsersCommand:(DIMCommand *)cmd;
 - (void)processSearchUsersCommand:(DIMCommand *)cmd;
 - (void)processContactsCommand:(DIMCommand *)cmd;

@@ -38,7 +38,10 @@
 #import <DIMSDK/DIMSDK.h>
 
 #import "NSObject+Singleton.h"
+#import "DIMFacebook+Extension.h"
+
 #import "DIMConversation.h"
+
 #import "DIMAmanuensis.h"
 
 @interface DIMAmanuensis () {

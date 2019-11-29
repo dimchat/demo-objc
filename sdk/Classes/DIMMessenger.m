@@ -35,8 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+JsON.h"
 #import "NSObject+Singleton.h"
+#import "NSObject+JsON.h"
 #import "DKDInstantMessage+Extension.h"
 #import "DIMReceiptCommand.h"
 #import "DIMMuteCommand.h"
@@ -44,6 +44,8 @@
 
 #import "DIMFacebook.h"
 #import "DIMKeyStore.h"
+
+#import "DIMMessageProcessor.h"
 
 #import "DIMMessenger.h"
 
@@ -59,24 +61,26 @@ static inline void loadCommandClasses(void) {
     NSMutableDictionary *_context;
     
     __weak id<DIMMessengerDelegate> _delegate;
+    
+    __weak DIMFacebook *_facebook;
+    
+    DIMMessageProcessor *_processor;
 }
 
 @end
 
 @implementation DIMMessenger
 
-SingletonImplementations(DIMMessenger, sharedInstance)
-
 - (instancetype)init {
     if (self = [super init]) {
-        // delegates
-        _barrack = [DIMFacebook sharedInstance];
-        _keyCache = [DIMKeyStore sharedInstance];
         
         // context
         _context = [[NSMutableDictionary alloc] init];
         
         _delegate = nil;
+        
+        _facebook = nil;
+        _processor = nil;
         
         // extend new commands
         loadCommandClasses();
@@ -101,12 +105,14 @@ SingletonImplementations(DIMMessenger, sharedInstance)
 }
 
 - (DIMFacebook *)facebook {
-    id delegate = [self valueForContextName:@"facebook"];
-    if (!delegate) {
-        delegate = self.barrack;
-        NSAssert([delegate isKindOfClass:[DIMFacebook class]], @"facebook error: %@", delegate);
+    if (!_facebook) {
+        _facebook = [self valueForContextName:@"facebook"];
+        if (!_facebook) {
+            NSAssert([self.barrack isKindOfClass:[DIMFacebook class]], @"facebook error: %@", self.barrack);
+            _facebook = (DIMFacebook *)self.barrack;
+        }
     }
-    return delegate;
+    return _facebook;
 }
 
 - (nullable NSArray<DIMUser *> *)localUsers {
@@ -226,7 +232,7 @@ SingletonImplementations(DIMMessenger, sharedInstance)
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
                   encryptKey:(NSDictionary *)password
                  forReceiver:(NSString *)receiver {
-    DIMID *to = DIMIDWithString(receiver);
+    DIMID *to = [self.facebook IDWithString:receiver];
     id<MKMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
     if (!key) {
         DIMMeta *meta = [self.facebook metaForID:to];
@@ -245,7 +251,7 @@ SingletonImplementations(DIMMessenger, sharedInstance)
                               from:(NSString *)sender
                                 to:(NSString *)receiver {
     if (key) {
-        DIMID *target = DIMIDWithString(sMsg.envelope.receiver);
+        DIMID *target = [self.facebook IDWithString:sMsg.envelope.receiver];
         NSArray<id<MKMDecryptKey>> *keys;
         keys = [self.facebook privateKeysForDecryption:target];
         if ([keys count] == 0) {
@@ -294,11 +300,13 @@ SingletonImplementations(DIMMessenger, sharedInstance)
     return content;
 }
 
-#pragma mark ConnectionDelegate
+#pragma mark DIMConnectionDelegate
 
 - (nullable NSData *)onReceivePackage:(NSData *)data {
-    // TODO: CPU!
-    return nil;
+    SingletonDispatchOnce(^{
+        _processor = [[DIMMessageProcessor alloc] initWithMessenger:self];
+    });
+    return [_processor onReceivePackage:data];
 }
 
 @end
@@ -307,7 +315,7 @@ SingletonImplementations(DIMMessenger, sharedInstance)
 
 - (nullable DIMSecureMessage *)verifyMessage:(DIMReliableMessage *)rMsg {
     // Notice: check meta before calling me
-    DIMID *sender = [_barrack IDWithString:rMsg.envelope.sender];
+    DIMID *sender = [self.barrack IDWithString:rMsg.envelope.sender];
     DIMMeta *meta = MKMMetaFromDictionary(rMsg.meta);
     if (meta) {
         // [Meta Protocol]
@@ -320,7 +328,7 @@ SingletonImplementations(DIMMessenger, sharedInstance)
             return nil;
         }
     } else {
-        meta = [_barrack metaForID:sender];
+        meta = [self.barrack metaForID:sender];
         if (!meta) {
             //[self queryMetaForID:sender];
             // TODO: save this message in a queue to wait meta response
@@ -423,7 +431,7 @@ SingletonImplementations(DIMMessenger, sharedInstance)
         return NO;
     }
     
-    DIMID *receiver = [_barrack IDWithString:iMsg.envelope.receiver];
+    DIMID *receiver = [self.barrack IDWithString:iMsg.envelope.receiver];
     BOOL OK = YES;
     if (split && MKMNetwork_IsGroup(receiver.type)) {
         NSAssert([receiver isEqual:iMsg.content.group], @"error: %@", iMsg);

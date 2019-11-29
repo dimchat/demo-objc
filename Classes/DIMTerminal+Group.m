@@ -40,6 +40,7 @@
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
+#import "DIMFacebook+Extension.h"
 #import "MKMGroup+Extension.h"
 
 #import "DIMTerminal+Request.h"

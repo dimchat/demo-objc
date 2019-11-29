@@ -28,41 +28,54 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMKeyStore.m
-//  DIMClient
+//  DIMQuitCommandProcessor.m
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "NSDictionary+Binary.h"
+#import "DIMFacebook.h"
 
-#import "DIMKeyStore.h"
+#import "DIMQuitCommandProcessor.h"
 
-// "Library/Caches"
-static inline NSString *caches_directory(void) {
-    NSArray *paths;
-    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
-                                                NSUserDomainMask, YES);
-    return paths.firstObject;
-}
+@implementation DIMQuitCommandProcessor
 
-@implementation DIMKeyStore
-
-- (BOOL)saveKeys:(NSDictionary *)keyMap {
-    // "Library/Caches/keystore.plist"
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    return [keyMap writeToBinaryFile:path];
-}
-
-- (nullable NSDictionary *)loadKeys {
-    NSString *dir = caches_directory();
-    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:path]) {
-        return [NSDictionary dictionaryWithContentsOfFile:path];
+- (void)_doQuit:(DIMID *)sender group:(DIMID *)group {
+    // existed members
+    NSMutableArray<DIMID *> *members = [self convertMembers:[_facebook membersOfGroup:group]];
+    if ([members count] == 0) {
+        NSAssert(false, @"group members not found: %@", group);
+        return;
     }
+    if (![members containsObject:sender]) {
+        // not a member
+        return;
+    }
+    [members removeObject:sender];
+    [_facebook saveMembers:members group:group];
+}
+
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSAssert([content isKindOfClass:[DIMQuitCommand class]], @"quit command error: %@", content);
+    DIMID *group = [_facebook IDWithString:content.group];
+    // 1. check permission
+    if ([_facebook group:group isOwner:sender]) {
+        NSAssert(false, @"owner cannot quit: %@ -> %@", sender, group);
+        return nil;
+    }
+    if ([_facebook group:group hasAssistant:sender]) {
+        NSAssert(false, @"assistant cannot quit now: %@ -> %@", sender, group);
+        return nil;
+    }
+    // 2. remove the sender from group members
+    [self _doQuit:sender group:group];
+    // 3. response (no need to response this group command)
     return nil;
 }
 
