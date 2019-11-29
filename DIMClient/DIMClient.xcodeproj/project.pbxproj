@@ -35,8 +35,6 @@
 		E959652F239125CA00DAA870 /* DIMFacebook+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */; };
 		E959656323916BB600DAA870 /* DIMMessenger+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E959656123916BB600DAA870 /* DIMMessenger+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959656423916BB600DAA870 /* DIMMessenger+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E959656223916BB600DAA870 /* DIMMessenger+Extension.m */; };
-		E959657623917CA400DAA870 /* DIMKeyStore+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E959657423917CA400DAA870 /* DIMKeyStore+Extension.h */; };
-		E959657723917CA400DAA870 /* DIMKeyStore+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E959657523917CA400DAA870 /* DIMKeyStore+Extension.m */; };
 		E959658023919D7200DAA870 /* DIMSearchCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E959657E23919D7200DAA870 /* DIMSearchCommandProcessor.h */; };
 		E959658123919D7200DAA870 /* DIMSearchCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E959657F23919D7200DAA870 /* DIMSearchCommandProcessor.m */; };
 		E959658823919E0600DAA870 /* DIMSearchCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E959658623919E0600DAA870 /* DIMSearchCommand.h */; };
@@ -203,8 +201,6 @@
 		E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMFacebook+Extension.m"; sourceTree = "<group>"; };
 		E959656123916BB600DAA870 /* DIMMessenger+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMMessenger+Extension.h"; sourceTree = "<group>"; };
 		E959656223916BB600DAA870 /* DIMMessenger+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMMessenger+Extension.m"; sourceTree = "<group>"; };
-		E959657423917CA400DAA870 /* DIMKeyStore+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMKeyStore+Extension.h"; sourceTree = "<group>"; };
-		E959657523917CA400DAA870 /* DIMKeyStore+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMKeyStore+Extension.m"; sourceTree = "<group>"; };
 		E959657E23919D7200DAA870 /* DIMSearchCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMSearchCommandProcessor.h; sourceTree = "<group>"; };
 		E959657F23919D7200DAA870 /* DIMSearchCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMSearchCommandProcessor.m; sourceTree = "<group>"; };
 		E959658623919E0600DAA870 /* DIMSearchCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMSearchCommand.h; sourceTree = "<group>"; };
@@ -482,8 +478,6 @@
 				E9D0D8DE22C3686F00EEBF8B /* MKMGroup+Extension.m */,
 				E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */,
 				E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */,
-				E959657423917CA400DAA870 /* DIMKeyStore+Extension.h */,
-				E959657523917CA400DAA870 /* DIMKeyStore+Extension.m */,
 				E959656123916BB600DAA870 /* DIMMessenger+Extension.h */,
 				E959656223916BB600DAA870 /* DIMMessenger+Extension.m */,
 				E9CEA104234EA1EB00EC507C /* DIMPassword.h */,
@@ -550,7 +544,6 @@
 				52DBA3092340372C0000C2B4 /* LocalDatabaseManager.h in Headers */,
 				E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */,
 				E96D14C12322523A00B5EA59 /* DIMProfileTable.h in Headers */,
-				E959657623917CA400DAA870 /* DIMKeyStore+Extension.h in Headers */,
 				E9B2FCBD230477E700E153EE /* MKMUser+Extension.h in Headers */,
 				E9D0D8E122C3686F00EEBF8B /* MKMGroup+Extension.h in Headers */,
 				E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */,
@@ -750,7 +743,6 @@
 				E9D0D8E022C3686F00EEBF8B /* MKMGroup+Extension.m in Sources */,
 				52DBA30B2340372C0000C2B4 /* FMDatabaseQueue.m in Sources */,
 				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
-				E959657723917CA400DAA870 /* DIMKeyStore+Extension.m in Sources */,
 				E9AFAB0E2232B960001F95C6 /* NSNotificationCenter+Extension.m in Sources */,
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
 				52DBA3132340372C0000C2B4 /* FMDatabasePool.m in Sources */,

@@ -45,10 +45,21 @@
 
 #import "DIMFacebook+Extension.h"
 
+@interface DIMAddressNameService (Extension)
+
++ (instancetype)sharedInstance;
+
+@end
+
+@implementation DIMAddressNameService (Extension)
+
+SingletonImplementations(DIMAddressNameService, sharedInstance)
+
+@end
+
+#pragma mark -
+
 @interface DIMSharedFacebook : DIMFacebook {
-    
-    // ANS
-    DIMAddressNameService *_sharedANS;
     
     // Database
     DIMSocialNetworkDatabase *_database;
@@ -67,17 +78,12 @@ SingletonImplementations(DIMSharedFacebook, sharedInstance)
     if (self = [super init]) {
         
         // ANS
-        _sharedANS = [[DIMAddressNameService alloc] init];
-        self.ans = _sharedANS;
+        self.ans = [DIMAddressNameService sharedInstance];
         
         _database = [[DIMSocialNetworkDatabase alloc] init];
         
         // Immortal accounts
         _immortals = [[MKMImmortals alloc] init];
-        
-        DIMMessenger *messenger = [DIMMessenger sharedInstance];
-        messenger.barrack = self;
-        messenger.keyCache = [DIMKeyStore sharedInstance];
     }
     return self;
 }

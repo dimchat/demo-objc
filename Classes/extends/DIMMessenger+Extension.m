@@ -43,8 +43,23 @@
 #import "DIMSearchCommandProcessor.h"
 
 #import "DIMAmanuensis.h"
+#import "DIMFacebook+Extension.h"
 
 #import "DIMMessenger+Extension.h"
+
+@interface DIMKeyStore (Extension)
+
++ (instancetype)sharedInstance;
+
+@end
+
+@implementation DIMKeyStore (Extension)
+
+SingletonImplementations(DIMKeyStore, sharedInstance)
+
+@end
+
+#pragma mark -
 
 @interface DIMSharedMessenger : DIMMessenger
 
@@ -69,6 +84,10 @@ SingletonImplementations(DIMSharedMessenger, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
+        
+        self.barrack = [DIMFacebook sharedInstance];
+        self.keyCache = [DIMKeyStore sharedInstance];
+        
         // register CPU classes
         SingletonDispatchOnce(^{
             load_cmd_classes();
