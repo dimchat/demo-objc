@@ -102,13 +102,14 @@
         [_caches setObject:founder forKey:@"founder"];
         
         // reserved names
-        NSUInteger count = sizeof(KEYWORDS);
+        NSUInteger count = sizeof(KEYWORDS)/sizeof(KEYWORDS[0]);
         NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithCapacity:count];
         char *name;
         for (NSUInteger index = 0; index < count; ++index) {
             name = KEYWORDS[index];
             [mDict setObject:@YES forKey:[NSString stringWithUTF8String:name]];
         }
+        _reserved = mDict;
     }
     return self;
 }

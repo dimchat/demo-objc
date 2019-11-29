@@ -28,21 +28,19 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMFacebook+Extension.m
+//  DIMSharedFacebook.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/11/29.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMSharedFacebook.h"
+#import <DIMSDK/DIMSDK.h>
 
-#import "DIMFacebook+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation DIMFacebook (Extension)
-
-+ (instancetype)sharedInstance {
-    return [DIMSharedFacebook sharedInstance];
-}
+@interface DIMSharedFacebook : DIMFacebook
 
 @end
+
+NS_ASSUME_NONNULL_END
