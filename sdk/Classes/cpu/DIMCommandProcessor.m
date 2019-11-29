@@ -120,7 +120,7 @@ static NSMutableDictionary<NSString *, Class> *cpu_classes(void) {
 
 - (DIMContentProcessor *)processorForCommand:(NSString *)name {
     SingletonDispatchOnce(^{
-        _processors = [[NSMutableDictionary alloc] init];
+        self->_processors = [[NSMutableDictionary alloc] init];
     });
     DIMCommandProcessor *cpu = [_processors objectForKey:name];
     if (!cpu) {

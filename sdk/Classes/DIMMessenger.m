@@ -304,7 +304,7 @@ static inline void loadCommandClasses(void) {
 
 - (nullable NSData *)onReceivePackage:(NSData *)data {
     SingletonDispatchOnce(^{
-        _processor = [[DIMMessageProcessor alloc] initWithMessenger:self];
+        self->_processor = [[DIMMessageProcessor alloc] initWithMessenger:self];
     });
     return [_processor onReceivePackage:data];
 }

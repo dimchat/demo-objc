@@ -141,7 +141,7 @@ static NSMutableDictionary<NSNumber *, Class> *cpu_classes(void) {
 
 - (DIMContentProcessor *)processorForContentType:(DKDContentType)type {
     SingletonDispatchOnce(^{
-        _processors = [[NSMutableDictionary alloc] init];
+        self->_processors = [[NSMutableDictionary alloc] init];
     });
     NSNumber *key = @(type);
     DIMContentProcessor *cpu = [_processors objectForKey:key];
