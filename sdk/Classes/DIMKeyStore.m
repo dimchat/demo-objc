@@ -28,50 +28,45 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  DIMKeyStore.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/8/1.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import "NSObject+Singleton.h"
+#import "NSDictionary+Binary.h"
 
-#import "MKMUser+Extension.h"
+#import "DIMKeyStore.h"
 
-@implementation MKMUser (Extension)
+// "Library/Caches"
+static inline NSString *caches_directory(void) {
+    NSArray *paths;
+    paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
+                                                NSUserDomainMask, YES);
+    return paths.firstObject;
+}
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
+@implementation DIMKeyStore
+
+SingletonImplementations(DIMKeyStore, sharedInstance)
+
+- (BOOL)saveKeys:(NSDictionary *)keyMap {
+    // "Library/Caches/keystore.plist"
+    NSString *dir = caches_directory();
+    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
+    return [keyMap writeToBinaryFile:path];
+}
+
+- (nullable NSDictionary *)loadKeys {
+    NSString *dir = caches_directory();
+    NSString *path = [dir stringByAppendingPathComponent:@"keystore.plist"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:path]) {
+        return [NSDictionary dictionaryWithContentsOfFile:path];
     }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
+    return nil;
 }
 
 @end

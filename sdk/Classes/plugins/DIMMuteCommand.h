@@ -28,50 +28,41 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  DIMMuteCommand.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <DIMCore/DIMCore.h>
 
-#import "MKMUser+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation MKMUser (Extension)
+#define DIMCommand_Mute   @"mute"
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
-    }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
-}
+@interface DIMMuteCommand : DIMHistoryCommand
+
+// timestamp which already defined in HistoryCommand
+//@property (readonly, strong, nonatomic) NSDate *time;
+
+// mute-list
+@property (strong, nonatomic, nullable) NSArray<DIMID *> *list;
+
+/**
+ *  MuteCommand message: {
+ *      type : 0x89,
+ *
+ *      command : "mute",
+ *      time    : 0,     // timestamp
+ *      list    : [] // mute-list; if it's None, means querying mute-list from station
+ *  }
+ */
+- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList;
+
+- (void)addID:(DIMID *)ID;
+- (void)removeID:(DIMID *)ID;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -6,13 +6,13 @@
 //  Copyright © 2019 John Chen. All rights reserved.
 //
 
+#import <sqlite3.h>
+#import <DIMSDK/DIMSDK.h>
+
 #import "LocalDatabaseManager.h"
 #import "FolderUtility.h"
 #import "FMDB.h"
 #import "NSObject+JsON.h"
-#import "DKDInstantMessage+Extension.h"
-#import "DIMFacebook.h"
-#import <sqlite3.h>
 
 @interface LocalDatabaseManager()
 

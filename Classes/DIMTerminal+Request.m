@@ -35,14 +35,12 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
+
 #import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 #import "NSNotificationCenter+Extension.h"
-#import "DKDInstantMessage+Extension.h"
 
-#import "DIMFacebook.h"
-#import "DIMMessenger.h"
-#import <DIMClient/DIMClient.h>
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 

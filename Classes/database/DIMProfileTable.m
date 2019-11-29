@@ -35,8 +35,9 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
+
 #import "NSDate+Timestamp.h"
-#import "DIMFacebook.h"
 #import "DIMClientConstants.h"
 #import "DIMProfileTable.h"
 

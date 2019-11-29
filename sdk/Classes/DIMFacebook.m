@@ -37,14 +37,7 @@
 
 #import "NSObject+Singleton.h"
 
-#import "MKMECCPrivateKey.h"
-#import "MKMECCPublicKey.h"
-#import "MKMAddressETH.h"
-#import "MKMMetaETH.h"
-
 #import "DIMAddressNameService.h"
-#import "DIMSocialNetworkDatabase.h"
-#import "DIMServer.h"
 
 #import "DIMFacebook.h"
 

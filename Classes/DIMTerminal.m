@@ -35,20 +35,20 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
+
 #import "NSObject+JsON.h"
 
 #import "MKMGroup+Extension.h"
 
-#import "DIMFacebook.h"
-#import "DIMMessenger.h"
-
 #import "DIMAmanuensis.h"
 
 #import "DIMServer.h"
+
 #import "DIMTerminal+Request.h"
 #import "DIMTerminal+Response.h"
 #import "DIMTerminal+Group.h"
-#import "DIMMuteCommand.h"
+
 #import "DIMTerminal.h"
 
 @interface DIMTerminal ()

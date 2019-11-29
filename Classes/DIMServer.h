@@ -35,10 +35,9 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
 #import <MarsGate/StarGate.h>
-#import <DIMCore/DIMCore.h>
 
-#import "DIMMessenger.h"
 #import "DIMServerState.h"
 
 NS_ASSUME_NONNULL_BEGIN

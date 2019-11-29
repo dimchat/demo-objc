@@ -35,6 +35,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
 #import <MarsGate/MarsGate.h>
 
 #import "NSObject+JsON.h"
@@ -42,9 +43,6 @@
 
 #import "NSObject+Extension.h"
 #import "NSNotificationCenter+Extension.h"
-
-#import "DIMFacebook.h"
-#import "DIMMessenger.h"
 
 #import "DIMFileServer.h"
 

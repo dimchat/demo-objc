@@ -28,50 +28,42 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  DKDInstantMessage+Extension.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/10/21.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <DaoKeDao/DaoKeDao.h>
 
-#import "MKMUser+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation MKMUser (Extension)
+typedef NS_ENUM(UInt8, DIMMessageState) {
+    DIMMessageState_Init = 0,
+    DIMMessageState_Normal = DIMMessageState_Init,
+    
+    DIMMessageState_Waiting,
+    DIMMessageState_Sending,   // sending to station
+    DIMMessageState_Accepted,  // station accepted, delivering
+    
+    DIMMessageState_Delivering = DIMMessageState_Accepted,
+    DIMMessageState_Delivered, // delivered to receiver (station said)
+    DIMMessageState_Arrived,   // the receiver's client feedback
+    DIMMessageState_Read,      // the receiver's client feedback
+    
+    DIMMessageState_Error = -1, // failed to send
+};
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
-    }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
-}
+@class DIMReceiptCommand;
+
+@interface DKDInstantMessage (Extension)
+
+@property (nonatomic) DIMMessageState state;
+@property (strong , nonatomic, nullable) NSString *error;
+
+- (BOOL)matchReceipt:(DIMReceiptCommand *)cmd;
 
 @end
+
+NS_ASSUME_NONNULL_END

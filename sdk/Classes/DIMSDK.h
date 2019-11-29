@@ -28,50 +28,46 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
-//  DIMClient
+//  DIMSDK.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/8/12.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/11/29.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <Foundation/Foundation.h>
 
-#import "MKMUser+Extension.h"
+//! Project version number for DIMSDK.
+FOUNDATION_EXPORT double DIMSDKVersionNumber;
 
-@implementation MKMUser (Extension)
+//! Project version string for DIMSDK.
+FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
-    }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
-}
+// In this header, you should import all the public headers of your framework using statements like #import <DIMSDK/PublicHeader.h>
 
-@end
+// MKM
+//#import <MingKeMing/MingKeMing.h>
+
+// DKD
+//#import <DaoKeDao/DaoKeDao.h>
+
+// Core
+//#import <DIMCore/DIMCore.h>
+
+#if !defined(__DIM_SDK__)
+#define __DIM_SDK__ 1
+
+// Extensions
+#import <DIMSDK/DKDInstantMessage+Extension.h>
+
+// Plug-Ins
+#import <DIMSDK/DIMBlockCommand.h>
+#import <DIMSDK/DIMMuteCommand.h>
+#import <DIMSDK/DIMReceiptCommand.h>
+
+#import <DIMSDK/DIMAddressNameService.h>
+#import <DIMSDK/DIMFacebook.h>
+#import <DIMSDK/DIMKeyStore.h>
+#import <DIMSDK/DIMMessenger.h>
+
+#endif /* ! __DIM_SDK__== */

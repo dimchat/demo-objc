@@ -35,15 +35,15 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
+
 #import "NSNotificationCenter+Extension.h"
 
-#import "DIMFacebook.h"
 #import "NSObject+JsON.h"
 #import "DIMServer.h"
 #import "DIMTerminal+Request.h"
 #import "NSString+Crypto.h"
 #import "DIMTerminal+Response.h"
-#import "DIMMuteCommand.h"
 #import "LocalDatabaseManager.h"
 
 NSString * const kNotificationName_OnlineUsersUpdated = @"OnlineUsersUpdated";

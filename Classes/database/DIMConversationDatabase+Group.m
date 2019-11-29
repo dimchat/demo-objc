@@ -35,8 +35,9 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
+
 #import "MKMGroup+Extension.h"
-#import "DIMFacebook.h"
 #import "DIMConversationDatabase.h"
 
 @implementation DIMConversationDatabase (GroupCommand)

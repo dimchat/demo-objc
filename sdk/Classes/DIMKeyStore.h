@@ -28,50 +28,21 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  DIMKeyStore.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/8/1.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <DIMCore/DIMCore.h>
 
-#import "MKMUser+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation MKMUser (Extension)
+@interface DIMKeyStore : DIMKeyCache
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
-    }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
-}
++ (instancetype)sharedInstance;
 
 @end
+
+NS_ASSUME_NONNULL_END

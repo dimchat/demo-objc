@@ -28,50 +28,41 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  DIMReceiptCommand.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/3/28.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <DIMCore/DIMCore.h>
 
-#import "MKMUser+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation MKMUser (Extension)
+@interface DIMReceiptCommand : DIMCommand
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
-    }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
-}
+@property (readonly, strong, nonatomic) NSString *message;
+
+// original message info
+@property (strong, nonatomic, nullable) DIMEnvelope *envelope;
+@property (strong, nonatomic, nullable) NSData *signature;
+
+/**
+ *  Command message: {
+ *      type : 0x88,
+ *      sn   : 123,  // the same serial number with the original message
+ *
+ *      command : "receipt",
+ *      message : "...",
+ *      // -- extra info
+ *      sender    : "...",
+ *      receiver  : "...",
+ *      time      : 0,
+ *      signature : "..." // the same signature with the original message
+ *  }
+ */
+- (instancetype)initWithMessage:(NSString *)message;
 
 @end
+
+NS_ASSUME_NONNULL_END
