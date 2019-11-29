@@ -89,7 +89,12 @@ SingletonImplementations(DIMSharedFacebook, sharedInstance)
 }
 
 - (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
-    return [_database metaForID:ID];
+    DIMMeta *meta = [_database metaForID:ID];
+    if (!meta) {
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        [messenger queryMetaForID:ID];
+    }
+    return meta;
 }
 
 - (BOOL)saveProfile:(DIMProfile *)profile {

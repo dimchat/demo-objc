@@ -28,18 +28,34 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMDefaultProcessor.m
+//  DIMHandshakeCommandProcessor.m
 //  DIMSDK
 //
-//  Created by Albert Moky on 2019/11/29.
+//  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMReceiptCommand.h"
+#import "DIMServer.h"
 
-#import "DIMDefaultProcessor.h"
+#import "DIMHandshakeCommandProcessor.h"
 
-@implementation DIMDefaultProcessor
+@implementation DIMHandshakeCommandProcessor
+
+- (nullable DIMContent *)_success {
+    NSString *sessionKey = [self valueForContextName:@"session_key"];
+    DIMServer *server = [self valueForContextName:@"server"];
+    [server handshakeAccepted:YES session:sessionKey];
+    return nil;
+}
+
+- (nullable DIMContent *)_ask:(NSString *)sessionKey {
+    if ([sessionKey length] == 0) {
+        NSAssert(false, @"session key should not be empty");
+        return nil;
+    }
+    [self setContextValue:sessionKey forName:@"session_key"];
+    return [[DIMHandshakeCommand alloc] initWithSessionKey:sessionKey];
+}
 
 //
 //  Main
@@ -47,40 +63,20 @@
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
                                 message:(DIMInstantMessage *)iMsg {
-    NSString *text = nil;
-    // File: Image, Audio, Video
-    if ([content isKindOfClass:[DIMFileContent class]]) {
-        if ([content isKindOfClass:[DIMImageContent class]]) {
-            text = @"Image received";
-        } else if ([content isKindOfClass:[DIMAudioContent class]]) {
-            text = @"Voice message received";
-        } else if ([content isKindOfClass:[DIMVideoContent class]]) {
-            text = @"Movie received";
-        } else {
-            text = @"File received";
-        }
-    } else if ([content isKindOfClass:[DIMTextContent class]]) {
-        NSAssert([content objectForKey:@"text"], @"Text content error: %@", content);
-        text = @"Text message received";
-    } else if ([content isKindOfClass:[DIMWebpageContent class]]) {
-        NSAssert([content objectForKey:@"URL"], @"Web content error: %@", content);
-        text = @"Web page received";
+    NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
+    DIMHandshakeCommand *cmd = (DIMHandshakeCommand *)content;
+    NSString *message = cmd.message;
+    if ([message isEqualToString:@"DIM!"]) {
+        // S -> C
+        return [self _success];
+    } else if ([message isEqualToString:@"DIM?"]) {
+        // S -> C
+        return [self _ask:cmd.sessionKey];
     } else {
-        text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
-        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-        NSString *group = content.group;
-        if (group) {
-            res.group = group;
-        }
-        return res;
-    }
-    
-    // response
-    if (content.group) {
-        // DON'T response group message for disturb reason
+        // C -> S: Hello world!
+        NSAssert(false, @"handshake command error: %@", cmd);
         return nil;
     }
-    return [[DIMReceiptCommand alloc] initWithMessage:text];
 }
 
 @end

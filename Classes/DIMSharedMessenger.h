@@ -28,21 +28,19 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessenger+Extension.m
+//  DIMSharedMessenger.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/11/29.
+//  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMSharedMessenger.h"
+#import <DIMSDK/DIMSDK.h>
 
-#import "DIMMessenger+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation DIMMessenger (Extension)
-
-+ (instancetype)sharedInstance {
-    return [DIMSharedMessenger sharedInstance];
-}
+@interface DIMSharedMessenger : DIMMessenger
 
 @end
+
+NS_ASSUME_NONNULL_END

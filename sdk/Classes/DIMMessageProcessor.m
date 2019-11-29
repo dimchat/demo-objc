@@ -112,7 +112,7 @@
 - (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg {
     // 0. verify
     DIMSecureMessage *sMsg = [_messenger verifyMessage:rMsg];
-    if (sMsg) {
+    if (!sMsg) {
         NSAssert(false, @"failed to verify message: %@", rMsg);
         return nil;
     }
