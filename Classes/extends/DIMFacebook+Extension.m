@@ -40,7 +40,6 @@
 #import "MKMImmortals.h"
 #import "DIMSocialNetworkDatabase.h"
 
-#import "DIMKeyStore+Extension.h"
 #import "DIMMessenger+Extension.h"
 
 #import "DIMFacebook+Extension.h"
