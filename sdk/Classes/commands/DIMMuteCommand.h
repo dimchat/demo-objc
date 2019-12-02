@@ -28,7 +28,7 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMBlockCommand.h
+//  DIMMuteCommand.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/10/25.
@@ -39,26 +39,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMCommand_Block   @"block"
+#define DIMCommand_Mute   @"mute"
 
-@interface DIMBlockCommand : DIMHistoryCommand
+@interface DIMMuteCommand : DIMHistoryCommand
 
 // timestamp which already defined in HistoryCommand
 //@property (readonly, strong, nonatomic) NSDate *time;
 
-// block-list
+// mute-list
 @property (strong, nonatomic, nullable) NSArray<NSString *> *list;
 
-/**
- *  BlockCommand message: {
+/*
+ *  MuteCommand message: {
  *      type : 0x89,
  *
- *      command : "block",
+ *      command : "mute",
  *      time    : 0,     // timestamp
- *      list    : [] // block-list; if it's None, means querying block-list from station
+ *      list    : [] // mute-list; if it's None, means querying mute-list from station
  *  }
  */
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList;
+- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList;
 
 - (void)addID:(DIMID *)ID;
 - (void)removeID:(DIMID *)ID;

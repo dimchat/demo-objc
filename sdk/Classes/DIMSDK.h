@@ -64,6 +64,7 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMBlockCommand.h>
 #import <DIMSDK/DIMMuteCommand.h>
 #import <DIMSDK/DIMReceiptCommand.h>
+#import <DIMSDK/DIMStorageCommand.h>
 
 // CPUs
 #import <DIMSDK/DIMContentProcessor.h>

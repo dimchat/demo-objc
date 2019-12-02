@@ -40,7 +40,9 @@
 #import "DIMSearchCommand.h"
 
 #import "DIMHandshakeCommandProcessor.h"
+#import "DIMMuteCommandProcessor.h"
 #import "DIMSearchCommandProcessor.h"
+#import "DIMStorageCommandProcessor.h"
 
 #import "DIMAmanuensis.h"
 #import "DIMFacebook+Extension.h"
@@ -74,8 +76,14 @@ static inline void load_cpu_classes(void) {
     
     [DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class] forCommand:DIMCommand_Handshake];
     
+    [DIMCommandProcessor registerClass:[DIMMuteCommandProcessor class] forCommand:DIMCommand_Mute];
+    
     [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_Search];
     [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_OnlineUsers];
+    
+    [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_Storage];
+    [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_Contacts];
+    [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_PrivateKey];
 }
 
 @implementation DIMSharedMessenger

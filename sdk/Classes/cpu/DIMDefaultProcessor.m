@@ -48,21 +48,28 @@
                                  sender:(DIMID *)sender
                                 message:(DIMInstantMessage *)iMsg {
     NSString *text = nil;
+    
     // File: Image, Audio, Video
     if ([content isKindOfClass:[DIMFileContent class]]) {
         if ([content isKindOfClass:[DIMImageContent class]]) {
+            // Image
             text = @"Image received";
         } else if ([content isKindOfClass:[DIMAudioContent class]]) {
+            // Audio
             text = @"Voice message received";
         } else if ([content isKindOfClass:[DIMVideoContent class]]) {
+            // Video
             text = @"Movie received";
         } else {
+            // File
             text = @"File received";
         }
     } else if ([content isKindOfClass:[DIMTextContent class]]) {
+        // Text
         NSAssert([content objectForKey:@"text"], @"Text content error: %@", content);
         text = @"Text message received";
     } else if ([content isKindOfClass:[DIMWebpageContent class]]) {
+        // Web Page
         NSAssert([content objectForKey:@"URL"], @"Web content error: %@", content);
         text = @"Web page received";
     } else {

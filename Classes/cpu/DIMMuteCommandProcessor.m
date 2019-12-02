@@ -28,24 +28,44 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.h
+//  DIMMuteCommandProcessor.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/12/2.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import "LocalDatabaseManager.h"
 
-NS_ASSUME_NONNULL_BEGIN
+#import "DIMMuteCommandProcessor.h"
 
-@interface MKMUser (LocalUser)
+@implementation DIMMuteCommandProcessor
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config;
-
-- (void)addContact:(MKMID *)contact;
-- (void)removeContact:(MKMID *)contact;
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSAssert([content isKindOfClass:[DIMMuteCommand class]], @"mute command error: %@", content);
+    DIMMuteCommand *cmd = (DIMMuteCommand *)content;
+    DIMMessenger *messenger = self.messenger;
+    DIMFacebook *facebook = self.facebook;
+    
+    NSArray *muteList = cmd.list;
+    DIMUser *user = [messenger currentUser];
+    
+    LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
+    [manager unmuteAllConversationForUser:user.ID];
+    
+    DIMID *conversationID;
+    for (NSString *item in muteList){
+        conversationID = [facebook IDWithString:item];
+        [manager muteConversation:conversationID forUser:user.ID];
+    }
+    
+    // no need to response this command
+    return nil;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

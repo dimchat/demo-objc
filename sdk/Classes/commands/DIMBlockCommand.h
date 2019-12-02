@@ -28,64 +28,41 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMBlockCommand.m
+//  DIMBlockCommand.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMFacebook.h"
+#import <DIMCore/DIMCore.h>
 
-#import "DIMBlockCommand.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMBlockCommand () {
-    
-    NSMutableArray *_list;
-}
+#define DIMCommand_Block   @"block"
 
-@end
+@interface DIMBlockCommand : DIMHistoryCommand
 
-@implementation DIMBlockCommand
+// timestamp which already defined in HistoryCommand
+//@property (readonly, strong, nonatomic) NSDate *time;
 
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList {
-    if (self = [super initWithHistoryCommand:DIMCommand_Block]) {
-        // block-list
-        if (blockList) {
-            _list = [blockList mutableCopy];
-            [_storeDictionary setObject:_list forKey:@"list"];
-        } else {
-            _list = nil;
-        }
-    }
-    return self;
-}
+// block-list
+@property (strong, nonatomic, nullable) NSArray<NSString *> *list;
 
-- (nullable NSArray<NSString *> *)list {
-    if (!_list) {
-        NSObject *array = [_storeDictionary objectForKey:@"list"];
-        if (![array isKindOfClass:[NSMutableArray class]]) {
-            _list = [array mutableCopy];
-        }
-    }
-    return _list;
-}
+/*
+ *  BlockCommand message: {
+ *      type : 0x89,
+ *
+ *      command : "block",
+ *      time    : 0,     // timestamp
+ *      list    : [] // block-list; if it's None, means querying block-list from station
+ *  }
+ */
+- (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList;
 
-- (void)addID:(DIMID *)ID {
-    if (![self list]) {
-        // create block-list
-        _list = [[NSMutableArray alloc] init];
-        [_storeDictionary setObject:_list forKey:@"list"];
-    } else if ([_list containsObject:ID]) {
-        NSAssert(false, @"ID already exists: %@", ID);
-        return;
-    }
-    [_list addObject:ID];
-}
-
-- (void)removeID:(DIMID *)ID {
-    NSAssert(_list, @"block-list not set yet");
-    [_list removeObject:ID];
-}
+- (void)addID:(DIMID *)ID;
+- (void)removeID:(DIMID *)ID;
 
 @end
+
+NS_ASSUME_NONNULL_END

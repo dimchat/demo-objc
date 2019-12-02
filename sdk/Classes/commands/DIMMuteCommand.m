@@ -28,59 +28,79 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  DIMMuteCommand.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/8/12.
+//  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import "DIMFacebook.h"
 
-#import "DIMFacebook+Extension.h"
-#import "MKMUser+Extension.h"
+#import "DIMMuteCommand.h"
 
-@implementation MKMUser (LocalUser)
-
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
+@interface DIMMuteCommand () {
     
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
+    NSMutableArray *_list;
+}
+
+@end
+
+@implementation DIMMuteCommand
+
+/* designated initializer */
+- (instancetype)initWithDictionary:(NSDictionary *)dict {
+    if (self = [super initWithDictionary:dict]) {
+        // lazy
+        _list = nil;
     }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
+    return self;
+}
+
+/* designated initializer */
+- (instancetype)initWithType:(DKDContentType)type {
+    if (self = [super initWithType:type]) {
+        _list = nil;
+    }
+    return self;
+}
+
+- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList {
+    if (self = [self initWithHistoryCommand:DIMCommand_Mute]) {
+        // mute-list
+        if (muteList) {
+            _list = [muteList mutableCopy];
+            [_storeDictionary setObject:_list forKey:@"list"];
         }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
     }
-    
-    return user;
+    return self;
 }
 
-- (void)addContact:(DIMID *)contact {
-    [[DIMFacebook sharedInstance] user:_ID removeContact:contact];
+- (nullable NSArray<NSString *> *)list {
+    if (!_list) {
+        NSObject *array = [_storeDictionary objectForKey:@"list"];
+        if (![array isKindOfClass:[NSMutableArray class]]) {
+            _list = [array mutableCopy];
+        }
+    }
+    return _list;
 }
 
-- (void)removeContact:(DIMID *)contact {
-    [[DIMFacebook sharedInstance] user:_ID addContact:contact];
+- (void)addID:(DIMID *)ID {
+    if (![self list]) {
+        // create mute-list
+        _list = [[NSMutableArray alloc] init];
+        [_storeDictionary setObject:_list forKey:@"list"];
+    } else if ([_list containsObject:ID]) {
+        NSAssert(false, @"ID already exists: %@", ID);
+        return;
+    }
+    [_list addObject:ID];
+}
+
+- (void)removeID:(DIMID *)ID {
+    NSAssert(_list, @"mute-list not set yet");
+    [_list removeObject:ID];
 }
 
 @end

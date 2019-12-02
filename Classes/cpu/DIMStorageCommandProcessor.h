@@ -28,64 +28,27 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMuteCommand.m
+//  DIMStorageCommandProcessor.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/10/25.
+//  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMFacebook.h"
+#import <DIMSDK/DIMSDK.h>
 
-#import "DIMMuteCommand.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMuteCommand () {
-    
-    NSMutableArray *_list;
-}
+@interface DIMStorageCommandProcessor : DIMCommandProcessor
 
 @end
 
-@implementation DIMMuteCommand
+#pragma mark - Contacts
 
-- (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList {
-    if (self = [super initWithHistoryCommand:DIMCommand_Mute]) {
-        // mute-list
-        if (muteList) {
-            _list = [muteList mutableCopy];
-            [_storeDictionary setObject:_list forKey:@"list"];
-        } else {
-            _list = nil;
-        }
-    }
-    return self;
-}
+@interface DIMStorageCommand (Contacts)
 
-- (nullable NSArray<NSString *> *)list {
-    if (!_list) {
-        NSObject *array = [_storeDictionary objectForKey:@"list"];
-        if (![array isKindOfClass:[NSMutableArray class]]) {
-            _list = [array mutableCopy];
-        }
-    }
-    return _list;
-}
-
-- (void)addID:(DIMID *)ID {
-    if (![self list]) {
-        // create mute-list
-        _list = [[NSMutableArray alloc] init];
-        [_storeDictionary setObject:_list forKey:@"list"];
-    } else if ([_list containsObject:ID]) {
-        NSAssert(false, @"ID already exists: %@", ID);
-        return;
-    }
-    [_list addObject:ID];
-}
-
-- (void)removeID:(DIMID *)ID {
-    NSAssert(_list, @"mute-list not set yet");
-    [_list removeObject:ID];
-}
+@property (strong, nonatomic, nullable) NSArray<NSString *> *contacts;
 
 @end
+
+NS_ASSUME_NONNULL_END

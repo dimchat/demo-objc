@@ -47,7 +47,6 @@
 #import "DIMServer.h"
 
 #import "DIMTerminal+Request.h"
-#import "DIMTerminal+Response.h"
 #import "DIMTerminal+Group.h"
 
 #import "DIMTerminal.h"
@@ -117,46 +116,6 @@
     if ([_currentStation.currentUser isEqual:user]) {
         _currentStation.currentUser = _users.firstObject;
     }
-}
-
-/**
- *  Process system command
- *
- * @return NO to let MessageProcessor(DB) finish the rest of the job
- */
-- (BOOL)_processCommand:(DIMCommand *)cmd commander:(DIMID *)sender {
-    // group commands
-    if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
-        NSAssert(cmd.group, @"group command error: %@", cmd);
-        // NOTICE: let MessageProcessor(DB) to parse group command
-        return NO;
-    }
-    // history command
-    if ([cmd isKindOfClass:[DIMHistoryCommand class]]) {
-        //NSAssert(false, @"history command not supported yet: %@", cmd);
-        
-        if([cmd isKindOfClass:[DIMMuteCommand class]]){
-            [self processMuteCommand:(DIMMuteCommand *)cmd];
-            return YES;
-        }
-        
-        return NO;
-    }
-    
-    //
-    //  system commands
-    //
-    
-    // other commands
-    NSString *command = cmd.command;
-    if ([command isEqualToString:@"contacts"]) {
-        // get contacts response
-        [self processContactsCommand:cmd];
-        return YES;
-    }
-    
-    // NOTE: let the MessageProcessor(DB) to do the job
-    return NO;
 }
 
 #pragma mark DIMStationDelegate
