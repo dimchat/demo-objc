@@ -76,11 +76,11 @@
 }
 
 - (void)addContact:(DIMID *)contact {
-    [[DIMFacebook sharedInstance] user:_ID removeContact:contact];
+    [[DIMFacebook sharedInstance] user:_ID addContact:contact];
 }
 
 - (void)removeContact:(DIMID *)contact {
-    [[DIMFacebook sharedInstance] user:_ID addContact:contact];
+    [[DIMFacebook sharedInstance] user:_ID removeContact:contact];
 }
 
 @end
