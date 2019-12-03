@@ -97,6 +97,8 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 #pragma mark -
 
+@class DIMFacebook;
+
 @interface DIMMessenger : DIMTransceiver <DIMConnectionDelegate>
 
 @property (readonly, strong, nonatomic) NSDictionary *context;

@@ -37,6 +37,8 @@
 
 #import "NSObject+Singleton.h"
 
+#import "DIMMessenger.h"
+
 #import "DIMGroupCommandProcessor.h"
 
 #import "DIMHistoryProcessor.h"
@@ -85,16 +87,20 @@
     if (content.group) {
         // call group command processor
         cpu = [self processor];
+        NSAssert(cpu, @"group command processor should not be empty");
     } else {
         // other commands
         cpu = [self processorForCommand:cmd.command];
-        if (!cpu) {
-            NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
-            return [[DIMTextContent alloc] initWithText:text];
-        }
     }
-    NSAssert(cpu != self, @"Dead cycle!");
-    return [cpu processContent:content sender:sender message:iMsg];
+    if (cpu) {
+        NSAssert(cpu != self, @"Dead cycle!");
+        return [cpu processContent:content sender:sender message:iMsg];
+    }
+    NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
+    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
+    [self.messenger sendContent:res receiver:sender];
+    // respond nothing (DON'T respond unknown command directly)
+    return nil;
 }
 
 @end

@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMMessenger.h"
+
 #import "DIMReceiptCommand.h"
 
 #import "DIMDefaultProcessor.h"
@@ -79,15 +81,17 @@
         if (group) {
             res.group = group;
         }
-        return res;
+        [self.messenger sendContent:res receiver:sender];
     }
     
-    // response
-    if (content.group) {
-        // DON'T response group message for disturb reason
-        return nil;
+    // receipt (DON'T respond group message for disturb reason)
+    if (!content.group) {
+        DIMCommand *cmd = [[DIMReceiptCommand alloc] initWithMessage:text];
+        [self.messenger sendContent:cmd receiver:sender];
     }
-    return [[DIMReceiptCommand alloc] initWithMessage:text];
+    
+    // respond nothing (DON'T respond default message content directly)
+    return nil;
 }
 
 @end

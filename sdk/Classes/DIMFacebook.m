@@ -106,7 +106,10 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];
     }
-    NSAssert([self metaForID:ID], @"failed to get meta for user: %@", ID);
+    if (![self metaForID:ID]) {
+        //NSAssert(false, @"failed to get meta for user: %@", ID);
+        return nil;
+    }
     MKMNetworkType type = ID.type;
     if (MKMNetwork_IsPerson(type)) {
         return [[DIMUser alloc] initWithID:ID];
@@ -127,7 +130,10 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         // create group 'everyone@everywhere'
         return [[DIMGroup alloc] initWithID:ID];
     }
-    NSAssert([self metaForID:ID], @"failed to get meta for group: %@", ID);
+    if (![self metaForID:ID]) {
+        //NSAssert(false, @"failed to get meta for group: %@", ID);
+        return nil;
+    }
     MKMNetworkType type = ID.type;
     if (type == MKMNetwork_Polylogue) {
         return [[DIMPolylogue alloc] initWithID:ID];
@@ -234,7 +240,9 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     // check each member's public key with group meta
     DIMMeta *gMeta = [self metaForID:group];
     if (!gMeta) {
-        NSAssert(false, @"failed to get group meta");
+        // FIXME: when group profile was arrived but the meta still on the way,
+        //        here will cause founder not found.
+        //NSAssert(false, @"failed to get group meta");
         return nil;
     }
     NSArray<DIMID *> *members = [self membersOfGroup:group];

@@ -64,7 +64,7 @@
         [manager muteConversation:conversationID forUser:user.ID];
     }
     
-    // no need to response this command
+    // no need to respond this command
     return nil;
 }
 

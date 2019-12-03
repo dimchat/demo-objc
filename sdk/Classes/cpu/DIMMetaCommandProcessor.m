@@ -36,6 +36,8 @@
 //
 
 #import "DIMFacebook.h"
+#import "DIMMessenger.h"
+
 #import "DIMReceiptCommand.h"
 
 #import "DIMMetaCommandProcessor.h"
@@ -81,11 +83,20 @@
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
     DIMMeta *meta = cmd.meta;
     DIMID *ID = [_facebook IDWithString:cmd.ID];
+    
+    DIMContent *res;
     if (meta) {
-        return [self _putMeta:meta forID:ID];
+        res = [self _putMeta:meta forID:ID];
     } else {
-        return [self _getMetaForID:ID];
+        res = [self _getMetaForID:ID];
     }
+    /*
+    if (res) {
+        [self.messenger sendContent:res receiver:sender];
+    }
+     */
+    // respond nothing (DON'T respond meta command directly)
+    return nil;
 }
 
 @end

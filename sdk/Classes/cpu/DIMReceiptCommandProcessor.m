@@ -49,7 +49,7 @@
                                  sender:(DIMID *)sender
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMReceiptCommand class]], @"receipt error: %@", content);
-    // no need to response receipt command
+    // no need to respond receipt command
     return nil;
 }
 

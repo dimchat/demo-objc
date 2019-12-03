@@ -50,7 +50,7 @@
         [facebook metaForID:ID];
         [facebook user:user.ID addContact:ID];
     }
-    // no need to response this command
+    // no need to respond this command
     return nil;
 }
 
@@ -102,8 +102,9 @@
     if ([title isEqualToString:DIMCommand_Contacts]) {
         return [self _processContactsCommand:cmd sender:sender];
     }
-    NSString *text = [NSString stringWithFormat:@"Storage command (title: %@) not support yet!", title];
-    return [[DIMTextContent alloc] initWithText:text];
+    NSAssert(false, @"Storage command (title: %@) not support yet!", title);
+    // respond nothing (DON'T respond storage command directly)
+    return nil;
 }
 
 @end

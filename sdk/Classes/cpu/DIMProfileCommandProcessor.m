@@ -95,13 +95,22 @@
     DIMProfileCommand *cmd = (DIMProfileCommand *)content;
     DIMProfile *profile = cmd.profile;
     DIMID *ID = [_facebook IDWithString:cmd.ID];
+    
+    DIMContent *res;
     if (profile) {
         // check meta
         DIMMeta *meta = cmd.meta;
-        return [self _putProfile:profile meta:meta forID:ID];
+        res = [self _putProfile:profile meta:meta forID:ID];
     } else {
-        return [self _getProfileForID:ID];
+        res = [self _getProfileForID:ID];
     }
+    /*
+    if (res) {
+        [self.messenger sendContent:res receiver:sender];
+    }
+     */
+    // respond nothing (DON'T respond profile command directly)
+    return nil;
 }
 
 @end
