@@ -94,7 +94,8 @@
         return YES;
     }
     BOOL needsUpdate = [self _isEmptyGroup:group];
-    if ([content isKindOfClass:[DIMInviteCommand class]]) {
+    if ([content isKindOfClass:[DIMInviteCommand class]] ||
+        [content isKindOfClass:[DIMResetGroupCommand class]]) {
         // FIXME: can we trust this stranger?
         //        may be we should keep this members list temporary,
         //        and send 'query' to the owner immediately.

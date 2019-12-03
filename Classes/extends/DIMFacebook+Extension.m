@@ -127,6 +127,14 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return self;
 }
 
+- (nullable NSArray<DIMID *> *)allUsers {
+    return [_database allUsers];
+}
+
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+    return [_database saveUsers:list];
+}
+
 #pragma mark Storage
 
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
@@ -151,6 +159,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
         }
     }
     // TODO: check for duplicated querying
+    
     // query from DIM network
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     [messenger queryMetaForID:ID];
@@ -163,7 +172,8 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 
 - (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
     DIMProfile *profile = [_database profileForID:ID];
-    if ([[profile propertyKeys] count] > 0) {
+    BOOL isEmpty = [[profile propertyKeys] count] == 0;
+    if (!isEmpty) {
         return profile;
     }
     // try from immortals
@@ -174,6 +184,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
         }
     }
     // TODO: check for duplicated querying
+    
     // query from DIM network
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     [messenger queryProfileForID:ID];
@@ -212,6 +223,16 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 
 + (instancetype)sharedInstance {
     return [_SharedFacebook sharedInstance];
+}
+
+- (nullable NSArray<DIMID *> *)allUsers {
+    NSAssert(false, @"override me!");
+    return nil;
+}
+
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+    NSAssert(false, @"override me!");
+    return NO;
 }
 
 @end

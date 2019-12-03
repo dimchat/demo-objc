@@ -54,16 +54,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMConversationDatabase (GroupCommand)
-
-- (BOOL)processGroupCommand:(DIMGroupCommand *)cmd
-                  commander:(DIMID *)sender;
-
-// query
-- (BOOL)processQueryCommand:(DIMGroupCommand *)gCmd
-                  commander:(DIMID *)sender
-                  polylogue:(DIMPolylogue *)group;
-
-@end
-
 NS_ASSUME_NONNULL_END

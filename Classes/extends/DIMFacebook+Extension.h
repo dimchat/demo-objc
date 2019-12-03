@@ -51,6 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
+- (nullable NSArray<DIMID *> *)allUsers;
+- (BOOL)saveUsers:(NSArray<DIMID *> *)list;
+
 @end
 
 NS_ASSUME_NONNULL_END

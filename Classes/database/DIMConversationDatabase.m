@@ -154,37 +154,9 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
 
 - (BOOL)conversation:(DIMConversation *)chatBox insertMessage:(DIMInstantMessage *)iMsg {
     
-    // preprocess
-    DIMContent *content = iMsg.content;
-    if ([content isKindOfClass:[DIMGroupCommand class]]) {
-        // group command
-        DIMGroupCommand *cmd = (DIMGroupCommand *)content;
-        DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
-        if (![self processGroupCommand:cmd commander:sender]) {
-            NSLog(@"group comment error: %@", content);
-            return NO;
-        }
-    } else if ([content isKindOfClass:[DIMHistoryCommand class]]) {
-        // history command
-        NSAssert(content.type == DKDContentType_History, @"error: %@", content);
-        DIMHistoryCommand *cmd = (DIMHistoryCommand *)content;
-        NSLog(@"history command: %@", cmd.command);
-        // TODO: history command not support yet
-        // ...
-        return NO;
-    } else if ([content isKindOfClass:[DIMCommand class]]) {
-        // system command
-        NSAssert(content.type == DKDContentType_Command, @"error: %@", content);
-        DIMCommand *cmd = (DIMCommand *)content;
-        NSLog(@"command: %@", cmd.command);
-        // TODO: parse & execute system command
-        // ...
-        return NO;
-    }
+    BOOL OK = [_messageTable addMessage:iMsg toConversation:chatBox.ID];
     
-    BOOL result = [_messageTable addMessage:iMsg toConversation:chatBox.ID];
-    
-    if(result){
+    if (OK) {
         [_conversationTable setObject:chatBox forKey:chatBox.ID];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:DIMConversationUpdatedNotification object:nil userInfo:@{@"ID": chatBox.ID}];
@@ -192,7 +164,7 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
         [[NSNotificationCenter defaultCenter] postNotificationName:DIMMessageInsertedNotifiation object:nil userInfo:userInfo];
     }
     
-    return result;
+    return OK;
     
 //    NSArray<DIMInstantMessage *> *messages;
 //    messages = [_messageTable messagesInConversation:chatBox.ID];
