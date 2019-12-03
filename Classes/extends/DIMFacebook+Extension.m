@@ -44,9 +44,18 @@
 
 #import "DIMFacebook+Extension.h"
 
-@interface _SharedANS : DIMAddressNameService
+@interface DIMAddressNameService (Extension)
 
 @property (weak, nonatomic) DIMSocialNetworkDatabase *database;
+
++ (instancetype)sharedInstance;
+
+@end
+
+@interface _SharedANS : DIMAddressNameService {
+    
+    DIMSocialNetworkDatabase *_database;
+}
 
 + (instancetype)sharedInstance;
 
@@ -55,6 +64,14 @@
 @implementation _SharedANS
 
 SingletonImplementations(_SharedANS, sharedInstance)
+
+- (DIMSocialNetworkDatabase *)database {
+    return _database;
+}
+
+- (void)setDatabase:(DIMSocialNetworkDatabase *)database {
+    _database = database;
+}
 
 - (nullable DIMID *)IDWithName:(NSString *)username {
     DIMID *ID = [_database ansRecordForName:username];
@@ -82,16 +99,19 @@ SingletonImplementations(_SharedANS, sharedInstance)
 
 @end
 
-@interface DIMAddressNameService (Extension)
-
-+ (instancetype)sharedInstance;
-
-@end
-
 @implementation DIMAddressNameService (Extension)
 
 + (instancetype)sharedInstance {
     return [_SharedANS sharedInstance];
+}
+
+- (DIMSocialNetworkDatabase *)database {
+    NSAssert(false, @"override me!");
+    return nil;
+}
+
+- (void)setDatabase:(DIMSocialNetworkDatabase *)database {
+    NSAssert(false, @"override me!");
 }
 
 @end
@@ -116,13 +136,16 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         
-        // ANS
-        self.ans = [DIMAddressNameService sharedInstance];
-        
+        // user db
         _database = [[DIMSocialNetworkDatabase alloc] init];
         
         // Immortal accounts
         _immortals = [[MKMImmortals alloc] init];
+        
+        // ANS
+        DIMAddressNameService *ans = [DIMAddressNameService sharedInstance];
+        ans.database = _database;
+        self.ans = ans;
     }
     return self;
 }
