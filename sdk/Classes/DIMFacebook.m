@@ -440,15 +440,14 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     NSAssert(MKMNetwork_IsUser(ID.type), @"user ID error: %@", ID);
     if ([contacts count] == 0) {
         [_contactsMap removeObjectForKey:ID];
-        return NO;
+        //return NO;
     } else if ([contacts isKindOfClass:[IDList class]]) {
         [_contactsMap setObject:(IDList *)contacts forKey:ID];
-        return YES;
     } else {
         IDList *list = [contacts mutableCopy];
         [_contactsMap setObject:list forKey:ID];
-        return YES;
     }
+    return YES;
 }
 
 - (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
@@ -470,12 +469,11 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         return NO;
     } else if ([members isKindOfClass:[IDList class]]) {
         [_membersMap setObject:(IDList *)members forKey:ID];
-        return YES;
     } else {
         IDList *list = [members mutableCopy];
         [_membersMap setObject:list forKey:ID];
-        return YES;
     }
+    return YES;
 }
 
 - (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {

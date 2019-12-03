@@ -37,6 +37,9 @@
 
 #import "NSObject+Singleton.h"
 
+#import "NSNotificationCenter+Extension.h"
+#import "DIMClientConstants.h"
+
 #import "MKMImmortals.h"
 #import "DIMSocialNetworkDatabase.h"
 
@@ -223,7 +226,17 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 }
 
 - (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
-    return [_database saveContacts:contacts user:ID];
+    if (![self cacheContacts:contacts user:ID]) {
+        return NO;
+    }
+    BOOL OK = [_database saveContacts:contacts user:ID];
+    if (OK) {
+        NSDictionary *info = @{@"ID": ID};
+        [NSNotificationCenter postNotificationName:kNotificationName_ContactsUpdated
+                                            object:self
+                                          userInfo:info];
+    }
+    return OK;
 }
 
 - (nullable NSArray<DIMID *> *)loadContacts:(DIMID *)ID {
@@ -231,7 +244,17 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 }
 
 - (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
-    return [_database saveMembers:members group:ID];
+    if (![self cacheMembers:members group:ID]) {
+        return NO;
+    }
+    BOOL OK = [_database saveMembers:members group:ID];
+    if (OK) {
+        NSDictionary *info = @{@"group": ID};
+        [NSNotificationCenter postNotificationName:kNotificationName_GroupMembersUpdated
+                                            object:self
+                                          userInfo:info];
+    }
+    return OK;
 }
 
 - (nullable NSArray<DIMID *> *)loadMembers:(DIMID *)ID {

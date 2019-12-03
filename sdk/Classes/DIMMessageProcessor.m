@@ -95,7 +95,7 @@ static inline void loadCommandClasses(void) {
 }
 
 // check whether need to update group
-- (BOOL)_checkGroup:(DIMContent *)content sender:(DIMID *)sender {
+- (BOOL)_checkingGroup:(DIMContent *)content sender:(DIMID *)sender {
     // check if it's a group message,
     // and whether the group members info needs update
     DIMID *group = [_facebook IDWithString:content.group];
@@ -113,21 +113,41 @@ static inline void loadCommandClasses(void) {
         //NSAssert(false, @"group meta not found: %@", group);
         return YES;
     }
-    BOOL needsUpdate = [self _isEmptyGroup:group];
-    if ([content isKindOfClass:[DIMInviteCommand class]] ||
-        [content isKindOfClass:[DIMResetGroupCommand class]]) {
-        // FIXME: can we trust this stranger?
-        //        may be we should keep this members list temporary,
-        //        and send 'query' to the owner immediately.
-        // TODO: check whether the members list is a full list,
-        //       it should contain the group owner(owner)
-        needsUpdate = NO;
+    // query group command
+    DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    if ([self _isEmptyGroup:group]) {
+        if ([content isKindOfClass:[DIMInviteCommand class]] ||
+            [content isKindOfClass:[DIMResetGroupCommand class]]) {
+            // FIXME: can we trust this stranger?
+            //        may be we should keep this members list temporary,
+            //        and send 'query' to the owner immediately.
+            // TODO: check whether the members list is a full list,
+            //       it should contain the group owner(owner)
+            return NO;
+        } else {
+            return [_messenger sendContent:cmd receiver:sender];
+        }
+    } else if ([_facebook group:group hasMember:sender] ||
+               [_facebook group:group hasAssistant:sender] ||
+               [_facebook group:group isOwner:sender]) {
+        // normal membership
+        return NO;
+    } else {
+        BOOL checking = NO;
+        // if assistants exist, query them
+        NSArray<DIMID *> *assistants = [_facebook assistantsOfGroup:group];
+        for (DIMID *item in assistants) {
+            if ([_messenger sendContent:cmd receiver:item]) {
+                checking = YES;
+            }
+        }
+        // if owner found, query it
+        DIMID *owner = [_facebook ownerOfGroup:group];
+        if (owner && [_messenger sendContent:cmd receiver:owner]) {
+            checking = YES;
+        }
+        return checking;
     }
-    if (needsUpdate) {
-        DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-        return [_messenger sendContent:cmd receiver:sender];
-    }
-    return NO;
 }
 
 - (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg {
@@ -165,7 +185,7 @@ static inline void loadCommandClasses(void) {
     
     // 4. check group
     DIMID *sender = [_facebook IDWithString:rMsg.envelope.sender];
-    if ([self _checkGroup:content sender:sender]) {
+    if ([self _checkingGroup:content sender:sender]) {
         // TODO: save this message in a queue to wait group meta response
         return nil;
     }
