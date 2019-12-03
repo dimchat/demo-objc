@@ -381,8 +381,8 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         
         // check by owner
         DIMID *owner = [self ownerOfGroup:ID];
-        if (owner && [members containsObject:owner]) {
-            // already checked
+        if (!owner || [members containsObject:owner]) {
+            // owner already checked?
             return NO;
         }
         meta = [self metaForID:owner];

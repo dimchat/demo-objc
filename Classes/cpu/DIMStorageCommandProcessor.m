@@ -68,8 +68,8 @@
 
 - (nullable DIMContent *)_processContactsCommand:(DIMStorageCommand *)cmd sender:(DIMID *)sender {
     DIMUser *user = [self.messenger currentUser];
-    if (![user.ID isEqual:sender]) {
-        NSAssert(false, @"sender error: %@, %@ contacts not saved", sender, user);
+    if (![user.ID isEqual:cmd.ID]) {
+        NSAssert(false, @"current user %@ not match %@ contacts not saved", user, cmd.ID);
         return nil;
     }
     

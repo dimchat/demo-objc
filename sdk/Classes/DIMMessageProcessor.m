@@ -36,6 +36,12 @@
 //
 
 #import "DIMFacebook.h"
+
+#import "DIMReceiptCommand.h"
+#import "DIMMuteCommand.h"
+#import "DIMBlockCommand.h"
+#import "DIMStorageCommand.h"
+
 #import "DIMContentProcessor.h"
 
 #import "DIMMessageProcessor.h"
@@ -50,6 +56,17 @@
 
 @end
 
+static inline void loadCommandClasses(void) {
+    // register new command classes
+    [DIMCommand registerClass:[DIMReceiptCommand class] forCommand:DIMCommand_Receipt];
+    [DIMCommand registerClass:[DIMMuteCommand class] forCommand:DIMCommand_Mute];
+    [DIMCommand registerClass:[DIMBlockCommand class] forCommand:DIMCommand_Block];
+    
+    [DIMCommand registerClass:[DIMStorageCommand class] forCommand:DIMCommand_Storage];
+    [DIMCommand registerClass:[DIMStorageCommand class] forCommand:DIMCommand_Contacts];
+    [DIMCommand registerClass:[DIMStorageCommand class] forCommand:DIMCommand_PrivateKey];
+}
+
 @implementation DIMMessageProcessor
 
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
@@ -57,6 +74,9 @@
         _cpu = [[DIMContentProcessor alloc] initWithMessenger:messenger];
         _messenger = messenger;
         _facebook = messenger.facebook;
+        
+        // extend new commands
+        loadCommandClasses();
     }
     return self;
 }
