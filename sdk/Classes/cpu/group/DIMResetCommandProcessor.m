@@ -121,7 +121,12 @@
     if ([self isEmpty:group]) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
-        return [self _tempSave:newMembers sender:sender group:group];
+        DIMContent *res = [self _tempSave:newMembers sender:sender group:group];
+        if (res) {
+            [self.messenger sendContent:res receiver:sender];
+        }
+        // respond nothing (DON'T respond group command directly)
+        return nil;
     }
     // 1. check permission
     if (![_facebook group:group isOwner:sender]) {
@@ -130,6 +135,7 @@
             return nil;
         }
     }
+    // 2. reset group members
     NSDictionary *result = [self _doReset:newMembers group:group];
     NSArray *added = [result objectForKey:@"added"];
     if (added) {
@@ -139,7 +145,7 @@
     if (removed) {
         [content setObject:removed forKey:@"removed"];
     }
-    // 3. response (no need to response this group command)
+    // 3. respond nothing
     return nil;
 }
 

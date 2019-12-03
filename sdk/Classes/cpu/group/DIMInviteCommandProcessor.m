@@ -36,6 +36,7 @@
 //
 
 #import "DIMFacebook.h"
+#import "DIMMessenger.h"
 
 #import "DIMInviteCommandProcessor.h"
 
@@ -105,7 +106,19 @@
     if (![_facebook group:group hasMember:sender]) {
         if (![_facebook group:group hasAssistant:sender]) {
             if (![_facebook group:group isOwner:sender]) {
-                NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
+                // FIXME: imcomplete member list? query the admin/assistant
+                DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+                NSArray<DIMID *> *assistants = [_facebook assistantsOfGroup:group];
+                // if assistant exists, query them
+                for (DIMID *item in assistants) {
+                    [self.messenger sendContent:cmd receiver:item];
+                }
+                DIMID *owner = [_facebook ownerOfGroup:group];
+                if (owner) {
+                    // if owner found, query it
+                    [self.messenger sendContent:cmd receiver:owner];
+                }
+                //NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
                 return nil;
             }
         }
@@ -127,7 +140,7 @@
     if (added) {
         [content setObject:added forKey:@"added"];
     }
-    // 3. response (no need to response this group command)
+    // 3. respond nothing (DON'T respond group command directly)
     return nil;
 }
 

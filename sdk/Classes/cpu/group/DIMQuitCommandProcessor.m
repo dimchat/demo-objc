@@ -75,7 +75,7 @@
     }
     // 2. remove the sender from group members
     [self _doQuit:sender group:group];
-    // 3. response (no need to response this group command)
+    // 3. respond nothing (DON'T respond group command directly)
     return nil;
 }
 
