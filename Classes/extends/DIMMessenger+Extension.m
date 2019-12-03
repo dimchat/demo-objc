@@ -63,7 +63,7 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 
 #pragma mark -
 
-@interface DIMSharedMessenger : DIMMessenger
+@interface _SharedMessenger : DIMMessenger
 
 @end
 
@@ -86,9 +86,9 @@ static inline void load_cpu_classes(void) {
     [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_PrivateKey];
 }
 
-@implementation DIMSharedMessenger
+@implementation _SharedMessenger
 
-SingletonImplementations(DIMSharedMessenger, sharedInstance)
+SingletonImplementations(_SharedMessenger, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -120,6 +120,14 @@ SingletonImplementations(DIMSharedMessenger, sharedInstance)
         return YES;
     }
     DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryProfileForID:(DIMID *)ID {
+    if ([ID isBroadcast]) {
+        return YES;
+    }
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];
 }
 
@@ -173,10 +181,12 @@ SingletonImplementations(DIMSharedMessenger, sharedInstance)
 
 @end
 
+#pragma mark -
+
 @implementation DIMMessenger (Extension)
 
 + (instancetype)sharedInstance {
-    return [DIMSharedMessenger sharedInstance];
+    return [_SharedMessenger sharedInstance];
 }
 
 @end

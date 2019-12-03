@@ -117,12 +117,20 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 @interface DIMMessenger (Send)
 
 /**
- *  Interface for client to query meta on station, or the station query on other station
+ *  Interface for client to query meta from station
  *
  * @param ID - entity ID
  * @return true on success
  */
 - (BOOL)queryMetaForID:(DIMID *)ID;
+
+/**
+ *  Interface for client to query profile from station
+ *
+ * @param ID - entity ID
+ * @return true on success
+ */
+- (BOOL)queryProfileForID:(DIMID *)ID;
 
 /**
  *  Send message content to receiver

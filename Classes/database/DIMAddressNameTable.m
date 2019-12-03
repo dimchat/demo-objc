@@ -139,11 +139,10 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
     }
     // get keys with the same value
     NSMutableArray<NSString *> *keys = [[NSMutableArray alloc] init];
-    DIMID *target = DIMIDWithString(ID);
     DIMID *value;
     for (NSString *name in allKeys) {
         value = [dict objectForKey:name];
-        if ([value isEqual:target]) {
+        if ([value isEqual:ID]) {
             [keys addObject:name];
         }
     }

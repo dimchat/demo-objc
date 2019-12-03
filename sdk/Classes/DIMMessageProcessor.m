@@ -90,7 +90,7 @@
         // NOTICE: if meta for group not found,
         //         facebook should query it from DIM network automatically
         // TODO: insert the message to a temporary queue to wait meta
-        NSAssert(false, @"group meta not found: %@", group);
+        //NSAssert(false, @"group meta not found: %@", group);
         return YES;
     }
     BOOL needsUpdate = [self _isEmptyGroup:group];
@@ -113,7 +113,8 @@
     // 0. verify
     DIMSecureMessage *sMsg = [_messenger verifyMessage:rMsg];
     if (!sMsg) {
-        NSAssert(false, @"failed to verify message: %@", rMsg);
+        // TODO: save this message in a queue to wait meta response
+        //NSAssert(false, @"failed to verify message: %@", rMsg);
         return nil;
     }
     
@@ -144,7 +145,8 @@
     // 4. check group
     DIMID *sender = [_facebook IDWithString:rMsg.envelope.sender];
     if ([self _checkGroup:content sender:sender]) {
-        // sending query group command
+        // TODO: save this message in a queue to wait group meta response
+        return nil;
     }
     
     // 5. process

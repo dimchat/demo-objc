@@ -533,7 +533,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     DIMMeta *gMeta = [self metaForID:group];
     NSAssert(gMeta, @"failed to get meta for group: %@", group);
     DIMMeta *mMeta = [self metaForID:member];
-    NSAssert(mMeta, @"failed to get meta for member: %@", member);
+    //NSAssert(mMeta, @"failed to get meta for member: %@", member);
     return [gMeta matchPublicKey:mMeta.key];
 }
 

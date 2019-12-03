@@ -330,9 +330,9 @@ static inline void loadCommandClasses(void) {
     } else {
         meta = [self.barrack metaForID:sender];
         if (!meta) {
-            //[self queryMetaForID:sender];
+            [self queryMetaForID:sender];
             // TODO: save this message in a queue to wait meta response
-            NSAssert(false, @"failed to get meta for sender: %@", sender);
+            //NSAssert(false, @"failed to get meta for sender: %@", sender);
             return nil;
         }
     }
@@ -394,6 +394,11 @@ static inline void loadCommandClasses(void) {
 @implementation DIMMessenger (Send)
 
 - (BOOL)queryMetaForID:(DIMID *)ID {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+- (BOOL)queryProfileForID:(DIMID *)ID {
     NSAssert(false, @"override me!");
     return NO;
 }

@@ -57,7 +57,7 @@
 @implementation DIMHistoryCommandProcessor
 
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super init]) {
+    if (self = [super initWithMessenger:messenger]) {
         _gpu = nil;
     }
     return self;

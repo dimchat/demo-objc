@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (DIMID *)recordForName:(NSString *)name;
 
-- (NSArray<DIMID *> *)namesWithRecord:(NSString *)ID;
+- (NSArray<NSString *> *)namesWithRecord:(NSString *)ID;
 
 @end
 

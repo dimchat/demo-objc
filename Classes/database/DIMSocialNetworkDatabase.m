@@ -75,7 +75,7 @@
     return [_ansTable recordForName:name];
 }
 
-- (NSArray<DIMID *> *)namesWithANSRecord:(NSString *)ID {
+- (NSArray<NSString *> *)namesWithANSRecord:(NSString *)ID {
     return [_ansTable namesWithRecord:ID];
 }
 

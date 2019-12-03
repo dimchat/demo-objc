@@ -44,6 +44,44 @@
 
 #import "DIMFacebook+Extension.h"
 
+@interface _SharedANS : DIMAddressNameService
+
+@property (weak, nonatomic) DIMSocialNetworkDatabase *database;
+
++ (instancetype)sharedInstance;
+
+@end
+
+@implementation _SharedANS
+
+SingletonImplementations(_SharedANS, sharedInstance)
+
+- (nullable DIMID *)IDWithName:(NSString *)username {
+    DIMID *ID = [_database ansRecordForName:username];
+    if (ID) {
+        return ID;
+    }
+    return [super IDWithName:username];
+}
+
+- (nullable NSArray<NSString *> *)namesWithID:(DIMID *)ID {
+    NSArray<NSString *> *names = [_database namesWithANSRecord:ID];
+    if (names) {
+        return names;
+    }
+    return [super namesWithID:ID];
+}
+
+- (BOOL)saveID:(DIMID *)ID withName:(NSString *)username {
+    if (![self cacheID:ID withName:username]) {
+        // username is reserved
+        return NO;
+    }
+    return [_database saveANSRecord:ID forName:username];
+}
+
+@end
+
 @interface DIMAddressNameService (Extension)
 
 + (instancetype)sharedInstance;
@@ -52,13 +90,15 @@
 
 @implementation DIMAddressNameService (Extension)
 
-SingletonImplementations(DIMAddressNameService, sharedInstance)
++ (instancetype)sharedInstance {
+    return [_SharedANS sharedInstance];
+}
 
 @end
 
 #pragma mark -
 
-@interface DIMSharedFacebook : DIMFacebook {
+@interface _SharedFacebook : DIMFacebook {
     
     // Database
     DIMSocialNetworkDatabase *_database;
@@ -69,9 +109,9 @@ SingletonImplementations(DIMAddressNameService, sharedInstance)
 
 @end
 
-@implementation DIMSharedFacebook
+@implementation _SharedFacebook
 
-SingletonImplementations(DIMSharedFacebook, sharedInstance)
+SingletonImplementations(_SharedFacebook, sharedInstance)
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -87,19 +127,34 @@ SingletonImplementations(DIMSharedFacebook, sharedInstance)
     return self;
 }
 
-#pragma mark - Storage
+#pragma mark Storage
 
 - (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
     return [_database saveMeta:meta forID:ID];
 }
 
 - (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
-    DIMMeta *meta = [_database metaForID:ID];
-    if (!meta) {
-        DIMMessenger *messenger = [DIMMessenger sharedInstance];
-        [messenger queryMetaForID:ID];
+    if ([ID isBroadcast]) {
+        // broadcast ID has not meta
+        return nil;
     }
-    return meta;
+    // try from database
+    DIMMeta *meta = [_database metaForID:ID];
+    if (meta) {
+        return meta;
+    }
+    // try from immortals
+    if (MKMNetwork_IsPerson(ID.type)) {
+        meta = [_immortals metaForID:ID];
+        if (meta) {
+            return meta;
+        }
+    }
+    // TODO: check for duplicated querying
+    // query from DIM network
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    [messenger queryMetaForID:ID];
+    return nil;
 }
 
 - (BOOL)saveProfile:(DIMProfile *)profile {
@@ -107,7 +162,22 @@ SingletonImplementations(DIMSharedFacebook, sharedInstance)
 }
 
 - (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
-    return [_database profileForID:ID];
+    DIMProfile *profile = [_database profileForID:ID];
+    if ([[profile propertyKeys] count] > 0) {
+        return profile;
+    }
+    // try from immortals
+    if (MKMNetwork_IsPerson(ID.type)) {
+        DIMProfile *tai = [_immortals profileForID:ID];
+        if (tai) {
+            return tai;
+        }
+    }
+    // TODO: check for duplicated querying
+    // query from DIM network
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    [messenger queryProfileForID:ID];
+    return profile;
 }
 
 - (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
@@ -136,10 +206,12 @@ SingletonImplementations(DIMSharedFacebook, sharedInstance)
 
 @end
 
+#pragma mark -
+
 @implementation DIMFacebook (Extension)
 
 + (instancetype)sharedInstance {
-    return [DIMSharedFacebook sharedInstance];
+    return [_SharedFacebook sharedInstance];
 }
 
 @end
