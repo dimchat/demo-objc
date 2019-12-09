@@ -96,6 +96,10 @@ static inline void loadCommandClasses(void) {
 
 // check whether need to update group
 - (BOOL)_checkingGroup:(DIMContent *)content sender:(DIMID *)sender {
+    if ([content isKindOfClass:[DIMReceiptCommand class]]) {
+        // no need to check group for receipt
+        return NO;
+    }
     // check if it's a group message,
     // and whether the group members info needs update
     DIMID *group = [_facebook IDWithString:content.group];
@@ -199,7 +203,7 @@ static inline void loadCommandClasses(void) {
     return nil;
 }
 
-#pragma mark ConnectionDelegate
+#pragma mark DIMConnectionDelegate
 
 - (nullable NSData *)onReceivePackage:(NSData *)data {
     DIMReliableMessage *rMsg = [_messenger deserializeMessage:data];
