@@ -83,13 +83,13 @@
         }
         [self.messenger sendContent:res receiver:sender];
     }
-    
+    /*
     // receipt (DON'T respond group message for disturb reason)
     if (!content.group) {
         DIMCommand *cmd = [[DIMReceiptCommand alloc] initWithMessage:text];
         [self.messenger sendContent:cmd receiver:sender];
     }
-    
+    */
     // respond nothing (DON'T respond default message content directly)
     return nil;
 }
