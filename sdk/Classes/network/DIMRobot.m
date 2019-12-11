@@ -28,67 +28,15 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMStorageCommand.h
-//  DIMSDK
+//  DIMRobot.m
+//  DIMCore
 //
-//  Created by Albert Moky on 2019/12/2.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2019/9/4.
+//  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMRobot.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-#define DIMCommand_Storage    @"storage"
-#define DIMCommand_Contacts   @"contacts"
-#define DIMCommand_PrivateKey @"private_key"
-
-@interface DIMStorageCommand : DIMCommand
-
-@property (readonly, strong, nonatomic) NSString *title;
-
-//
-//  ID string
-//
-@property (strong, nonatomic, nullable) NSString *ID;
-
-//
-//  Encrypted data
-//      encrypted by a random password before upload
-//
-@property (strong, nonatomic, nullable) NSData *data;
-
-//
-//  Symmetric key
-//      password to decrypt data
-//      encrypted by user's public key before upload.
-//      this should be empty when the storage data is "private_key".
-//
-@property (strong, nonatomic, nullable) NSData *key;
-
-/*
-*  Command message: {
-*      type : 0x88,
-*      sn   : 123,
-*
-*      command : "storage",
-*      title   : "key name",  // "contacts", "private_key", ...
-*
-*      data    : "...",       // base64_encode(symmetric)
-*      key     : "...",       // base64_encode(asymmetric)
-*
-*      // -- extra info
-*      //...
-*  }
-*/
-- (instancetype)initWithTitle:(NSString *)title;
-
-#pragma mark Decryption
-
-- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW;
-
-- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK;
+@implementation DIMRobot
 
 @end
-
-NS_ASSUME_NONNULL_END

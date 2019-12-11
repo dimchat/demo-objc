@@ -60,6 +60,21 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 // Extensions
 #import <DIMSDK/DKDInstantMessage+Extension.h>
 
+// CA
+#import <DIMSDK/DIMCASubject.h>
+#import <DIMSDK/DIMCAValidity.h>
+#import <DIMSDK/DIMCAData.h>
+#import <DIMSDK/DIMCertificateAuthority.h>
+
+// Network
+#import <DIMSDK/DIMServiceProvider.h>
+#import <DIMSDK/DIMStation.h>
+#import <DIMSDK/DIMRobot.h>
+
+// Group
+#import <DIMSDK/DIMPolylogue.h>
+#import <DIMSDK/DIMChatroom.h>
+
 // Commands
 #import <DIMSDK/DIMBlockCommand.h>
 #import <DIMSDK/DIMMuteCommand.h>

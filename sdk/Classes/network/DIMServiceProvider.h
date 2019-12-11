@@ -2,7 +2,7 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
@@ -28,66 +28,40 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMStorageCommand.h
-//  DIMSDK
+//  DIMServiceProvider.h
+//  DIMCore
 //
-//  Created by Albert Moky on 2019/12/2.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2018/10/13.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMCertificateAuthority.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define DIMCommand_Storage    @"storage"
-#define DIMCommand_Contacts   @"contacts"
-#define DIMCommand_PrivateKey @"private_key"
+@class DIMStation;
 
-@interface DIMStorageCommand : DIMCommand
+@interface DIMServiceProvider : DIMGroup
 
-@property (readonly, strong, nonatomic) NSString *title;
+@property (strong, nonatomic, nullable) DIMCertificateAuthority *CA;
+@property (readonly, strong, nonatomic) DIMPublicKey *publicKey; // CA.info.*
 
-//
-//  ID string
-//
-@property (strong, nonatomic, nullable) NSString *ID;
+@property (strong, nonatomic, nullable) NSURL *home; // home page URL
 
-//
-//  Encrypted data
-//      encrypted by a random password before upload
-//
-@property (strong, nonatomic, nullable) NSData *data;
+- (instancetype)initWithDictionary:(NSDictionary *)dict;
 
-//
-//  Symmetric key
-//      password to decrypt data
-//      encrypted by user's public key before upload.
-//      this should be empty when the storage data is "private_key".
-//
-@property (strong, nonatomic, nullable) NSData *key;
+- (BOOL)verifyStation:(DIMStation *)server;
 
-/*
-*  Command message: {
-*      type : 0x88,
-*      sn   : 123,
-*
-*      command : "storage",
-*      title   : "key name",  // "contacts", "private_key", ...
-*
-*      data    : "...",       // base64_encode(symmetric)
-*      key     : "...",       // base64_encode(asymmetric)
-*
-*      // -- extra info
-*      //...
-*  }
-*/
-- (instancetype)initWithTitle:(NSString *)title;
+@end
 
-#pragma mark Decryption
+#pragma mark Service Provider Data Source
 
-- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW;
+@protocol DIMServiceProviderDataSource <NSObject>
 
-- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK;
+- (NSInteger)numberOfStationsInServiceProvider:(DIMServiceProvider *)SP;
+
+- (DIMStation *)serviceProvider:(DIMServiceProvider *)SP
+                 stationAtIndex:(NSInteger)index;
 
 @end
 

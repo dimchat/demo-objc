@@ -189,6 +189,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     // query from DIM network
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     [messenger queryMetaForID:ID];
+    
     return nil;
 }
 
@@ -197,6 +198,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 }
 
 - (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
+    // try from database
     DIMProfile *profile = [_database profileForID:ID];
     BOOL isEmpty = [[profile propertyKeys] count] == 0;
     if (!isEmpty) {
@@ -214,6 +216,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     // query from DIM network
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     [messenger queryProfileForID:ID];
+    
     return profile;
 }
 

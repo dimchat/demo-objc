@@ -35,6 +35,13 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMServiceProvider.h"
+#import "DIMStation.h"
+#import "DIMRobot.h"
+
+#import "DIMPolylogue.h"
+#import "DIMChatroom.h"
+
 #import "DIMAddressNameService.h"
 
 #import "DIMFacebook.h"

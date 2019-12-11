@@ -59,7 +59,7 @@ static inline void load_cpu_classes(void) {
     [DIMGroupCommandProcessor registerClass:[DIMExpelCommandProcessor class] forCommand:DIMGroupCommand_Expel];
     [DIMGroupCommandProcessor registerClass:[DIMQuitCommandProcessor class] forCommand:DIMGroupCommand_Quit];
     [DIMGroupCommandProcessor registerClass:[DIMResetGroupCommandProcessor class] forCommand:DIMGroupCommand_Reset];
-    [DIMGroupCommandProcessor registerClass:[DIMQueryGroupCommandProcessor class] forCommand:DIMGroupCommand_Quit];
+    [DIMGroupCommandProcessor registerClass:[DIMQueryGroupCommandProcessor class] forCommand:DIMGroupCommand_Query];
 }
 
 @implementation DIMGroupCommandProcessor
