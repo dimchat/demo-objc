@@ -64,9 +64,15 @@
 @end
 
 static inline void load_cpu_classes(void) {
-    [DIMContentProcessor registerClass:[DIMCommandProcessor class] forType:DKDContentType_Command];
-    [DIMContentProcessor registerClass:[DIMHistoryCommandProcessor class] forType:DKDContentType_History];
-    [DIMContentProcessor registerClass:[DIMDefaultProcessor class] forType:DKDContentType_Unknown];
+    // command
+    [DIMContentProcessor registerClass:[DIMCommandProcessor class]
+                               forType:DKDContentType_Command];
+    // history command
+    [DIMContentProcessor registerClass:[DIMHistoryCommandProcessor class]
+                               forType:DKDContentType_History];
+    // unknown content (default)
+    [DIMContentProcessor registerClass:[DIMDefaultProcessor class]
+                               forType:DKDContentType_Unknown];
 }
 
 @implementation DIMContentProcessor

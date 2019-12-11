@@ -220,7 +220,7 @@
                   encryptKey:(NSDictionary *)password
                  forReceiver:(NSString *)receiver {
     DIMID *to = [self.facebook IDWithString:receiver];
-    id<MKMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
+    id<DIMEncryptKey> key = [self.facebook publicKeyForEncryption:to];
     if (!key) {
         DIMMeta *meta = [self.facebook metaForID:to];
         if (!meta) {
@@ -239,7 +239,7 @@
                                 to:(NSString *)receiver {
     if (key) {
         DIMID *target = [self.facebook IDWithString:sMsg.envelope.receiver];
-        NSArray<id<MKMDecryptKey>> *keys;
+        NSArray<id<DIMDecryptKey>> *keys;
         keys = [self.facebook privateKeysForDecryption:target];
         if ([keys count] == 0) {
             // FIXME: private key lost?

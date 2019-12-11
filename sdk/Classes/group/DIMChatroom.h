@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  *           |      (Freezing) ----+         (Freezing) ------+
  *           |        /            |           /              |
  *           V       /             V          /               V
- *        Owner (Normal)          Member (Normal)           Other User
+ *        Owner (Normal)          Member (Normal)         Strangers
  *                   \             |  ^   |   \               |
  *                    \            |  |   |    \              |
  *                  (Waiting) <----+  |   |  (Waiting) <------+
@@ -111,6 +111,8 @@ typedef NS_ENUM(UInt8, DIMMemberType) {
     DIMMember_MemberFreezing = DIMMember_Member | DIMMember_Freezing,
 };
 typedef UInt8 DIMMemberRole;
+
+#pragma mark - Chatroom
 
 @interface DIMChatroom : DIMGroup
 

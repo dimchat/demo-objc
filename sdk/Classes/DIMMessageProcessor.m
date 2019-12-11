@@ -56,15 +56,25 @@
 
 @end
 
-static inline void loadCommandClasses(void) {
-    // register new command classes
-    [DIMCommand registerClass:[DIMReceiptCommand class] forCommand:DIMCommand_Receipt];
-    [DIMCommand registerClass:[DIMMuteCommand class] forCommand:DIMCommand_Mute];
-    [DIMCommand registerClass:[DIMBlockCommand class] forCommand:DIMCommand_Block];
+static inline void load_cmd_classes(void) {
+    // receipt
+    [DIMCommand registerClass:[DIMReceiptCommand class]
+                   forCommand:DIMCommand_Receipt];
     
-    [DIMCommand registerClass:[DIMStorageCommand class] forCommand:DIMCommand_Storage];
-    [DIMCommand registerClass:[DIMStorageCommand class] forCommand:DIMCommand_Contacts];
-    [DIMCommand registerClass:[DIMStorageCommand class] forCommand:DIMCommand_PrivateKey];
+    // mute
+    [DIMCommand registerClass:[DIMMuteCommand class]
+                   forCommand:DIMCommand_Mute];
+    // block
+    [DIMCommand registerClass:[DIMBlockCommand class]
+                   forCommand:DIMCommand_Block];
+    
+    // storage (contacts, private_key)
+    [DIMCommand registerClass:[DIMStorageCommand class]
+                   forCommand:DIMCommand_Storage];
+    [DIMCommand registerClass:[DIMStorageCommand class]
+                   forCommand:DIMCommand_Contacts];
+    [DIMCommand registerClass:[DIMStorageCommand class]
+                   forCommand:DIMCommand_PrivateKey];
 }
 
 @implementation DIMMessageProcessor
@@ -75,8 +85,8 @@ static inline void loadCommandClasses(void) {
         _messenger = messenger;
         _facebook = messenger.facebook;
         
-        // extend new commands
-        loadCommandClasses();
+        // register new commands
+        load_cmd_classes();
     }
     return self;
 }

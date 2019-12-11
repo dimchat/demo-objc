@@ -190,7 +190,7 @@
         key = (DIMPublicKey *)[meta key];
     }
     // 3. encrypt with profile.key
-    return [(id<MKMEncryptKey>)key encrypt:plaintext];
+    return [(id<DIMEncryptKey>)key encrypt:plaintext];
 }
 
 @end

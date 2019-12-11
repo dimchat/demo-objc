@@ -231,7 +231,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     DIMPrivateKey *key = [_privateKeyMap objectForKey:user];
     if (key) {
         // TODO: support profile.key
-        NSAssert([key conformsToProtocol:@protocol(MKMDecryptKey)], @"key error: %@", key);
+        NSAssert([key conformsToProtocol:@protocol(DIMDecryptKey)], @"key error: %@", key);
         [keys addObject:key];
     }
     return keys;

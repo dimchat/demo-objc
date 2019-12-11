@@ -143,7 +143,7 @@
     return [_userTable contactsOfUser:user];
 }
 
-- (nullable id<MKMEncryptKey>)publicKeyForEncryption:(nonnull DIMID *)user {
+- (nullable id<DIMEncryptKey>)publicKeyForEncryption:(nonnull DIMID *)user {
     return nil;
 }
 
@@ -156,7 +156,7 @@
     return [DIMPrivateKey loadKeyWithIdentifier:user.address];
 }
 
-- (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(nonnull DIMID *)user {
+- (nullable NSArray<id<DIMVerifyKey>> *)publicKeysForVerification:(nonnull DIMID *)user {
     return nil;
 }
 

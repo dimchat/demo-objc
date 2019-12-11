@@ -54,12 +54,23 @@
 
 @end
 
-static inline void load_cpu_classes(void) {
-    [DIMGroupCommandProcessor registerClass:[DIMInviteCommandProcessor class] forCommand:DIMGroupCommand_Invite];
-    [DIMGroupCommandProcessor registerClass:[DIMExpelCommandProcessor class] forCommand:DIMGroupCommand_Expel];
-    [DIMGroupCommandProcessor registerClass:[DIMQuitCommandProcessor class] forCommand:DIMGroupCommand_Quit];
-    [DIMGroupCommandProcessor registerClass:[DIMResetGroupCommandProcessor class] forCommand:DIMGroupCommand_Reset];
-    [DIMGroupCommandProcessor registerClass:[DIMQueryGroupCommandProcessor class] forCommand:DIMGroupCommand_Query];
+static inline void load_gpu_classes(void) {
+    // invite
+    [DIMGroupCommandProcessor registerClass:[DIMInviteCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Invite];
+    // expel
+    [DIMGroupCommandProcessor registerClass:[DIMExpelCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Expel];
+    // quit
+    [DIMGroupCommandProcessor registerClass:[DIMQuitCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Quit];
+    // reset
+    [DIMGroupCommandProcessor registerClass:[DIMResetGroupCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Reset];
+    
+    // query
+    [DIMGroupCommandProcessor registerClass:[DIMQueryGroupCommandProcessor class]
+                                 forCommand:DIMGroupCommand_Query];
 }
 
 @implementation DIMGroupCommandProcessor
@@ -69,7 +80,7 @@ static inline void load_cpu_classes(void) {
         
         // register CPU classes
         SingletonDispatchOnce(^{
-            load_cpu_classes();
+            load_gpu_classes();
         });
     }
     return self;

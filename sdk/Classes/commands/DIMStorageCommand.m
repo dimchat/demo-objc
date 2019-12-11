@@ -48,7 +48,7 @@
     NSData *_key;
     
     NSData *_plaintext;
-    id<MKMDecryptKey> _password;
+    id<DIMDecryptKey> _password;
 }
 
 @end
@@ -96,7 +96,12 @@
     if (!_title) {
         _title = [_storeDictionary objectForKey:@"title"];
         if (!_title) {
-            // compatible with v1.0
+            // (compatible with v1.0)
+            //  contacts command: {
+            //      command : "contacts",
+            //      data    : "...",
+            //      key     : "...",
+            //  }
             _title = self.command;
             NSAssert(![_title isEqualToString:DIMCommand_Storage], @"title error: %@", _title);
         }
@@ -153,7 +158,7 @@
 
 #pragma mark Decryption
 
-- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW {
+- (nullable NSData *)decryptWithSymmetricKey:(id<DIMDecryptKey>)PW {
     NSAssert([PW conformsToProtocol:@protocol(MKMSymmetricKey)], @"password error: %@", PW);
     if (_plaintext) {
         // already decrypted
@@ -165,7 +170,7 @@
     return _plaintext;
 }
 
-- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK {
+- (nullable NSData *)decryptWithPrivateKey:(id<DIMDecryptKey>)SK {
     if (_plaintext) {
         // already decrypted
         return _plaintext;

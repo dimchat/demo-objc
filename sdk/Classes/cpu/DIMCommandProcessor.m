@@ -59,9 +59,16 @@
 @end
 
 static inline void load_cpu_classes(void) {
-    [DIMCommandProcessor registerClass:[DIMMetaCommandProcessor class] forCommand:DIMCommand_Meta];
-    [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class] forCommand:DIMCommand_Profile];
-    [DIMCommandProcessor registerClass:[DIMReceiptCommandProcessor class] forCommand:DIMCommand_Receipt];
+    // meta
+    [DIMCommandProcessor registerClass:[DIMMetaCommandProcessor class]
+                            forCommand:DIMCommand_Meta];
+    // profile
+    [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class]
+                            forCommand:DIMCommand_Profile];
+    
+    // receipt
+    [DIMCommandProcessor registerClass:[DIMReceiptCommandProcessor class]
+                            forCommand:DIMCommand_Receipt];
 }
 
 @implementation DIMCommandProcessor
