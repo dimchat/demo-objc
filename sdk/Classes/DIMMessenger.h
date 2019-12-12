@@ -114,25 +114,11 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver;
 
+- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg;
+
 @end
 
 @interface DIMMessenger (Send)
-
-/**
- *  Interface for client to query meta from station
- *
- * @param ID - entity ID
- * @return true on success
- */
-- (BOOL)queryMetaForID:(DIMID *)ID;
-
-/**
- *  Interface for client to query profile from station
- *
- * @param ID - entity ID
- * @return true on success
- */
-- (BOOL)queryProfileForID:(DIMID *)ID;
 
 /**
  *  Send message content to receiver

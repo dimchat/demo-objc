@@ -121,12 +121,7 @@
     if ([self isEmpty:group]) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
-        DIMContent *res = [self _tempSave:newMembers sender:sender group:group];
-        if (res) {
-            [self.messenger sendContent:res receiver:sender];
-        }
-        // respond nothing (DON'T respond group command directly)
-        return nil;
+        return [self _tempSave:newMembers sender:sender group:group];
     }
     // 1. check permission
     if (![_facebook group:group isOwner:sender]) {

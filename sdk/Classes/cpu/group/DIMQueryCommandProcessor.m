@@ -58,18 +58,15 @@
         }
     }
     // 2. get members
-    DIMContent *res;
     NSArray<DIMID *> *members = [_facebook membersOfGroup:group];
     if ([members count] == 0) {
         NSString *text = [NSString stringWithFormat:@"Sorry, members not found in group: %@", group];
-        res = [[DIMTextContent alloc] initWithText:text];
+        DIMContent *res = [[DIMTextContent alloc] initWithText:text];
         res.group = group;
+        return res;
     } else {
-        res = [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
+        return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
     }
-    [self.messenger sendContent:res receiver:sender];
-    // 3. respond nothing (DON'T respond group command directly)
-    return nil;
 }
 
 @end

@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "NSObject+Singleton.h"
+
 #import "DIMFacebook.h"
 
 #import "DIMReceiptCommand.h"
@@ -86,7 +88,9 @@ static inline void load_cmd_classes(void) {
         _facebook = messenger.facebook;
         
         // register new commands
-        load_cmd_classes();
+        SingletonDispatchOnce(^{
+            load_cmd_classes();
+        });
     }
     return self;
 }
@@ -193,8 +197,8 @@ static inline void load_cmd_classes(void) {
     DIMContent *content = iMsg.content;
     if ([content isKindOfClass:[DIMForwardContent class]]) {
         // it's asking you to forward it
-        DIMForwardContent *forward = (DIMForwardContent *)content;
-        return [_messenger forwardMessage:forward.forwardMessage];
+        DIMForwardContent *secret = (DIMForwardContent *)content;
+        return [_messenger forwardMessage:secret.forwardMessage];
     }
     
     // 4. check group
@@ -211,30 +215,6 @@ static inline void load_cmd_classes(void) {
     }
     // error
     return nil;
-}
-
-#pragma mark DIMConnectionDelegate
-
-- (nullable NSData *)onReceivePackage:(NSData *)data {
-    DIMReliableMessage *rMsg = [_messenger deserializeMessage:data];
-    DIMContent *res = [self processMessage:rMsg];
-    if (!res) {
-        // nothing to response
-        return nil;
-    }
-    DIMUser *user = [_messenger currentUser];
-    NSAssert(user, @"failed to get current user");
-    DIMID *receiver = [_facebook IDWithString:rMsg.envelope.sender];
-    DIMInstantMessage *iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:res
-                                               sender:user.ID
-                                             receiver:receiver
-                                                 time:nil];
-    DIMSecureMessage *sMsg = [_messenger encryptMessage:iMsg];
-    NSAssert(sMsg, @"failed to encrypt message: %@", iMsg);
-    DIMReliableMessage *nMsg = [_messenger signMessage:sMsg];
-    NSAssert(nMsg, @"failed to sign message: %@", sMsg);
-    return [_messenger serializeMessage:nMsg];
 }
 
 @end

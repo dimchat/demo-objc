@@ -98,7 +98,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 
 #pragma mark DIMBarrack
 
-- (DIMID *)createID:(NSString *)string {
+- (nullable DIMID *)createID:(NSString *)string {
     // try ANS record
     DIMID *ID = [self ansGet:string];
     if (ID) {
@@ -108,7 +108,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     return [super createID:string];
 }
 
-- (DIMUser *)createUser:(DIMID *)ID {
+- (nullable DIMUser *)createUser:(DIMID *)ID {
     if ([ID isBroadcast]) {
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];
@@ -131,7 +131,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     return nil;
 }
 
-- (DIMGroup *)createGroup:(DIMID *)ID {
+- (nullable DIMGroup *)createGroup:(DIMID *)ID {
     NSAssert(MKMNetwork_IsGroup(ID.type), @"group ID error: %@", ID);
     if ([ID isBroadcast]) {
         // create group 'everyone@everywhere'
@@ -366,20 +366,12 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         NSAssert(false, @"profile ID error: %@", profile);
         return NO;
     }
-    // NOTICE: if this is a user profile,
+    // NOTICE: if this is a group profile,
+    //             verify it with each member's meta.key
+    //         else (this is a user profile)
     //             verify it with the user's meta.key
-    //         else if this is a polylogue profile,
-    //             verify it with the founder's meta.key
-    //             (which equals to the group's meta.key)
     DIMMeta *meta;
     if (MKMNetwork_IsGroup(ID.type)) {
-        // polylogue?
-        if (ID.type == MKMNetwork_Polylogue) {
-            meta = [self metaForID:ID];
-            if ([profile verify:meta.key]) {
-                return YES;
-            }
-        }
         // check by each member
         NSArray<DIMID *> *members = [self membersOfGroup:ID];
         for (DIMID *item in members) {
@@ -392,12 +384,22 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
                 return YES;
             }
         }
-        // TODO: what to do about assistants?
+        // DISCUSS: what to do about assistants?
         
         // check by owner
         DIMID *owner = [self ownerOfGroup:ID];
-        if (!owner || [members containsObject:owner]) {
-            // owner already checked?
+        if (!owner) {
+            if (ID.type == MKMNetwork_Polylogue) {
+                // NOTICE: if this is a polylogue profile
+                //             verify it with the founder's meta.key
+                //             (which equals to the group's meta.key)
+                meta = [self metaForID:ID];
+            } else {
+                // FIXME: owner not found for this group
+                return NO;
+            }
+        } else if ([members containsObject:owner]) {
+            // already checked
             return NO;
         }
         meta = [self metaForID:owner];

@@ -171,9 +171,8 @@ static inline void load_gpu_classes(void) {
     }
     NSString *text = [NSString stringWithFormat:@"Group command (%@) not support yet!", cmd.command];
     DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-    [self.messenger sendContent:res receiver:sender];
-    // respond nothing (DON'T respond unknown command directly)
-    return nil;
+    res.group = content.group;
+    return res;
 }
 
 @end

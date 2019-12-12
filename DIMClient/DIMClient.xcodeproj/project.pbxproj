@@ -65,8 +65,6 @@
 		E97816D02223EAFC00BCE3AD /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816CF2223EAFC00BCE3AD /* DIMClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816D12223EB4700BCE3AD /* DIMTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = E97816D22223EB4700BCE3AD /* DIMTerminal.m */; };
-		E97816D72223F82F00BCE3AD /* DIMTerminal+Request.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816D52223F82F00BCE3AD /* DIMTerminal+Request.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E97816D82223F82F00BCE3AD /* DIMTerminal+Request.m in Sources */ = {isa = PBXBuildFile; fileRef = E97816D62223F82F00BCE3AD /* DIMTerminal+Request.m */; };
 		E97907A1225621890024C830 /* DIMFileServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E979079F225621890024C830 /* DIMFileServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97907A2225621890024C830 /* DIMFileServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E97907A0225621890024C830 /* DIMFileServer.m */; };
 		E97926BB22284D59005ED1F0 /* DIMServer.h in Headers */ = {isa = PBXBuildFile; fileRef = E97926B922284D59005ED1F0 /* DIMServer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -235,8 +233,6 @@
 		E97816CF2223EAFC00BCE3AD /* DIMClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMClient.h; sourceTree = "<group>"; };
 		E97816D12223EB4700BCE3AD /* DIMTerminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMTerminal.h; sourceTree = "<group>"; };
 		E97816D22223EB4700BCE3AD /* DIMTerminal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMTerminal.m; sourceTree = "<group>"; };
-		E97816D52223F82F00BCE3AD /* DIMTerminal+Request.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Request.h"; sourceTree = "<group>"; };
-		E97816D62223F82F00BCE3AD /* DIMTerminal+Request.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMTerminal+Request.m"; sourceTree = "<group>"; };
 		E979079F225621890024C830 /* DIMFileServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMFileServer.h; sourceTree = "<group>"; };
 		E97907A0225621890024C830 /* DIMFileServer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMFileServer.m; sourceTree = "<group>"; };
 		E97926B922284D59005ED1F0 /* DIMServer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMServer.h; sourceTree = "<group>"; };
@@ -434,8 +430,6 @@
 				E94E13EC2276EB0F009D5275 /* DIMConversation.m */,
 				E97816D12223EB4700BCE3AD /* DIMTerminal.h */,
 				E97816D22223EB4700BCE3AD /* DIMTerminal.m */,
-				E97816D52223F82F00BCE3AD /* DIMTerminal+Request.h */,
-				E97816D62223F82F00BCE3AD /* DIMTerminal+Request.m */,
 				E9AFAB422233A522001F95C6 /* DIMTerminal+Group.h */,
 				E9AFAB432233A522001F95C6 /* DIMTerminal+Group.m */,
 				520ECCAF235D5CAE00822B97 /* DIMClientConstants.h */,
@@ -562,7 +556,6 @@
 				E97926BB22284D59005ED1F0 /* DIMServer.h in Headers */,
 				E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */,
 				E9CEA1432350AE5B00EC507C /* MKMECCPublicKey.h in Headers */,
-				E97816D72223F82F00BCE3AD /* DIMTerminal+Request.h in Headers */,
 				E9CEA1422350AE5B00EC507C /* MKMMetaETH.h in Headers */,
 				E9CEA1402350AE5B00EC507C /* MKMECCPrivateKey.h in Headers */,
 				E9CEA13D2350AE5B00EC507C /* MKMAddressETH.h in Headers */,
@@ -765,7 +758,6 @@
 				E9AFAB452233A522001F95C6 /* DIMTerminal+Group.m in Sources */,
 				E96D14B62322455E00B5EA59 /* DIMSocialNetworkDatabase.m in Sources */,
 				E94E13EF2276EB0F009D5275 /* DIMAmanuensis.m in Sources */,
-				E97816D82223F82F00BCE3AD /* DIMTerminal+Request.m in Sources */,
 				E9CEA1412350AE5B00EC507C /* MKMAddressETH.m in Sources */,
 				52DBA30E2340372C0000C2B4 /* FMDatabaseAdditions.m in Sources */,
 				E959652F239125CA00DAA870 /* DIMFacebook+Extension.m in Sources */,

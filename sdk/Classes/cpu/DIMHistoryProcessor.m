@@ -97,10 +97,7 @@
         return [cpu processContent:content sender:sender message:iMsg];
     }
     NSString *text = [NSString stringWithFormat:@"History command (%@) not support yet!", cmd.command];
-    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-    [self.messenger sendContent:res receiver:sender];
-    // respond nothing (DON'T respond unknown command directly)
-    return nil;
+    return [[DIMTextContent alloc] initWithText:text];
 }
 
 @end

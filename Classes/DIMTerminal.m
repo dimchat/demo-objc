@@ -46,7 +46,6 @@
 
 #import "DIMServer.h"
 
-#import "DIMTerminal+Request.h"
 #import "DIMTerminal+Group.h"
 
 #import "DIMTerminal.h"
@@ -126,6 +125,44 @@
     NSData *response = [messenger onReceivePackage:data];
     if ([response length] > 0) {
         [_currentStation.star send:response];
+    }
+}
+
+@end
+
+@implementation DIMTerminal (Login)
+
+- (BOOL)login:(DIMUser *)user {
+    if (!user || [self.currentUser isEqual:user]) {
+        NSLog(@"user not change");
+        return NO;
+    }
+    
+    // clear session
+    _session = nil;
+    
+    NSLog(@"logout: %@", self.currentUser);
+    self.currentUser = user;
+    NSLog(@"login: %@", user);
+    
+    // add to the list of this client
+    if (![_users containsObject:user]) {
+        [_users addObject:user];
+    }
+    return YES;
+}
+
+- (void)onHandshakeAccepted:(NSString *)session {
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    // post current profile to station
+    DIMProfile *profile = self.currentUser.profile;
+    if (profile) {
+        [messenger postProfile:profile];
+    }
+    // post contacts(encrypted) to station
+    NSArray<DIMID *> *contacts = self.currentUser.contacts;
+    if (contacts) {
+        [messenger postContacts:contacts];
     }
 }
 

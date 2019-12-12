@@ -93,24 +93,15 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMProfileCommand class]], @"profile command error: %@", content);
     DIMProfileCommand *cmd = (DIMProfileCommand *)content;
-    DIMProfile *profile = cmd.profile;
     DIMID *ID = [_facebook IDWithString:cmd.ID];
-    
-    DIMContent *res;
+    DIMProfile *profile = cmd.profile;
     if (profile) {
         // check meta
         DIMMeta *meta = cmd.meta;
-        res = [self _putProfile:profile meta:meta forID:ID];
+        return [self _putProfile:profile meta:meta forID:ID];
     } else {
-        res = [self _getProfileForID:ID];
+        return [self _getProfileForID:ID];
     }
-    /*
-    if (res) {
-        [self.messenger sendContent:res receiver:sender];
-    }
-     */
-    // respond nothing (DON'T respond profile command directly)
-    return nil;
 }
 
 @end

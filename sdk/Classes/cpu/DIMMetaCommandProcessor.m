@@ -66,8 +66,8 @@
     }
     if (![_facebook saveMeta:meta forID:ID]) {
         // save failed
-        NSAssert(false, @"failed to save meta for ID: %@, %@", ID, meta);
-        return nil;
+        text = [NSString stringWithFormat:@"Sorry, meta error for ID: %@", ID];
+        return [[DIMTextContent alloc] initWithText:text];
     }
     text = [NSString stringWithFormat:@"Meta accepted for ID: %@", ID];
     return [[DIMReceiptCommand alloc] initWithMessage:text];
@@ -81,22 +81,13 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMMetaCommand class]], @"meta command error: %@", content);
     DIMMetaCommand *cmd = (DIMMetaCommand *)content;
-    DIMMeta *meta = cmd.meta;
     DIMID *ID = [_facebook IDWithString:cmd.ID];
-    
-    DIMContent *res;
+    DIMMeta *meta = cmd.meta;
     if (meta) {
-        res = [self _putMeta:meta forID:ID];
+        return [self _putMeta:meta forID:ID];
     } else {
-        res = [self _getMetaForID:ID];
+        return [self _getMetaForID:ID];
     }
-    /*
-    if (res) {
-        [self.messenger sendContent:res receiver:sender];
-    }
-     */
-    // respond nothing (DON'T respond meta command directly)
-    return nil;
 }
 
 @end

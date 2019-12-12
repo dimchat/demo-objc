@@ -77,21 +77,18 @@
     } else {
         text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
         DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-        NSString *group = content.group;
-        if (group) {
-            res.group = group;
-        }
-        [self.messenger sendContent:res receiver:sender];
+        res.group = content.group;
+        return res;
     }
-    /*
-    // receipt (DON'T respond group message for disturb reason)
-    if (!content.group) {
-        DIMCommand *cmd = [[DIMReceiptCommand alloc] initWithMessage:text];
-        [self.messenger sendContent:cmd receiver:sender];
+    if (content.group) {
+        // respond nothing (DON'T respond group message for disturb reason)
+        return nil;
     }
-    */
-    // respond nothing (DON'T respond default message content directly)
-    return nil;
+    
+    // response
+    DIMContent *res = [[DIMReceiptCommand alloc] initWithMessage:text];
+    res.group = content.group;
+    return res;
 }
 
 @end

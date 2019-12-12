@@ -111,12 +111,12 @@
                 // 1.1. if assistants exist, query them
                 NSArray<DIMID *> *assistants = [_facebook assistantsOfGroup:group];
                 for (DIMID *item in assistants) {
-                    [self.messenger sendContent:cmd receiver:item];
+                    [_messenger sendContent:cmd receiver:item];
                 }
                 // 1.2. if owner found, query it
                 DIMID *owner = [_facebook ownerOfGroup:group];
                 if (owner) {
-                    [self.messenger sendContent:cmd receiver:owner];
+                    [_messenger sendContent:cmd receiver:owner];
                 }
                 //NSAssert(false, @"%@ is not a member/assistant of group %@, cannot invite.", sender, group);
                 return nil;

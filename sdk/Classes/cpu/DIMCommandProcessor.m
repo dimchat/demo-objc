@@ -101,10 +101,7 @@ static inline void load_cpu_classes(void) {
         return [cpu processContent:content sender:sender message:iMsg];
     }
     NSString *text = [NSString stringWithFormat:@"Command (%@) not support yet!", cmd.command];
-    DIMContent *res = [[DIMTextContent alloc] initWithText:text];
-    [self.messenger sendContent:res receiver:sender];
-    // respond nothing (DON'T respond unknown command directly)
-    return nil;
+    return [[DIMTextContent alloc] initWithText:text];
 }
 
 @end

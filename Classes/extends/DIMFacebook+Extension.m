@@ -123,11 +123,15 @@ SingletonImplementations(_SharedANS, sharedInstance)
 
 @interface _SharedFacebook : DIMFacebook {
     
-    // Database
+    // user db
     DIMSocialNetworkDatabase *_database;
     
-    // Immortals
+    // immortal accounts
     MKMImmortals *_immortals;
+    
+    // query tables
+    NSMutableDictionary<DIMID *, NSDate *> *_metaQueryTable;
+    NSMutableDictionary<DIMID *, NSDate *> *_profileQueryTable;
 }
 
 @end
@@ -142,8 +146,12 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
         // user db
         _database = [[DIMSocialNetworkDatabase alloc] init];
         
-        // Immortal accounts
+        // immortal accounts
         _immortals = [[MKMImmortals alloc] init];
+        
+        // query tables
+        _metaQueryTable    = [[NSMutableDictionary alloc] init];
+        _profileQueryTable = [[NSMutableDictionary alloc] init];
         
         // ANS
         DIMAddressNameService *ans = [DIMAddressNameService sharedInstance];
@@ -184,11 +192,17 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
             return meta;
         }
     }
-    // TODO: check for duplicated querying
     
-    // query from DIM network
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    [messenger queryMetaForID:ID];
+    // check for duplicated querying
+    NSDate *now = [[NSDate alloc] init];
+    NSDate *lastTime = [_metaQueryTable objectForKey:ID];
+    NSTimeInterval dt = [now timeIntervalSince1970] - [lastTime timeIntervalSince1970];
+    if (dt > 30) {
+        [_metaQueryTable setObject:now forKey:ID];
+        // query from DIM network
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        [messenger queryMetaForID:ID];
+    }
     
     return nil;
 }
@@ -211,11 +225,17 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
             return tai;
         }
     }
-    // TODO: check for duplicated querying
     
-    // query from DIM network
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    [messenger queryProfileForID:ID];
+    // check for duplicated querying
+    NSDate *now = [[NSDate alloc] init];
+    NSDate *lastTime = [_profileQueryTable objectForKey:ID];
+    NSTimeInterval dt = [now timeIntervalSince1970] - [lastTime timeIntervalSince1970];
+    if (dt > 30) {
+        [_profileQueryTable setObject:now forKey:ID];
+        // query from DIM network
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        [messenger queryProfileForID:ID];
+    }
     
     return profile;
 }

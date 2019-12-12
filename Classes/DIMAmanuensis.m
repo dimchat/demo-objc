@@ -219,16 +219,16 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         if ([sender isEqual:receiver]) {
             // the receiver's client feedback
             if ([receipt.message containsString:@"read"]) {
-                targetMessage.state = DIMMessageState_Read;
+                targetMessage.content.state = DIMMessageState_Read;
             } else {
-                targetMessage.state = DIMMessageState_Arrived;
+                targetMessage.content.state = DIMMessageState_Arrived;
             }
         } else if (MKMNetwork_IsStation(sender.type)) {
             // delivering or delivered to receiver (station said)
             if ([receipt.message containsString:@"delivered"]) {
-                targetMessage.state = DIMMessageState_Delivered;
+                targetMessage.content.state = DIMMessageState_Delivered;
             } else {
-                targetMessage.state = DIMMessageState_Delivering;
+                targetMessage.content.state = DIMMessageState_Delivering;
             }
         } else {
             NSAssert(false, @"unexpect receipt sender: %@", sender);

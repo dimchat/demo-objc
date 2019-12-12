@@ -187,7 +187,7 @@
     
     NSTimeInterval sendTime = [msg.envelope.time timeIntervalSince1970];
     
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, text, content_text, msg.envelope.sender, msg.envelope.receiver, sendTime, msg.state];
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, text, content_text, msg.envelope.sender, msg.envelope.receiver, sendTime, msg.content.state];
     BOOL success = [self.db executeStatements:sql];
     
     if(success){

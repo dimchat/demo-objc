@@ -66,4 +66,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface DIMTerminal (Login)
+
+- (BOOL)login:(DIMUser *)user;
+
+/**
+ *  Callback for handshake accepted
+ *
+ * @param session - new session key
+ */
+- (void)onHandshakeAccepted:(NSString *)session;
+
+@end
+
 NS_ASSUME_NONNULL_END

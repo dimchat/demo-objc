@@ -41,9 +41,8 @@
 #import "NSData+Crypto.h"
 
 #import "DIMFacebook+Extension.h"
+#import "DIMMessenger+Extension.h"
 #import "MKMGroup+Extension.h"
-
-#import "DIMTerminal+Request.h"
 
 #import "DIMTerminal+Group.h"
 
@@ -128,11 +127,12 @@
     }
     
     // 1.1. share to station
-    [self sendCommand:cmd];
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    [messenger sendCommand:cmd];
     
     // 1.2. send to each new member
     for (DIMID *ID in newMembers) {
-        [self sendContent:cmd to:ID];
+        [messenger sendContent:cmd receiver:ID];
     }
     
     // checking assistants
@@ -145,13 +145,13 @@
         // 2.1. send expel command to all old members
         if (members.count > 0) {
             for (DIMID *ID in members) {
-                [self sendContent:cmd to:ID];
+                [messenger sendContent:cmd receiver:ID];
             }
         }
         // 2.2. send expel command to all assistants
         if (assistants.count > 0) {
             for (DIMID *ID in assistants) {
-                [self sendContent:cmd to:ID];
+                [messenger sendContent:cmd receiver:ID];
             }
         }
     }
@@ -161,12 +161,12 @@
         cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
         // 3.1. send invite command to all new members
         for (DIMID *ID in newMembers) {
-            [self sendContent:cmd to:ID];
+            [messenger sendContent:cmd receiver:ID];
         }
         // 3.2. send invite command to all assistants
         if (assistants.count > 0) {
             for (DIMID *ID in assistants) {
-                [self sendContent:cmd to:ID];
+                [messenger sendContent:cmd receiver:ID];
             }
         }
     }

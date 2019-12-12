@@ -93,7 +93,6 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMAmanuensis.h>
 
 #import <DIMClient/DIMTerminal.h>
-#import <DIMClient/DIMTerminal+Request.h>
 #import <DIMClient/DIMTerminal+Group.h>
 
 #endif /* ! __DIM_CLIENT__ */

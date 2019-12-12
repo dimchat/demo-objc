@@ -39,12 +39,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMMessageProcessor : NSObject <DIMConnectionDelegate>
+@interface DIMMessageProcessor : NSObject
 
 @property (readonly, weak, nonatomic) DIMMessenger *messenger;
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
 
 - (instancetype)initWithMessenger:(DIMMessenger *)messenger;
+
+- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg;
 
 @end
 

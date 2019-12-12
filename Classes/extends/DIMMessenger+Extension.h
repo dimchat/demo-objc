@@ -39,9 +39,97 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern NSString * const kNotificationName_MessageSent;
+extern NSString * const kNotificationName_SendMessageFailed;
+
 @interface DIMMessenger (Extension)
 
 + (instancetype)sharedInstance;
+
+/**
+ *  broadcast message content to everyone@everywhere
+ *
+ * @param content - broadcast content
+ * @return YES on sucess
+ */
+- (BOOL)broadcastContent:(DIMContent *)content;
+
+/**
+ *  pack and send command to station
+ *
+ * @param cmd - command
+ * @return YES on success
+ */
+- (BOOL)sendCommand:(DIMCommand *)cmd;
+
+/**
+ *  Interface for client to query meta from station
+ *
+ * @param ID - entity ID
+ * @return YES on success
+ */
+- (BOOL)queryMetaForID:(DIMID *)ID;
+
+/**
+ *  Interface for client to query profile from station
+ *
+ * @param ID - entity ID
+ * @return YES on success
+ */
+- (BOOL)queryProfileForID:(DIMID *)ID;
+
+/**
+ *  Post profile to station
+ *
+ * @param profile - user profile
+ * @return YES on success
+ */
+- (BOOL)postProfile:(DIMProfile *)profile;
+
+/**
+ *  Broadcast profile to all contacts
+ *
+ * @param profile - user profile
+ * @return YES on success
+ */
+- (BOOL)broadcastProfile:(DIMProfile *)profile;
+
+/**
+ *  Encrypt and post contacts list to station
+ *
+ * @param contacts - ID list
+ * @return YES on success
+ */
+- (BOOL)postContacts:(NSArray<DIMID *> *)contacts;
+
+/**
+ *  Query contacts while login from a new device
+ *
+ * @return YES on success
+ */
+- (BOOL)queryContacts;
+
+/**
+ *  Query mute-list from station
+ *
+ * @return YES on success
+ */
+- (BOOL)queryMuteList;
+
+/**
+ *  Query online users
+ *
+ * @return YES on success
+ */
+- (BOOL)queryOnlineUsers;
+
+/**
+ *  Search users with keywords
+ *
+ * @param keywords - words splited by space
+ * @return YES on success
+ */
+- (BOOL)searchUsersWithKeywords:(NSString *)keywords;
 
 @end
 

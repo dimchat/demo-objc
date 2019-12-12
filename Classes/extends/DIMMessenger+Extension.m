@@ -36,6 +36,8 @@
 //
 
 #import "NSObject+Singleton.h"
+#import "NSObject+JsON.h"
+#import "NSNotificationCenter+Extension.h"
 
 #import "DIMSearchCommand.h"
 
@@ -48,6 +50,9 @@
 #import "DIMFacebook+Extension.h"
 
 #import "DIMMessenger+Extension.h"
+
+NSString * const kNotificationName_MessageSent       = @"MessageSent";
+NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 @interface DIMKeyStore (Extension)
 
@@ -105,40 +110,27 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return self;
 }
 
-- (nullable DIMStation *)currentServer {
-    return [self valueForContextName:@"server"];
-}
-
-- (BOOL)sendCommand:(DIMCommand *)cmd {
-    DIMStation *server = [self currentServer];
-    return [self sendContent:cmd receiver:server.ID];
-}
-
-- (BOOL)queryMetaForID:(DIMID *)ID {
-    NSAssert(![[self currentServer].ID isEqual:ID], @"error: %@", ID);
-    if ([ID isBroadcast]) {
-        return YES;
-    }
-    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
-    return [self sendCommand:cmd];
-}
-
-- (BOOL)queryProfileForID:(DIMID *)ID {
-    if ([ID isBroadcast]) {
-        return YES;
-    }
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
-    return [self sendCommand:cmd];
-}
-
-- (nullable DIMContent *)broadcastMessage:(DIMReliableMessage *)rMsg {
-    // do nothing
-    return nil;
-}
-
-- (nullable DIMContent *)deliverMessage:(DIMReliableMessage *)rMsg {
-    // do nothing
-    return nil;
+- (BOOL)sendContent:(DIMContent *)content receiver:(DIMID *)receiver {
+    DIMMessengerCallback callback;
+    callback = ^(DIMReliableMessage *rMsg, NSError *error) {
+        NSString *name = nil;
+        if (error) {
+            NSLog(@"send message error: %@", error);
+            name = kNotificationName_SendMessageFailed;
+            content.state = DIMMessageState_Error;
+            content.error = [error localizedDescription];
+        } else {
+            NSLog(@"sent message: %@ -> %@", content, rMsg);
+            name = kNotificationName_MessageSent;
+            content.state = DIMMessageState_Accepted;
+        }
+        
+        NSDictionary *info = @{@"content": content};
+        [NSNotificationCenter postNotificationName:name
+                                            object:self
+                                          userInfo:info];
+    };
+    return [self sendContent:content receiver:receiver callback:callback dispersedly:YES];
 }
 
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
@@ -187,6 +179,125 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 
 + (instancetype)sharedInstance {
     return [_SharedMessenger sharedInstance];
+}
+
+- (nullable DIMStation *)currentServer {
+    return [self valueForContextName:@"server"];
+}
+
+- (BOOL)broadcastContent:(DIMContent *)content {
+    NSAssert(self.currentServer, @"station not connected yet");
+    // broadcast IDs
+    DIMID *everyone = DIMIDWithString(@"everyone@everywhere");
+    DIMID *anyone = DIMIDWithString(@"anyone@anywhere");
+    [content setGroup:everyone];
+    return [self sendContent:content receiver:anyone];
+}
+
+- (BOOL)sendCommand:(DIMCommand *)cmd {
+    DIMStation *server = [self currentServer];
+    NSAssert(server, @"server not connected yet");
+    return [self sendContent:cmd receiver:server.ID];
+}
+
+- (BOOL)queryMetaForID:(DIMID *)ID {
+    NSAssert(![[self currentServer].ID isEqual:ID], @"error: %@", ID);
+    if ([ID isBroadcast]) {
+        return YES;
+    }
+    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryProfileForID:(DIMID *)ID {
+    if ([ID isBroadcast]) {
+        return YES;
+    }
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)postProfile:(DIMProfile *)profile {
+    DIMUser *user = [self currentUser];
+    DIMID *ID = user.ID;
+    if (![profile.ID isEqual:ID]) {
+        NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
+        return NO;
+    }
+    
+    DIMMeta *meta = user.meta;
+    if (![profile verify:meta.key]){
+        return NO;
+    }
+    
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
+                                                    profile:profile];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)broadcastProfile:(DIMProfile *)profile {
+    DIMUser *user = [self currentUser];
+    DIMID *ID = user.ID;
+    if (![profile.ID isEqual:ID]) {
+        NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
+        return NO;
+    }
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
+                                                    profile:profile];
+    NSArray<DIMID *> *contacts = user.contacts;
+    BOOL OK = YES;
+    for (DIMID *contact in contacts) {
+        if (![self sendContent:cmd receiver:contact]) {
+            OK = NO;
+        }
+    }
+    return OK;
+}
+
+- (BOOL)postContacts:(NSArray<DIMID *> *)contacts {
+    DIMUser *user = [self currentUser];
+    NSAssert([contacts count] > 0, @"contacts cannot be empty");
+    // generate password
+    DIMSymmetricKey *password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
+    // encrypt contacts
+    NSData *data = [contacts jsonData];
+    data = [password encrypt:data];
+    // encrypt key
+    NSData *key = [password jsonData];
+    key = [user encrypt:key];
+    // pack 'contacts' command
+    DIMStorageCommand *cmd;
+    cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
+    cmd.ID = user.ID;
+    cmd.data = data;
+    cmd.key = key;
+    // send to station
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryContacts{
+    DIMUser *user = [self currentUser];
+    // pack 'contacts' command
+    DIMStorageCommand *cmd;
+    cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
+    cmd.ID = user.ID;
+    // send to station
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryMuteList{
+    DIMCommand *cmd = [[DIMMuteCommand alloc] initWithList:nil];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryOnlineUsers {
+    DIMCommand *cmd = [[DIMSearchCommand alloc] initWithKeywords:DIMCommand_OnlineUsers];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)searchUsersWithKeywords:(NSString *)keywords {
+    DIMCommand *cmd = [[DIMSearchCommand alloc] initWithKeywords:keywords];
+    return [self sendCommand:cmd];
 }
 
 @end
