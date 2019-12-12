@@ -129,6 +129,8 @@ SingletonImplementations(_SharedANS, sharedInstance)
     // immortal accounts
     MKMImmortals *_immortals;
     
+    NSMutableArray<DIMUser *> *_allUsers;
+    
     // query tables
     NSMutableDictionary<DIMID *, NSDate *> *_metaQueryTable;
     NSMutableDictionary<DIMID *, NSDate *> *_profileQueryTable;
@@ -161,8 +163,40 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return self;
 }
 
-- (nullable NSArray<DIMID *> *)allUsers {
-    return [_database allUsers];
+- (nullable NSArray<DIMUser *> *)localUsers {
+    if (!_allUsers) {
+        _allUsers = [[NSMutableArray alloc] init];
+        NSArray<DIMID *> *list = [_database allUsers];
+        DIMUser *user;
+        for (DIMID *item in list) {
+            user = [self userWithID:item];
+            NSAssert(user, @"failed to get local user: %@", item);
+            [_allUsers addObject:user];
+        }
+    }
+    return _allUsers;
+}
+
+- (nullable DIMUser *)currentUser {
+    return [super currentUser];
+}
+
+- (void)setCurrentUser:(DIMUser *)user {
+    if (!user) {
+        NSAssert(false, @"current user cannot be empty");
+        return;
+    }
+    NSArray<DIMID *> *list = [_database allUsers];
+    NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:(list.count + 1)];
+    [mArray addObject:user.ID];
+    for (DIMID *item in list) {
+        if ([mArray containsObject:item]) {
+            continue;
+        }
+        [mArray addObject:item];
+    }
+    [_database saveUsers:mArray];
+    _allUsers = nil;
 }
 
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list {
@@ -294,9 +328,8 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [_SharedFacebook sharedInstance];
 }
 
-- (nullable NSArray<DIMID *> *)allUsers {
+- (void)setCurrentUser:(DIMUser *)user {
     NSAssert(false, @"override me!");
-    return nil;
 }
 
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list {

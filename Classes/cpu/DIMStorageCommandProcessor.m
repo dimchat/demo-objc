@@ -67,7 +67,7 @@
 }
 
 - (nullable DIMContent *)_processContactsCommand:(DIMStorageCommand *)cmd sender:(DIMID *)sender {
-    DIMUser *user = [self.messenger currentUser];
+    DIMUser *user = [self.facebook currentUser];
     if (![user.ID isEqual:cmd.ID]) {
         NSAssert(false, @"current user %@ not match %@ contacts not saved", user, cmd.ID);
         return nil;

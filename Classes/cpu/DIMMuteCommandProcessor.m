@@ -49,11 +49,10 @@
                                 message:(DIMInstantMessage *)iMsg {
     NSAssert([content isKindOfClass:[DIMMuteCommand class]], @"mute command error: %@", content);
     DIMMuteCommand *cmd = (DIMMuteCommand *)content;
-    DIMMessenger *messenger = self.messenger;
     DIMFacebook *facebook = self.facebook;
     
     NSArray *muteList = cmd.list;
-    DIMUser *user = [messenger currentUser];
+    DIMUser *user = [facebook currentUser];
     
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
     [manager unmuteAllConversationForUser:user.ID];

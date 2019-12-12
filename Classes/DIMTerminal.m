@@ -88,8 +88,8 @@
         // insert the user to the first
         [_users insertObject:user atIndex:0];
     }
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    messenger.currentUser = user;
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    facebook.currentUser = user;
     
     //Save current user
     [[NSUserDefaults standardUserDefaults] setObject:user.ID forKey:@"Current_User_ID"];

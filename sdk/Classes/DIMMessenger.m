@@ -104,47 +104,8 @@
     return _facebook;
 }
 
-- (nullable NSArray<DIMUser *> *)localUsers {
-    return (NSArray<DIMUser *> *)[self valueForContextName:@"local_users"];
-}
-
-- (void)setLocalUsers:(NSArray<DIMUser *> *)localUsers {
-    [self setContextValue:localUsers forName:@"local_users"];
-}
-
-- (nullable DIMUser *)currentUser {
-    NSArray<DIMUser *> *users = self.localUsers;
-    if ([users count] == 0) {
-        return nil;
-    }
-    return [users firstObject];
-}
-
-- (void)setCurrentUser:(DIMUser *)currentUser {
-    NSMutableArray *users = (NSMutableArray *)self.localUsers;
-    if (!users) {
-        users = [[NSMutableArray alloc] initWithCapacity:1];
-        [self setLocalUsers:users];
-    } else if (![users isKindOfClass:[NSMutableArray class]]) {
-        users = [users mutableCopy];
-        [self setLocalUsers:users];
-    }
-    if ([users count] == 0) {
-        [users addObject:currentUser];
-        return;
-    }
-    NSUInteger index = [users indexOfObject:currentUser];
-    if (index != 0) {
-        // set the current user in the front of local users list
-        if (index != NSNotFound) {
-            [users removeObject:currentUser];
-        }
-        [users insertObject:currentUser atIndex:0];
-    }
-}
-
 - (nullable DIMUser *)selectUserWithID:(DIMID *)receiver {
-    NSArray<DIMUser *> *users = self.localUsers;
+    NSArray<DIMUser *> *users = self.facebook.localUsers;
     if ([users count] == 0) {
         NSAssert(false, @"local users should not be empty");
         return nil;
@@ -298,9 +259,9 @@
         // nothing to response
         return nil;
     }
-    DIMUser *user = [self currentUser];
+    DIMUser *user = [self.facebook currentUser];
     NSAssert(user, @"failed to get current user");
-    DIMID *receiver = [_facebook IDWithString:rMsg.envelope.sender];
+    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:res
                                                sender:user.ID
@@ -423,7 +384,7 @@
            receiver:(DIMID *)receiver
            callback:(nullable DIMMessengerCallback)callback
         dispersedly:(BOOL)split {
-    DIMUser *user = self.currentUser;
+    DIMUser *user = self.facebook.currentUser;
     NSAssert(user, @"current user not found");
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:content

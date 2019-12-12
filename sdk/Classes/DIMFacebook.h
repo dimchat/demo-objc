@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) id<DIMAddressNameService> ans;
 
+@property (readonly, strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
+@property (readonly, strong, nonatomic, nullable) DIMUser *currentUser;
+
 - (nullable DIMID *)IDWithAddress:(DIMAddress *)address;
 
 @end

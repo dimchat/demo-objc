@@ -106,9 +106,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 @property (readonly, weak, nonatomic) DIMFacebook *facebook;
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 
-@property (strong, nonatomic, nullable) NSArray<DIMUser *> *localUsers;
-@property (strong, nonatomic, nullable) DIMUser *currentUser;
-
 - (nullable id)valueForContextName:(NSString *)key;
 - (void)setContextValue:(id)value forName:(NSString *)key;
 

@@ -80,6 +80,19 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
     return [_ans IDWithName:name];
 }
 
+- (nullable NSArray<DIMUser *> *)localUsers {
+    NSAssert(false, @"override me!");
+    return nil;
+}
+
+- (nullable DIMUser *)currentUser {
+    NSArray<DIMUser *> *users = self.localUsers;
+    if ([users count] == 0) {
+        return nil;
+    }
+    return [users firstObject];
+}
+
 - (nullable DIMID *)IDWithAddress:(DIMAddress *)address {
     DIMID *ID = [[DIMID alloc] initWithAddress:address];
     DIMMeta *meta = [self metaForID:ID];

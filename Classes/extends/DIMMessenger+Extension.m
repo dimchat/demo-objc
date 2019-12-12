@@ -218,7 +218,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (BOOL)postProfile:(DIMProfile *)profile {
-    DIMUser *user = [self currentUser];
+    DIMUser *user = [self.facebook currentUser];
     DIMID *ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
@@ -236,7 +236,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (BOOL)broadcastProfile:(DIMProfile *)profile {
-    DIMUser *user = [self currentUser];
+    DIMUser *user = [self.facebook currentUser];
     DIMID *ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
@@ -255,7 +255,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (BOOL)postContacts:(NSArray<DIMID *> *)contacts {
-    DIMUser *user = [self currentUser];
+    DIMUser *user = [self.facebook currentUser];
     NSAssert([contacts count] > 0, @"contacts cannot be empty");
     // generate password
     DIMSymmetricKey *password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
@@ -276,7 +276,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (BOOL)queryContacts{
-    DIMUser *user = [self currentUser];
+    DIMUser *user = [self.facebook currentUser];
     // pack 'contacts' command
     DIMStorageCommand *cmd;
     cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];

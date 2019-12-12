@@ -64,8 +64,14 @@
         DIMContent *res = [[DIMTextContent alloc] initWithText:text];
         res.group = group;
         return res;
-    } else {
+    }
+    // 3. respond
+    DIMUser *user = [_facebook currentUser];
+    NSAssert(user, @"current user not set");
+    if ([_facebook group:group isOwner:user.ID]) {
         return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
+    } else {
+        return [[DIMInviteCommand alloc] initWithGroup:group members:members];
     }
 }
 
