@@ -169,7 +169,13 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         chatBox = [self conversationWithID:groupID];
     } else {
         // personal chat, get chat box with contact ID
-        chatBox = [self conversationWithID:sender];
+        DIMFacebook *facebook = [DIMFacebook sharedInstance];
+        DIMUser *user = [facebook currentUser];
+        if ([sender isEqual:user.ID]) {
+            chatBox = [self conversationWithID:receiver];
+        } else {
+            chatBox = [self conversationWithID:sender];
+        }
     }
     
     NSAssert(chatBox, @"chat box not found for message: %@", iMsg);

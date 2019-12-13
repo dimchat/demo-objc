@@ -414,8 +414,9 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
         } else if ([members containsObject:owner]) {
             // already checked
             return NO;
+        } else {
+            meta = [self metaForID:owner];
         }
-        meta = [self metaForID:owner];
     } else {
         NSAssert(MKMNetwork_IsUser(ID.type), @"profile ID error: %@", ID);
         meta = [self metaForID:ID];
