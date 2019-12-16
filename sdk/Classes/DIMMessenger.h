@@ -182,6 +182,14 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  */
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg;
 
+/**
+ *  Suspend message for the contact's meta
+ *
+ * @param msg - message received from network / instant message to be sent
+ * @return NO on error
+ */
+- (BOOL)suspendMessage:(DIMMessage *)msg;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -171,6 +171,42 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
 }
 
+- (BOOL)suspendMessage:(DIMMessage *)msg {
+    if ([msg isKindOfClass:[DIMReliableMessage class]]) {
+        // TODO: save this message in a queue waiting sender's meta response
+    } else {
+        NSAssert([msg isKindOfClass:[DIMInstantMessage class]], @"message error: %@", msg);
+        // TODO: save this message in a queue waiting receiver's meta response
+    }
+    return NO;
+}
+
+- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg {
+    DIMContent *res = [super processMessage:rMsg];
+    if (!res) {
+        // respond nothing
+        return nil;
+    }
+    if ([res isKindOfClass:[DIMHandshakeCommand class]]) {
+        // urgent command
+        return res;
+    }
+    /*
+    if ([res isKindOfClass:[DIMReceiptCommand class]]) {
+        DIMID *receiver = [self.barrack IDWithString:rMsg.envelope.receiver];
+        if (MKMNetwork_IsStation(receiver.type)) {
+            // no need to respond receipt to station
+            return nil;
+        }
+    }
+     */
+    // normal response
+    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
+    [self sendContent:res receiver:receiver];
+    // DNO'T respond station directly
+    return nil;
+}
+
 @end
 
 #pragma mark -

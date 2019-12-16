@@ -187,7 +187,9 @@
     if (!key) {
         DIMMeta *meta = [self.facebook metaForID:to];
         if (!meta) {
-            // TODO: save this message in a queue waiting meta response
+            // save this message in a queue waiting receiver's meta response
+            [self suspendMessage:iMsg];
+            //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
             return nil;
         }
     }
@@ -253,12 +255,15 @@
 #pragma mark DIMConnectionDelegate
 
 - (nullable NSData *)onReceivePackage:(NSData *)data {
+    // 1. deserialize message
     DIMReliableMessage *rMsg = [self deserializeMessage:data];
+    // 2. process message
     DIMContent *res = [self processMessage:rMsg];
     if (!res) {
         // nothing to response
         return nil;
     }
+    // 3. pack response
     DIMUser *user = [self.facebook currentUser];
     NSAssert(user, @"failed to get current user");
     DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
@@ -271,6 +276,7 @@
     NSAssert(sMsg, @"failed to encrypt message: %@", iMsg);
     DIMReliableMessage *nMsg = [self signMessage:sMsg];
     NSAssert(nMsg, @"failed to sign message: %@", sMsg);
+    // serialize message
     return [self serializeMessage:nMsg];
 }
 
@@ -278,21 +284,7 @@
     SingletonDispatchOnce(^{
         self->_processor = [[DIMMessageProcessor alloc] initWithMessenger:self];
     });
-    DIMContent *res = [_processor processMessage:rMsg];
-    if (!res) {
-        // respond nothing
-        return nil;
-    }
-    if ([res isKindOfClass:[DIMHandshakeCommand class]]) {
-        // urgent command
-        return res;
-    }
-    
-    // normal response
-    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
-    [self sendContent:res receiver:receiver];
-    // DNO'T respond station directly
-    return nil;
+    return [_processor processMessage:rMsg];
 }
 
 @end
@@ -314,7 +306,8 @@
         meta = [self.facebook metaForID:sender];
         if (!meta) {
             // NOTICE: the application will query meta automatically
-            // TODO: save this message in a queue to wait meta response
+            // save this message in a queue waiting sender's meta response
+            [self suspendMessage:rMsg];
             //NSAssert(false, @"failed to get meta for sender: %@", sender);
             return nil;
         }
@@ -482,6 +475,8 @@
     // NOTICE: this function is for Station
     //         if the receiver is a grouped broadcast ID,
     //         split and deliver to everyone
+    NSAssert([self.barrack IDWithString:rMsg.envelope.receiver].isBroadcast,
+             @"receiver error: %@", rMsg);
     return nil;
 }
 
@@ -493,6 +488,11 @@
 }
 
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+- (BOOL)suspendMessage:(DIMMessage *)msg {
     NSAssert(false, @"override me!");
     return NO;
 }
