@@ -203,7 +203,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     // normal response
     DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
     [self sendContent:res receiver:receiver];
-    // DNO'T respond station directly
+    // DON'T respond to station directly
     return nil;
 }
 
