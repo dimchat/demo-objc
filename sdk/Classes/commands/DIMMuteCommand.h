@@ -41,27 +41,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DIMCommand_Mute   @"mute"
 
-@interface DIMMuteCommand : DIMHistoryCommand
-
-// timestamp which already defined in HistoryCommand
-//@property (readonly, strong, nonatomic) NSDate *time;
+@interface DIMMuteCommand : DIMCommand
 
 // mute-list
 @property (strong, nonatomic, nullable) NSArray<NSString *> *list;
 
 /*
  *  MuteCommand message: {
- *      type : 0x89,
+ *      type : 0x88,
  *
  *      command : "mute",
- *      time    : 0,     // timestamp
  *      list    : [] // mute-list; if it's None, means querying mute-list from station
  *  }
  */
 - (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList;
-
-- (void)addID:(DIMID *)ID;
-- (void)removeID:(DIMID *)ID;
 
 @end
 

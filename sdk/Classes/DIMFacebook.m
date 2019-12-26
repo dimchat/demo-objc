@@ -122,6 +122,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> ProfileTable;
 }
 
 - (nullable DIMUser *)createUser:(DIMID *)ID {
+    NSAssert(MKMNetwork_IsUser(ID.type), @"user ID error: %@", ID);
     if ([ID isBroadcast]) {
         // create user 'anyone@anywhere'
         return [[DIMUser alloc] initWithID:ID];

@@ -71,8 +71,6 @@
 		E95965582391609600DAA870 /* DIMMetaCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E95965562391609600DAA870 /* DIMMetaCommandProcessor.m */; };
 		E959655B239160A400DAA870 /* DIMProfileCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9596559239160A400DAA870 /* DIMProfileCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959655C239160A400DAA870 /* DIMProfileCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E959655A239160A400DAA870 /* DIMProfileCommandProcessor.m */; };
-		E959655F239160B900DAA870 /* DIMReceiptCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E959655D239160B800DAA870 /* DIMReceiptCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9596560239160B900DAA870 /* DIMReceiptCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E959655E239160B900DAA870 /* DIMReceiptCommandProcessor.m */; };
 		E9705CCB2395034900289441 /* DIMStorageCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E9705CC92395034900289441 /* DIMStorageCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = E9705CCA2395034900289441 /* DIMStorageCommand.m */; };
 /* End PBXBuildFile section */
@@ -180,8 +178,6 @@
 		E95965562391609600DAA870 /* DIMMetaCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMMetaCommandProcessor.m; sourceTree = "<group>"; };
 		E9596559239160A400DAA870 /* DIMProfileCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMProfileCommandProcessor.h; sourceTree = "<group>"; };
 		E959655A239160A400DAA870 /* DIMProfileCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMProfileCommandProcessor.m; sourceTree = "<group>"; };
-		E959655D239160B800DAA870 /* DIMReceiptCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMReceiptCommandProcessor.h; sourceTree = "<group>"; };
-		E959655E239160B900DAA870 /* DIMReceiptCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMReceiptCommandProcessor.m; sourceTree = "<group>"; };
 		E9705CC92395034900289441 /* DIMStorageCommand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorageCommand.h; sourceTree = "<group>"; };
 		E9705CCA2395034900289441 /* DIMStorageCommand.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorageCommand.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -350,8 +346,6 @@
 				E95965562391609600DAA870 /* DIMMetaCommandProcessor.m */,
 				E9596559239160A400DAA870 /* DIMProfileCommandProcessor.h */,
 				E959655A239160A400DAA870 /* DIMProfileCommandProcessor.m */,
-				E959655D239160B800DAA870 /* DIMReceiptCommandProcessor.h */,
-				E959655E239160B900DAA870 /* DIMReceiptCommandProcessor.m */,
 				E959653423912BDB00DAA870 /* DIMHistoryProcessor.h */,
 				E959653523912BDB00DAA870 /* DIMHistoryProcessor.m */,
 				E959653823912C7B00DAA870 /* DIMGroupCommandProcessor.h */,
@@ -421,7 +415,6 @@
 				E95965572391609600DAA870 /* DIMMetaCommandProcessor.h in Headers */,
 				E95965262391096600DAA870 /* DIMContentProcessor.h in Headers */,
 				E95965322391273200DAA870 /* DIMCommandProcessor.h in Headers */,
-				E959655F239160B900DAA870 /* DIMReceiptCommandProcessor.h in Headers */,
 				E959653623912BDB00DAA870 /* DIMHistoryProcessor.h in Headers */,
 				E95965072391077F00DAA870 /* DIMMuteCommand.h in Headers */,
 				E95965052391077F00DAA870 /* DIMBlockCommand.h in Headers */,
@@ -567,7 +560,6 @@
 				E94DEB7F23A1053400FBFD3C /* DIMServiceProvider.m in Sources */,
 				E95965272391096600DAA870 /* DIMContentProcessor.m in Sources */,
 				E9705CCC2395034900289441 /* DIMStorageCommand.m in Sources */,
-				E9596560239160B900DAA870 /* DIMReceiptCommandProcessor.m in Sources */,
 				E959653B23912C7B00DAA870 /* DIMGroupCommandProcessor.m in Sources */,
 				E94DEB8623A1053400FBFD3C /* DIMCAData.m in Sources */,
 				E95965092391077F00DAA870 /* DIMReceiptCommand.m in Sources */,

@@ -167,7 +167,7 @@
         NSAssert(file.URL == nil, @"content.URL exists, already uploaded?");
         // encrypt and upload file data onto CDN and save the URL in message content
         NSData *CT = [key encrypt:file.fileData];
-        NSURL *url = [_delegate uploadEncryptedFileData:CT forMessage:iMsg];
+        NSURL *url = [_delegate uploadData:CT forMessage:iMsg];
         if (url) {
             // replace 'data' with 'URL'
             file.URL = url;
@@ -198,24 +198,6 @@
 
 #pragma mark DKDSecureMessageDelegate
 
-- (nullable NSDictionary *)message:(DIMSecureMessage *)sMsg
-                        decryptKey:(nullable NSData *)key
-                              from:(NSString *)sender
-                                to:(NSString *)receiver {
-    if (key) {
-        DIMID *target = [self.facebook IDWithString:sMsg.envelope.receiver];
-        NSArray<id<DIMDecryptKey>> *keys;
-        keys = [self.facebook privateKeysForDecryption:target];
-        if ([keys count] == 0) {
-            // FIXME: private key lost?
-            @throw [NSException exceptionWithName:NSObjectNotAvailableException
-                                           reason:@"Private Key Not Found"
-                                         userInfo:sMsg];
-        }
-    }
-    return [super message:sMsg decryptKey:key from:sender to:receiver];
-}
-
 - (nullable DIMContent *)message:(DIMSecureMessage *)sMsg
                   decryptContent:(NSData *)data
                          withKey:(NSDictionary *)password {
@@ -236,8 +218,7 @@
         iMsg = [[DIMInstantMessage alloc] initWithContent:content
                                                  envelope:sMsg.envelope];
         // download from CDN
-        NSData *fileData = [_delegate downloadEncryptedFileData:file.URL
-                                                     forMessage:iMsg];
+        NSData *fileData = [_delegate downloadData:file.URL forMessage:iMsg];
         if (fileData) {
             // decrypt file data
             file.fileData = [key decrypt:fileData];

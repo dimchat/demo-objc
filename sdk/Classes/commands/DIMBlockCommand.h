@@ -41,27 +41,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 #define DIMCommand_Block   @"block"
 
-@interface DIMBlockCommand : DIMHistoryCommand
-
-// timestamp which already defined in HistoryCommand
-//@property (readonly, strong, nonatomic) NSDate *time;
+@interface DIMBlockCommand : DIMCommand
 
 // block-list
 @property (strong, nonatomic, nullable) NSArray<NSString *> *list;
 
 /*
  *  BlockCommand message: {
- *      type : 0x89,
+ *      type : 0x88,
  *
  *      command : "block",
- *      time    : 0,     // timestamp
  *      list    : [] // block-list; if it's None, means querying block-list from station
  *  }
  */
 - (instancetype)initWithList:(nullable NSArray<DIMID *> *)blockList;
-
-- (void)addID:(DIMID *)ID;
-- (void)removeID:(DIMID *)ID;
 
 @end
 

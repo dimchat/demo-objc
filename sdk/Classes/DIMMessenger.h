@@ -70,7 +70,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  *  @param iMsg - instant message
  *  @return download URL
  */
-- (nullable NSURL *)uploadEncryptedFileData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg;
+- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg;
 
 /**
  *  Download encrypted data from CDN
@@ -79,7 +79,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
  *  @param iMsg - instant message
  *  @return encrypted file data
  */
-- (nullable NSData *)downloadEncryptedFileData:(NSURL *)url forMessage:(DIMInstantMessage *)iMsg;
+- (nullable NSData *)downloadData:(NSURL *)url forMessage:(DIMInstantMessage *)iMsg;
 
 @end
 

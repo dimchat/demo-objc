@@ -42,6 +42,7 @@
 #import "DIMSearchCommand.h"
 
 #import "DIMHandshakeCommandProcessor.h"
+#import "DIMReceiptCommandProcessor.h"
 #import "DIMMuteCommandProcessor.h"
 #import "DIMSearchCommandProcessor.h"
 #import "DIMStorageCommandProcessor.h"
@@ -81,6 +82,9 @@ static inline void load_cpu_classes(void) {
     
     [DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class] forCommand:DIMCommand_Handshake];
     
+    [DIMCommandProcessor registerClass:[DIMReceiptCommandProcessor class]
+                            forCommand:DIMCommand_Receipt];
+
     [DIMCommandProcessor registerClass:[DIMMuteCommandProcessor class] forCommand:DIMCommand_Mute];
     
     [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_Search];

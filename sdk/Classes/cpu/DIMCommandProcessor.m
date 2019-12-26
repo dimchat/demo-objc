@@ -41,7 +41,6 @@
 
 #import "DIMMetaCommandProcessor.h"
 #import "DIMProfileCommandProcessor.h"
-#import "DIMReceiptCommandProcessor.h"
 
 #import "DIMCommandProcessor.h"
 
@@ -65,10 +64,6 @@ static inline void load_cpu_classes(void) {
     // profile
     [DIMCommandProcessor registerClass:[DIMProfileCommandProcessor class]
                             forCommand:DIMCommand_Profile];
-    
-    // receipt
-    [DIMCommandProcessor registerClass:[DIMReceiptCommandProcessor class]
-                            forCommand:DIMCommand_Receipt];
 }
 
 @implementation DIMCommandProcessor

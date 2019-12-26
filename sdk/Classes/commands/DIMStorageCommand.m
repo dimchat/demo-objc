@@ -154,36 +154,29 @@
         [_storeDictionary removeObjectForKey:@"key"];
     }
     _key = keyData;
+    _password = nil;
 }
 
 #pragma mark Decryption
 
 - (nullable NSData *)decryptWithSymmetricKey:(id<DIMDecryptKey>)PW {
     NSAssert([PW conformsToProtocol:@protocol(MKMSymmetricKey)], @"password error: %@", PW);
-    if (_plaintext) {
-        // already decrypted
-        return _plaintext;
+    if (!_plaintext) {
+        NSAssert(PW, @"password should not be empty");
+        NSData *data = self.data;
+        NSAssert([data length] > 0, @"data empty: %@", self);
+        _plaintext = [PW decrypt:data];
     }
-    NSData *data = self.data;
-    NSAssert([data length] > 0, @"data empty: %@", self);
-    _plaintext = [PW decrypt:data];
     return _plaintext;
 }
 
 - (nullable NSData *)decryptWithPrivateKey:(id<DIMDecryptKey>)SK {
-    if (_plaintext) {
-        // already decrypted
-        return _plaintext;
-    }
     if (!_password) {
-        NSData *keyData = self.key;
-        NSAssert([keyData length] > 0, @"key empty: %@", self);
-        keyData = [SK decrypt:keyData];
-        if ([keyData length] == 0) {
-            //NSAssert(false, @"failed to decrypt key data: %@ wity private key: %@", self, SK);
-            return nil;
-        }
-        NSDictionary *dict = [keyData jsonDictionary];
+        NSData *key = self.key;
+        NSAssert([key length] > 0, @"key empty: %@", self);
+        key = [SK decrypt:key];
+        NSAssert([key length] > 0, @"failed to decrypt key data: %@ wity private key: %@", self, SK);
+        NSDictionary *dict = [key jsonDictionary];
         _password = MKMSymmetricKeyFromDictionary(dict);
     }
     return [self decryptWithSymmetricKey:_password];

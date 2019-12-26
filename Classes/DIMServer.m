@@ -283,7 +283,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
 }
 
-#pragma mark DKDTransceiverDelegate
+#pragma mark DIMMessengerDelegate
 
 - (BOOL)sendPackage:(NSData *)data completionHandler:(nullable DIMMessengerCompletionHandler)handler {
     NSLog(@"sending data len: %ld", data.length);
@@ -308,7 +308,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return res == 0;
 }
 
-- (nullable NSURL *)uploadEncryptedFileData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
+- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
     DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;
@@ -317,7 +317,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return [ftp uploadEncryptedData:CT filename:filename sender:sender];
 }
 
-- (nullable NSData *)downloadEncryptedFileData:(NSURL *)url forMessage:(DIMInstantMessage *)iMsg {
+- (nullable NSData *)downloadData:(NSURL *)url forMessage:(DIMInstantMessage *)iMsg {
     
     DIMFileServer *ftp = [DIMFileServer sharedInstance];
     return [ftp downloadEncryptedDataFromURL:url];

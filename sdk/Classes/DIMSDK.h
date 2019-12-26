@@ -87,7 +87,6 @@ FOUNDATION_EXPORT const unsigned char DIMSDKVersionString[];
 #import <DIMSDK/DIMCommandProcessor.h>
 #import <DIMSDK/DIMMetaCommandProcessor.h>
 #import <DIMSDK/DIMProfileCommandProcessor.h>
-#import <DIMSDK/DIMReceiptCommandProcessor.h>
 #import <DIMSDK/DIMHistoryProcessor.h>
 // GPUs
 #import <DIMSDK/DIMGroupCommandProcessor.h>

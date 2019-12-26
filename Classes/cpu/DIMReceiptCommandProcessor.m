@@ -28,19 +28,26 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMReceiptCommandProcessor.h
+//  DIMReceiptCommandProcessor.m
 //  DIMSDK
 //
 //  Created by Albert Moky on 2019/11/29.
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMCommandProcessor.h"
+#import "DIMReceiptCommandProcessor.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation DIMReceiptCommandProcessor
 
-@interface DIMReceiptCommandProcessor : DIMCommandProcessor
+//
+//  Main
+//
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMInstantMessage *)iMsg {
+    NSAssert([content isKindOfClass:[DIMReceiptCommand class]], @"receipt error: %@", content);
+    // no need to respond receipt command
+    return nil;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

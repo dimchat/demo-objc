@@ -39,68 +39,28 @@
 
 #import "DIMMuteCommand.h"
 
-@interface DIMMuteCommand () {
-    
-    NSMutableArray *_list;
-}
-
-@end
-
 @implementation DIMMuteCommand
 
-/* designated initializer */
-- (instancetype)initWithDictionary:(NSDictionary *)dict {
-    if (self = [super initWithDictionary:dict]) {
-        // lazy
-        _list = nil;
-    }
-    return self;
-}
-
-/* designated initializer */
-- (instancetype)initWithType:(DKDContentType)type {
-    if (self = [super initWithType:type]) {
-        _list = nil;
-    }
-    return self;
-}
-
 - (instancetype)initWithList:(nullable NSArray<DIMID *> *)muteList {
-    if (self = [self initWithHistoryCommand:DIMCommand_Mute]) {
+    if (self = [self initWithCommand:DIMCommand_Mute]) {
         // mute-list
         if (muteList) {
-            _list = [muteList mutableCopy];
-            [_storeDictionary setObject:_list forKey:@"list"];
+            [_storeDictionary setObject:muteList forKey:@"list"];
         }
     }
     return self;
 }
 
 - (nullable NSArray<NSString *> *)list {
-    if (!_list) {
-        NSObject *array = [_storeDictionary objectForKey:@"list"];
-        if (![array isKindOfClass:[NSMutableArray class]]) {
-            _list = [array mutableCopy];
-        }
-    }
-    return _list;
+    return [_storeDictionary objectForKey:@"list"];
 }
 
-- (void)addID:(DIMID *)ID {
-    if (![self list]) {
-        // create mute-list
-        _list = [[NSMutableArray alloc] init];
-        [_storeDictionary setObject:_list forKey:@"list"];
-    } else if ([_list containsObject:ID]) {
-        NSAssert(false, @"ID already exists: %@", ID);
-        return;
+- (void)setList:(NSArray<NSString *> *)list {
+    if (list) {
+        [_storeDictionary setObject:list forKey:@"list"];
+    } else {
+        [_storeDictionary removeObjectForKey:@"list"];
     }
-    [_list addObject:ID];
-}
-
-- (void)removeID:(DIMID *)ID {
-    NSAssert(_list, @"mute-list not set yet");
-    [_list removeObject:ID];
 }
 
 @end
