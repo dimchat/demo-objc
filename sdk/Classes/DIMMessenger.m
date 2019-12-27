@@ -245,13 +245,14 @@
         return nil;
     }
     // 3. pack response
-    DIMUser *user = [self.facebook currentUser];
+    DIMID *sender = [self.facebook IDWithString:rMsg.envelope.sender];
+    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
+    DIMUser *user = [self selectUserWithID:receiver];
     NSAssert(user, @"failed to get current user");
-    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:res
                                                sender:user.ID
-                                             receiver:receiver
+                                             receiver:sender
                                                  time:nil];
     DIMSecureMessage *sMsg = [self encryptMessage:iMsg];
     NSAssert(sMsg, @"failed to encrypt message: %@", iMsg);
