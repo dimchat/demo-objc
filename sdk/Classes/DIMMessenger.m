@@ -238,6 +238,10 @@
 - (nullable NSData *)onReceivePackage:(NSData *)data {
     // 1. deserialize message
     DIMReliableMessage *rMsg = [self deserializeMessage:data];
+    if (!rMsg) {
+        // no message received
+        return nil;
+    }
     // 2. process message
     DIMContent *res = [self processMessage:rMsg];
     if (!res) {
