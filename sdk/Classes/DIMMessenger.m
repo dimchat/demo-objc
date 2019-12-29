@@ -252,7 +252,11 @@
     DIMID *sender = [self.facebook IDWithString:rMsg.envelope.sender];
     DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
     DIMUser *user = [self selectUserWithID:receiver];
-    NSAssert(user, @"failed to get current user");
+    if (!user) {
+        // not for you?
+        // delivering message to other receiver?
+        user = [self.facebook currentUser];
+    }
     DIMInstantMessage *iMsg;
     iMsg = [[DIMInstantMessage alloc] initWithContent:res
                                                sender:user.ID
