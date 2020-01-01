@@ -160,7 +160,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
     
     // send out directly
-    NSData *data = [rMsg jsonData];
+    NSData *data = [messenger serializeMessage:rMsg];
     [_star send:data];
 }
 

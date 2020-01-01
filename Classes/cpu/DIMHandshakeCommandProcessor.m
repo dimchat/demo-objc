@@ -49,10 +49,7 @@
 }
 
 - (nullable DIMContent *)_ask:(NSString *)sessionKey {
-    if ([sessionKey length] == 0) {
-        NSAssert(false, @"session key should not be empty");
-        return nil;
-    }
+    NSAssert([sessionKey length] > 0, @"session key should not be empty");
     [self setContextValue:sessionKey forName:@"session_key"];
     return [[DIMHandshakeCommand alloc] initWithSessionKey:sessionKey];
 }
