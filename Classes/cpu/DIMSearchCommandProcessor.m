@@ -58,9 +58,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     for (key in result) {
         value = [result objectForKey:key];
         ID = [self.facebook IDWithString:key];
-        meta = [self.facebook metaForID:ID];
-        if (![meta matchID:ID]) {
-            NSAssert(false, @"meta not match ID: %@, %@", key, value);
+        meta = MKMMetaFromDictionary(value);
+        if (!meta) {
             continue;
         }
         [self.facebook saveMeta:meta forID:ID];

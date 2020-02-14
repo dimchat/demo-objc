@@ -60,7 +60,7 @@
 }
 
 - (nullable NSDictionary *)results {
-    return [_storeDictionary objectForKey:@"result"];
+    return [_storeDictionary objectForKey:@"results"];
 }
 
 @end

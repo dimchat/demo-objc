@@ -48,15 +48,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, strong, nonatomic, nullable) NSDictionary *results;
 
 /*
-*  Command message: {
-*      type : 0x88,
-*      sn   : 123,
-*
-*      command : "search",        // "users"
-*      users   : ["ID"],          // user ID list
-*      results : {"ID": {meta}, } // user's meta
-*  }
-*/
+ *  Command message: {
+ *      type : 0x88,
+ *      sn   : 123,
+ *
+ *      command  : "search",        // or "users"
+ *
+ *      keywords : "keywords",      // keyword string
+ *      users    : ["ID"],          // user ID list
+ *      results  : {"ID": {meta}, } // user's meta map
+ *  }
+ */
 - (instancetype)initWithKeywords:(NSString *)string;
 
 @end
