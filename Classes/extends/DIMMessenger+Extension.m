@@ -185,8 +185,8 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return NO;
 }
 
-- (nullable DIMContent *)processMessage:(DIMReliableMessage *)rMsg {
-    DIMContent *res = [super processMessage:rMsg];
+- (nullable DIMContent *)processInstantMessage:(DIMInstantMessage *)iMsg {
+    DIMContent *res = [super processInstantMessage:iMsg];
     if (!res) {
         // respond nothing
         return nil;
@@ -205,7 +205,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
      */
     // normal response
-    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.sender];
+    DIMID *receiver = [self.facebook IDWithString:iMsg.envelope.sender];
     [self sendContent:res receiver:receiver];
     // DON'T respond to station directly
     return nil;
