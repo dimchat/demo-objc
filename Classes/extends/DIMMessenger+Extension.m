@@ -69,7 +69,13 @@ SingletonImplementations(DIMKeyStore, sharedInstance)
 
 #pragma mark -
 
-@interface _SharedMessenger : DIMMessenger
+@interface _SharedMessenger : DIMMessenger {
+    
+    // query tables
+    NSMutableDictionary<DIMID *, NSDate *> *_metaQueryTable;
+    NSMutableDictionary<DIMID *, NSDate *> *_profileQueryTable;
+    NSMutableDictionary<DIMID *, NSDate *> *_groupQueryTable;
+}
 
 @end
 
@@ -105,6 +111,11 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         self.barrack = [DIMFacebook sharedInstance];
         self.keyCache = [DIMKeyStore sharedInstance];
         
+        // query tables
+        _metaQueryTable    = [[NSMutableDictionary alloc] init];
+        _profileQueryTable = [[NSMutableDictionary alloc] init];
+        _groupQueryTable = [[NSMutableDictionary alloc] init];
+
         // register CPU classes
         SingletonDispatchOnce(^{
             load_cmd_classes();
@@ -112,6 +123,60 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         });
     }
     return self;
+}
+
+- (BOOL)queryMetaForID:(DIMID *)ID {
+    if ([ID isBroadcast]) {
+        // broadcast ID has not meta
+        return YES;
+    }
+    
+    // check for duplicated querying
+    NSDate *now = [[NSDate alloc] init];
+    NSDate *lastTime = [_metaQueryTable objectForKey:ID];
+    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < 30) {
+        return NO;
+    }
+    [_metaQueryTable setObject:now forKey:ID];
+    
+    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryProfileForID:(DIMID *)ID {
+    // check for duplicated querying
+    NSDate *now = [[NSDate alloc] init];
+    NSDate *lastTime = [_profileQueryTable objectForKey:ID];
+    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < 30) {
+        return NO;
+    }
+    [_profileQueryTable setObject:now forKey:ID];
+    
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
+    return [self sendCommand:cmd];
+}
+
+- (BOOL)queryGroupForID:(DIMID *)group fromMember:(DIMID *)member {
+    return [self queryGroupForID:group fromMembers:@[member]];
+}
+
+- (BOOL)queryGroupForID:(DIMID *)group fromMembers:(NSArray<DIMID *> *)members {
+    // check for duplicated querying
+    NSDate *now = [[NSDate alloc] init];
+    NSDate *lastTime = [_groupQueryTable objectForKey:group];
+    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < 30) {
+        return NO;
+    }
+    [_groupQueryTable setObject:now forKey:group];
+    
+    DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    BOOL checking = NO;
+    for (DIMID *item in members) {
+        if ([self sendContent:cmd receiver:item]) {
+            checking = YES;
+        }
+    }
+    return checking;
 }
 
 - (BOOL)_isEmptyGroup:(DIMID *)group {
@@ -142,7 +207,6 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         return YES;
     }
     // query group command
-    DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     if ([self _isEmptyGroup:group]) {
         // NOTICE: if the group info not found, and this is not an 'invite' command
         //         query group info from the sender
@@ -155,7 +219,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
             //       it should contain the group owner(owner)
             return NO;
         } else {
-            return [self sendContent:cmd receiver:sender];
+            return [self queryGroupForID:group fromMember:sender];
         }
     } else if ([self.facebook group:group hasMember:sender] ||
                [self.facebook group:group hasAssistant:sender] ||
@@ -163,20 +227,18 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         // normal membership
         return NO;
     } else {
-        BOOL checking = NO;
         // if assistants exist, query them
         NSArray<DIMID *> *assistants = [self.facebook assistantsOfGroup:group];
+        NSMutableArray<DIMID *> *mArray = [[NSMutableArray alloc] initWithCapacity:(assistants.count+1)];
         for (DIMID *item in assistants) {
-            if ([self sendContent:cmd receiver:item]) {
-                checking = YES;
-            }
+            [mArray addObject:item];
         }
         // if owner found, query it
         DIMID *owner = [self.facebook ownerOfGroup:group];
-        if (owner && [self sendContent:cmd receiver:owner]) {
-            checking = YES;
+        if (owner && ![mArray containsObject:owner]) {
+            [mArray addObject:owner];
         }
-        return checking;
+        return [self queryGroupForID:group fromMembers:mArray];
     }
 }
 
@@ -316,20 +378,23 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (BOOL)queryMetaForID:(DIMID *)ID {
-    NSAssert(![[self currentServer].ID isEqual:ID], @"error: %@", ID);
-    if ([ID isBroadcast]) {
-        return YES;
-    }
-    DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
-    return [self sendCommand:cmd];
+    NSAssert(false, @"implement me!");
+    return NO;
 }
 
 - (BOOL)queryProfileForID:(DIMID *)ID {
-    if ([ID isBroadcast]) {
-        return YES;
-    }
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
-    return [self sendCommand:cmd];
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
+- (BOOL)queryGroupForID:(DIMID *)group fromMember:(DIMID *)member {
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
+- (BOOL)queryGroupForID:(DIMID *)group fromMembers:(NSArray<DIMID *> *)members {
+    NSAssert(false, @"implement me!");
+    return NO;
 }
 
 - (BOOL)postProfile:(DIMProfile *)profile {

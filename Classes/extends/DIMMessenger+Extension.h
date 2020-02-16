@@ -79,6 +79,16 @@ extern NSString * const kNotificationName_SendMessageFailed;
 - (BOOL)queryProfileForID:(DIMID *)ID;
 
 /**
+ *  Query group member list from any member
+ *
+ * @param group - group ID
+ * @param member - member ID
+ * @return YES on success
+ */
+- (BOOL)queryGroupForID:(DIMID *)group fromMember:(DIMID *)member;
+- (BOOL)queryGroupForID:(DIMID *)group fromMembers:(NSArray<DIMID *> *)members;
+
+/**
  *  Post profile to station
  *
  * @param profile - user profile
