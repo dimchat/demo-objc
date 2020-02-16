@@ -114,6 +114,72 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return self;
 }
 
+- (BOOL)_isEmptyGroup:(DIMID *)group {
+    NSArray *members = [self.facebook membersOfGroup:group];
+    if ([members count] == 0) {
+        return YES;
+    }
+    DIMID *owner = [self.facebook ownerOfGroup:group];
+    return !owner;
+}
+
+// check whether need to update group
+- (BOOL)_checkingGroup:(DIMContent *)content sender:(DIMID *)sender {
+    // Check if it is a group message, and whether the group members info needs update
+    DIMID *group = [self.facebook IDWithString:content.group];
+    if (!group || [group isBroadcast]) {
+        // 1. personal message
+        // 2. broadcast message
+        return NO;
+    }
+    // chek meta for new group ID
+    DIMMeta *meta = [self.facebook metaForID:group];
+    if (!meta) {
+        // NOTICE: if meta for group not found,
+        //         facebook should query it from DIM network automatically
+        // TODO: insert the message to a temporary queue to wait meta
+        //NSAssert(false, @"group meta not found: %@", group);
+        return YES;
+    }
+    // query group command
+    DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    if ([self _isEmptyGroup:group]) {
+        // NOTICE: if the group info not found, and this is not an 'invite' command
+        //         query group info from the sender
+        if ([content isKindOfClass:[DIMInviteCommand class]] ||
+            [content isKindOfClass:[DIMResetGroupCommand class]]) {
+            // FIXME: can we trust this stranger?
+            //        may be we should keep this members list temporary,
+            //        and send 'query' to the owner immediately.
+            // TODO: check whether the members list is a full list,
+            //       it should contain the group owner(owner)
+            return NO;
+        } else {
+            return [self sendContent:cmd receiver:sender];
+        }
+    } else if ([self.facebook group:group hasMember:sender] ||
+               [self.facebook group:group hasAssistant:sender] ||
+               [self.facebook group:group isOwner:sender]) {
+        // normal membership
+        return NO;
+    } else {
+        BOOL checking = NO;
+        // if assistants exist, query them
+        NSArray<DIMID *> *assistants = [self.facebook assistantsOfGroup:group];
+        for (DIMID *item in assistants) {
+            if ([self sendContent:cmd receiver:item]) {
+                checking = YES;
+            }
+        }
+        // if owner found, query it
+        DIMID *owner = [self.facebook ownerOfGroup:group];
+        if (owner && [self sendContent:cmd receiver:owner]) {
+            checking = YES;
+        }
+        return checking;
+    }
+}
+
 - (BOOL)sendContent:(DIMContent *)content receiver:(DIMID *)receiver {
     DIMMessengerCallback callback;
     callback = ^(DIMReliableMessage *rMsg, NSError *error) {
@@ -186,6 +252,15 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (nullable DIMContent *)processInstantMessage:(DIMInstantMessage *)iMsg {
+    DIMContent *content = iMsg.content;
+    DIMID *sender = [self.facebook IDWithString:iMsg.envelope.sender];
+    
+    if ([self _checkingGroup:content sender:sender]) {
+        // save this message in a queue to wait group meta response
+        [self suspendMessage:iMsg];
+        return nil;
+    }
+    
     DIMContent *res = [super processInstantMessage:iMsg];
     if (!res) {
         // respond nothing
