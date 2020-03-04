@@ -113,7 +113,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
-    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
+    NSAssert([group isGroup], @"group ID error: %@", group);
     NSArray<DIMID *> *members = [_caches objectForKey:group];
     if (!members) {
         members = [self _loadMembersOfGroup:group];
@@ -126,7 +126,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group {
-    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
+    NSAssert([group isGroup], @"group ID error: %@", group);
     NSAssert(members.count > 0, @"group members cannot be empty");
     // update cache
     [_caches setObject:members forKey:group];
@@ -138,12 +138,12 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
 }
 
 - (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
+    NSAssert([group isGroup], @"group ID error: %@", group);
     return nil;
 }
 
 - (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    NSAssert(MKMNetwork_IsGroup(group.type), @"group ID error: %@", group);
+    NSAssert([group isGroup], @"group ID error: %@", group);
     return nil;
 }
 

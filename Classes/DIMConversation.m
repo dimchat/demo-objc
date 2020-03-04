@@ -59,9 +59,9 @@
 }
 
 - (DIMConversationType)type {
-    if (MKMNetwork_IsUser(_entity.type)) {
+    if ([_entity.ID isUser]) {
         return DIMConversationPersonal;
-    } else if (MKMNetwork_IsGroup(_entity.type)) {
+    } else if ([_entity.ID isUser]) {
         return DIMConversationGroup;
     }
     return DIMConversationUnknown;

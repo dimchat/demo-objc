@@ -78,7 +78,7 @@
     // check broadcast ID
     if ([_ID isBroadcast]) {
         // anyone user is a member of the broadcast group 'everyone@everywhere'
-        return MKMNetwork_IsUser([ID type]);
+        return [ID isUser];
     }
     // check all member(s)
     NSArray<DIMID *> *members = [self members];

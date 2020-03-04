@@ -212,7 +212,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
         return meta;
     }
     // try from immortals
-    if (MKMNetwork_IsPerson(ID.type)) {
+    if (ID.type == MKMNetwork_Main) {
         meta = [_immortals metaForID:ID];
         if (meta) {
             return meta;
@@ -236,7 +236,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
         return profile;
     }
     // try from immortals
-    if (MKMNetwork_IsPerson(ID.type)) {
+    if (ID.type == MKMNetwork_Main) {
         DIMProfile *tai = [_immortals profileForID:ID];
         if (tai) {
             return tai;

@@ -105,7 +105,7 @@
     return [self generateIDWithMeta:meta network:_network];
 }
 
-- (DIMID *)generateIDWithMeta:(DIMMeta *)meta network:(MKMNetworkID)type {
+- (DIMID *)generateIDWithMeta:(DIMMeta *)meta network:(MKMNetworkType)type {
     return [meta generateID:type];
 }
 
@@ -119,7 +119,7 @@
     DIMProfile *profile = [[DIMProfile alloc] initWithID:ID];
     [profile setName:name];
     if (url) {
-        NSAssert(MKMNetwork_IsUser(ID.type), @"user ID error: %@", ID);
+        NSAssert([ID isUser], @"user ID error: %@", ID);
         [profile setAvatar:url];
     }
     [profile sign:_key];

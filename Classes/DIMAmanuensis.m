@@ -105,9 +105,9 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
             // create directly if we can find the entity
             // get entity with ID
             DIMEntity *entity = nil;
-            if (MKMNetwork_IsUser(ID.type)) {
+            if ([ID isUser]) {
                 entity = DIMUserWithID(ID);
-            } else if (MKMNetwork_IsGroup(ID.type)) {
+            } else if ([ID isGroup]) {
                 entity = DIMGroupWithID(ID);
             }
             NSAssert(entity, @"ID error: %@", ID);
@@ -161,7 +161,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     DIMID *receiver = DIMIDWithString(env.receiver);
     DIMID *groupID = DIMIDWithString(iMsg.content.group);
     
-    if (MKMNetwork_IsGroup(receiver.type)) {
+    if ([receiver isGroup]) {
         // group chat, get chat box with group ID
         chatBox = [self conversationWithID:receiver];
     } else if (groupID) {

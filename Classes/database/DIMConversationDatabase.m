@@ -131,9 +131,9 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     }
     // create entity
     DIMEntity *entity = nil;
-    if (MKMNetwork_IsUser(ID.type)) {
+    if ([ID isUser]) {
         entity = DIMUserWithID(ID);
-    } else if (MKMNetwork_IsGroup(ID.type)) {
+    } else if ([ID isGroup]) {
         entity = DIMGroupWithID(ID);
     }
     if (entity) {
