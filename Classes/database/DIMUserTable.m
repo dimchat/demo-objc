@@ -160,7 +160,9 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     BOOL result = [self array:contacts writeToFile:path];
     
     if(result){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ContactsUpdated object:nil userInfo:@{@"ID":user}];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:kNotificationName_ContactsUpdated object:nil
+                        userInfo:@{@"ID":user}];
     }
     
     return result;

@@ -42,7 +42,6 @@
 #import "NSData+Crypto.h"
 
 #import "NSObject+Extension.h"
-#import "NSNotificationCenter+Extension.h"
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 
@@ -328,9 +327,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 - (void)machine:(FSMMachine *)machine enterState:(FSMState *)state {
     NSDictionary *info = @{@"state": state.name};
     NSString *name = kNotificationName_ServerStateChanged;
-    [NSNotificationCenter postNotificationName:name
-                                        object:self
-                                      userInfo:info];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:name object:self userInfo:info];
     
     if ([state.name isEqualToString:kDIMServerState_Handshaking]) {
         // start handshake

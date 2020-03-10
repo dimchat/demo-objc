@@ -37,7 +37,6 @@
 
 #import "NSObject+Singleton.h"
 
-#import "NSNotificationCenter+Extension.h"
 #import "DIMClientConstants.h"
 
 #import "MKMImmortals.h"
@@ -263,9 +262,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     BOOL OK = [_database saveContacts:contacts user:ID];
     if (OK) {
         NSDictionary *info = @{@"ID": ID};
-        [NSNotificationCenter postNotificationName:kNotificationName_ContactsUpdated
-                                            object:self
-                                          userInfo:info];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:kNotificationName_ContactsUpdated
+                          object:self userInfo:info];
     }
     return OK;
 }
@@ -281,9 +280,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     BOOL OK = [_database saveMembers:members group:ID];
     if (OK) {
         NSDictionary *info = @{@"group": ID};
-        [NSNotificationCenter postNotificationName:kNotificationName_GroupMembersUpdated
-                                            object:self
-                                          userInfo:info];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:kNotificationName_GroupMembersUpdated
+                          object:self userInfo:info];
     }
     return OK;
 }

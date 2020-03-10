@@ -76,8 +76,6 @@
 		E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
 		E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAEB223116AC001F95C6 /* DIMServerState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAEC223116AC001F95C6 /* DIMServerState.m */; };
-		E9AFAB0D2232B960001F95C6 /* NSNotificationCenter+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAB0B2232B960001F95C6 /* NSNotificationCenter+Extension.h */; };
-		E9AFAB0E2232B960001F95C6 /* NSNotificationCenter+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAB0C2232B960001F95C6 /* NSNotificationCenter+Extension.m */; };
 		E9AFAB442233A522001F95C6 /* DIMTerminal+Group.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAB422233A522001F95C6 /* DIMTerminal+Group.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAB452233A522001F95C6 /* DIMTerminal+Group.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAB432233A522001F95C6 /* DIMTerminal+Group.m */; };
 		E9B2FCBD230477E700E153EE /* MKMUser+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FCB8230477E700E153EE /* MKMUser+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -248,8 +246,6 @@
 		E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = ../../../moky/FiniteStateMachine/FiniteStateMachine/FiniteStateMachine.xcodeproj; sourceTree = "<group>"; };
 		E9AFAAEB223116AC001F95C6 /* DIMServerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServerState.h; sourceTree = "<group>"; };
 		E9AFAAEC223116AC001F95C6 /* DIMServerState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMServerState.m; sourceTree = "<group>"; };
-		E9AFAB0B2232B960001F95C6 /* NSNotificationCenter+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+Extension.h"; sourceTree = "<group>"; };
-		E9AFAB0C2232B960001F95C6 /* NSNotificationCenter+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+Extension.m"; sourceTree = "<group>"; };
 		E9AFAB422233A522001F95C6 /* DIMTerminal+Group.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMTerminal+Group.h"; sourceTree = "<group>"; };
 		E9AFAB432233A522001F95C6 /* DIMTerminal+Group.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMTerminal+Group.m"; sourceTree = "<group>"; };
 		E9B2FCB8230477E700E153EE /* MKMUser+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMUser+Extension.h"; sourceTree = "<group>"; };
@@ -460,8 +456,6 @@
 			children = (
 				E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */,
 				E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */,
-				E9AFAB0B2232B960001F95C6 /* NSNotificationCenter+Extension.h */,
-				E9AFAB0C2232B960001F95C6 /* NSNotificationCenter+Extension.m */,
 				E9E8248322475AFD00A029F1 /* NSObject+Extension.h */,
 				E9E8248422475AFD00A029F1 /* NSObject+Extension.m */,
 				E9B2FCB8230477E700E153EE /* MKMUser+Extension.h */,
@@ -580,7 +574,6 @@
 				52DBA3102340372C0000C2B4 /* FMDatabaseQueue.h in Headers */,
 				52DBA3162340372C0000C2B4 /* FolderUtility.h in Headers */,
 				E9AFAB442233A522001F95C6 /* DIMTerminal+Group.h in Headers */,
-				E9AFAB0D2232B960001F95C6 /* NSNotificationCenter+Extension.h in Headers */,
 				E97816D02223EAFC00BCE3AD /* DIMClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -756,7 +749,6 @@
 				52DBA30B2340372C0000C2B4 /* FMDatabaseQueue.m in Sources */,
 				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
 				E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */,
-				E9AFAB0E2232B960001F95C6 /* NSNotificationCenter+Extension.m in Sources */,
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
 				52DBA3132340372C0000C2B4 /* FMDatabasePool.m in Sources */,
 				E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */,

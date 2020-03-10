@@ -125,7 +125,9 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
     BOOL result = [self dictionary:profile writeToBinaryFile:path];
     
     if(result){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_ProfileUpdated object:nil userInfo:@{@"ID":profile.ID}];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:kNotificationName_ProfileUpdated object:nil
+                        userInfo:@{@"ID":profile.ID}];
     }
     
     return result;

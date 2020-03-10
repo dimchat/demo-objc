@@ -35,8 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSNotificationCenter+Extension.h"
-
 #import "DIMSearchCommand.h"
 
 #import "DIMSearchCommandProcessor.h"
@@ -88,7 +86,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         return nil;
     }
     
-    [NSNotificationCenter postNotificationName:notificationName object:self userInfo:content];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:notificationName object:self userInfo:content];
     
     return nil;
 }

@@ -37,7 +37,6 @@
 
 #import "NSObject+Singleton.h"
 #import "NSObject+JsON.h"
-#import "NSNotificationCenter+Extension.h"
 
 #import "DIMSearchCommand.h"
 
@@ -258,9 +257,8 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         }
         
         NSDictionary *info = @{@"content": content};
-        [NSNotificationCenter postNotificationName:name
-                                            object:self
-                                          userInfo:info];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:name object:self userInfo:info];
     };
     return [self sendContent:content receiver:receiver callback:callback dispersedly:YES];
 }

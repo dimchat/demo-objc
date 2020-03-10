@@ -61,7 +61,7 @@
 - (DIMConversationType)type {
     if ([_entity.ID isUser]) {
         return DIMConversationPersonal;
-    } else if ([_entity.ID isUser]) {
+    } else if ([_entity.ID isGroup]) {
         return DIMConversationGroup;
     }
     return DIMConversationUnknown;

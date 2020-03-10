@@ -83,7 +83,9 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     BOOL result = [_messageTable removeConversation:chatBox.ID];
     
     if(result){
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationName_MessageCleaned object:nil userInfo:@{@"ID": chatBox.ID}];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:kNotificationName_MessageCleaned object:nil
+                        userInfo:@{@"ID": chatBox.ID}];
     }
     
     return result;
@@ -101,7 +103,9 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     BOOL result = [_messageTable markConversationMessageRead:chatBox.ID];
     
     if(result){
-        [[NSNotificationCenter defaultCenter] postNotificationName:DIMConversationUpdatedNotification object:nil userInfo:@{@"ID": chatBox.ID}];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:DIMConversationUpdatedNotification object:nil
+                        userInfo:@{@"ID": chatBox.ID}];
     }
     
     return result;
@@ -159,9 +163,13 @@ typedef NSMutableDictionary<DIMID *, DIMConversation *> ConversationTableM;
     if (OK) {
         [_conversationTable setObject:chatBox forKey:chatBox.ID];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:DIMConversationUpdatedNotification object:nil userInfo:@{@"ID": chatBox.ID}];
-        NSDictionary *userInfo = @{@"Conversation": chatBox.ID, @"Message": iMsg};
-        [[NSNotificationCenter defaultCenter] postNotificationName:DIMMessageInsertedNotifiation object:nil userInfo:userInfo];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        
+        [nc postNotificationName:DIMConversationUpdatedNotification object:nil
+                        userInfo:@{@"ID": chatBox.ID}];
+        
+        [nc postNotificationName:DIMMessageInsertedNotifiation object:nil
+                        userInfo:@{@"Conversation": chatBox.ID, @"Message": iMsg}];
     }
     
     return OK;
