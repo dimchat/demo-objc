@@ -313,7 +313,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return NO;
 }
 
-- (nullable DIMContent *)processInstantMessage:(DIMInstantMessage *)iMsg {
+- (nullable DIMInstantMessage *)processInstantMessage:(DIMInstantMessage *)iMsg {
     DIMContent *content = iMsg.content;
     DIMID *sender = [self.facebook IDWithString:iMsg.envelope.sender];
     
@@ -323,17 +323,17 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         return nil;
     }
     
-    DIMContent *res = [super processInstantMessage:iMsg];
-    if (!res) {
+    iMsg = [super processInstantMessage:iMsg];
+    if (!iMsg) {
         // respond nothing
         return nil;
     }
-    if ([res isKindOfClass:[DIMHandshakeCommand class]]) {
+    if ([iMsg.content isKindOfClass:[DIMHandshakeCommand class]]) {
         // urgent command
-        return res;
+        return iMsg;
     }
     /*
-    if ([res isKindOfClass:[DIMReceiptCommand class]]) {
+    if ([iMsg.content isKindOfClass:[DIMReceiptCommand class]]) {
         DIMID *receiver = [self.barrack IDWithString:rMsg.envelope.receiver];
         if (MKMNetwork_IsStation(receiver.type)) {
             // no need to respond receipt to station
@@ -342,8 +342,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
      */
     // normal response
-    DIMID *receiver = [self.facebook IDWithString:iMsg.envelope.sender];
-    [self sendContent:res receiver:receiver];
+    [self sendInstantMessage:iMsg callback:NULL dispersedly:NO];
     // DON'T respond to station directly
     return nil;
 }
