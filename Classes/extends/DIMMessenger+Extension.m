@@ -260,7 +260,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc postNotificationName:name object:self userInfo:info];
     };
-    return [self sendContent:content receiver:receiver callback:callback dispersedly:YES];
+    return [self sendContent:content receiver:receiver callback:callback];
 }
 
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
@@ -340,7 +340,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
      */
     // normal response
-    [self sendInstantMessage:iMsg callback:NULL dispersedly:NO];
+    [self sendInstantMessage:iMsg];
     // DON'T respond to station directly
     return nil;
 }
