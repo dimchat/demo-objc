@@ -424,6 +424,10 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     NSArray<DIMID *> *contacts = user.contacts;
     BOOL OK = YES;
     for (DIMID *contact in contacts) {
+        if (![contact isUser]) {
+            NSLog(@"%@ is not a user, do not broadcaset profile to it", contact);
+            continue;
+        }
         if (![self sendContent:cmd receiver:contact]) {
             OK = NO;
         }
