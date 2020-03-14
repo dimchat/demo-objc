@@ -291,6 +291,11 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         // no need to save search command here
         return YES;
     }
+    if ([content isKindOfClass:[DIMForwardContent class]]) {
+        // forward content will be parsed, if secrect message decrypted, save it
+        // no need to save forward content itself
+        return YES;
+    }
     
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     
