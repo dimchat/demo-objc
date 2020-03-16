@@ -263,6 +263,34 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return [self sendContent:content receiver:receiver callback:callback];
 }
 
+#pragma mark - Reuse message key
+
+- (nullable DIMSecureMessage *)encryptMessage:(DIMInstantMessage *)iMsg {
+    DIMSecureMessage *sMsg = [super encryptMessage:iMsg];
+    DIMEnvelope *env = iMsg.envelope;
+    DIMID *receiver = [self.facebook IDWithString:env.receiver];
+    if ([receiver isGroup]) {
+        // reuse group message keys
+        DIMID *sender = [self.facebook IDWithString:env.sender];
+        DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:sender to:receiver];
+        [key setObject:@(YES) forKey:@"reused"];
+    }
+    // TODO: reuse personal message key?
+    return sMsg;
+}
+
+- (nullable NSData *)message:(DIMInstantMessage *)iMsg
+                  encryptKey:(NSDictionary *)password
+                 forReceiver:(NSString *)receiver {
+    if ([password objectForKey:@"reused"]) {
+        // no need to encrypt reused key again
+        return nil;
+    }
+    return [super message:iMsg encryptKey:password forReceiver:receiver];
+}
+
+#pragma mark - Message
+
 - (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
     DIMContent *content = iMsg.content;
     // TODO: check message type
@@ -297,6 +325,15 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         return YES;
     }
     
+    if ([content isKindOfClass:[DIMInviteCommand class]]) {
+        // send keys again
+        DIMID *me = DIMIDWithString(iMsg.envelope.receiver);
+        DIMID *group = DIMIDWithString([content group]);
+        DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:me to:group];
+        [key removeObjectForKey:@"reused"];
+        NSLog(@"key (%@ => %@): %@", me, group, key);
+    }
+
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     
     if ([content isKindOfClass:[DIMReceiptCommand class]]) {
