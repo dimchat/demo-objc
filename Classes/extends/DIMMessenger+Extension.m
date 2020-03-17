@@ -320,7 +320,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         return YES;
     }
     if ([content isKindOfClass:[DIMForwardContent class]]) {
-        // forward content will be parsed, if secrect message decrypted, save it
+        // forward content will be parsed, if secret message decrypted, save it
         // no need to save forward content itself
         return YES;
     }
@@ -332,6 +332,10 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:me to:group];
         [key removeObjectForKey:@"reused"];
         NSLog(@"key (%@ => %@): %@", me, group, key);
+    }
+    if ([content isKindOfClass:[DIMQueryGroupCommand class]]) {
+        // FIXME: same query command sent to different members?
+        return YES;
     }
 
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
