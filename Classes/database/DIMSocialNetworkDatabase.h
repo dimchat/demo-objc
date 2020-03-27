@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMSocialNetworkDatabase <DIMUserDataSource, DIMGroupDataSource>
+@interface DIMSocialNetworkDatabase : NSObject <DIMUserDataSource, DIMGroupDataSource>
 
 // Address Name Service
 - (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name;
@@ -57,10 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user;
 - (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group;
-
-@end
-
-@interface DIMSocialNetworkDatabase : NSObject <DIMSocialNetworkDatabase>
 
 @end
 
