@@ -61,7 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-// conversation factory
+/**
+ *  Conversation factory
+ *
+ * @param ID - entity ID
+ * @return conversation(chat box)
+ */
 - (DIMConversation *)conversationWithID:(DIMID *)ID;
 
 - (void)addConversation:(DIMConversation *)chatBox;

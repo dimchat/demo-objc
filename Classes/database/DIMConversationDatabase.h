@@ -35,22 +35,73 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMConversation.h"
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMConversationDatabase <DIMConversationDataSource, DIMConversationDelegate>
+@protocol DIMConversationDataSource <NSObject>
 
-- (NSArray<DIMConversation *> *)allConversations;
-- (BOOL)removeConversation:(DIMConversation *)chatBox;
-- (BOOL)clearConversation:(DIMConversation *)chatBox;
-- (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMConversation *)chatBox;
+/**
+ *  Get message count in this conversation for an entity
+ *
+ * @param chatBox - conversation ID
+ * @return total count
+ */
+- (NSInteger)numberOfMessagesInConversation:(DIMID *)chatBox;
 
--(BOOL)markConversationMessageRead:(DIMConversation *)chatBox;
+/**
+ *  Get message at index of this conversation
+ *
+ * @param chatBox - conversation ID
+ * @param index - start from 0, latest first
+ * @return instant message
+ */
+- (DIMInstantMessage *)conversation:(DIMID *)chatBox
+                     messageAtIndex:(NSInteger)index;
 
 @end
 
-@interface DIMConversationDatabase : NSObject <DIMConversationDatabase>
+@protocol DIMConversationDelegate <NSObject>
+
+/**
+ *  Save the new message to local storage
+ *
+ * @param chatBox - conversation ID
+ * @param iMsg - instant message
+ */
+- (BOOL)conversation:(DIMID *)chatBox
+       insertMessage:(DIMInstantMessage *)iMsg;
+
+@optional
+
+/**
+ *  Delete the message
+ *
+ * @param chatBox - conversation ID
+ * @param iMsg - instant message
+ */
+- (BOOL)conversation:(DIMID *)chatBox
+       removeMessage:(DIMInstantMessage *)iMsg;
+
+/**
+ *  Try to withdraw the message, maybe won't success
+ *
+ * @param chatBox - conversation ID
+ * @param iMsg - instant message
+ */
+- (BOOL)conversation:(DIMID *)chatBox
+     withdrawMessage:(DIMInstantMessage *)iMsg;
+
+@end
+
+@interface DIMConversationDatabase : NSObject <DIMConversationDataSource, DIMConversationDelegate>
+
+- (NSArray<DIMID *> *)allConversations;
+- (BOOL)removeConversation:(DIMID *)chatBox;
+- (BOOL)clearConversation:(DIMID *)chatBox;
+- (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)chatBox;
+
+-(BOOL)markConversationMessageRead:(DIMID *)chatBox;
 
 @end
 

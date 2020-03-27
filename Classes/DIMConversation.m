@@ -101,27 +101,19 @@
 
 - (NSInteger)numberOfMessage {
     NSAssert(_dataSource, @"set data source handler first");
-    return [_dataSource numberOfMessagesInConversation:self];
+    return [_dataSource numberOfMessagesInConversation:self.ID];
 }
 
 - (DIMInstantMessage *)messageAtIndex:(NSInteger)index {
     NSAssert(_dataSource, @"set data source handler first");
-    return [_dataSource conversation:self messageAtIndex:index];
-}
-
-- (nullable DIMInstantMessage *)lastMessage {
-    NSUInteger count = [_dataSource numberOfMessagesInConversation:self];
-    if (count == 0) {
-        return nil;
-    }
-    return [_dataSource conversation:self messageAtIndex:(count - 1)];
+    return [_dataSource conversation:self.ID messageAtIndex:index];
 }
 
 #pragma mark - Write via delegate
 
 - (BOOL)insertMessage:(DIMInstantMessage *)iMsg {
     NSAssert(_delegate, @"set delegate first");
-    BOOL result = [_delegate conversation:self insertMessage:iMsg];
+    BOOL result = [_delegate conversation:self.ID insertMessage:iMsg];
     return result;
 }
 
@@ -133,7 +125,7 @@
         return NO;
     }
     
-    BOOL result = [_delegate conversation:self removeMessage:iMsg];
+    BOOL result = [_delegate conversation:self.ID removeMessage:iMsg];
     return result;
 }
 
@@ -144,7 +136,7 @@
         NSAssert(false, @"delegate error");
         return NO;
     }
-    BOOL result = [_delegate conversation:self withdrawMessage:iMsg];
+    BOOL result = [_delegate conversation:self.ID withdrawMessage:iMsg];
     return result;
 }
 

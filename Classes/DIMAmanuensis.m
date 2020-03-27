@@ -97,24 +97,18 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 - (DIMConversation *)conversationWithID:(DIMID *)ID {
     DIMConversation *chatBox = [_conversations objectForKey:ID.address];
     if (!chatBox) {
-        if (_conversationDelegate) {
-            // create by delegate
-            chatBox = [_conversationDelegate conversationWithID:ID];
+        // create directly if we can find the entity
+        // get entity with ID
+        DIMEntity *entity = nil;
+        if ([ID isUser]) {
+            entity = DIMUserWithID(ID);
+        } else if ([ID isGroup]) {
+            entity = DIMGroupWithID(ID);
         }
-        if (!chatBox) {
-            // create directly if we can find the entity
-            // get entity with ID
-            DIMEntity *entity = nil;
-            if ([ID isUser]) {
-                entity = DIMUserWithID(ID);
-            } else if ([ID isGroup]) {
-                entity = DIMGroupWithID(ID);
-            }
-            NSAssert(entity, @"ID error: %@", ID);
-            if (entity) {
-                // create new conversation with entity(User/Group)
-                chatBox = [[DIMConversation alloc] initWithEntity:entity];
-            }
+        NSAssert(entity, @"ID error: %@", ID);
+        if (entity) {
+            // create new conversation with entity(User/Group)
+            chatBox = [[DIMConversation alloc] initWithEntity:entity];
         }
         NSAssert(chatBox, @"failed to create conversation: %@", ID);
         [self addConversation:chatBox];
