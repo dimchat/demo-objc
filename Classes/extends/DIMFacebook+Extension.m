@@ -251,8 +251,32 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [_database savePrivateKey:key forID:ID];
 }
 
-- (nullable DIMPrivateKey *)loadPrivateKey:(DIMID *)ID {
-    return (DIMPrivateKey *)[_database privateKeyForSignature:ID];
+- (nullable id<DIMSignKey>)privateKeyForSignature:(DIMID *)user {
+    NSAssert([user isUser], @"user ID error: %@", user);
+    id<DIMSignKey> key = [_database privateKeyForSignature:user];
+    if (!key) {
+        // try immortals
+        key = [_immortals privateKeyForSignature:user];
+    }
+    return key;
+}
+
+- (nullable NSArray<id<DIMDecryptKey>> *)privateKeysForDecryption:(DIMID *)user {
+    NSAssert([user isUser], @"user ID error: %@", user);
+    NSArray<id<DIMDecryptKey>> *keys = [_database privateKeysForDecryption:user];
+    if ([keys count] == 0) {
+        // try immortals
+        keys = [_immortals privateKeysForDecryption:user];
+        if ([keys count] == 0) {
+            // DIMP v1.0:
+            //     decrypt key and the sign key are the same keys
+            id<DIMSignKey> key = [self privateKeyForSignature:user];
+            if ([key conformsToProtocol:@protocol(DIMDecryptKey)]) {
+                keys = @[(id<DIMDecryptKey>)key];
+            }
+        }
+    }
+    return keys;
 }
 
 - (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
@@ -306,6 +330,11 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 }
 
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
     NSAssert(false, @"override me!");
     return NO;
 }

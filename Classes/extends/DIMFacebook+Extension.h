@@ -55,6 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list;
 
+- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
+
 @end
 
 NS_ASSUME_NONNULL_END
