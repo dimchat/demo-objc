@@ -118,7 +118,7 @@ SingletonImplementations(_SharedANS, sharedInstance)
 
 @end
 
-#pragma mark -
+#pragma mark - Facebook
 
 @interface _SharedFacebook : DIMFacebook {
     
@@ -208,7 +208,10 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     // try from database
     DIMMeta *meta = [_database metaForID:ID];
     if (meta) {
-        return meta;
+        // is empty?
+        if (meta.key) {
+            return meta;
+        }
     }
     // try from immortals
     if (ID.type == MKMNetwork_Main) {
@@ -227,14 +230,29 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [_database saveProfile:profile];
 }
 
-- (nullable DIMProfile *)loadProfileForID:(DIMID *)ID {
+#define PROFILE_EXPIRES  3600  // profile expires (1 hour)
+#define PROFILE_EXPIRES_KEY @"expires"
+
+- (nullable DIMProfile *)profileForID:(DIMID *)ID {
     // try from database
     DIMProfile *profile = [_database profileForID:ID];
-    BOOL isEmpty = [[profile propertyKeys] count] == 0;
-    if (!isEmpty) {
-        return profile;
+    if (profile) {
+        // is empty?
+        if ([profile.propertyKeys count] > 0) {
+            // check expired time
+            NSDate *now = [[NSDate alloc] init];
+            NSTimeInterval timestamp = [now timeIntervalSince1970];
+            NSNumber *expires = [profile objectForKey:PROFILE_EXPIRES_KEY];
+            if (!expires) {
+                // set expired time
+                [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+            } else if ([expires longValue] > timestamp) {
+                // not expired yet
+                return profile;
+            }
+        }
     }
-    // try from immortals
+    // try fron immortals
     if (ID.type == MKMNetwork_Main) {
         DIMProfile *tai = [_immortals profileForID:ID];
         if (tai) {
