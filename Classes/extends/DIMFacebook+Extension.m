@@ -200,7 +200,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [_database saveMeta:meta forID:ID];
 }
 
-- (nullable DIMMeta *)loadMetaForID:(DIMID *)ID {
+- (nullable DIMMeta *)metaForID:(DIMID *)ID {
     if ([ID isBroadcast]) {
         // broadcast ID has not meta
         return nil;
@@ -297,10 +297,11 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [_database contactsOfUser:ID];
 }
 
+- (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
+    return [_database membersOfGroup:group];
+}
+
 - (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
-    if (![self cacheMembers:members group:ID]) {
-        return NO;
-    }
     BOOL OK = [_database saveMembers:members group:ID];
     if (OK) {
         NSDictionary *info = @{@"group": ID};
@@ -309,10 +310,6 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
                           object:self userInfo:info];
     }
     return OK;
-}
-
-- (nullable NSArray<DIMID *> *)loadMembers:(DIMID *)ID {
-    return [_database membersOfGroup:ID];
 }
 
 @end
