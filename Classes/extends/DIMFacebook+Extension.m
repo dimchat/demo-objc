@@ -280,9 +280,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 }
 
 - (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
-    if (![self cacheContacts:contacts user:ID]) {
-        return NO;
-    }
+//    if (![self cacheContacts:contacts user:ID]) {
+//        return NO;
+//    }
     BOOL OK = [_database saveContacts:contacts user:ID];
     if (OK) {
         NSDictionary *info = @{@"ID": ID};
@@ -293,7 +293,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return OK;
 }
 
-- (nullable NSArray<DIMID *> *)loadContacts:(DIMID *)ID {
+- (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)ID {
     return [_database contactsOfUser:ID];
 }
 
@@ -334,6 +334,85 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 - (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
     NSAssert(false, @"override me!");
     return NO;
+}
+
+- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
+    NSAssert(false, @"override me!");
+    return NO;
+}
+
+- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact {
+    NSLog(@"user %@ add contact %@", user, contact);
+    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
+    if (contacts) {
+        if ([contacts containsObject:contact]) {
+            NSLog(@"contact %@ already exists, user: %@", contact, user);
+            return NO;
+        } else if (![contacts respondsToSelector:@selector(addObject:)]) {
+            // mutable
+            contacts = [contacts mutableCopy];
+        }
+    } else {
+        contacts = [[NSMutableArray alloc] initWithCapacity:1];
+    }
+    [(NSMutableArray *)contacts addObject:contact];
+    return [self saveContacts:contacts user:user];
+}
+
+- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact {
+    NSLog(@"user %@ remove contact %@", user, contact);
+    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
+    if (contacts) {
+        if (![contacts containsObject:contact]) {
+            NSLog(@"contact %@ not exists, user: %@", contact, user);
+            return NO;
+        } else if (![contacts respondsToSelector:@selector(removeObject:)]) {
+            // mutable
+            contacts = [contacts mutableCopy];
+        }
+    } else {
+        NSLog(@"user %@ doesn't has contact yet", user);
+        return NO;
+    }
+    [(NSMutableArray *)contacts removeObject:contact];
+    return [self saveContacts:contacts user:user];
+}
+
+- (BOOL)group:(DIMID *)group addMember:(DIMID *)member {
+    NSLog(@"group %@ add member %@", group, member);
+    NSArray<DIMID *> *members = [self membersOfGroup:group];
+    if (members) {
+        if ([members containsObject:member]) {
+            NSLog(@"member %@ already exists, group: %@", member, group);
+            return NO;
+        } else if (![members respondsToSelector:@selector(addObject:)]) {
+            // mutable
+            members = [members mutableCopy];
+        }
+    } else {
+        members = [[NSMutableArray alloc] initWithCapacity:1];
+    }
+    [(NSMutableArray *)members addObject:member];
+    return [self saveMembers:members group:group];
+}
+
+- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member {
+    NSLog(@"group %@ remove member %@", group, member);
+    NSArray<DIMID *> *members = [self membersOfGroup:group];
+    if (members) {
+        if (![members containsObject:member]) {
+            NSLog(@"members %@ not exists, group: %@", member, group);
+            return NO;
+        } else if (![members respondsToSelector:@selector(removeObject:)]) {
+            // mutable
+            members = [members mutableCopy];
+        }
+    } else {
+        NSLog(@"group %@ doesn't has member yet", group);
+        return NO;
+    }
+    [(NSMutableArray *)members removeObject:member];
+    return [self saveMembers:members group:group];
 }
 
 @end

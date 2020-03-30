@@ -37,6 +37,8 @@
 
 #import "NSObject+JsON.h"
 
+#import "DIMFacebook+Extension.h"
+
 #import "DIMStorageCommandProcessor.h"
 
 @implementation DIMStorageCommandProcessor

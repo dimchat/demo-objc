@@ -57,6 +57,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
 
+//
+//  contacts
+//
+- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;
+- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact;
+- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact;
+
+//
+//  group members
+//
+- (BOOL)group:(DIMID *)group addMember:(DIMID *)member;
+- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member;
+
 @end
 
 NS_ASSUME_NONNULL_END
