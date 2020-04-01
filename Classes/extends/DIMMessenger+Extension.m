@@ -280,13 +280,12 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
-                  encryptKey:(NSDictionary *)password
-                 forReceiver:(NSString *)receiver {
+                serializeKey:(NSDictionary *)password {
     if ([password objectForKey:@"reused"]) {
         // no need to encrypt reused key again
         return nil;
     }
-    return [super message:iMsg encryptKey:password forReceiver:receiver];
+    return [super message:iMsg serializeKey:password];
 }
 
 #pragma mark - Message
