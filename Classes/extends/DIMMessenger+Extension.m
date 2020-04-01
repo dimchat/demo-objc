@@ -37,6 +37,7 @@
 
 #import "NSObject+Singleton.h"
 #import "NSObject+JsON.h"
+#import "NSData+Crypto.h"
 
 #import "DIMSearchCommand.h"
 
@@ -262,6 +263,63 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     };
     return [self sendContent:content receiver:receiver callback:callback];
 }
+
+#pragma mark Serialization
+
+- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
+    [self _attachKeyDigest:rMsg];
+    return [super serializeMessage:rMsg];
+}
+
+- (void)_attachKeyDigest:(DIMReliableMessage *)rMsg {
+    if (rMsg.delegate == nil) {
+        rMsg.delegate = self;
+    }
+    if ([rMsg encryptedKey]) {
+        // 'key' exists
+        return;
+    }
+    NSDictionary *keys = [rMsg encryptedKeys];
+    if ([keys objectForKey:@"digest"]) {
+        // key digest already exists
+        return;
+    }
+    // get key with direction
+    DIMSymmetricKey *key;
+    DIMID *sender = [self.barrack IDWithString:rMsg.envelope.sender];
+    DIMID *group = [self.barrack IDWithString:rMsg.envelope.group];
+    if (group) {
+        key = [self.keyCache cipherKeyFrom:sender to:group];
+    } else {
+        DIMID *receiver = [self.barrack IDWithString:rMsg.envelope.receiver];
+        key = [self.keyCache cipherKeyFrom:sender to:receiver];
+    }
+    // get key data
+    NSData *data = key.data;
+    if ([data length] < 8) {
+        NSAssert(false, @"key data error: %@", key);
+        return;
+    }
+    // get digest
+    NSRange range = NSMakeRange([data length] - 4, 4);
+    NSData *part = [data subdataWithRange:range];
+    NSData *digest = [part sha256];
+    NSString *base64 = [digest base64Encode];
+    // set digest
+    NSMutableDictionary *mDict;
+    if ([keys isKindOfClass:[NSMutableDictionary class]]) {
+        mDict = (NSMutableDictionary *)keys;
+    } else {
+        mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
+    }
+    NSUInteger pos = base64.length - 8;
+    [mDict setObject:@"digest" forKey:[base64 substringFromIndex:pos]];
+    [rMsg setObject:mDict forKey:@"keys"];
+}
+
+//- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
+//    return [super deserializeMessage:data];
+//}
 
 #pragma mark - Reuse message key
 
