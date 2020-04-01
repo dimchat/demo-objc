@@ -317,9 +317,12 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     [rMsg setObject:mDict forKey:@"keys"];
 }
 
-//- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
-//    return [super deserializeMessage:data];
-//}
+- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
+    if ([data length] == 0) {
+        return nil;
+    }
+    return [super deserializeMessage:data];
+}
 
 #pragma mark - Reuse message key
 
