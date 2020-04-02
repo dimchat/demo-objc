@@ -306,14 +306,9 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     NSData *digest = [part sha256];
     NSString *base64 = [digest base64Encode];
     // set digest
-    NSMutableDictionary *mDict;
-    if ([keys isKindOfClass:[NSMutableDictionary class]]) {
-        mDict = (NSMutableDictionary *)keys;
-    } else {
-        mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
-    }
+    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
     NSUInteger pos = base64.length - 8;
-    [mDict setObject:@"digest" forKey:[base64 substringFromIndex:pos]];
+    [mDict setObject:[base64 substringFromIndex:pos] forKey:@"digest"];
     [rMsg setObject:mDict forKey:@"keys"];
 }
 

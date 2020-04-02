@@ -246,6 +246,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
             if (!expires) {
                 // set expired time
                 [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+                return profile;
             } else if ([expires longValue] > timestamp) {
                 // not expired yet
                 return profile;
