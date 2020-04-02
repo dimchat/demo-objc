@@ -296,12 +296,12 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
     // get key data
     NSData *data = key.data;
-    if ([data length] < 8) {
+    if ([data length] < 6) {
         NSAssert(false, @"key data error: %@", key);
         return;
     }
     // get digest
-    NSRange range = NSMakeRange([data length] - 4, 4);
+    NSRange range = NSMakeRange([data length] - 6, 6);
     NSData *part = [data subdataWithRange:range];
     NSData *digest = [part sha256];
     NSString *base64 = [digest base64Encode];
