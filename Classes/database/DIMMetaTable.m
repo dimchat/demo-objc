@@ -111,7 +111,7 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
             // no need to check meta again
             [_caches setObject:meta forKey:ID];
         } else {
-            // meta not found
+            // place an empty meta for cache
             [_caches setObject:_emptyMeta forKey:ID];
         }
     }
