@@ -338,8 +338,11 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 - (nullable NSData *)message:(DIMInstantMessage *)iMsg
                 serializeKey:(NSDictionary *)password {
     if ([password objectForKey:@"reused"]) {
-        // no need to encrypt reused key again
-        return nil;
+        DIMID *ID = MKMIDFromString(iMsg.envelope.receiver);
+        if ([ID isGroup]) {
+            // reuse key for grouped message
+            return nil;
+        }
     }
     return [super message:iMsg serializeKey:password];
 }
