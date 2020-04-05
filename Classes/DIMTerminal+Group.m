@@ -44,15 +44,15 @@
 #import "DIMMessenger+Extension.h"
 #import "MKMGroup+Extension.h"
 #import "DIMGroupManager.h"
+#import "DIMRegister.h"
 
 #import "DIMTerminal+Group.h"
 
 @implementation DIMTerminal (GroupManage)
 
 - (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                   members:(NSArray<DIMID *> *)list
-                                   profile:(NSDictionary *)dict {
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+                                      name:(NSString *)name
+                                   members:(NSArray<DIMID *> *)list {
     DIMUser *user = self.currentUser;
     DIMID *founder = user.ID;
 
@@ -70,36 +70,19 @@
         [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
         list = mArray;
     }
-
-    // 1. create new group
-    id<MKMPrivateKey> SK = (id)[facebook privateKeyForSignature:user.ID];
-    // 1.1. generate group meta
-    DIMMeta *meta = MKMMetaGenerate(MKMMetaDefaultVersion, SK, seed);
-    // 1.2. generate group ID
-    DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
-    // 1.3. generate group profile
-    NSData *data = [dict jsonData];
-    NSData *signature = [user sign:data];
-    DIMProfile *profile = [[DIMProfile alloc] initWithID:ID
-                                                    data:data
-                                               signature:signature];
     
-    // 2. save profile with group ID
-    [facebook saveMeta:meta forID:ID];
-    [facebook saveProfile:profile];
-    NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
-    // add current user as the first member (founder)
-    [facebook group:ID addMember:user.ID];
-
-    // 3. send out group info
-    [self _broadcastGroup:ID meta:meta profile:profile];
+    // 1. create profile
+    DIMRegister *reg = [[DIMRegister alloc] init];
+    DIMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
+    
+    // 2. send out group info
+    [self _broadcastGroup:group.ID meta:group.meta profile:group.profile];
     
     // 4. send out 'invite' command
-    DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:ID];
+    DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group.ID];
     [gm invite:list];
     
-    // 5. create group
-    return DIMGroupWithID(ID);
+    return group;
 }
 
 - (BOOL)_broadcastGroup:(DIMID *)ID meta:(nullable DIMMeta *)meta profile:(DIMProfile *)profile {
@@ -128,18 +111,10 @@
     NSArray<DIMID *> *members = [facebook membersOfGroup:group];
     DIMUser *user = self.currentUser;
 
-    // 1. process profile
+    // 1. update profile
     if (profile) {
-        // 1.1. sign profile
-        id<MKMSignKey> SK = [facebook privateKeyForSignature:user.ID];
-        if ([profile sign:SK]) {
-            // 1.2. save profile
-            [facebook saveProfile:profile];
-            // 1.3. send out group info
-            [self _broadcastGroup:group meta:nil profile:profile];
-        } else {
-            NSAssert(facebook, @"failed to sign profile: %@", profile);
-        }
+        [facebook saveProfile:profile];
+        [self _broadcastGroup:group meta:nil profile:profile];
     }
     
     // 2. check expel

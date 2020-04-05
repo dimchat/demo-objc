@@ -42,8 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMTerminal (GroupManage)
 
 - (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                   members:(NSArray<DIMID *> *)list
-                                   profile:(nullable NSDictionary *)dict;
+                                      name:(NSString *)name
+                                   members:(NSArray<DIMID *> *)list;
 
 - (BOOL)updateGroupWithID:(DIMID *)ID
                   members:(NSArray<DIMID *> *)list

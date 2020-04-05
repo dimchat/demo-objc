@@ -62,6 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @return Group object
  */
 - (DIMGroup *)createGroupWithName:(NSString *)name founder:(DIMID *)ID;
+- (DIMGroup *)createGroupWithSeed:(NSString *)seed
+                             name:(NSString *)name founder:(DIMID *)ID;
 
 #pragma mark -
 

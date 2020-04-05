@@ -68,12 +68,19 @@
     return [facebook userWithID:ID];
 }
 
-- (DIMGroup *)createGroupWithName:(NSString *)name founder:(DIMID *)ID {
+- (DIMGroup *)createGroupWithName:(NSString *)name founder:(DIMID *)founder {
+    uint32_t seed = arc4random();
+    NSString *string = [NSString stringWithFormat:@"Group-%u", seed];
+    return [self createGroupWithSeed:string name:name founder:founder];
+}
+
+- (DIMGroup *)createGroupWithSeed:(NSString *)seed
+                             name:(NSString *)name founder:(MKMID *)founder {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // 1. get private key
-    _key = (DIMPrivateKey *)[facebook privateKeyForSignature:ID];
+    _key = (DIMPrivateKey *)[facebook privateKeyForSignature:founder];
     // 2. generate meta
-    DIMMeta *meta = [self generateMeta:@"group"];
+    DIMMeta *meta = [self generateMeta:seed];
     // 3. generate ID
     DIMID *group = [self generateIDWithMeta:meta network:MKMNetwork_Polylogue];
     // 4. generate profile
@@ -82,7 +89,9 @@
     //    don't forget to upload them onto the DIM station
     [facebook saveMeta:meta forID:group];
     [facebook saveProfile:profile];
-    // 6. create group
+    // 6. add founder as first member
+    [facebook group:group addMember:founder];
+    // 7. create group
     return [facebook groupWithID:group];
 }
 
