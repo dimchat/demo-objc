@@ -43,181 +43,145 @@
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 #import "MKMGroup+Extension.h"
+#import "DIMGroupManager.h"
 
 #import "DIMTerminal+Group.h"
 
 @implementation DIMTerminal (GroupManage)
-
-- (BOOL)_sendOutGroupID:(DIMID *)groupID
-                   meta:(DIMMeta *)meta
-                profile:(nullable DIMProfile *)profile
-                members:(NSArray<DIMID *> *)newMembers {
-    NSAssert([meta matchID:groupID], @"meta not match group ID: %@, %@", groupID, meta);
-    NSAssert(!profile || [profile.ID isEqual:groupID], @"profile not match group ID: %@, %@", groupID, profile);
-    
-    DIMGroup *group = DIMGroupWithID(groupID);
-    DIMUser *user = self.currentUser;
-    
-    if (group.ID.type != MKMNetwork_Polylogue) {
-        NSAssert(false, @"unsupported group type: %@", group.ID);
-        return NO;
-    }
-    
-    // checking founder
-    DIMID *founder = group.founder;
-    if (!founder) {
-        // FIXME: new group?
-        founder = user.ID;
-    }
-    if (![founder isValid] || !MKMNetwork_IsPerson(founder.type)) {
-        NSAssert(false, @"invalid founder: %@", founder);
-        return NO;
-    }
-    NSUInteger index = [newMembers indexOfObject:founder];
-    if (index == NSNotFound) {
-        NSAssert(false, @"the founder not found in the member list");
-        // add the founder to the front of group members list
-        NSMutableArray *mArray = [newMembers mutableCopy];
-        [mArray insertObject:founder atIndex:0];
-        newMembers = mArray;
-    } else if (index != 0) {
-        //NSAssert(false, @"the founder must be the first member");
-        // move the founder to the front
-        NSMutableArray *mArray = [newMembers mutableCopy];
-        [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
-        newMembers = mArray;
-    }
-    
-    // checking expeled list with old members
-    NSArray<DIMID *> *members = group.members;
-    NSMutableArray<DIMID *> *expels;
-    expels = [[NSMutableArray alloc] initWithCapacity:members.count];
-    for (DIMID *ID in members) {
-        // if old member not in the new list, expel it
-        if (![newMembers containsObject:ID]) {
-            [expels addObject:ID];
-        }
-    }
-    if (expels.count > 0) {
-        // only the founder can expel members
-        if (![founder isEqual:user.ID]) {
-            NSLog(@"user (%@) not the founder of group: %@", user, group);
-            return NO;
-        }
-        if ([expels containsObject:founder]) {
-            NSLog(@"cannot expel founder (%@) of group: %@", group.founder, group);
-            return NO;
-        }
-    }
-    
-    // check membership
-    if (![founder isEqual:user.ID] && ![members containsObject:user.ID]) {
-    //if (![group existsMember:user.ID]) {
-        NSLog(@"user (%@) not a member of group: %@", user, group);
-        return NO;
-    }
-    
-    DIMCommand *cmd;
-    
-    // 1. send out meta & profile
-    if (profile) {
-        cmd = [[DIMProfileCommand alloc] initWithID:groupID meta:meta profile:profile];
-    } else {
-        cmd = [[DIMMetaCommand alloc] initWithID:groupID meta:meta];
-    }
-    
-    // 1.1. share to station
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    [messenger sendCommand:cmd];
-    
-    // 1.2. send to each new member
-    for (DIMID *ID in newMembers) {
-        [messenger sendContent:cmd receiver:ID];
-    }
-    
-    // checking assistants
-    NSArray<DIMID *> *assistants = group.assistants;
-    NSLog(@"group(%@) assistants: %@", groupID, assistants);
-    
-    // 2. send expel command
-    if (expels.count > 0) {
-        cmd = [[DIMExpelCommand alloc] initWithGroup:groupID members:expels];
-        // 2.1. send expel command to all old members
-        if (members.count > 0) {
-            for (DIMID *ID in members) {
-                [messenger sendContent:cmd receiver:ID];
-            }
-        }
-        // 2.2. send expel command to all assistants
-        if (assistants.count > 0) {
-            for (DIMID *ID in assistants) {
-                [messenger sendContent:cmd receiver:ID];
-            }
-        }
-    }
-    
-    // 3. send invite command
-    if (newMembers.count > 0) {
-        cmd = [[DIMInviteCommand alloc] initWithGroup:groupID members:newMembers];
-        // 3.1. send invite command to all new members
-        for (DIMID *ID in newMembers) {
-            [messenger sendContent:cmd receiver:ID];
-        }
-        // 3.2. send invite command to all assistants
-        if (assistants.count > 0) {
-            for (DIMID *ID in assistants) {
-                [messenger sendContent:cmd receiver:ID];
-            }
-        }
-    }
-    
-    return YES;
-}
 
 - (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
                                    members:(NSArray<DIMID *> *)list
                                    profile:(NSDictionary *)dict {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     DIMUser *user = self.currentUser;
-    
-    // generate group meta with current user's private key
+    DIMID *founder = user.ID;
+
+    // 0. make sure the founder is in the front
+    NSUInteger index = [list indexOfObject:founder];
+    if (index == NSNotFound) {
+        NSAssert(false, @"the founder not found in the member list");
+        // add the founder to the front of group members list
+        NSMutableArray *mArray = [list mutableCopy];
+        [mArray insertObject:founder atIndex:0];
+        list = mArray;
+    } else if (index != 0) {
+        // move the founder to the front
+        NSMutableArray *mArray = [list mutableCopy];
+        [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
+        list = mArray;
+    }
+
+    // 1. create new group
     id<MKMPrivateKey> SK = (id)[facebook privateKeyForSignature:user.ID];
+    // 1.1. generate group meta
     DIMMeta *meta = MKMMetaGenerate(MKMMetaDefaultVersion, SK, seed);
-    // generate group ID
+    // 1.2. generate group ID
     DIMID *ID = [meta generateID:MKMNetwork_Polylogue];
-    // save meta for group ID
-    [facebook saveMeta:meta forID:ID];
-    
-    // generate group profile
+    // 1.3. generate group profile
     NSData *data = [dict jsonData];
     NSData *signature = [user sign:data];
     DIMProfile *profile = [[DIMProfile alloc] initWithID:ID
                                                     data:data
                                                signature:signature];
+    
+    // 2. save profile with group ID
+    [facebook saveMeta:meta forID:ID];
+    [facebook saveProfile:profile];
     NSLog(@"new group: %@, meta: %@, profile: %@", ID, meta, profile);
+    // add current user as the first member (founder)
+    [facebook group:ID addMember:user.ID];
+
+    // 3. send out group info
+    [self _broadcastGroup:ID meta:meta profile:profile];
     
-    // send out meta+profile command
-    BOOL sent = [self _sendOutGroupID:ID meta:meta profile:profile members:list];
-    if (!sent) {
-        NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
-        // TODO: remove the new group info
-        return nil;
-    }
+    // 4. send out 'invite' command
+    DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:ID];
+    [gm invite:list];
     
-    // create group
+    // 5. create group
     return DIMGroupWithID(ID);
 }
 
-- (BOOL)updateGroupWithID:(DIMID *)ID
+- (BOOL)_broadcastGroup:(DIMID *)ID meta:(nullable DIMMeta *)meta profile:(DIMProfile *)profile {
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    // create 'profile' command
+    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
+                                                       meta:meta
+                                                    profile:profile];
+    // 1. share to station
+    [messenger sendCommand:cmd];
+    // 2. send to group assistants
+    NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:ID];
+    for (DIMID *ass in assistants) {
+        [messenger sendContent:cmd receiver:ass];
+    }
+    return YES;
+}
+
+- (BOOL)updateGroupWithID:(DIMID *)group
                   members:(NSArray<DIMID *> *)list
                   profile:(nullable DIMProfile *)profile {
-    DIMGroup *group = DIMGroupWithID(ID);
-    DIMMeta *meta = group.meta;
-    NSLog(@"update group: %@, meta: %@, profile: %@", ID, meta, profile);
-    BOOL sent = [self _sendOutGroupID:ID meta:meta profile:profile members:list];
-    if (!sent) {
-        NSLog(@"failed to send out group: %@, %@, %@, %@", ID, meta, profile, list);
-        return NO;
+    DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group];
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    DIMID *owner = [facebook ownerOfGroup:group];
+    NSArray<DIMID *> *members = [facebook membersOfGroup:group];
+    DIMUser *user = self.currentUser;
+
+    // 1. process profile
+    if (profile) {
+        // 1.1. sign profile
+        id<MKMSignKey> SK = [facebook privateKeyForSignature:user.ID];
+        if ([profile sign:SK]) {
+            // 1.2. save profile
+            [facebook saveProfile:profile];
+            // 1.3. send out group info
+            [self _broadcastGroup:group meta:nil profile:profile];
+        } else {
+            NSAssert(facebook, @"failed to sign profile: %@", profile);
+        }
+    }
+    
+    // 2. check expel
+    NSMutableArray<DIMID *> *outMembers = [[NSMutableArray alloc] initWithCapacity:members.count];
+    for (DIMID *item in members) {
+        if ([list containsObject:item]) {
+            continue;
+        }
+        [outMembers addObject:item];
+    }
+    if ([outMembers count] > 0) {
+        // only the owner can expel members
+        if (![owner isEqual:user.ID]) {
+            NSLog(@"user (%@) not the owner of group: %@", user, group);
+            return NO;
+        }
+        if (![gm expel:outMembers]) {
+            NSLog(@"failed to expel members: %@", outMembers);
+            return NO;
+        }
+        NSLog(@"%lu member(s) expeled: %@", outMembers.count, outMembers);
+    }
+    
+    // 3. check invite
+    NSMutableArray<DIMID *> *newMembers = [[NSMutableArray alloc] initWithCapacity:list.count];
+    for (DIMID *item in list) {
+        if ([members containsObject:item]) {
+            continue;
+        }
+        [newMembers addObject:item];
+    }
+    if ([newMembers count] > 0) {
+        // only the group member can invite new members
+        if (![owner isEqual:user.ID] && ![members containsObject:user.ID]) {
+            NSLog(@"user (%@) not a member of group: %@", user.ID, group);
+            return NO;
+        }
+        if (![gm invite:newMembers]) {
+            NSLog(@"failed to invite members: %@", newMembers);
+            return NO;
+        }
+        NSLog(@"%lu member(s) invited: %@", newMembers.count, newMembers);
     }
     
     return YES;
