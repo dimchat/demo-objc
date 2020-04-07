@@ -73,7 +73,7 @@
 }
 
 + (id<NSCopying>)keyWithData:(NSData *)data {
-    return [data sha256];
+    return MKMSHA256Digest(data);
 }
 
 @end

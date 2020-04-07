@@ -36,7 +36,6 @@
 //
 
 #import "NSObject+Singleton.h"
-#import "NSData+Extension.h"
 
 #import "DIMFileServer.h"
 
@@ -313,7 +312,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
                         sender:(DIMID *)from {
     
     // prepare filename (make sure that filenames won't conflict)
-    NSString *filename = MKMHexEncode([data md5]);
+    NSString *filename = MKMHexEncode(MKMMD5Digest(data));
     NSString *ext = [name pathExtension];
     if (ext.length > 0) {
         filename = [filename stringByAppendingPathExtension:ext];
@@ -363,7 +362,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     NSLog(@"decrypt file data %lu bytes -> %lu bytes", CT.length, data.length);
     
     // save the new file
-    NSString *filename2 = MKMHexEncode([data md5]);
+    NSString *filename2 = MKMHexEncode(MKMMD5Digest(data));
     NSString *ext = [name pathExtension];
     if (ext.length > 0) {
         filename2 = [filename2 stringByAppendingPathExtension:ext];
@@ -379,7 +378,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 - (BOOL)saveData:(NSData *)data filename:(NSString *)name {
     
-    NSString *filename = MKMHexEncode([data md5]);
+    NSString *filename = MKMHexEncode(MKMMD5Digest(data));
     NSString *ext = [name pathExtension];
     if (ext.length > 0) {
         filename = [filename stringByAppendingPathExtension:ext];
@@ -420,7 +419,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     [self post:(NSData *)data name:(NSString *)name varName:@"avatar" url:url];
     
     NSString *ext = [name pathExtension];
-    name = MKMHexEncode([data md5]);
+    name = MKMHexEncode(MKMMD5Digest(data));
     NSString *filename = [name stringByAppendingPathExtension:ext];
     
     // build download URL

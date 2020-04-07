@@ -45,7 +45,7 @@
 
 + (MKMSymmetricKey *)generateWithString:(NSString *)pwd {
     NSData *data = MKMUTF8Encode(pwd);
-    NSData *digest = [data sha256];
+    NSData *digest = MKMSHA256Digest(data);
     // AES key data
     NSInteger len = 32 - [data length];
     if (len > 0) {
