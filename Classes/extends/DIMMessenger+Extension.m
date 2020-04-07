@@ -545,10 +545,10 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     // generate password
     DIMSymmetricKey *password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
     // encrypt contacts
-    NSData *data = [contacts jsonData];
+    NSData *data = MKMJSONEncode(contacts);
     data = [password encrypt:data];
     // encrypt key
-    NSData *key = [password jsonData];
+    NSData *key = MKMJSONEncode(password);
     key = [user encrypt:key];
     // pack 'contacts' command
     DIMStorageCommand *cmd;

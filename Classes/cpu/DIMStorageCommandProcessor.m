@@ -59,11 +59,11 @@
 - (nullable DIMContent *)_decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(DIMUser *)user {
     // decrypt key
     key = [user decrypt:key];
-    NSDictionary *dict = [key jsonDictionary];
+    NSDictionary *dict = MKMJSONDecode(key);
     DIMSymmetricKey *password = MKMSymmetricKeyFromDictionary(dict);
     // decrypt data
     data = [password decrypt:data];
-    NSArray *contacts = [data jsonArray];
+    NSArray *contacts = MKMJSONDecode(data);
     NSAssert(contacts, @"failed to decrypt contacts");
     return [self _saveContacts:contacts forUser:user];
 }

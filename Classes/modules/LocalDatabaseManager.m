@@ -179,7 +179,7 @@
     
     [self insertConversation:conversationID];
     
-    NSString *content_text = [msg.content jsonString];
+    NSString *content_text = [MKMJSONEncode(msg.content) UTF8String];
     content_text = [content_text stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 
     NSString *text = [msg.content objectForKey:@"text"];
@@ -231,7 +231,7 @@
         NSInteger time = [s doubleForColumn:@"time"];
         NSInteger status = [s intForColumn:@"status"];
         
-        NSDictionary *contentDict = [[content_text data] jsonDictionary];
+        NSDictionary *contentDict = MKMJSONDecode([content_text data]);
         NSDictionary *messageDict = @{
             @"content": contentDict,
             @"sender": sender,
