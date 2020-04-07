@@ -64,8 +64,8 @@
     NSData *iv = [digest subdataWithRange:range];
     NSDictionary *key = @{
                           @"algorithm": SCAlgorithmAES,
-                          @"data": [data base64Encode],
-                          @"iv": [iv base64Encode],
+                          @"data": MKMBase64Encode(data),
+                          @"iv": MKMBase64Encode(iv),
                           };
     return MKMSymmetricKeyFromDictionary(key);
 }

@@ -304,7 +304,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     NSRange range = NSMakeRange([data length] - 6, 6);
     NSData *part = [data subdataWithRange:range];
     NSData *digest = [part sha256];
-    NSString *base64 = [digest base64Encode];
+    NSString *base64 = MKMBase64Encode(digest);
     // set digest
     NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
     NSUInteger pos = base64.length - 8;
