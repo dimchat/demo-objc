@@ -37,7 +37,6 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
 #import "DIMFacebook+Extension.h"

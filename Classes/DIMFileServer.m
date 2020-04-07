@@ -36,7 +36,6 @@
 //
 
 #import "NSObject+Singleton.h"
-#import "NSObject+JsON.h"
 #import "NSData+Extension.h"
 
 #import "DIMFileServer.h"
@@ -212,9 +211,9 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     
     NSUInteger len = begin.length + data.length + end.length;
     NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:len];
-    [mData appendData:[begin data]];
+    [mData appendData:MKMUTF8Encode(begin)];
     [mData appendData:data];
-    [mData appendData:[end data]];
+    [mData appendData:MKMUTF8Encode(end)];
     return mData;
 }
 
@@ -237,7 +236,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     // completion handler
     void (^handler)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error);
     handler = ^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        NSLog(@"HTTP upload task complete: %@, %@, %@", response, error, [data UTF8String]);
+        NSLog(@"HTTP upload task complete: %@, %@, %@", response, error, MKMUTF8Decode(data));
         
         if (error) {
             // connection error
@@ -280,7 +279,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
         } else if ([response.MIMEType isEqualToString:@"text/html"]) {
             // server response error
             NSData *data = [NSData dataWithContentsOfURL:location];
-            NSLog(@"download %@ error: %@", url, [data UTF8String]);
+            NSLog(@"download %@ error: %@", url, MKMUTF8Decode(data));
         } else {
             // move to caches directory
             NSFileManager *fm = [NSFileManager defaultManager];

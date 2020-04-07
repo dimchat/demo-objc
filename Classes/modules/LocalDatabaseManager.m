@@ -14,7 +14,6 @@
 #import "LocalDatabaseManager.h"
 #import "FolderUtility.h"
 #import "FMDB.h"
-#import "NSObject+JsON.h"
 
 @interface LocalDatabaseManager()
 
@@ -179,7 +178,7 @@
     
     [self insertConversation:conversationID];
     
-    NSString *content_text = [MKMJSONEncode(msg.content) UTF8String];
+    NSString *content_text = MKMUTF8Decode(MKMJSONEncode(msg.content));
     content_text = [content_text stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
 
     NSString *text = [msg.content objectForKey:@"text"];
@@ -231,7 +230,7 @@
         NSInteger time = [s doubleForColumn:@"time"];
         NSInteger status = [s intForColumn:@"status"];
         
-        NSDictionary *contentDict = MKMJSONDecode([content_text data]);
+        NSDictionary *contentDict = MKMJSONDecode(MKMUTF8Encode(content_text));
         NSDictionary *messageDict = @{
             @"content": contentDict,
             @"sender": sender,

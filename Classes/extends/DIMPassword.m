@@ -37,7 +37,6 @@
 
 #import <CommonCrypto/CommonCryptor.h>
 
-#import "NSObject+JsON.h"
 #import "NSData+Crypto.h"
 
 #import "DIMPassword.h"
@@ -45,7 +44,7 @@
 @implementation DIMPassword
 
 + (MKMSymmetricKey *)generateWithString:(NSString *)pwd {
-    NSData *data = [pwd data];
+    NSData *data = MKMUTF8Encode(pwd);
     NSData *digest = [data sha256];
     // AES key data
     NSInteger len = 32 - [data length];

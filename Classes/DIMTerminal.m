@@ -37,7 +37,6 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import "NSObject+JsON.h"
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 #import "MKMGroup+Extension.h"

@@ -35,8 +35,6 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+JsON.h"
-
 #import "DIMFacebook+Extension.h"
 
 #import "DIMStorageCommandProcessor.h"
