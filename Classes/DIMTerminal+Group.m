@@ -37,8 +37,6 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import "NSData+Crypto.h"
-
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 #import "MKMGroup+Extension.h"

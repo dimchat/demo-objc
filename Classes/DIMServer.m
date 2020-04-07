@@ -38,8 +38,6 @@
 #import <DIMSDK/DIMSDK.h>
 #import <MarsGate/MarsGate.h>
 
-#import "NSData+Crypto.h"
-
 #import "NSObject+Extension.h"
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"

@@ -37,8 +37,6 @@
 
 #import <CommonCrypto/CommonCryptor.h>
 
-#import "NSData+Crypto.h"
-
 #import "DIMPassword.h"
 
 @implementation DIMPassword
