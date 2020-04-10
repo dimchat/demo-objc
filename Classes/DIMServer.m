@@ -169,6 +169,10 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     if (success) {
         NSLog(@"handshake success: %@", session);
         _fsm.session = session;
+        // call client
+        if ([_delegate respondsToSelector:@selector(station:onHandshakeAccepted:)]) {
+            [_delegate station:self onHandshakeAccepted:session];
+        }
     } else {
         NSLog(@"handshake failed");
         // TODO: prompt to handshake again

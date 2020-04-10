@@ -116,21 +116,6 @@
     }
 }
 
-#pragma mark DIMStationDelegate
-
-- (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
-
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    NSData *response = [messenger onReceivePackage:data];
-    if ([response length] > 0) {
-        [_currentStation.star send:response];
-    }
-}
-
-@end
-
-@implementation DIMTerminal (Login)
-
 - (BOOL)login:(DIMUser *)user {
     if (!user || [self.currentUser isEqual:user]) {
         NSLog(@"user not change");
@@ -151,7 +136,17 @@
     return YES;
 }
 
-- (void)onHandshakeAccepted:(NSString *)session {
+#pragma mark DIMStationDelegate
+
+- (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    NSData *response = [messenger onReceivePackage:data];
+    if ([response length] > 0) {
+        [_currentStation.star send:response];
+    }
+}
+
+- (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     // post current profile to station
     DIMProfile *profile = self.currentUser.profile;
