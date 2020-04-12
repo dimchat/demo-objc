@@ -413,7 +413,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return NO;
 }
 
-- (nullable DIMInstantMessage *)processInstantMessage:(DIMInstantMessage *)iMsg {
+- (nullable DIMInstantMessage *)processInstant:(DIMInstantMessage *)iMsg message:(DIMReliableMessage *)rMsg {
     DIMContent *content = iMsg.content;
     DIMID *sender = [self.facebook IDWithString:iMsg.envelope.sender];
     
@@ -423,7 +423,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         return nil;
     }
     
-    iMsg = [super processInstantMessage:iMsg];
+    iMsg = [super processInstant:iMsg message:rMsg];
     if (!iMsg) {
         // respond nothing
         return nil;

@@ -46,7 +46,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMMuteCommand class]], @"mute command error: %@", content);
     DIMMuteCommand *cmd = (DIMMuteCommand *)content;
     DIMFacebook *facebook = self.facebook;

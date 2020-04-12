@@ -69,7 +69,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMSearchCommand class]], @"search command error: %@", content);
     DIMSearchCommand *cmd = (DIMSearchCommand *)content;
     NSString *command = cmd.command;

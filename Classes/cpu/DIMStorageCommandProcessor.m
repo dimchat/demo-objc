@@ -95,7 +95,7 @@
 //
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
-                                message:(DIMInstantMessage *)iMsg {
+                                message:(DIMReliableMessage *)rMsg {
     NSAssert([content isKindOfClass:[DIMStorageCommand class]], @"storage command error: %@", content);
     DIMStorageCommand *cmd = (DIMStorageCommand *)content;
     NSString *title = cmd.title;
