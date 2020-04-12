@@ -413,27 +413,27 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return NO;
 }
 
-- (nullable DIMInstantMessage *)processInstant:(DIMInstantMessage *)iMsg message:(DIMReliableMessage *)rMsg {
-    DIMContent *content = iMsg.content;
-    DIMID *sender = [self.facebook IDWithString:iMsg.envelope.sender];
+- (nullable DIMContent *)processContent:(DIMContent *)content
+                                 sender:(DIMID *)sender
+                                message:(DIMReliableMessage *)rMsg {
     
     if ([self _checkingGroup:content sender:sender]) {
         // save this message in a queue to wait group meta response
-        [self suspendMessage:iMsg];
+        [self suspendMessage:rMsg];
         return nil;
     }
     
-    iMsg = [super processInstant:iMsg message:rMsg];
-    if (!iMsg) {
+    DIMContent *res = [super processContent:content sender:sender message:rMsg];
+    if (!res) {
         // respond nothing
         return nil;
     }
-    if ([iMsg.content isKindOfClass:[DIMHandshakeCommand class]]) {
+    if ([res isKindOfClass:[DIMHandshakeCommand class]]) {
         // urgent command
-        return iMsg;
+        return res;
     }
     /*
-    if ([iMsg.content isKindOfClass:[DIMReceiptCommand class]]) {
+    if ([res isKindOfClass:[DIMReceiptCommand class]]) {
         DIMID *receiver = [self.barrack IDWithString:rMsg.envelope.receiver];
         if (MKMNetwork_IsStation(receiver.type)) {
             // no need to respond receipt to station
@@ -441,6 +441,18 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         }
     }
      */
+    
+    // check receiver
+    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
+    DIMUser *user = [self selectUserWithID:receiver];
+    NSAssert(user, @"receiver error: %@", receiver);
+    
+    // pack message
+    DIMInstantMessage * iMsg;
+    iMsg = [[DIMInstantMessage alloc] initWithContent:res
+                                               sender:user.ID
+                                             receiver:sender
+                                                 time:nil];
     // normal response
     [self sendInstantMessage:iMsg];
     // DON'T respond to station directly
