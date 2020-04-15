@@ -148,16 +148,23 @@
 
 - (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    DIMUser *user = self.currentUser;
     // post current profile to station
-    DIMProfile *profile = self.currentUser.profile;
+    DIMProfile *profile = user.profile;
     if (profile) {
         [messenger postProfile:profile];
     }
     // post contacts(encrypted) to station
-    NSArray<DIMID *> *contacts = self.currentUser.contacts;
+    NSArray<DIMID *> *contacts = user.contacts;
     if (contacts) {
         [messenger postContacts:contacts];
     }
+    // broadcast login command
+    DIMLoginCommand *login = [[DIMLoginCommand alloc] initWithID:user.ID];
+    [login setAgent:self.userAgent];
+    [login copyStationInfo:server];
+    [login copyProviderInfo:server.SP];
+    [messenger broadcastContent:login];
 }
 
 @end

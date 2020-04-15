@@ -295,6 +295,10 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     // get key data
     NSData *data = key.data;
     if ([data length] < 6) {
+        if ([[key valueForKey:@"algorithm"] isEqualToString:@"PLAIN"]) {
+            NSLog(@"broadcast message has no key: %@", rMsg);
+            return;
+        }
         NSAssert(false, @"key data error: %@", key);
         return;
     }
