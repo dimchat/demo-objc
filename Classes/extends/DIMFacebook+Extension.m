@@ -217,7 +217,6 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     if (ID.type == MKMNetwork_Main) {
         meta = [_immortals metaForID:ID];
         if (meta) {
-            [_database saveMeta:meta forID:ID];
             return meta;
         }
     }
@@ -258,7 +257,6 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     if (ID.type == MKMNetwork_Main) {
         DIMProfile *tai = [_immortals profileForID:ID];
         if (tai) {
-            [_database saveProfile:tai];
             return tai;
         }
     }

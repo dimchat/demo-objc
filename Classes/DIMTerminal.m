@@ -140,7 +140,7 @@
 
 - (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    NSData *response = [messenger onReceivePackage:data];
+    NSData *response = [messenger processPackage:data];
     if ([response length] > 0) {
         [_currentStation.star send:response];
     }
