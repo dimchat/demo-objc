@@ -481,9 +481,8 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     NSAssert(self.currentServer, @"station not connected yet");
     // broadcast IDs
     DIMID *everyone = DIMIDWithString(@"everyone@everywhere");
-    DIMID *anyone = DIMIDWithString(@"anyone@anywhere");
     [content setGroup:everyone];
-    return [self sendContent:content receiver:anyone];
+    return [self sendContent:content receiver:everyone];
 }
 
 - (BOOL)sendCommand:(DIMCommand *)cmd {
