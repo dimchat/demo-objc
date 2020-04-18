@@ -243,7 +243,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 - (NSInteger)star:(id<SGStar>)star onReceive:(NSData *)responseData {
     NSLog(@"response data len: %ld", responseData.length);
     NSAssert(_delegate, @"station delegate not set");
-    [_delegate station:self didReceivePackage:responseData];
+    [_delegate station:self onReceivePackage:responseData];
     return 0;
 }
 

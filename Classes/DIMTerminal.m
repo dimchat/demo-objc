@@ -138,7 +138,7 @@
 
 #pragma mark DIMStationDelegate
 
-- (void)station:(DIMStation *)server didReceivePackage:(NSData *)data {
+- (void)station:(DIMStation *)server onReceivePackage:(NSData *)data {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     NSData *response = [messenger processPackage:data];
     if ([response length] > 0) {
