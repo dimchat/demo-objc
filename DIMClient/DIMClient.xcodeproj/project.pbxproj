@@ -73,6 +73,10 @@
 		E97C332423ACC66400C47BBF /* DIMRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = E97C332223ACC66400C47BBF /* DIMRegister.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97C332523ACC66400C47BBF /* DIMRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = E97C332323ACC66400C47BBF /* DIMRegister.m */; };
 		E988C94923F2FAD700BA5D66 /* DIMSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B7023BC9A2000A14FD8 /* DIMSDK.framework */; };
+		E989F651244DC012009AA4B6 /* DIMDefaultProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E989F64C244DC012009AA4B6 /* DIMDefaultProcessor.m */; };
+		E989F652244DC012009AA4B6 /* DIMDefaultProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E989F650244DC012009AA4B6 /* DIMDefaultProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E989F656244DCE7D009AA4B6 /* DIMCommand+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E989F654244DCE7D009AA4B6 /* DIMCommand+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E989F657244DCE7D009AA4B6 /* DIMCommand+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E989F655244DCE7D009AA4B6 /* DIMCommand+Extension.m */; };
 		E9A4A58F23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A4A58A23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A4A58E23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m */; };
 		E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
@@ -245,6 +249,10 @@
 		E9798B6723BC9A2000A14FD8 /* DIMSDK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DIMSDK.xcodeproj; path = "../../sdk-objc/DIMSDK/DIMSDK.xcodeproj"; sourceTree = "<group>"; };
 		E97C332223ACC66400C47BBF /* DIMRegister.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMRegister.h; sourceTree = "<group>"; };
 		E97C332323ACC66400C47BBF /* DIMRegister.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMRegister.m; sourceTree = "<group>"; };
+		E989F64C244DC012009AA4B6 /* DIMDefaultProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMDefaultProcessor.m; sourceTree = "<group>"; };
+		E989F650244DC012009AA4B6 /* DIMDefaultProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDefaultProcessor.h; sourceTree = "<group>"; };
+		E989F654244DCE7D009AA4B6 /* DIMCommand+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMCommand+Extension.h"; sourceTree = "<group>"; };
+		E989F655244DCE7D009AA4B6 /* DIMCommand+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMCommand+Extension.m"; sourceTree = "<group>"; };
 		E9A4A58A23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMReceiptCommandProcessor.h; sourceTree = "<group>"; };
 		E9A4A58E23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMReceiptCommandProcessor.m; sourceTree = "<group>"; };
 		E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = ../../../moky/FiniteStateMachine/FiniteStateMachine/FiniteStateMachine.xcodeproj; sourceTree = "<group>"; };
@@ -470,6 +478,8 @@
 				E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */,
 				E959656123916BB600DAA870 /* DIMMessenger+Extension.h */,
 				E959656223916BB600DAA870 /* DIMMessenger+Extension.m */,
+				E989F654244DCE7D009AA4B6 /* DIMCommand+Extension.h */,
+				E989F655244DCE7D009AA4B6 /* DIMCommand+Extension.m */,
 				E9CEA104234EA1EB00EC507C /* DIMPassword.h */,
 				E9CEA105234EA1EB00EC507C /* DIMPassword.m */,
 				E97C332223ACC66400C47BBF /* DIMRegister.h */,
@@ -516,6 +526,8 @@
 		E9DD00DF2391982000F5FBDD /* cpu */ = {
 			isa = PBXGroup;
 			children = (
+				E989F650244DC012009AA4B6 /* DIMDefaultProcessor.h */,
+				E989F64C244DC012009AA4B6 /* DIMDefaultProcessor.m */,
 				E9DD00E02391982000F5FBDD /* DIMHandshakeCommandProcessor.h */,
 				E9DD00E12391982000F5FBDD /* DIMHandshakeCommandProcessor.m */,
 				E9A4A58A23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h */,
@@ -558,9 +570,11 @@
 				52DBA3122340372C0000C2B4 /* FMDatabaseAdditions.h in Headers */,
 				520ECCB1235D5CAE00822B97 /* DIMClientConstants.h in Headers */,
 				52DBA3092340372C0000C2B4 /* LocalDatabaseManager.h in Headers */,
+				E989F656244DCE7D009AA4B6 /* DIMCommand+Extension.h in Headers */,
 				E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */,
 				E96D14C12322523A00B5EA59 /* DIMProfileTable.h in Headers */,
 				E9B2FCBD230477E700E153EE /* MKMUser+Extension.h in Headers */,
+				E989F652244DC012009AA4B6 /* DIMDefaultProcessor.h in Headers */,
 				E9D0D8E122C3686F00EEBF8B /* MKMGroup+Extension.h in Headers */,
 				E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */,
 				E94E13F12276EB0F009D5275 /* DIMConversation.h in Headers */,
@@ -748,9 +762,11 @@
 				E94E13F02276EB0F009D5275 /* DIMConversation.m in Sources */,
 				E9CEA13C2350AE5B00EC507C /* MKMECCPrivateKey.m in Sources */,
 				E96D14BE2322493300B5EA59 /* DIMStorage.m in Sources */,
+				E989F657244DCE7D009AA4B6 /* DIMCommand+Extension.m in Sources */,
 				52DBA30F2340372C0000C2B4 /* FMDatabase.m in Sources */,
 				E94901342392696300107C06 /* DIMStorageCommandProcessor.m in Sources */,
 				E96D14BA232247F600B5EA59 /* DIMMetaTable.m in Sources */,
+				E989F651244DC012009AA4B6 /* DIMDefaultProcessor.m in Sources */,
 				E96D14F723227DD200B5EA59 /* DIMConversationDatabase.m in Sources */,
 				E9D0D8E022C3686F00EEBF8B /* MKMGroup+Extension.m in Sources */,
 				52DBA30B2340372C0000C2B4 /* FMDatabaseQueue.m in Sources */,

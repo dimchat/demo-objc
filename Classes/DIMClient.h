@@ -71,6 +71,7 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/MKMGroup+Extension.h>
 #import <DIMClient/DIMFacebook+Extension.h>
 #import <DIMClient/DIMMessenger+Extension.h>
+#import <DIMClient/DIMCommand+Extension.h>
 #import <DIMClient/DIMPassword.h>
 #import <DIMClient/DIMRegister.h>
 #import <DIMClient/DIMGroupManager.h>
@@ -79,6 +80,7 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMSearchCommand.h>
 
 // CPU
+#import <DIMClient/DIMDefaultProcessor.h>
 #import <DIMClient/DIMHandshakeCommandProcessor.h>
 #import <DIMClient/DIMReceiptCommandProcessor.h>
 #import <DIMClient/DIMSearchCommandProcessor.h>
