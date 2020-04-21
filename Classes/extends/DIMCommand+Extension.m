@@ -160,12 +160,26 @@ NSString *DIMGroupCommand_BuildText(DIMGroupCommand *cmd, DIMID *commander) {
     return nil;
 }
 
+#pragma mark System Commands
+
+NSString *DIMLoginCommand_BuildText(DIMLoginCommand *cmd, DIMID *commander) {
+    DIMID *ID = DIMIDWithString(cmd.ID);
+    NSDictionary *station = cmd.stationInfo;
+    NSString *format = NSLocalizedString(@"%@ login: %@", nil);
+    NSString *text = [NSString stringWithFormat:format, readable_name(ID), station];
+    [cmd setObject:text forKey:@"text"];
+    return text;
+}
+
 NSString *DIMCommand_BuildText(DIMCommand *cmd, DIMID *commander) {
     if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
         return DIMGroupCommand_BuildText((DIMGroupCommand *)cmd, commander);
     }
     if ([cmd isKindOfClass:[DIMHistoryCommand class]]) {
         // TODO: process history command
+    }
+    if ([cmd isKindOfClass:[DIMLoginCommand class]]) {
+        return DIMLoginCommand_BuildText((DIMLoginCommand *)cmd, commander);
     }
     NSString *format = NSLocalizedString(@"Current version doesn't support this command: %@", nil);
     return [NSString stringWithFormat:format, [cmd command]];

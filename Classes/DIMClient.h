@@ -81,8 +81,9 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 
 // CPU
 #import <DIMClient/DIMDefaultProcessor.h>
-#import <DIMClient/DIMHandshakeCommandProcessor.h>
 #import <DIMClient/DIMReceiptCommandProcessor.h>
+#import <DIMClient/DIMHandshakeCommandProcessor.h>
+#import <DIMClient/DIMLoginCommandProcessor.h>
 #import <DIMClient/DIMSearchCommandProcessor.h>
 #import <DIMClient/DIMMuteCommandProcessor.h>
 #import <DIMClient/DIMStorageCommandProcessor.h>

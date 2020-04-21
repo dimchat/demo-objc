@@ -40,8 +40,9 @@
 #import "DIMSearchCommand.h"
 
 #import "DIMDefaultProcessor.h"
-#import "DIMHandshakeCommandProcessor.h"
 #import "DIMReceiptCommandProcessor.h"
+#import "DIMHandshakeCommandProcessor.h"
+#import "DIMLoginCommandProcessor.h"
 #import "DIMMuteCommandProcessor.h"
 #import "DIMSearchCommandProcessor.h"
 #import "DIMStorageCommandProcessor.h"
@@ -88,10 +89,13 @@ static inline void load_cpu_classes(void) {
     [DIMContentProcessor registerClass:[DIMDefaultContentProcessor class]
                                forType:DKDContentType_Unknown];
     
-    [DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class] forCommand:DIMCommand_Handshake];
-    
     [DIMCommandProcessor registerClass:[DIMReceiptCommandProcessor class]
                             forCommand:DIMCommand_Receipt];
+
+    [DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class] forCommand:DIMCommand_Handshake];
+    
+    [DIMCommandProcessor registerClass:[DIMLoginCommandProcessor class]
+                            forCommand:DIMCommand_Login];
 
     [DIMCommandProcessor registerClass:[DIMMuteCommandProcessor class] forCommand:DIMCommand_Mute];
     
