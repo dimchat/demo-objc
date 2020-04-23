@@ -46,33 +46,22 @@
 
 #import "DIMFacebook+Extension.h"
 
-@interface DIMAddressNameService (Extension)
-
-@property (weak, nonatomic) DIMSocialNetworkDatabase *database;
-
-+ (instancetype)sharedInstance;
-
-@end
-
-@interface _SharedANS : DIMAddressNameService {
+@interface ANS : DIMAddressNameService {
     
     DIMSocialNetworkDatabase *_database;
 }
 
-+ (instancetype)sharedInstance;
+- (instancetype)initWithDatabase:(DIMSocialNetworkDatabase *)db;
 
 @end
 
-@implementation _SharedANS
+@implementation ANS
 
-SingletonImplementations(_SharedANS, sharedInstance)
-
-- (DIMSocialNetworkDatabase *)database {
-    return _database;
-}
-
-- (void)setDatabase:(DIMSocialNetworkDatabase *)database {
-    _database = database;
+- (instancetype)initWithDatabase:(DIMSocialNetworkDatabase *)db {
+    if (self = [super init]) {
+        _database = db;
+    }
+    return self;
 }
 
 - (nullable DIMID *)IDWithName:(NSString *)username {
@@ -101,23 +90,6 @@ SingletonImplementations(_SharedANS, sharedInstance)
 
 @end
 
-@implementation DIMAddressNameService (Extension)
-
-+ (instancetype)sharedInstance {
-    return [_SharedANS sharedInstance];
-}
-
-- (DIMSocialNetworkDatabase *)database {
-    NSAssert(false, @"override me!");
-    return nil;
-}
-
-- (void)setDatabase:(DIMSocialNetworkDatabase *)database {
-    NSAssert(false, @"override me!");
-}
-
-@end
-
 #pragma mark - Facebook
 
 @interface _SharedFacebook : DIMFacebook {
@@ -125,6 +97,9 @@ SingletonImplementations(_SharedANS, sharedInstance)
     // user db
     DIMSocialNetworkDatabase *_database;
     
+    // ANS
+    id<DIMAddressNameService> _ans;
+
     // immortal accounts
     MKMImmortals *_immortals;
     
@@ -143,13 +118,11 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
         // user db
         _database = [[DIMSocialNetworkDatabase alloc] init];
         
+        // ANS
+        _ans = [[ANS alloc] initWithDatabase:_database];
+
         // immortal accounts
         _immortals = [[MKMImmortals alloc] init];
-        
-        // ANS
-        DIMAddressNameService *ans = [DIMAddressNameService sharedInstance];
-        ans.database = _database;
-        self.ans = ans;
     }
     return self;
 }
@@ -192,6 +165,15 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list {
     return [_database saveUsers:list];
+}
+
+- (nullable DIMID *)createID:(NSString *)string {
+    // try ANS record
+    DIMID *ID = [_ans IDWithName:string];
+    if (ID) {
+        return ID;
+    }
+    return [super createID:string];
 }
 
 #pragma mark Storage
@@ -442,6 +424,16 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     }
     [(NSMutableArray *)members removeObject:member];
     return [self saveMembers:members group:group];
+}
+
+- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
+    NSAssert([group isGroup], @"group ID error: %@", group);
+    DIMID *assistant = [self IDWithString:@"assistant"];
+    if ([assistant isValid]) {
+        return @[assistant];
+    } else {
+        return nil;
+    }
 }
 
 @end
