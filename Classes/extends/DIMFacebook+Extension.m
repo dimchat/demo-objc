@@ -331,6 +331,16 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return OK;
 }
 
+- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
+    return @[
+        // dev
+        [self IDWithString:@"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq"],
+        // desktop.dim.chat
+        [self IDWithString:@"assistant@4WBSiDzg9cpZGPqFrQ4bHcq4U5z9QAQLHS"],
+    ];
+    //return [super assistantsOfGroup:group];
+}
+
 @end
 
 #pragma mark -

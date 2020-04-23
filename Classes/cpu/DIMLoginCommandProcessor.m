@@ -45,13 +45,13 @@
 - (nullable DIMContent *)processContent:(DIMContent *)content
                                  sender:(DIMID *)sender
                                 message:(DIMReliableMessage *)rMsg {
-    NSAssert([content isKindOfClass:[DIMLoginCommand class]], @"receipt error: %@", content);
-    DIMLoginCommand *login = (DIMLoginCommand *)content;
+    NSAssert([content isKindOfClass:[DIMLoginCommand class]], @"login error: %@", content);
+    DIMLoginCommand *cmd = (DIMLoginCommand *)content;
     
-    NSLog(@"%@ login: %@", login.ID, login.stationInfo);
+    NSLog(@"[%@] %@ login: %@", cmd.time, cmd.ID, cmd.stationInfo);
     // TODO: update contact's login status
     
-    // no need to respond receipt command
+    // no need to respond login command
     return nil;
 }
 
