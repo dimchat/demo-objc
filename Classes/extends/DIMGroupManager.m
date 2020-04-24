@@ -115,6 +115,7 @@
     NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:self.group];
     NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
     NSAssert([assistants count] > 0, @"failed to get assistant for group: %@", self.group);
+    members = [members copy];    
     cmd = [[DIMInviteCommand alloc] initWithGroup:self.group members:newMembers];
     // 1.1. send to existed members
     [self _sendGroupCommand:cmd to:members];
