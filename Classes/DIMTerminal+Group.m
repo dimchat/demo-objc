@@ -94,7 +94,7 @@
     // 2. send to group assistants
     NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:ID];
     for (DIMID *ass in assistants) {
-        [messenger sendContent:cmd receiver:ass];
+        [messenger sendContent:cmd receiver:ass callback:NULL];
     }
     return YES;
 }

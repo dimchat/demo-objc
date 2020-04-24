@@ -466,7 +466,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
                                              receiver:sender
                                                  time:nil];
     // normal response
-    [self sendInstantMessage:iMsg];
+    [self sendInstantMessage:iMsg callback:NULL];
     // DON'T respond to station directly
     return nil;
 }
@@ -490,13 +490,13 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     // broadcast IDs
     DIMID *everyone = DIMIDWithString(@"everyone@everywhere");
     [content setGroup:everyone];
-    return [self sendContent:content receiver:everyone];
+    return [self sendContent:content receiver:everyone callback:NULL];
 }
 
 - (BOOL)sendCommand:(DIMCommand *)cmd {
     DIMStation *server = [self currentServer];
     NSAssert(server, @"server not connected yet");
-    return [self sendContent:cmd receiver:server.ID];
+    return [self sendContent:cmd receiver:server.ID callback:NULL];
 }
 
 - (BOOL)queryMetaForID:(DIMID *)ID {
@@ -553,7 +553,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
             NSLog(@"%@ is not a user, do not broadcaset profile to it", contact);
             continue;
         }
-        if (![self sendContent:cmd receiver:contact]) {
+        if (![self sendContent:cmd receiver:contact callback:NULL]) {
             OK = NO;
         }
     }
