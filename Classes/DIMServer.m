@@ -336,10 +336,9 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         [self handshakeWithSession:_fsm.session];
     } else if ([state.name isEqualToString:kDIMServerState_Running]) {
         // send all packages waiting
-        void (^block)(void) = ^{
+        [NSObject performBlockInBackground:^{
             [self _carryOutWaitingTasks];
-        };
-        [NSObject performBlock:block afterDelay:1.0];
+        } afterDelay:1.0];
     }
 }
 

@@ -10,9 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (DelayBlock)
+@interface NSObject (MainThread)
 
-+ (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay;
++ (void)performBlockOnMainThread:(void (^)(void))block waitUntilDone:(BOOL)wait;
++ (void)performBlockOnMainThread:(void (^)(void))block afterDelay:(NSTimeInterval)delay;
+
+@end
+
+@interface NSObject (Background)
+
++ (void)performBlockInBackground:(void (^)(void))block;
++ (void)performBlockInBackground:(void (^)(void))block afterDelay:(NSTimeInterval)delay;
 
 @end
 
