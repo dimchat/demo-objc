@@ -259,6 +259,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     PackageHandler *wrapper = [_sendingTable objectForKey:key];
     if (wrapper) {
         handler = wrapper.handler;
+        // FIXME: why different requests have a same SHA256(data) key?
         NSAssert([wrapper.data isEqual:requestData], @"data not match, error: %@", error);
         //requestData = wrapper.data;
         [_sendingTable removeObjectForKey:key];
@@ -298,14 +299,12 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         return YES;
     }
     
-    NSInteger res = [_star send:data];
-    
     if (handler) {
         id key = [PackageHandler keyWithData:data];
         [_sendingTable setObject:wrapper forKey:key];
     }
     
-    return res == 0;
+    return [_star send:data] == 0;
 }
 
 - (nullable NSURL *)uploadData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
