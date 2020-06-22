@@ -105,13 +105,15 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         } else if ([ID isGroup]) {
             entity = DIMGroupWithID(ID);
         }
-        NSAssert(entity, @"ID error: %@", ID);
-        if (entity) {
-            // create new conversation with entity(User/Group)
-            chatBox = [[DIMConversation alloc] initWithEntity:entity];
+        //NSAssert(entity, @"ID error: %@", ID);
+        if(entity != nil){
+            if (entity) {
+                // create new conversation with entity(User/Group)
+                chatBox = [[DIMConversation alloc] initWithEntity:entity];
+            }
+            NSAssert(chatBox, @"failed to create conversation: %@", ID);
+            [self addConversation:chatBox];
         }
-        NSAssert(chatBox, @"failed to create conversation: %@", ID);
-        [self addConversation:chatBox];
     }
     return chatBox;
 }
@@ -172,7 +174,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         }
     }
     
-    NSAssert(chatBox, @"chat box not found for message: %@", iMsg);
+    //NSAssert(chatBox, @"chat box not found for message: %@", iMsg);
     return [chatBox insertMessage:iMsg];
 }
 
