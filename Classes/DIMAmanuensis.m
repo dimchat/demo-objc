@@ -148,6 +148,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
         NSLog(@"update target msg.state with receipt: %@", content);
         return [self saveReceipt:iMsg];
     }
+    
+    //Check whether is a command
+    if ([self skipCommand:content]){
+        return YES;
+    }
+    
     NSLog(@"saving message: %@", iMsg);
     
     DIMConversation *chatBox = nil;
@@ -240,6 +246,31 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     }
     
     NSLog(@"target message not found for receipt: %@", receipt);
+    return NO;
+}
+
+-(BOOL)skipCommand:(DIMContent *)content{
+    
+    //Check whether is a command
+    if ([content isKindOfClass:[DIMStorageCommand class]]) {
+        NSLog(@"It is a storage command, skip : %@", content);
+        return YES;
+    }
+    
+    //Check whether is a command
+    if ([content isKindOfClass:[DIMLoginCommand class]]) {
+        NSLog(@"It is a login command, skip : %@", content);
+        return YES;
+    }
+    
+    if([content isKindOfClass:[DIMCommand class]]){
+        DIMCommand *command = (DIMCommand *)content;
+        if([command.command isEqualToString:@"broadcast"]){
+            NSLog(@"It is a broadcast command, skip : %@", content);
+            return YES;
+        }
+    }
+    
     return NO;
 }
 

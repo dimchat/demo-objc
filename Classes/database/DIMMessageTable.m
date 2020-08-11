@@ -77,7 +77,10 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
         [_caches setObject:messages forKey:ID];
         // add cid
         if (![list containsObject:ID]) {
-            [list addObject:ID];
+            
+            if(messages.count > 0){
+                [list addObject:ID];
+            }
         }
     } else {
         // erase cache
