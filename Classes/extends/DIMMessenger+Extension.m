@@ -405,7 +405,24 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
         // FIXME: same query command sent to different members?
         return YES;
     }
-
+    
+    if ([content isKindOfClass:[DIMStorageCommand class]]) {
+        return YES;
+    }
+    
+    //Check whether is a command
+    if ([content isKindOfClass:[DIMLoginCommand class]]) {
+        return YES;
+    }
+    
+    if([content isKindOfClass:[DIMCommand class]]){
+        DIMCommand *command = (DIMCommand *)content;
+        if([command.command isEqualToString:@"broadcast"]){
+            NSLog(@"It is a broadcast command, skip : %@", content);
+            return YES;
+        }
+    }
+    
     DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
     
     if ([content isKindOfClass:[DIMReceiptCommand class]]) {
