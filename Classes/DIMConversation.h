@@ -39,8 +39,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMInstantMessage;
-
 typedef NS_ENUM(UInt8, DIMConversationID) {
     DIMConversationUnknown  = 0x00,
     DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000

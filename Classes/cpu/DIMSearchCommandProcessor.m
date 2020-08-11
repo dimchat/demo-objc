@@ -49,18 +49,19 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     if ([result count] == 0) {
         return;
     }
+    DIMFacebook *facebook = self.facebook;
     DIMID *ID;
     DIMMeta *meta;
     NSString *key;
     NSDictionary *value;
     for (key in result) {
         value = [result objectForKey:key];
-        ID = [self.facebook IDWithString:key];
+        ID = [facebook IDWithString:key];
         meta = MKMMetaFromDictionary(value);
         if (!meta) {
             continue;
         }
-        [self.facebook saveMeta:meta forID:ID];
+        [facebook saveMeta:meta forID:ID];
     }
 }
 

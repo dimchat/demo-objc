@@ -197,7 +197,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 // check whether need to update group
 - (BOOL)_checkingGroup:(DIMContent *)content sender:(DIMID *)sender {
     // Check if it is a group message, and whether the group members info needs update
-    DIMID *group = [self.facebook IDWithString:content.group];
+    DIMID *group = content.group;
     if (!group || [group isBroadcast]) {
         // 1. personal message
         // 2. broadcast message
@@ -292,12 +292,12 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
     // get key with direction
     DIMSymmetricKey *key;
-    DIMID *sender = [self.barrack IDWithString:rMsg.envelope.sender];
-    DIMID *group = [self.barrack IDWithString:rMsg.envelope.group];
+    DIMID *sender = rMsg.envelope.sender;
+    DIMID *group = rMsg.envelope.group;
     if (group) {
         key = [self.keyCache cipherKeyFrom:sender to:group];
     } else {
-        DIMID *receiver = [self.barrack IDWithString:rMsg.envelope.receiver];
+        DIMID *receiver = rMsg.envelope.receiver;
         key = [self.keyCache cipherKeyFrom:sender to:receiver];
     }
     // get key data
@@ -334,10 +334,10 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 - (nullable DIMSecureMessage *)encryptMessage:(DIMInstantMessage *)iMsg {
     DIMSecureMessage *sMsg = [super encryptMessage:iMsg];
     DIMEnvelope *env = iMsg.envelope;
-    DIMID *receiver = [self.facebook IDWithString:env.receiver];
+    DIMID *receiver = env.receiver;
     if ([receiver isGroup]) {
         // reuse group message keys
-        DIMID *sender = [self.facebook IDWithString:env.sender];
+        DIMID *sender = env.sender;
         DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:sender to:receiver];
         [key setObject:@(YES) forKey:@"reused"];
     }
@@ -395,8 +395,8 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     
     if ([content isKindOfClass:[DIMInviteCommand class]]) {
         // send keys again
-        DIMID *me = DIMIDWithString(iMsg.envelope.receiver);
-        DIMID *group = DIMIDWithString([content group]);
+        DIMID *me = iMsg.envelope.receiver;
+        DIMID *group = content.group;
         DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:me to:group];
         [key removeObjectForKey:@"reused"];
         NSLog(@"key (%@ => %@): %@", me, group, key);
@@ -463,7 +463,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
     /*
     if ([res isKindOfClass:[DIMReceiptCommand class]]) {
-        DIMID *receiver = [self.barrack IDWithString:rMsg.envelope.receiver];
+        DIMID *receiver = rMsg.envelope.receiver;
         if (MKMNetwork_IsStation(receiver.type)) {
             // no need to respond receipt to station
             return nil;
@@ -472,7 +472,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
      */
     
     // check receiver
-    DIMID *receiver = [self.facebook IDWithString:rMsg.envelope.receiver];
+    DIMID *receiver = rMsg.envelope.receiver;
     DIMUser *user = [self selectUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     

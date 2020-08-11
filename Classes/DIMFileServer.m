@@ -410,7 +410,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 #pragma mark Avatar
 
-- (NSURL *)uploadAvatar:(NSData *)data filename:(NSString *)name sender:(DIMID *)ID {
+- (NSURL *)uploadAvatar:(NSData *)data filename:(nullable NSString *)name sender:(DIMID *)ID {
     
     // upload to CDN
     NSString *upload = _uploadAPI;

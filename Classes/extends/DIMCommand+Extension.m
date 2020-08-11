@@ -163,7 +163,7 @@ NSString *DIMGroupCommand_BuildText(DIMGroupCommand *cmd, DIMID *commander) {
 #pragma mark System Commands
 
 NSString *DIMLoginCommand_BuildText(DIMLoginCommand *cmd, DIMID *commander) {
-    DIMID *ID = DIMIDWithString(cmd.ID);
+    DIMID *ID = cmd.ID;
     NSDictionary *station = cmd.stationInfo;
     NSString *format = NSLocalizedString(@"%@ login: %@", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(ID), station];

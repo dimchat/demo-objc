@@ -308,7 +308,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (nullable NSURL *)uploadData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
-    DIMID *sender = DIMIDWithString(iMsg.envelope.sender);
+    DIMID *sender = iMsg.envelope.sender;
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;
     

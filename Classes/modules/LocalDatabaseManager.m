@@ -10,6 +10,7 @@
 #import <DIMSDK/DIMSDK.h>
 
 #import "DIMFacebook+Extension.h"
+#import "DIMMessenger+Extension.h"
 
 #import "LocalDatabaseManager.h"
 #import "FolderUtility.h"
@@ -222,6 +223,8 @@
     NSString *sql = [NSString stringWithFormat:@"SELECT * FROM messages WHERE conversation_id='%@' ORDER BY time", conversationID];
     FMResultSet *s = [self.db executeQuery:sql];
     
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    
     while ([s next]) {
         
         NSString *content_text = [s stringForColumn:@"content"];
@@ -244,7 +247,7 @@
             NSAssert(false, @"message invalid: %@", messageDict);
             continue;
         }
-        
+        msg.delegate = messenger;
         [messages addObject:msg];
     }
     
