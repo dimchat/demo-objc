@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMContent (Extension)
+@interface DKDContent (Extension)
 
 - (nullable NSString *)messageText;
 

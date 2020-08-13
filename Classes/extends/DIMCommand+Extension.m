@@ -237,7 +237,7 @@ NSString *DIMContent_BuildText(DIMContent *content) {
 
 #pragma mark -
 
-@implementation DIMContent (Extension)
+@implementation DKDContent (Extension)
 
 - (nullable NSString *)messageText {
     NSString *text = [self objectForKey:@"text"];
