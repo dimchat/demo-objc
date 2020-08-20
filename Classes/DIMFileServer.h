@@ -70,6 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveThumbnail:(NSData *)data filename:(NSString *)name;
 - (NSData *)loadThumbnailWithFilename:(NSString *)name;
 
+-(NSString *)cachePathForFilename:(NSString *)filename;
+
 #pragma mark Avatar
 
 - (NSURL *)uploadAvatar:(NSData *)data

@@ -185,7 +185,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     if (!_session) {
         NSURLSessionConfiguration *config;
         config = [NSURLSessionConfiguration defaultSessionConfiguration];
-        config.timeoutIntervalForRequest = 5.0f;
+        config.timeoutIntervalForRequest = 30.0f;
         config.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
         if (_userAgent.length > 0) {
             config.HTTPAdditionalHeaders = @{@"User-Agent": _userAgent};
@@ -392,6 +392,11 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     
     NSString *path = data_filepath((NSString *)name, NO);
     return [NSData dataWithContentsOfFile:path];
+}
+
+-(NSString *)cachePathForFilename:(NSString *)filename{
+    NSString *path = data_filepath((NSString *)filename, NO);
+    return path;
 }
 
 - (BOOL)saveThumbnail:(NSData *)data filename:(NSString *)name {
