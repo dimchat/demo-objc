@@ -334,21 +334,21 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
 }
 
 - (void)setCurrentUser:(DIMUser *)user {
-    NSAssert(false, @"override me!");
+    NSAssert(false, @"implement me!");
 }
 
 - (BOOL)saveUsers:(NSArray<DIMID *> *)list {
-    NSAssert(false, @"override me!");
+    NSAssert(false, @"implement me!");
     return NO;
 }
 
 - (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
-    NSAssert(false, @"override me!");
+    NSAssert(false, @"implement me!");
     return NO;
 }
 
 - (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
-    NSAssert(false, @"override me!");
+    NSAssert(false, @"implement me!");
     return NO;
 }
 

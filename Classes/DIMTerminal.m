@@ -74,7 +74,7 @@
 #pragma mark - User(s)
 
 - (NSArray<DIMUser *> *)users {
-    return [_users copy];
+    return [_users mutableCopy];
 }
 
 - (DIMUser *)currentUser {
@@ -140,7 +140,7 @@
 
 - (void)station:(DIMStation *)server onReceivePackage:(NSData *)data {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    NSData *response = [messenger processPackage:data];
+    NSData *response = [messenger processData:data];
     if ([response length] > 0) {
         [_currentStation.star send:response];
     }

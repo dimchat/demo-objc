@@ -45,7 +45,7 @@
 - (NSArray<DIMID *> *)assistants {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     NSArray *list = [facebook assistantsOfGroup:self.ID];
-    return [list copy];
+    return [list mutableCopy];
 }
 
 - (BOOL)isFounder:(DIMID *)ID {
