@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  SeChat : Secure/secret Chat Application
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,55 +28,33 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal.h
+//  SCFacebook.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/25.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/13.
+//  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMServer;
+@class DIMSocialNetworkDatabase;
+@class MKMImmortals;
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
+@interface SCFacebook : DIMFacebook {
     
-    DIMServer *_currentStation;
-    NSString *_session;
+    // user db
+    DIMSocialNetworkDatabase *_database;
     
-    NSMutableArray<MKMUser *> *_users;
+    // ANS
+    id<DIMAddressNameService> _ans;
+
+    // immortal accounts
+    MKMImmortals *_immortals;
+    
+    NSMutableArray<MKMUser *> *_allUsers;
 }
-
-/**
- *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
- */
-@property (readonly, nonatomic, nullable) NSString *userAgent;
-
-@property (readonly, nonatomic) NSString *language;
-
-#pragma mark - User(s)
-
-@property (readonly, copy, nonatomic) NSArray<MKMUser *> *users;
-@property (strong, nonatomic) MKMUser *currentUser;
-
-- (void)addUser:(MKMUser *)user;
-- (void)removeUser:(MKMUser *)user;
-
-- (BOOL)login:(MKMUser *)user;
-
-@end
-
-@interface DIMTerminal (GroupManage)
-
-- (nullable MKMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
-
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
 
 @end
 

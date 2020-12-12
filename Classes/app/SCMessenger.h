@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  SeChat : Secure/secret Chat Application
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,26 +28,26 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal+Group.h
+//  SCMessenger.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/3/9.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/13.
+//  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import "DIMTerminal.h"
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal (GroupManage)
-
-- (nullable MKMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
-
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
+@interface SCMessenger : DIMMessenger {
+    
+    DIMStation *_server;
+    
+    // query tables
+    NSMutableDictionary<id<MKMID>, NSDate *> *_metaQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_profileQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_groupQueryTable;
+}
 
 @end
 

@@ -41,11 +41,12 @@
 #import "DIMMessenger+Extension.h"
 #import "MKMEntity+Extension.h"
 
+#import "DIMRegister.h"
+#import "DIMGroupManager.h"
+
 #import "DIMAmanuensis.h"
 
 #import "DIMServer.h"
-
-#import "DIMTerminal+Group.h"
 
 #import "DIMTerminal.h"
 
@@ -164,6 +165,123 @@
     [login copyStationInfo:server];
     //[login copyProviderInfo:server.SP];
     [messenger broadcastContent:login];
+}
+
+@end
+
+@implementation DIMTerminal (GroupManage)
+
+- (nullable MKMGroup *)createGroupWithSeed:(NSString *)seed
+                                      name:(NSString *)name
+                                   members:(NSArray<id<MKMID>> *)list {
+    MKMUser *user = self.currentUser;
+    id<MKMID>founder = user.ID;
+
+    // 0. make sure the founder is in the front
+    NSUInteger index = [list indexOfObject:founder];
+    if (index == NSNotFound) {
+        NSAssert(false, @"the founder not found in the member list");
+        // add the founder to the front of group members list
+        NSMutableArray *mArray = [list mutableCopy];
+        [mArray insertObject:founder atIndex:0];
+        list = mArray;
+    } else if (index != 0) {
+        // move the founder to the front
+        NSMutableArray *mArray = [list mutableCopy];
+        [mArray exchangeObjectAtIndex:index withObjectAtIndex:0];
+        list = mArray;
+    }
+    
+    // 1. create profile
+    DIMRegister *reg = [[DIMRegister alloc] init];
+    MKMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
+    
+    // 2. send out group info
+    id<MKMBulletin> profile = [group documentWithType:MKMDocument_Bulletin];
+    [self _broadcastGroup:group.ID meta:group.meta profile:profile];
+    
+    // 4. send out 'invite' command
+    DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group.ID];
+    [gm invite:list];
+    
+    return group;
+}
+
+- (BOOL)_broadcastGroup:(id<MKMID>)ID meta:(nullable id<MKMMeta>)meta profile:(id<MKMDocument>)profile {
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    // create 'profile' command
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
+                                                        meta:meta
+                                                     profile:profile];
+    // 1. share to station
+    [messenger sendCommand:cmd];
+    // 2. send to group assistants
+    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:ID];
+    for (id<MKMID>ass in assistants) {
+        [messenger sendContent:cmd receiver:ass callback:NULL];
+    }
+    return YES;
+}
+
+- (BOOL)updateGroupWithID:(id<MKMID>)group
+                  members:(NSArray<id<MKMID>> *)list
+                  profile:(nullable id<MKMDocument>)profile {
+    DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group];
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    id<MKMID>owner = [facebook ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    MKMUser *user = self.currentUser;
+
+    // 1. update profile
+    if (profile) {
+        [facebook saveDocument:profile];
+        [self _broadcastGroup:group meta:nil profile:profile];
+    }
+    
+    // 2. check expel
+    NSMutableArray<id<MKMID>> *outMembers = [[NSMutableArray alloc] initWithCapacity:members.count];
+    for (id<MKMID>item in members) {
+        if ([list containsObject:item]) {
+            continue;
+        }
+        [outMembers addObject:item];
+    }
+    if ([outMembers count] > 0) {
+        // only the owner can expel members
+        if (![owner isEqual:user.ID]) {
+            NSLog(@"user (%@) not the owner of group: %@", user, group);
+            return NO;
+        }
+        if (![gm expel:outMembers]) {
+            NSLog(@"failed to expel members: %@", outMembers);
+            return NO;
+        }
+        NSLog(@"%lu member(s) expeled: %@", outMembers.count, outMembers);
+    }
+    
+    // 3. check invite
+    NSMutableArray<id<MKMID>> *newMembers = [[NSMutableArray alloc] initWithCapacity:list.count];
+    for (id<MKMID>item in list) {
+        if ([members containsObject:item]) {
+            continue;
+        }
+        [newMembers addObject:item];
+    }
+    if ([newMembers count] > 0) {
+        // only the group member can invite new members
+        if (![owner isEqual:user.ID] && ![members containsObject:user.ID]) {
+            NSLog(@"user (%@) not a member of group: %@", user.ID, group);
+            return NO;
+        }
+        if (![gm invite:newMembers]) {
+            NSLog(@"failed to invite members: %@", newMembers);
+            return NO;
+        }
+        NSLog(@"%lu member(s) invited: %@", newMembers.count, newMembers);
+    }
+    
+    return YES;
 }
 
 @end
