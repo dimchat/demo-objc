@@ -41,15 +41,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMessageTable : DIMStorage
 
-- (NSArray<DIMID *> *)allConversations;
-- (BOOL)removeConversation:(DIMID *)ID;
+- (NSArray<id<MKMID>> *)allConversations;
+- (BOOL)removeConversation:(id<MKMID>)ID;
 
 #pragma mark -
 
-- (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)ID;
-- (BOOL)addMessage:(DIMInstantMessage *)message toConversation:(DIMID *)ID;
-- (BOOL)clearConversation:(DIMID *)ID;
-- (BOOL)markConversationMessageRead:(DIMID *)chatBox;
+- (NSArray<id<DKDInstantMessage>> *)messagesInConversation:(id<MKMID>)ID;
+- (BOOL)addMessage:(id<DKDInstantMessage>)message toConversation:(id<MKMID>)ID;
+- (BOOL)clearConversation:(id<MKMID>)ID;
+- (BOOL)markConversationMessageRead:(id<MKMID>)chatBox;
 
 @end
 

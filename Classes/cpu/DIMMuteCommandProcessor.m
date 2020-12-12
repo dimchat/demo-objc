@@ -44,22 +44,21 @@
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMuteCommand class]], @"mute command error: %@", content);
     DIMMuteCommand *cmd = (DIMMuteCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
     NSArray *muteList = cmd.list;
-    DIMUser *user = [facebook currentUser];
+    MKMUser *user = [facebook currentUser];
     
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
     [manager unmuteAllConversationForUser:user.ID];
     
-    DIMID *conversationID;
+    id<MKMID>conversationID;
     for (NSString *item in muteList){
-        conversationID = [facebook IDWithString:item];
+        conversationID = MKMIDFromString(item);
         [manager muteConversation:conversationID forUser:user.ID];
     }
     

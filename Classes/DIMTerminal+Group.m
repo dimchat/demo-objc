@@ -39,7 +39,7 @@
 
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
-#import "MKMGroup+Extension.h"
+#import "MKMEntity+Extension.h"
 #import "DIMGroupManager.h"
 #import "DIMRegister.h"
 
@@ -47,11 +47,11 @@
 
 @implementation DIMTerminal (GroupManage)
 
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
+- (nullable MKMGroup *)createGroupWithSeed:(NSString *)seed
                                       name:(NSString *)name
-                                   members:(NSArray<DIMID *> *)list {
-    DIMUser *user = self.currentUser;
-    DIMID *founder = user.ID;
+                                   members:(NSArray<id<MKMID>> *)list {
+    MKMUser *user = self.currentUser;
+    id<MKMID>founder = user.ID;
 
     // 0. make sure the founder is in the front
     NSUInteger index = [list indexOfObject:founder];
@@ -70,10 +70,11 @@
     
     // 1. create profile
     DIMRegister *reg = [[DIMRegister alloc] init];
-    DIMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
+    MKMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
     
     // 2. send out group info
-    [self _broadcastGroup:group.ID meta:group.meta profile:group.profile];
+    id<MKMBulletin> profile = [group documentWithType:MKMDocument_Bulletin];
+    [self _broadcastGroup:group.ID meta:group.meta profile:profile];
     
     // 4. send out 'invite' command
     DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group.ID];
@@ -82,41 +83,41 @@
     return group;
 }
 
-- (BOOL)_broadcastGroup:(DIMID *)ID meta:(nullable DIMMeta *)meta profile:(DIMProfile *)profile {
+- (BOOL)_broadcastGroup:(id<MKMID>)ID meta:(nullable id<MKMMeta>)meta profile:(id<MKMDocument>)profile {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // create 'profile' command
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
-                                                       meta:meta
-                                                    profile:profile];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
+                                                        meta:meta
+                                                     profile:profile];
     // 1. share to station
     [messenger sendCommand:cmd];
     // 2. send to group assistants
-    NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:ID];
-    for (DIMID *ass in assistants) {
+    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:ID];
+    for (id<MKMID>ass in assistants) {
         [messenger sendContent:cmd receiver:ass callback:NULL];
     }
     return YES;
 }
 
-- (BOOL)updateGroupWithID:(DIMID *)group
-                  members:(NSArray<DIMID *> *)list
-                  profile:(nullable DIMProfile *)profile {
+- (BOOL)updateGroupWithID:(id<MKMID>)group
+                  members:(NSArray<id<MKMID>> *)list
+                  profile:(nullable id<MKMDocument>)profile {
     DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    DIMID *owner = [facebook ownerOfGroup:group];
-    NSArray<DIMID *> *members = [facebook membersOfGroup:group];
-    DIMUser *user = self.currentUser;
+    id<MKMID>owner = [facebook ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    MKMUser *user = self.currentUser;
 
     // 1. update profile
     if (profile) {
-        [facebook saveProfile:profile];
+        [facebook saveDocument:profile];
         [self _broadcastGroup:group meta:nil profile:profile];
     }
     
     // 2. check expel
-    NSMutableArray<DIMID *> *outMembers = [[NSMutableArray alloc] initWithCapacity:members.count];
-    for (DIMID *item in members) {
+    NSMutableArray<id<MKMID>> *outMembers = [[NSMutableArray alloc] initWithCapacity:members.count];
+    for (id<MKMID>item in members) {
         if ([list containsObject:item]) {
             continue;
         }
@@ -136,8 +137,8 @@
     }
     
     // 3. check invite
-    NSMutableArray<DIMID *> *newMembers = [[NSMutableArray alloc] initWithCapacity:list.count];
-    for (DIMID *item in list) {
+    NSMutableArray<id<MKMID>> *newMembers = [[NSMutableArray alloc] initWithCapacity:list.count];
+    for (id<MKMID>item in list) {
         if ([members containsObject:item]) {
             continue;
         }

@@ -42,7 +42,7 @@
 #import "DIMClientConstants.h"
 #import "DIMGroupTable.h"
 
-typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
+typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
 
 @interface DIMGroupTable () {
     
@@ -66,14 +66,14 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
  * @param ID - group ID
  * @return "Documents/.mkm/{address}/members.plist"
  */
-- (NSString *)_filePathWithID:(DIMID *)ID {
+- (NSString *)_filePathWithID:(id<MKMID>)ID {
     NSString *dir = self.documentDirectory;
     dir = [dir stringByAppendingPathComponent:@".mkm"];
-    dir = [dir stringByAppendingPathComponent:ID.address];
+    dir = [dir stringByAppendingPathComponent:ID.address.string];
     return [dir stringByAppendingPathComponent:@"members.plist"];
 }
 
-- (nullable NSArray<DIMID *> *)_loadMembersOfGroup:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)_loadMembersOfGroup:(id<MKMID>)group {
     NSString *path = [self _filePathWithID:group];
     NSArray *array = [self arrayWithContentsOfFile:path];
     if (!array) {
@@ -81,12 +81,12 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
         return nil;
     }
     NSLog(@"members from %@", path);
-    NSMutableArray<DIMID *> *members;
-    DIMID *ID;
+    NSMutableArray<id<MKMID>> *members;
+    id<MKMID>ID;
     members = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (NSString *item in array) {
-        ID = DIMIDWithString(item);
-        if (![ID isValid]) {
+        ID = MKMIDFromString(item);
+        if (!ID) {
             NSAssert(false, @"members ID invalid: %@", item);
             continue;
         }
@@ -94,8 +94,8 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     }
     // ensure that founder is at the front
     if (members.count > 1) {
-        DIMMeta *gMeta = DIMMetaForID(group);
-        DIMPublicKey *PK;
+        id<MKMMeta>gMeta = DIMMetaForID(group);
+        id<MKMVerifyKey> PK;
         for (NSUInteger index = 0; index < members.count; ++index) {
             ID = [members objectAtIndex:index];
             PK = [DIMMetaForID(ID) key];
@@ -112,9 +112,8 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return members;
 }
 
-- (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
-    NSAssert([group isGroup], @"group ID error: %@", group);
-    NSArray<DIMID *> *members = [_caches objectForKey:group];
+- (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
+    NSArray<id<MKMID>> *members = [_caches objectForKey:group];
     if (!members) {
         members = [self _loadMembersOfGroup:group];
         if (members) {
@@ -125,8 +124,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return members;
 }
 
-- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group {
-    NSAssert([group isGroup], @"group ID error: %@", group);
+- (BOOL)saveMembers:(NSArray *)members group:(id<MKMID>)group {
     NSAssert(members.count > 0, @"group members cannot be empty");
     // update cache
     [_caches setObject:members forKey:group];
@@ -137,13 +135,11 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return result;
 }
 
-- (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    NSAssert([group isGroup], @"group ID error: %@", group);
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group {
     return nil;
 }
 
-- (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    NSAssert([group isGroup], @"group ID error: %@", group);
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group {
     return nil;
 }
 

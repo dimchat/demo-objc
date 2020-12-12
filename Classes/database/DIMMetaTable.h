@@ -41,9 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMMetaTable : DIMStorage
 
-- (nullable DIMMeta *)metaForID:(DIMID *)ID;
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID;
 
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 
 @end
 

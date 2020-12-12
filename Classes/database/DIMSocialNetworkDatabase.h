@@ -39,24 +39,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMSocialNetworkDatabase : NSObject <DIMUserDataSource, DIMGroupDataSource>
+@interface DIMSocialNetworkDatabase : NSObject <MKMUserDataSource, MKMGroupDataSource>
 
 // Address Name Service
-- (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name;
-- (DIMID *)ansRecordForName:(NSString *)name;
+- (BOOL)saveANSRecord:(id<MKMID>)ID forName:(NSString *)name;
+- (id<MKMID>)ansRecordForName:(NSString *)name;
 - (NSArray<NSString *> *)namesWithANSRecord:(NSString *)ID;
 
-- (nullable NSArray<DIMID *> *)allUsers;
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list;
-- (BOOL)saveUser:(DIMID *)user;
-- (BOOL)removeUser:(DIMID *)user;
+- (nullable NSArray<id<MKMID>> *)allUsers;
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list;
+- (BOOL)saveUser:(id<MKMID>)user;
+- (BOOL)removeUser:(id<MKMID>)user;
 
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID;
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID;
-- (BOOL)saveProfile:(DIMProfile *)profile;
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key forID:(id<MKMID>)ID;
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
+- (BOOL)saveDocument:(id<MKMDocument>)profile;
 
-- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user;
-- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group;
+- (BOOL)saveContacts:(NSArray *)contacts user:(id<MKMID>)user;
+- (BOOL)saveMembers:(NSArray *)members group:(id<MKMID>)group;
 
 @end
 

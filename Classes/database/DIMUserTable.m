@@ -42,13 +42,13 @@
 #import "DIMClientConstants.h"
 #import "DIMUserTable.h"
 
-typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
+typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
 
 @interface DIMUserTable () {
     
     CacheTableM *_caches;
     
-    NSMutableArray<DIMID *> *_users;
+    NSMutableArray<id<MKMID>> *_users;
 }
 
 @end
@@ -75,26 +75,25 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return [dir stringByAppendingPathComponent:@"users.plist"];
 }
 
-- (nullable NSArray<DIMID *> *)allUsers {
+- (nullable NSArray<id<MKMID>> *)allUsers {
     if (_users) {
         return _users;
     }
     _users = [[NSMutableArray alloc] init];
-    DIMID *ID;
+    id<MKMID>ID;
     
     NSString *path = [self _usersFilePath];
     NSLog(@"loading users: %@", path);
     NSArray *array = [self arrayWithContentsOfFile:path];
     for (NSString *item in array) {
-        ID = DIMIDWithString(item);
-        NSAssert([ID isValid], @"ID error: %@", item);
+        ID = MKMIDFromString(item);
         [_users addObject:ID];
     }
     
     return _users;
 }
 
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list {
     // update cache
     _users = [list mutableCopy];
     // save into storage
@@ -109,14 +108,14 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
  * @param ID - user ID
  * @return "Documents/.mkm/{address}/contacts.plist"
  */
-- (NSString *)_filePathWithID:(DIMID *)ID {
+- (NSString *)_filePathWithID:(id<MKMID>)ID {
     NSString *dir = self.documentDirectory;
     dir = [dir stringByAppendingPathComponent:@".mkm"];
-    dir = [dir stringByAppendingPathComponent:ID.address];
+    dir = [dir stringByAppendingPathComponent:[ID.address string]];
     return [dir stringByAppendingPathComponent:@"contacts.plist"];
 }
 
-- (nullable NSArray<DIMID *> *)_loadContactsForUser:(DIMID *)user {
+- (nullable NSArray<id<MKMID>> *)_loadContactsForUser:(id<MKMID>)user {
     NSString *path = [self _filePathWithID:user];
     NSArray *array = [self arrayWithContentsOfFile:path];
     if (!array) {
@@ -124,12 +123,12 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
         return nil;
     }
     NSLog(@"contacts from %@", path);
-    NSMutableArray<DIMID *> *contacts;
-    DIMID *ID;
+    NSMutableArray<id<MKMID>> *contacts;
+    id<MKMID>ID;
     contacts = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (NSString *item in array) {
-        ID = DIMIDWithString(item);
-        if (![ID isValid]) {
+        ID = MKMIDFromString(item);
+        if (!ID) {
             NSAssert(false, @"contact ID invalid: %@", item);
             continue;
         }
@@ -138,8 +137,8 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return contacts;
 }
 
-- (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user {
-    NSArray<DIMID *> *contacts = [_caches objectForKey:user];
+- (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
+    NSArray<id<MKMID>> *contacts = [_caches objectForKey:user];
     if (!contacts) {
         contacts = [self _loadContactsForUser:user];
         if (contacts) {
@@ -150,7 +149,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return contacts;
 }
 
-- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user {
+- (BOOL)saveContacts:(NSArray *)contacts user:(id<MKMID>)user {
     NSAssert(contacts, @"contacts cannot be empty");
     // update cache
     [_caches setObject:contacts forKey:user];

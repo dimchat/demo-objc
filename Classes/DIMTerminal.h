@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
     DIMServer *_currentStation;
     NSString *_session;
     
-    NSMutableArray<DIMUser *> *_users;
+    NSMutableArray<MKMUser *> *_users;
 }
 
 /**
@@ -58,13 +58,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - User(s)
 
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
+@property (readonly, copy, nonatomic) NSArray<MKMUser *> *users;
+@property (strong, nonatomic) MKMUser *currentUser;
 
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
+- (void)addUser:(MKMUser *)user;
+- (void)removeUser:(MKMUser *)user;
 
-- (BOOL)login:(DIMUser *)user;
+- (BOOL)login:(MKMUser *)user;
 
 @end
 

@@ -43,7 +43,7 @@
 #import "DIMClientConstants.h"
 #import "DIMProfileTable.h"
 
-typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
+typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
 
 @interface DIMProfileTable () {
     
@@ -67,14 +67,14 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
  * @param ID - entity ID
  * @return "Documents/.mkm/{address}/profile.plist"
  */
-- (NSString *)_filePathWithID:(DIMID *)ID {
+- (NSString *)_filePathWithID:(id<MKMID>)ID {
     NSString *dir = self.documentDirectory;
     dir = [dir stringByAppendingPathComponent:@".mkm"];
-    dir = [dir stringByAppendingPathComponent:ID.address];
+    dir = [dir stringByAppendingPathComponent:ID.address.string];
     return [dir stringByAppendingPathComponent:@"profile.plist"];
 }
 
-- (BOOL)_cacheProfile:(DIMProfile *)profile {
+- (BOOL)_cacheProfile:(id<MKMDocument>)profile {
     if (![profile isValid]) {
         //NSAssert(false, @"profile not valid: %@", profile);
         return NO;
@@ -83,7 +83,7 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
     return YES;
 }
 
-- (nullable __kindof DIMProfile *)_loadProfileForID:(DIMID *)ID {
+- (nullable __kindof id<MKMDocument>)_loadProfileForID:(id<MKMID>)ID {
     NSString *path = [self _filePathWithID:ID];
     NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
     if (!dict) {
@@ -91,11 +91,12 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
         return nil;
     }
     NSLog(@"profile from: %@", path);
-    return MKMProfileFromDictionary(dict);
+    return MKMDocumentFromDictionary(dict);
 }
 
-- (nullable DIMProfile *)profileForID:(DIMID *)ID {
-    DIMProfile *profile = [_caches objectForKey:ID];
+- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
+                                              type:(nullable NSString *)type {
+    id<MKMDocument>profile = [_caches objectForKey:ID];
     if (!profile) {
         // first access, try to load from local storage
         profile = [self _loadProfileForID:ID];
@@ -104,14 +105,14 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
             [self _cacheProfile:profile];
         } else {
             // place an empty profile for cache
-            profile = [[DIMProfile alloc] initWithID:ID];
+            profile = MKMDocumentNew(ID, type);
             [_caches setObject:profile forKey:ID];
         }
     }
     return profile;
 }
 
-- (BOOL)saveProfile:(DIMProfile *)profile {
+- (BOOL)saveDocument:(id<MKMDocument>)profile {
     
     NSDate *now = [[NSDate alloc] init];
     [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
@@ -119,10 +120,10 @@ typedef NSMutableDictionary<DIMID *, DIMProfile *> CacheTableM;
     if (![self _cacheProfile:profile]) {
         return NO;
     }
-    DIMID *ID = DIMIDWithString(profile.ID);
+    id<MKMID>ID = profile.ID;
     NSString *path = [self _filePathWithID:ID];
     NSLog(@"saving profile into: %@", path);
-    BOOL result = [self dictionary:profile writeToBinaryFile:path];
+    BOOL result = [self dictionary:profile.dictionary writeToBinaryFile:path];
     
     if(result){
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];

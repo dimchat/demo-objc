@@ -56,13 +56,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURL *)uploadEncryptedData:(NSData *)data
                       filename:(nullable NSString *)name
-                        sender:(DIMID *)from;
+                        sender:(id<MKMID>)from;
 
 - (nullable NSData *)downloadEncryptedDataFromURL:(NSURL *)url;
 
 - (nullable NSData *)decryptDataFromURL:(NSURL *)url
                                filename:(NSString *)name
-                                wityKey:(DIMSymmetricKey *)key;
+                                wityKey:(id<MKMSymmetricKey>)key;
 
 - (BOOL)saveData:(NSData *)data filename:(NSString *)name;
 - (NSData *)loadDataWithFilename:(NSString *)name;
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSURL *)uploadAvatar:(NSData *)data
                filename:(nullable NSString *)name
-                 sender:(DIMID *)ID;
+                 sender:(id<MKMID>)ID;
 
 @end
 

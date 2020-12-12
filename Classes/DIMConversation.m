@@ -35,11 +35,13 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
+#import "MKMEntity+Extension.h"
+
 #import "DIMConversation.h"
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) DIMEntity *entity; // User or Group
+@property (strong, nonatomic) MKMEntity *entity; // User or Group
 
 @end
 
@@ -47,11 +49,11 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    DIMEntity *entity = nil;
+    MKMEntity *entity = nil;
     return [self initWithEntity:entity];
 }
 
-- (instancetype)initWithEntity:(DIMEntity *)entity {
+- (instancetype)initWithEntity:(MKMEntity *)entity {
     if (self = [super init]) {
         _entity = entity;
     }
@@ -59,15 +61,15 @@
 }
 
 - (DIMConversationType)type {
-    if ([_entity.ID isUser]) {
+    if (MKMIDIsUser(_entity.ID)) {
         return DIMConversationPersonal;
-    } else if ([_entity.ID isGroup]) {
+    } else if (MKMIDIsGroup(_entity.ID)) {
         return DIMConversationGroup;
     }
     return DIMConversationUnknown;
 }
 
-- (DIMID *)ID {
+- (id<MKMID>)ID {
     return _entity.ID;
 }
 
@@ -78,12 +80,12 @@
 - (NSString *)title {
     DIMConversationType type = self.type;
     if (type == DIMConversationPersonal) {
-        DIMUser *user = (DIMUser *)_entity;
+        MKMUser *user = (MKMUser *)_entity;
         NSString *name = user.name;
         // "xxx"
         return name;
     } else if (type == DIMConversationGroup) {
-        DIMGroup *group = (DIMGroup *)_entity;
+        MKMGroup *group = (MKMGroup *)_entity;
         NSString *name = group.name;
         unsigned long count = group.members.count;
         // "yyy (123)"
@@ -93,8 +95,8 @@
     return @"Conversation";
 }
 
-- (nullable DIMProfile *)profile {
-    return _entity.profile;
+- (nullable id<MKMDocument>)profile {
+    return [_entity documentWithType:MKMDocument_Any];
 }
 
 #pragma mark - Read from data source
@@ -104,20 +106,20 @@
     return [_dataSource numberOfMessagesInConversation:self.ID];
 }
 
-- (DIMInstantMessage *)messageAtIndex:(NSInteger)index {
+- (id<DKDInstantMessage>)messageAtIndex:(NSInteger)index {
     NSAssert(_dataSource, @"set data source handler first");
     return [_dataSource conversation:self.ID messageAtIndex:index];
 }
 
 #pragma mark - Write via delegate
 
-- (BOOL)insertMessage:(DIMInstantMessage *)iMsg {
+- (BOOL)insertMessage:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
     BOOL result = [_delegate conversation:self.ID insertMessage:iMsg];
     return result;
 }
 
-- (BOOL)removeMessage:(DIMInstantMessage *)iMsg {
+- (BOOL)removeMessage:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
     SEL selector = @selector(conversation:removeMessage:);
     if (![_delegate respondsToSelector:selector]) {
@@ -129,7 +131,7 @@
     return result;
 }
 
-- (BOOL)withdrawMessage:(DIMInstantMessage *)iMsg {
+- (BOOL)withdrawMessage:(id<DKDInstantMessage>)iMsg {
     NSAssert(_delegate, @"set delegate first");
     SEL selector = @selector(conversation:withdrawMessage:);
     if (![_delegate respondsToSelector:selector]) {

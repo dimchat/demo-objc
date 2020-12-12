@@ -28,59 +28,44 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMUser+Extension.m
+//  MKMEntity+Extension.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/8/12.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <MingKeMing/MingKeMing.h>
 
-#import "DIMFacebook+Extension.h"
-#import "MKMUser+Extension.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation MKMUser (LocalUser)
+@interface MKMEntity (Name)
 
-+ (nullable instancetype)userWithConfigFile:(NSString *)config {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
-    
-    if (!dict) {
-        NSLog(@"failed to load: %@", config);
-        return nil;
-    }
-    
-    DIMID *ID = DIMIDWithString([dict objectForKey:@"ID"]);
-    DIMMeta *meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
-    
-    DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
-    
-    DIMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    [SK saveKeyWithIdentifier:ID.address];
-    
-    DIMUser *user = DIMUserWithID(ID);
-    
-    // profile
-    DIMProfile *profile = [dict objectForKey:@"profile"];
-    if (profile) {
-        // copy profile from config to local storage
-        if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
-        }
-        profile = MKMProfileFromDictionary(profile);
-        [[DIMFacebook sharedInstance] saveProfile:profile];
-    }
-    
-    return user;
-}
-
-- (void)addContact:(DIMID *)contact {
-    [[DIMFacebook sharedInstance] user:_ID addContact:contact];
-}
-
-- (void)removeContact:(DIMID *)contact {
-    [[DIMFacebook sharedInstance] user:_ID removeContact:contact];
-}
+@property (readonly, strong, nonatomic) NSString *name;
 
 @end
+
+@interface MKMUser (LocalUser)
+
++ (nullable instancetype)userWithConfigFile:(NSString *)config;
+
+- (void)addContact:(id<MKMID>)contact;
+- (void)removeContact:(id<MKMID>)contact;
+
+@end
+
+@interface MKMGroup (Extension)
+
+@property (readonly, copy, nonatomic) NSArray<id<MKMID>> *assistants;
+
+- (BOOL)isFounder:(id<MKMID>)ID;
+
+- (BOOL)isOwner:(id<MKMID>)ID;
+
+- (BOOL)existsAssistant:(id<MKMID>)ID;
+
+- (BOOL)existsMember:(id<MKMID>)ID;
+
+@end
+
+NS_ASSUME_NONNULL_END

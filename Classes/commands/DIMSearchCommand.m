@@ -49,18 +49,18 @@
     }
     if (self = [self initWithCommand:command]) {
         if (string) {
-            [_storeDictionary setObject:string forKey:@"keywords"];
+            [self setObject:string forKey:@"keywords"];
         }
     }
     return self;
 }
 
 - (nullable NSArray *)users {
-    return [_storeDictionary objectForKey:@"users"];
+    return [self objectForKey:@"users"];
 }
 
 - (nullable NSDictionary *)results {
-    return [_storeDictionary objectForKey:@"results"];
+    return [self objectForKey:@"results"];
 }
 
 @end

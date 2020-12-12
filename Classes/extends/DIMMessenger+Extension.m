@@ -55,56 +55,39 @@
 NSString * const kNotificationName_MessageSent       = @"MessageSent";
 NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
-@interface DIMKeyStore (Extension)
-
-+ (instancetype)sharedInstance;
-
-@end
-
-@implementation DIMKeyStore (Extension)
-
-SingletonImplementations(DIMKeyStore, sharedInstance)
-
-@end
-
-#pragma mark -
-
 @interface _SharedMessenger : DIMMessenger {
     
     // query tables
-    NSMutableDictionary<DIMID *, NSDate *> *_metaQueryTable;
-    NSMutableDictionary<DIMID *, NSDate *> *_profileQueryTable;
-    NSMutableDictionary<DIMID *, NSDate *> *_groupQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_metaQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_profileQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_groupQueryTable;
 }
 
 @end
 
 static inline void load_cmd_classes(void) {
-    [DIMCommand registerClass:[DIMSearchCommand class] forCommand:DIMCommand_Search];
-    [DIMCommand registerClass:[DIMSearchCommand class] forCommand:DIMCommand_OnlineUsers];
+    DIMCommandParserRegisterClass(DIMCommand_Search, DIMSearchCommand);
+    DIMCommandParserRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
 }
 
 static inline void load_cpu_classes(void) {
     
-    [DIMContentProcessor registerClass:[DIMDefaultContentProcessor class]
-                               forType:DKDContentType_Unknown];
+    DIMContentProcessorRegisterClass(DKDContentType_Unknown, DIMDefaultContentProcessor);
     
-    [DIMCommandProcessor registerClass:[DIMReceiptCommandProcessor class]
-                            forCommand:DIMCommand_Receipt];
+    DIMCommandProcessorRegisterClass(DIMCommand_Receipt, DIMReceiptCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMCommand_Handshake, DIMHandshakeCommandProcessor);
+    DIMCommandProcessorRegisterClass(DIMCommand_Login, DIMLoginCommandProcessor);
+    
+    DIMCommandProcessorRegisterClass(DIMCommand_Mute, DIMMuteCommandProcessor);
 
-    [DIMCommandProcessor registerClass:[DIMHandshakeCommandProcessor class] forCommand:DIMCommand_Handshake];
+    DIMStorageCommandProcessor *storeProcessor = [[DIMStorageCommandProcessor alloc] init];
+    DIMCommandProcessorRegister(DIMCommand_Storage, storeProcessor);
+    DIMCommandProcessorRegister(DIMCommand_Contacts, storeProcessor);
+    DIMCommandProcessorRegister(DIMCommand_PrivateKey, storeProcessor);
     
-    [DIMCommandProcessor registerClass:[DIMLoginCommandProcessor class]
-                            forCommand:DIMCommand_Login];
-
-    [DIMCommandProcessor registerClass:[DIMMuteCommandProcessor class] forCommand:DIMCommand_Mute];
-    
-    [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_Search];
-    [DIMCommandProcessor registerClass:[DIMSearchCommandProcessor class] forCommand:DIMCommand_OnlineUsers];
-    
-    [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_Storage];
-    [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_Contacts];
-    [DIMCommandProcessor registerClass:[DIMStorageCommandProcessor class] forCommand:DIMCommand_PrivateKey];
+    DIMSearchCommandProcessor *searchProcessor = [[DIMSearchCommandProcessor alloc] init];
+    DIMCommandProcessorRegister(DIMCommand_Search, searchProcessor);
+    DIMCommandProcessorRegister(DIMCommand_OnlineUsers, searchProcessor);
 }
 
 @implementation _SharedMessenger
@@ -115,7 +98,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     if (self = [super init]) {
         
         self.barrack = [DIMFacebook sharedInstance];
-        self.keyCache = [DIMKeyStore sharedInstance];
+        self.keyCache = nil;//[DIMKeyStore sharedInstance];
         
         // query tables
         _metaQueryTable    = [[NSMutableDictionary alloc] init];
@@ -131,8 +114,8 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return self;
 }
 
-- (BOOL)queryMetaForID:(DIMID *)ID {
-    if ([ID isBroadcast]) {
+- (BOOL)queryMetaForID:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
         // broadcast ID has not meta
         return YES;
     }
@@ -149,7 +132,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryProfileForID:(DIMID *)ID {
+- (BOOL)queryProfileForID:(id<MKMID>)ID {
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
     NSDate *lastTime = [_profileQueryTable objectForKey:ID];
@@ -158,15 +141,15 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
     [_profileQueryTable setObject:now forKey:ID];
     
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryGroupForID:(DIMID *)group fromMember:(DIMID *)member {
+- (BOOL)queryGroupForID:(id<MKMID>)group fromMember:(id<MKMID>)member {
     return [self queryGroupForID:group fromMembers:@[member]];
 }
 
-- (BOOL)queryGroupForID:(DIMID *)group fromMembers:(NSArray<DIMID *> *)members {
+- (BOOL)queryGroupForID:(id<MKMID>)group fromMembers:(NSArray<id<MKMID>> *)members {
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
     NSDate *lastTime = [_groupQueryTable objectForKey:group];
@@ -177,7 +160,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     
     DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     BOOL checking = NO;
-    for (DIMID *item in members) {
+    for (id<MKMID>item in members) {
         if ([self sendContent:cmd receiver:item]) {
             checking = YES;
         }
@@ -185,82 +168,19 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return checking;
 }
 
-- (BOOL)_isEmptyGroup:(DIMID *)group {
-    NSArray *members = [self.facebook membersOfGroup:group];
-    if ([members count] == 0) {
-        return YES;
-    }
-    DIMID *owner = [self.facebook ownerOfGroup:group];
-    return !owner;
-}
-
-// check whether need to update group
-- (BOOL)_checkingGroup:(DIMContent *)content sender:(DIMID *)sender {
-    // Check if it is a group message, and whether the group members info needs update
-    DIMID *group = content.group;
-    if (!group || [group isBroadcast]) {
-        // 1. personal message
-        // 2. broadcast message
-        return NO;
-    }
-    // chek meta for new group ID
-    DIMMeta *meta = [self.facebook metaForID:group];
-    if (!meta) {
-        // NOTICE: if meta for group not found,
-        //         facebook should query it from DIM network automatically
-        // TODO: insert the message to a temporary queue to wait meta
-        //NSAssert(false, @"group meta not found: %@", group);
-        return YES;
-    }
-    // query group command
-    if ([self _isEmptyGroup:group]) {
-        // NOTICE: if the group info not found, and this is not an 'invite' command
-        //         query group info from the sender
-        if ([content isKindOfClass:[DIMInviteCommand class]] ||
-            [content isKindOfClass:[DIMResetGroupCommand class]]) {
-            // FIXME: can we trust this stranger?
-            //        may be we should keep this members list temporary,
-            //        and send 'query' to the owner immediately.
-            // TODO: check whether the members list is a full list,
-            //       it should contain the group owner(owner)
-            return NO;
-        } else {
-            return [self queryGroupForID:group fromMember:sender];
-        }
-    } else if ([self.facebook group:group hasMember:sender] ||
-               [self.facebook group:group hasAssistant:sender] ||
-               [self.facebook group:group isOwner:sender]) {
-        // normal membership
-        return NO;
-    } else {
-        // if assistants exist, query them
-        NSArray<DIMID *> *assistants = [self.facebook assistantsOfGroup:group];
-        NSMutableArray<DIMID *> *mArray = [[NSMutableArray alloc] initWithCapacity:(assistants.count+1)];
-        for (DIMID *item in assistants) {
-            [mArray addObject:item];
-        }
-        // if owner found, query it
-        DIMID *owner = [self.facebook ownerOfGroup:group];
-        if (owner && ![mArray containsObject:owner]) {
-            [mArray addObject:owner];
-        }
-        return [self queryGroupForID:group fromMembers:mArray];
-    }
-}
-
-- (BOOL)sendContent:(DIMContent *)content receiver:(DIMID *)receiver {
-    DIMMessengerCallback callback;
-    callback = ^(DIMReliableMessage *rMsg, NSError *error) {
+- (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver {
+    DKDContent *cont = (DKDContent *)content;
+    DIMMessengerCallback callback = ^(id<DKDReliableMessage> rMsg, NSError *error) {
         NSString *name = nil;
         if (error) {
             NSLog(@"send message error: %@", error);
             name = kNotificationName_SendMessageFailed;
-            content.state = DIMMessageState_Error;
-            content.error = [error localizedDescription];
+            cont.state = DIMMessageState_Error;
+            cont.error = [error localizedDescription];
         } else {
             NSLog(@"sent message: %@ -> %@", content, rMsg);
             name = kNotificationName_MessageSent;
-            content.state = DIMMessageState_Accepted;
+            cont.state = DIMMessageState_Accepted;
         }
         
         NSDictionary *info = @{@"content": content};
@@ -270,86 +190,11 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return [self sendContent:content receiver:receiver callback:callback];
 }
 
-#pragma mark Serialization
-
-- (nullable NSData *)serializeMessage:(DIMReliableMessage *)rMsg {
-    [self _attachKeyDigest:rMsg];
-    return [super serializeMessage:rMsg];
-}
-
-- (void)_attachKeyDigest:(DIMReliableMessage *)rMsg {
-    if (rMsg.delegate == nil) {
-        rMsg.delegate = self;
-    }
-    if ([rMsg encryptedKey]) {
-        // 'key' exists
-        return;
-    }
-    NSDictionary *keys = [rMsg encryptedKeys];
-    if ([keys objectForKey:@"digest"]) {
-        // key digest already exists
-        return;
-    }
-    // get key with direction
-    DIMSymmetricKey *key;
-    DIMID *sender = rMsg.envelope.sender;
-    DIMID *group = rMsg.envelope.group;
-    if (group) {
-        key = [self.keyCache cipherKeyFrom:sender to:group];
-    } else {
-        DIMID *receiver = rMsg.envelope.receiver;
-        key = [self.keyCache cipherKeyFrom:sender to:receiver];
-    }
-    // get key data
-    NSData *data = key.data;
-    if ([data length] < 6) {
-        if ([[key valueForKey:@"algorithm"] isEqualToString:@"PLAIN"]) {
-            NSLog(@"broadcast message has no key: %@", rMsg);
-            return;
-        }
-        NSAssert(false, @"key data error: %@", key);
-        return;
-    }
-    // get digest
-    NSRange range = NSMakeRange([data length] - 6, 6);
-    NSData *part = [data subdataWithRange:range];
-    NSData *digest = MKMSHA256Digest(part);
-    NSString *base64 = MKMBase64Encode(digest);
-    // set digest
-    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
-    NSUInteger pos = base64.length - 8;
-    [mDict setObject:[base64 substringFromIndex:pos] forKey:@"digest"];
-    [rMsg setObject:mDict forKey:@"keys"];
-}
-
-- (nullable DIMReliableMessage *)deserializeMessage:(NSData *)data {
-    if ([data length] == 0) {
-        return nil;
-    }
-    return [super deserializeMessage:data];
-}
-
-#pragma mark - Reuse message key
-
-- (nullable DIMSecureMessage *)encryptMessage:(DIMInstantMessage *)iMsg {
-    DIMSecureMessage *sMsg = [super encryptMessage:iMsg];
-    DIMEnvelope *env = iMsg.envelope;
-    DIMID *receiver = env.receiver;
-    if ([receiver isGroup]) {
-        // reuse group message keys
-        DIMID *sender = env.sender;
-        DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:sender to:receiver];
-        [key setObject:@(YES) forKey:@"reused"];
-    }
-    // TODO: reuse personal message key?
-    return sMsg;
-}
-
-- (nullable NSData *)message:(DIMInstantMessage *)iMsg
-                serializeKey:(NSDictionary *)password {
+- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
+                serializeKey:(id<MKMSymmetricKey>)password {
     if ([password objectForKey:@"reused"]) {
-        DIMID *ID = MKMIDFromString(iMsg.envelope.receiver);
-        if ([ID isGroup]) {
+        id<MKMID> receiver = iMsg.receiver;
+        if (MKMIDIsGroup(receiver)) {
             // reuse key for grouped message
             return nil;
         }
@@ -357,10 +202,10 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return [super message:iMsg serializeKey:password];
 }
 
-#pragma mark - Message
+#pragma mark Storage
 
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
-    DIMContent *content = iMsg.content;
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
+    id<DKDContent> content = iMsg.content;
     // TODO: check message type
     //       only save normal message and group commands
     //       ignore 'Handshake', ...
@@ -395,9 +240,9 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     
     if ([content isKindOfClass:[DIMInviteCommand class]]) {
         // send keys again
-        DIMID *me = iMsg.envelope.receiver;
-        DIMID *group = content.group;
-        DIMSymmetricKey *key = [self.keyCache cipherKeyFrom:me to:group];
+        id<MKMID>me = iMsg.envelope.receiver;
+        id<MKMID>group = content.group;
+        id<MKMSymmetricKey>key = [self.keyCache cipherKeyFrom:me to:group generate:NO];
         [key removeObjectForKey:@"reused"];
         NSLog(@"key (%@ => %@): %@", me, group, key);
     }
@@ -432,27 +277,112 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
 }
 
-- (BOOL)suspendMessage:(DIMMessage *)msg {
-    if ([msg isKindOfClass:[DIMReliableMessage class]]) {
+- (BOOL)suspendMessage:(id<DKDMessage>)msg {
+    if ([msg conformsToProtocol:@protocol(DKDReliableMessage)]) {
         // TODO: save this message in a queue waiting sender's meta response
-    } else {
-        NSAssert([msg isKindOfClass:[DIMInstantMessage class]], @"message error: %@", msg);
+    } else if ([msg conformsToProtocol:@protocol(DKDInstantMessage)]) {
         // TODO: save this message in a queue waiting receiver's meta response
     }
     return NO;
 }
 
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
-    
-    if ([self _checkingGroup:content sender:sender]) {
+@end
+
+#pragma mark -
+
+@interface _MessageProcessor : DIMMessageProcessor
+
+@end
+
+@implementation _MessageProcessor
+
+- (void)_attachKeyDigest:(id<DKDReliableMessage>)rMsg {
+    if (rMsg.delegate == nil) {
+        rMsg.delegate = self.messenger;
+    }
+    if ([rMsg encryptedKey]) {
+        // 'key' exists
+        return;
+    }
+    NSDictionary *keys = [rMsg encryptedKeys];
+    if ([keys objectForKey:@"digest"]) {
+        // key digest already exists
+        return;
+    }
+    // get key with direction
+    id<MKMSymmetricKey> key;
+    id<MKMID>sender = rMsg.envelope.sender;
+    id<MKMID>group = rMsg.envelope.group;
+    if (group) {
+        key = [self.keyCache cipherKeyFrom:sender to:group generate:NO];
+    } else {
+        id<MKMID>receiver = rMsg.envelope.receiver;
+        key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
+    }
+    // get key data
+    NSData *data = key.data;
+    if ([data length] < 6) {
+        if ([key.algorithm isEqualToString:@"PLAIN"]) {
+            NSLog(@"broadcast message has no key: %@", rMsg);
+            return;
+        }
+        NSAssert(false, @"key data error: %@", key);
+        return;
+    }
+    // get digest
+    NSRange range = NSMakeRange([data length] - 6, 6);
+    NSData *part = [data subdataWithRange:range];
+    NSData *digest = MKMSHA256Digest(part);
+    NSString *base64 = MKMBase64Encode(digest);
+    // set digest
+    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
+    NSUInteger pos = base64.length - 8;
+    [mDict setObject:[base64 substringFromIndex:pos] forKey:@"digest"];
+    [rMsg setObject:mDict forKey:@"keys"];
+}
+
+#pragma mark Serialization
+
+- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
+    [self _attachKeyDigest:rMsg];
+    return [super serializeMessage:rMsg];
+}
+
+- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
+    if ([data length] == 0) {
+        return nil;
+    }
+    return [super deserializeMessage:data];
+}
+
+#pragma mark Reuse message key
+
+- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
+    id<DKDSecureMessage> sMsg = [super encryptMessage:iMsg];
+    id<DKDEnvelope> env = iMsg.envelope;
+    id<MKMID> receiver = env.receiver;
+    if (MKMIDIsGroup(receiver)) {
+        // reuse group message keys
+        id<MKMID> sender = env.sender;
+        id<MKMSymmetricKey> key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
+        [key setObject:@(YES) forKey:@"reused"];
+    }
+    // TODO: reuse personal message key?
+    return sMsg;
+}
+
+#pragma mark Process
+
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                              withMessage:(id<DKDReliableMessage>)rMsg {
+    id<MKMID> sender = rMsg.sender;
+    if ([self.messenger checkingGroup:content sender:sender]) {
         // save this message in a queue to wait group meta response
-        [self suspendMessage:rMsg];
+        [self.messenger suspendMessage:rMsg];
         return nil;
     }
     
-    DIMContent *res = [super processContent:content sender:sender message:rMsg];
+    id<DKDContent>res = [super processContent:content withMessage:rMsg];
     if (!res) {
         // respond nothing
         return nil;
@@ -463,7 +393,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     }
     /*
     if ([res isKindOfClass:[DIMReceiptCommand class]]) {
-        DIMID *receiver = rMsg.envelope.receiver;
+        id<MKMID>receiver = rMsg.envelope.receiver;
         if (MKMNetwork_IsStation(receiver.type)) {
             // no need to respond receipt to station
             return nil;
@@ -472,18 +402,15 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
      */
     
     // check receiver
-    DIMID *receiver = rMsg.envelope.receiver;
-    DIMUser *user = [self selectUserWithID:receiver];
+    id<MKMID>receiver = rMsg.envelope.receiver;
+    MKMUser *user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // pack message
-    DIMInstantMessage * iMsg;
-    iMsg = [[DIMInstantMessage alloc] initWithContent:res
-                                               sender:user.ID
-                                             receiver:sender
-                                                 time:nil];
+    id<DKDEnvelope> env = DKDEnvelopeCreate(user.ID, sender, nil);
+    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, res);
     // normal response
-    [self sendInstantMessage:iMsg callback:NULL];
+    [self.messenger sendInstantMessage:iMsg callback:NULL];
     // DON'T respond to station directly
     return nil;
 }
@@ -498,14 +425,20 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return [_SharedMessenger sharedInstance];
 }
 
-- (nullable DIMStation *)currentServer {
-    return [self valueForContextName:@"server"];
+static DIMStation *s_server = nil;
+
+- (DIMStation *)currentServer {
+    return s_server;
 }
 
-- (BOOL)broadcastContent:(DIMContent *)content {
+- (void)setCurrentServer:(DIMStation *)server {
+    s_server = server;
+}
+
+- (BOOL)broadcastContent:(id<DKDContent>)content {
     NSAssert(self.currentServer, @"station not connected yet");
     // broadcast IDs
-    DIMID *everyone = DIMIDWithString(@"everyone@everywhere");
+    id<MKMID>everyone = MKMIDFromString(@"everyone@everywhere");
     [content setGroup:everyone];
     return [self sendContent:content receiver:everyone callback:NULL];
 }
@@ -516,57 +449,57 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return [self sendContent:cmd receiver:server.ID callback:NULL];
 }
 
-- (BOOL)queryMetaForID:(DIMID *)ID {
+- (BOOL)queryMetaForID:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return NO;
 }
 
-- (BOOL)queryProfileForID:(DIMID *)ID {
+- (BOOL)queryProfileForID:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return NO;
 }
 
-- (BOOL)queryGroupForID:(DIMID *)group fromMember:(DIMID *)member {
+- (BOOL)queryGroupForID:(id<MKMID>)group fromMember:(id<MKMID>)member {
     NSAssert(false, @"implement me!");
     return NO;
 }
 
-- (BOOL)queryGroupForID:(DIMID *)group fromMembers:(NSArray<DIMID *> *)members {
+- (BOOL)queryGroupForID:(id<MKMID>)group fromMembers:(NSArray<id<MKMID>> *)members {
     NSAssert(false, @"implement me!");
     return NO;
 }
 
-- (BOOL)postProfile:(DIMProfile *)profile {
-    DIMUser *user = [self.facebook currentUser];
-    DIMID *ID = user.ID;
+- (BOOL)postProfile:(id<MKMDocument>)profile {
+    MKMUser *user = [self.facebook currentUser];
+    id<MKMID>ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return NO;
     }
     
-    DIMMeta *meta = user.meta;
+    id<MKMMeta>meta = user.meta;
     if (![profile verify:meta.key]){
         return NO;
     }
     
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
-                                                    profile:profile];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
+                                                     profile:profile];
     return [self sendCommand:cmd];
 }
 
-- (BOOL)broadcastProfile:(DIMProfile *)profile {
-    DIMUser *user = [self.facebook currentUser];
-    DIMID *ID = user.ID;
+- (BOOL)broadcastProfile:(id<MKMDocument>)profile {
+    MKMUser *user = [self.facebook currentUser];
+    id<MKMID>ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return NO;
     }
-    DIMCommand *cmd = [[DIMProfileCommand alloc] initWithID:ID
-                                                    profile:profile];
-    NSArray<DIMID *> *contacts = user.contacts;
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
+                                                     profile:profile];
+    NSArray<id<MKMID>> *contacts = user.contacts;
     BOOL OK = YES;
-    for (DIMID *contact in contacts) {
-        if (![contact isUser]) {
+    for (id<MKMID>contact in contacts) {
+        if (!MKMIDIsUser(contact)) {
             NSLog(@"%@ is not a user, do not broadcaset profile to it", contact);
             continue;
         }
@@ -577,11 +510,11 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
     return OK;
 }
 
-- (BOOL)postContacts:(NSArray<DIMID *> *)contacts {
-    DIMUser *user = [self.facebook currentUser];
+- (BOOL)postContacts:(NSArray<id<MKMID>> *)contacts {
+    MKMUser *user = [self.facebook currentUser];
     NSAssert([contacts count] > 0, @"contacts cannot be empty");
     // generate password
-    DIMSymmetricKey *password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
+    id<MKMSymmetricKey>password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
     // encrypt contacts
     NSData *data = MKMJSONEncode(contacts);
     data = [password encrypt:data];
@@ -599,7 +532,7 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 }
 
 - (BOOL)queryContacts{
-    DIMUser *user = [self.facebook currentUser];
+    MKMUser *user = [self.facebook currentUser];
     // pack 'contacts' command
     DIMStorageCommand *cmd;
     cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
@@ -621,6 +554,69 @@ SingletonImplementations(_SharedMessenger, sharedInstance)
 - (BOOL)searchUsersWithKeywords:(NSString *)keywords {
     DIMCommand *cmd = [[DIMSearchCommand alloc] initWithKeywords:keywords];
     return [self sendCommand:cmd];
+}
+
+- (BOOL)_isEmptyGroup:(id<MKMID>)group {
+    NSArray *members = [self.facebook membersOfGroup:group];
+    if ([members count] == 0) {
+        return YES;
+    }
+    id<MKMID>owner = [self.facebook ownerOfGroup:group];
+    return !owner;
+}
+
+// check whether need to update group
+- (BOOL)checkingGroup:(id<DKDContent>)content sender:(id<MKMID>)sender {
+    // Check if it is a group message, and whether the group members info needs update
+    id<MKMID>group = content.group;
+    if (!group || MKMIDIsBroadcast(group)) {
+        // 1. personal message
+        // 2. broadcast message
+        return NO;
+    }
+    // chek meta for new group ID
+    id<MKMMeta>meta = [self.facebook metaForID:group];
+    if (!meta) {
+        // NOTICE: if meta for group not found,
+        //         facebook should query it from DIM network automatically
+        // TODO: insert the message to a temporary queue to wait meta
+        //NSAssert(false, @"group meta not found: %@", group);
+        return YES;
+    }
+    // query group command
+    if ([self _isEmptyGroup:group]) {
+        // NOTICE: if the group info not found, and this is not an 'invite' command
+        //         query group info from the sender
+        if ([content isKindOfClass:[DIMInviteCommand class]] ||
+            [content isKindOfClass:[DIMResetGroupCommand class]]) {
+            // FIXME: can we trust this stranger?
+            //        may be we should keep this members list temporary,
+            //        and send 'query' to the owner immediately.
+            // TODO: check whether the members list is a full list,
+            //       it should contain the group owner(owner)
+            return NO;
+        } else {
+            return [self queryGroupForID:group fromMember:sender];
+        }
+    } else if ([self.facebook group:group containsMember:sender] ||
+               [self.facebook group:group containsAssistant:sender] ||
+               [self.facebook group:group isOwner:sender]) {
+        // normal membership
+        return NO;
+    } else {
+        // if assistants exist, query them
+        NSArray<id<MKMID>> *assistants = [self.facebook assistantsOfGroup:group];
+        NSMutableArray<id<MKMID>> *mArray = [[NSMutableArray alloc] initWithCapacity:(assistants.count+1)];
+        for (id<MKMID>item in assistants) {
+            [mArray addObject:item];
+        }
+        // if owner found, query it
+        id<MKMID>owner = [self.facebook ownerOfGroup:group];
+        if (owner && ![mArray containsObject:owner]) {
+            [mArray addObject:owner];
+        }
+        return [self queryGroupForID:group fromMembers:mArray];
+    }
 }
 
 @end

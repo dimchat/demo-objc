@@ -67,11 +67,11 @@
     return self;
 }
 
-- (BOOL)saveANSRecord:(DIMID *)ID forName:(NSString *)name {
+- (BOOL)saveANSRecord:(id<MKMID>)ID forName:(NSString *)name {
     return [_ansTable saveRecord:ID forName:name];
 }
 
-- (DIMID *)ansRecordForName:(NSString *)name {
+- (id<MKMID>)ansRecordForName:(NSString *)name {
     return [_ansTable recordForName:name];
 }
 
@@ -79,28 +79,29 @@
     return [_ansTable namesWithRecord:ID];
 }
 
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key forID:(DIMID *)ID {
-    return [key saveKeyWithIdentifier:ID.address];
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key forID:(id<MKMID>)ID {
+    //return [key saveKeyWithIdentifier:ID.address];
+    return NO;
 }
 
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     return [_metaTable saveMeta:meta forID:ID];
 }
 
-- (BOOL)saveProfile:(DIMProfile *)profile {
-    return [_profileTable saveProfile:profile];
+- (BOOL)saveDocument:(id<MKMDocument>)profile {
+    return [_profileTable saveDocument:profile];
 }
 
-- (nullable NSArray<DIMID *> *)allUsers {
+- (nullable NSArray<id<MKMID>> *)allUsers {
     return [_userTable allUsers];
 }
 
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list {
     return [_userTable saveUsers:list];
 }
 
-- (BOOL)saveUser:(DIMID *)user {
-    NSMutableArray<DIMID *> *list = (NSMutableArray<DIMID *> *)[_userTable allUsers];
+- (BOOL)saveUser:(id<MKMID>)user {
+    NSMutableArray<id<MKMID>> *list = (NSMutableArray<id<MKMID>> *)[_userTable allUsers];
     NSAssert(list, @"would not happen");
     if ([list containsObject:user]) {
         //NSAssert(false, @"user already exists: %@", user);
@@ -110,8 +111,8 @@
     return [self saveUsers:list];
 }
 
-- (BOOL)removeUser:(DIMID *)user {
-    NSMutableArray<DIMID *> *list = (NSMutableArray<DIMID *> *)[_userTable allUsers];
+- (BOOL)removeUser:(id<MKMID>)user {
+    NSMutableArray<id<MKMID>> *list = (NSMutableArray<id<MKMID>> *)[_userTable allUsers];
     NSAssert(list, @"would not happen");
     if (![list containsObject:user]) {
         //NSAssert(false, @"user not exists: %@", user);
@@ -121,56 +122,58 @@
     return [self saveUsers:list];
 }
 
-- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user {
+- (BOOL)saveContacts:(NSArray *)contacts user:(id<MKMID>)user {
     return [_userTable saveContacts:contacts user:user];
 }
 
-- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group {
+- (BOOL)saveMembers:(NSArray *)members group:(id<MKMID>)group {
     return [_groupTable saveMembers:members group:group];
 }
 
 #pragma mark -
 
-- (nullable DIMMeta *)metaForID:(DIMID *)ID {
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
     return [_metaTable metaForID:ID];
 }
 
-- (nullable __kindof DIMProfile *)profileForID:(DIMID *)ID {
-    return [_profileTable profileForID:ID];
+- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
+                                              type:(nullable NSString *)type {
+    return [_profileTable documentForID:ID type:type];
 }
 
-- (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user {
+- (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
     return [_userTable contactsOfUser:user];
 }
 
-- (nullable id<DIMEncryptKey>)publicKeyForEncryption:(nonnull DIMID *)user {
+- (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
+    // return nil to use [visa.key, meta.key]
     return nil;
 }
 
-- (nullable NSArray<DIMPrivateKey *> *)privateKeysForDecryption:(DIMID *)user {
-    DIMPrivateKey *key = [DIMPrivateKey loadKeyWithIdentifier:user.address];
+- (NSArray<id<MKMPrivateKey>> *)privateKeysForDecryption:(id<MKMID>)user {
+    id<MKMPrivateKey>key = nil;//[MKMRSAPrivateKey loadKeyWithIdentifier:user.address];
     return [[NSArray alloc] initWithObjects:key, nil];
 }
 
-- (nullable DIMPrivateKey *)privateKeyForSignature:(DIMID *)user {
-    return [DIMPrivateKey loadKeyWithIdentifier:user.address];
+- (id<MKMPrivateKey>)privateKeyForSignature:(id<MKMID>)user {
+    return nil;//[DIMPrivateKey loadKeyWithIdentifier:user.address];
 }
 
-- (nullable NSArray<id<DIMVerifyKey>> *)publicKeysForVerification:(nonnull DIMID *)user {
-    return nil;
+- (id<MKMSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
+    return [self privateKeyForSignature:user];
 }
 
 
-- (nullable DIMID *)founderOfGroup:(DIMID *)group {
-    DIMID *founder = [_groupTable founderOfGroup:group];
-    if ([founder isValid]) {
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group {
+    id<MKMID>founder = [_groupTable founderOfGroup:group];
+    if (founder) {
         return founder;
     }
     // check each member's public key with group meta
-    DIMMeta *gMeta = [self metaForID:group];
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
-    DIMMeta *meta;
-    for (DIMID *member in members) {
+    id<MKMMeta>gMeta = [self metaForID:group];
+    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
+    id<MKMMeta>meta;
+    for (id<MKMID>member in members) {
         // if the user's public key matches with the group's meta,
         // it means this meta was generate by the user's private key
         meta = [self metaForID:member];
@@ -181,9 +184,9 @@
     return nil;
 }
 
-- (nullable DIMID *)ownerOfGroup:(DIMID *)group {
-    DIMID *owner = [_groupTable ownerOfGroup:group];
-    if ([owner isValid]) {
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group {
+    id<MKMID>owner = [_groupTable ownerOfGroup:group];
+    if (owner) {
         return owner;
     }
     if ([group type] == MKMNetwork_Polylogue) {
@@ -193,7 +196,7 @@
     return nil;
 }
 
-- (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
     return [_groupTable membersOfGroup:group];
 }
 

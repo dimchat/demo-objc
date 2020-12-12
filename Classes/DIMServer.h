@@ -46,12 +46,12 @@ extern NSString * const kNotificationName_ServerStateChanged;
 
 @interface DIMServer : DIMStation <DIMMessengerDelegate, SGStarDelegate, FSMDelegate> {
     
-    DIMUser *_currentUser;
+    MKMUser *_currentUser;
     
     DIMServerStateMachine *_fsm;
 }
 
-@property (strong, nonatomic) DIMUser *currentUser;
+@property (strong, nonatomic) MKMUser *currentUser;
 
 @property (readonly, strong, nonatomic) id<SGStar> star;
 

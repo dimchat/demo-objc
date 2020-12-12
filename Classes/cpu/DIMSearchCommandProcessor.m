@@ -50,13 +50,13 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         return;
     }
     DIMFacebook *facebook = self.facebook;
-    DIMID *ID;
-    DIMMeta *meta;
+    id<MKMID>ID;
+    id<MKMMeta>meta;
     NSString *key;
     NSDictionary *value;
     for (key in result) {
         value = [result objectForKey:key];
-        ID = [facebook IDWithString:key];
+        ID = MKMIDFromString(key);
         meta = MKMMetaFromDictionary(value);
         if (!meta) {
             continue;
@@ -68,9 +68,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMSearchCommand class]], @"search command error: %@", content);
     DIMSearchCommand *cmd = (DIMSearchCommand *)content;
     NSString *command = cmd.command;
@@ -88,7 +87,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
     
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc postNotificationName:notificationName object:self userInfo:content];
+    [nc postNotificationName:notificationName object:self userInfo:content.dictionary];
     
     return nil;
 }

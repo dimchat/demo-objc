@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMCommand (Extension)
 
-- (nullable NSString *)messageWithSender:(DIMID *)sender;
+- (nullable NSString *)messageWithSender:(id<MKMID>)sender;
 
 @end
 

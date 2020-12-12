@@ -85,7 +85,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     // target state: Connecting
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
-        DIMUser *user = server.currentUser;
+        MKMUser *user = server.currentUser;
         if (!user) {
             return NO;
         }
@@ -153,7 +153,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     // target state: Handshaking
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
-        DIMUser *user = server.currentUser;
+        MKMUser *user = server.currentUser;
         if (user) {
             return YES;
         }

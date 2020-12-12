@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroupManager : NSObject
 
-- (instancetype)initWithGroupID:(DIMID *)ID;
+- (instancetype)initWithGroupID:(id<MKMID>)ID;
 
 /**
  *  Send message content to this group
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param content - message content
  * @return YES on success
 */
-- (BOOL)send:(DIMContent *)content;
+- (BOOL)send:(id<DKDContent>)content;
 
 /**
  *  Invite new members to this group
@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param newMembers - new members ID list
  * @return YES on success
 */
-- (BOOL)invite:(NSArray<DIMID *> *)newMembers;
+- (BOOL)invite:(NSArray<id<MKMID>> *)newMembers;
 
 /**
  *  Expel members from this group
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outMembers - existed member ID list
  * @return YES on success
 */
-- (BOOL)expel:(NSArray<DIMID *> *)outMembers;
+- (BOOL)expel:(NSArray<id<MKMID>> *)outMembers;
 
 /**
  *  Quit from this group
@@ -77,15 +77,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param me - my ID
  * @return YES on success
  */
-- (BOOL)quit:(DIMID *)me;
+- (BOOL)quit:(id<MKMID>)me;
 
 #pragma mark Local Storage
 
-- (BOOL)addMembers:(NSArray<DIMID *> *)newMembers;
-- (BOOL)removeMembers:(NSArray<DIMID *> *)outMembers;
+- (BOOL)addMembers:(NSArray<id<MKMID>> *)newMembers;
+- (BOOL)removeMembers:(NSArray<id<MKMID>> *)outMembers;
 
-- (BOOL)addMember:(DIMID *)member;
-- (BOOL)removeMember:(DIMID *)member;
+- (BOOL)addMember:(id<MKMID>)member;
+- (BOOL)removeMember:(id<MKMID>)member;
 
 @end
 

@@ -28,61 +28,119 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMGroup+Extension.m
-//  DIMCore
+//  MKMEntity+Extension.m
+//  DIMClient
 //
-//  Created by Albert Moky on 2019/3/18.
+//  Created by Albert Moky on 2019/8/12.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
 #import <DIMSDK/DIMSDK.h>
 
 #import "DIMFacebook+Extension.h"
-#import "MKMGroup+Extension.h"
+#import "MKMEntity+Extension.h"
+
+@implementation MKMEntity (Name)
+
+- (NSString *)name {
+    id<MKMDocument> doc = [self documentWithType:MKMDocument_Any];
+    NSString *name = [doc name];
+    if (name.length > 0) {
+        return name;
+    }
+    return [self.ID name];
+}
+
+@end
+
+@implementation MKMUser (LocalUser)
+
++ (nullable instancetype)userWithConfigFile:(NSString *)config {
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
+    
+    if (!dict) {
+        NSLog(@"failed to load: %@", config);
+        return nil;
+    }
+    
+    id<MKMID>ID = MKMIDFromString([dict objectForKey:@"ID"]);
+    id<MKMMeta>meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
+    
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
+    [facebook saveMeta:meta forID:ID];
+    
+    id<MKMPrivateKey> SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
+    //[SK saveKeyWithIdentifier:ID.address];
+    
+    MKMUser *user = DIMUserWithID(ID);
+    
+    // profile
+    id profile = [dict objectForKey:@"profile"];
+    if (profile) {
+        // copy profile from config to local storage
+        if (![profile objectForKey:@"ID"]) {
+            [profile setObject:ID forKey:@"ID"];
+        }
+        profile = MKMDocumentFromDictionary(profile);
+        [[DIMFacebook sharedInstance] saveDocument:profile];
+    }
+    
+    return user;
+}
+
+- (void)addContact:(id<MKMID>)contact {
+    [[DIMFacebook sharedInstance] user:_ID addContact:contact];
+}
+
+- (void)removeContact:(id<MKMID>)contact {
+    [[DIMFacebook sharedInstance] user:_ID removeContact:contact];
+}
+
+@end
 
 @implementation MKMGroup (Extension)
 
-- (NSArray<DIMID *> *)assistants {
+- (NSArray<id<MKMID>> *)assistants {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     NSArray *list = [facebook assistantsOfGroup:self.ID];
     return [list mutableCopy];
 }
 
-- (BOOL)isFounder:(DIMID *)ID {
-    DIMID *founder = [self founder];
+- (BOOL)isFounder:(id<MKMID>)ID {
+    id<MKMID>founder = [self founder];
     if (founder) {
         return [founder isEqual:ID];
     } else {
-        DIMMeta *meta = [self meta];
-        DIMPublicKey *PK = [DIMMetaForID(ID) key];
+        id<MKMMeta>meta = [self meta];
+        id<MKMVerifyKey> PK = [DIMMetaForID(ID) key];
         //NSAssert(PK, @"failed to get meta for ID: %@", ID);
         return [meta matchPublicKey:PK];
     }
 }
 
-- (BOOL)isOwner:(DIMID *)ID {
+- (BOOL)isOwner:(id<MKMID>)ID {
     if (self.ID.type == MKMNetwork_Polylogue) {
         return [self isFounder:ID];
     }
     // check owner
-    DIMID *owner = [self owner];
+    id<MKMID>owner = [self owner];
     return [owner isEqual:ID];
 }
 
-- (BOOL)existsAssistant:(DIMID *)ID {
-    NSArray<DIMID *> *assistants = [self assistants];
+- (BOOL)existsAssistant:(id<MKMID>)ID {
+    NSArray<id<MKMID>> *assistants = [self assistants];
     return [assistants containsObject:ID];
 }
 
-- (BOOL)existsMember:(DIMID *)ID {
+- (BOOL)existsMember:(id<MKMID>)ID {
     // check broadcast ID
-    if ([_ID isBroadcast]) {
+    if (MKMIDIsBroadcast(_ID)) {
         // anyone user is a member of the broadcast group 'everyone@everywhere'
-        return [ID isUser];
+        return MKMIDIsUser(ID);
     }
     // check all member(s)
-    NSArray<DIMID *> *members = [self members];
-    for (DIMID *item in members) {
+    NSArray<id<MKMID>> *members = [self members];
+    for (id<MKMID>item in members) {
         if ([item isEqual:ID]) {
             return YES;
         }

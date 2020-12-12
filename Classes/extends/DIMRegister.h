@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readwrite, nonatomic) MKMNetworkType network; // user type (Main: 0x08)
 
-@property (strong, nonatomic, nullable) DIMPrivateKey *key; // user private key
+@property (strong, nonatomic, nullable) id<MKMPrivateKey>key; // user private key
 
 /**
  *  Generate user account
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param url - avatar URL
  * @return User object
  */
-- (DIMUser *)createUserWithName:(NSString *)nickname avatar:(NSString *)url;
+- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(NSString *)url;
 
 /**
  *  Generate group account (Polylogue)
@@ -61,9 +61,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - group founder
  * @return Group object
  */
-- (DIMGroup *)createGroupWithName:(NSString *)name founder:(DIMID *)ID;
-- (DIMGroup *)createGroupWithSeed:(NSString *)seed
-                             name:(NSString *)name founder:(DIMID *)ID;
+- (MKMGroup *)createGroupWithName:(NSString *)name founder:(id<MKMID>)ID;
+- (MKMGroup *)createGroupWithSeed:(NSString *)seed
+                             name:(NSString *)name founder:(id<MKMID>)ID;
 
 #pragma mark -
 
@@ -72,8 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return private key (RSA)
  */
-- (DIMPrivateKey *)generatePrivateKey;
-- (DIMPrivateKey *)generatePrivateKey:(NSString *)algorithm;
+- (id<MKMPrivateKey>)generatePrivateKey;
+- (id<MKMPrivateKey>)generatePrivateKey:(NSString *)algorithm;
 
 /**
  *  Step 2. generate meta with private key (and meta seed)
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param seed - "username" or "group-name"
  * @return meta
  */
-- (DIMMeta *)generateMeta:(NSString *)seed;
+- (id<MKMMeta>)generateMeta:(NSString *)seed;
 
 /**
  *  Step 3. generate ID with meta (and network type)
@@ -89,8 +89,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param meta - user/group meta
  * @return user/group ID
  */
-- (DIMID *)generateIDWithMeta:(DIMMeta *)meta;
-- (DIMID *)generateIDWithMeta:(DIMMeta *)meta network:(MKMNetworkType)type;
+- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta;
+- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(MKMNetworkType)type;
 
 /**
  *  Step 4. create profile with ID and sign with private key
@@ -99,9 +99,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name - user/group name
  * @return user/group profile
  */
-- (DIMProfile *)createProfileWithID:(DIMID *)ID name:(NSString *)name;
-- (DIMProfile *)createProfileWithID:(DIMID *)ID name:(NSString *)name avatar:(nullable NSString *)url;
-- (DIMProfile *)credateProfileWithID:(DIMID *)ID properties:(NSDictionary *)info;
+- (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name;
+- (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
+- (id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info;
 
 /**
  *  Step 5. upload meta & profile for ID
@@ -111,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param profile - user/group profile
  * @return YES on success
  */
-- (BOOL)uploadInfoWithID:(DIMID *)ID meta:(DIMMeta *)meta profile:(nullable DIMProfile *)profile;
+- (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)profile;
 
 @end
 

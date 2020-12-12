@@ -64,23 +64,23 @@
     return self;
 }
 
-- (nullable DIMID *)IDWithName:(NSString *)username {
-    DIMID *ID = [_database ansRecordForName:username];
+- (nullable id<MKMID>)IDWithName:(NSString *)username {
+    id<MKMID>ID = [_database ansRecordForName:username];
     if (ID) {
         return ID;
     }
     return [super IDWithName:username];
 }
 
-- (nullable NSArray<NSString *> *)namesWithID:(DIMID *)ID {
-    NSArray<NSString *> *names = [_database namesWithANSRecord:ID];
+- (nullable NSArray<NSString *> *)namesWithID:(id<MKMID>)ID {
+    NSArray<NSString *> *names = [_database namesWithANSRecord:ID.string];
     if (names) {
         return names;
     }
     return [super namesWithID:ID];
 }
 
-- (BOOL)saveID:(DIMID *)ID withName:(NSString *)username {
+- (BOOL)saveID:(id<MKMID>)ID withName:(NSString *)username {
     if (![self cacheID:ID withName:username]) {
         // username is reserved
         return NO;
@@ -103,7 +103,7 @@
     // immortal accounts
     MKMImmortals *_immortals;
     
-    NSMutableArray<DIMUser *> *_allUsers;
+    NSMutableArray<MKMUser *> *_allUsers;
 }
 
 @end
@@ -127,12 +127,12 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return self;
 }
 
-- (nullable NSArray<DIMUser *> *)localUsers {
+- (nullable NSArray<MKMUser *> *)localUsers {
     if (!_allUsers) {
         _allUsers = [[NSMutableArray alloc] init];
-        NSArray<DIMID *> *list = [_database allUsers];
-        DIMUser *user;
-        for (DIMID *item in list) {
+        NSArray<id<MKMID>> *list = [_database allUsers];
+        MKMUser *user;
+        for (id<MKMID>item in list) {
             user = [self userWithID:item];
             NSAssert(user, @"failed to get local user: %@", item);
             [_allUsers addObject:user];
@@ -141,19 +141,19 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return _allUsers;
 }
 
-- (nullable DIMUser *)currentUser {
+- (nullable MKMUser *)currentUser {
     return [super currentUser];
 }
 
-- (void)setCurrentUser:(DIMUser *)user {
+- (void)setCurrentUser:(MKMUser *)user {
     if (!user) {
         NSAssert(false, @"current user cannot be empty");
         return;
     }
-    NSArray<DIMID *> *list = [_database allUsers];
+    NSArray<id<MKMID>> *list = [_database allUsers];
     NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:(list.count + 1)];
     [mArray addObject:user.ID];
-    for (DIMID *item in list) {
+    for (id<MKMID>item in list) {
         if ([mArray containsObject:item]) {
             continue;
         }
@@ -163,32 +163,23 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     _allUsers = nil;
 }
 
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list {
     return [_database saveUsers:list];
-}
-
-- (nullable DIMID *)createID:(NSString *)string {
-    // try ANS record
-    DIMID *ID = [_ans IDWithName:string];
-    if (ID) {
-        return ID;
-    }
-    return [super createID:string];
 }
 
 #pragma mark Storage
 
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     return [_database saveMeta:meta forID:ID];
 }
 
-- (nullable DIMMeta *)metaForID:(DIMID *)ID {
-    if ([ID isBroadcast]) {
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
         // broadcast ID has not meta
         return nil;
     }
     // try from database
-    DIMMeta *meta = [_database metaForID:ID];
+    id<MKMMeta>meta = [_database metaForID:ID];
     if (meta) {
         // is empty?
         if (meta.key) {
@@ -208,16 +199,17 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return nil;
 }
 
-- (BOOL)saveProfile:(DIMProfile *)profile {
-    return [_database saveProfile:profile];
+- (BOOL)saveDocument:(id<MKMDocument>)profile {
+    return [_database saveDocument:profile];
 }
 
 #define PROFILE_EXPIRES  3600  // profile expires (1 hour)
 #define PROFILE_EXPIRES_KEY @"expires"
 
-- (nullable DIMProfile *)profileForID:(DIMID *)ID {
+- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
+                                              type:(nullable NSString *)type {
     // try from database
-    DIMProfile *profile = [_database profileForID:ID];
+    id<MKMDocument>profile = [_database documentForID:ID type:type];
     if (profile) {
         // check expired time
         NSDate *now = [[NSDate alloc] init];
@@ -237,7 +229,7 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     }
     // try fron immortals
     if (ID.type == MKMNetwork_Main) {
-        DIMProfile *tai = [_immortals profileForID:ID];
+        id<MKMDocument>tai = [_immortals documentForID:ID type:type];
         if (tai) {
             return tai;
         }
@@ -248,13 +240,12 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return profile;
 }
 
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key user:(id<MKMID>)ID {
     return [_database savePrivateKey:key forID:ID];
 }
 
-- (nullable id<DIMSignKey>)privateKeyForSignature:(DIMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    id<DIMSignKey> key = [_database privateKeyForSignature:user];
+- (id<MKMSignKey>)privateKeyForSignature:(id<MKMID>)user {
+    id<MKMSignKey> key = [_database privateKeyForSignature:user];
     if (!key) {
         // try immortals
         key = [_immortals privateKeyForSignature:user];
@@ -262,25 +253,24 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return key;
 }
 
-- (nullable NSArray<id<DIMDecryptKey>> *)privateKeysForDecryption:(DIMID *)user {
-    NSAssert([user isUser], @"user ID error: %@", user);
-    NSArray<id<DIMDecryptKey>> *keys = [_database privateKeysForDecryption:user];
+- (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
+    NSArray<id<MKMDecryptKey>> *keys = [_database privateKeysForDecryption:user];
     if ([keys count] == 0) {
         // try immortals
         keys = [_immortals privateKeysForDecryption:user];
         if ([keys count] == 0) {
             // DIMP v1.0:
             //     decrypt key and the sign key are the same keys
-            id<DIMSignKey> key = [self privateKeyForSignature:user];
-            if ([key conformsToProtocol:@protocol(DIMDecryptKey)]) {
-                keys = @[(id<DIMDecryptKey>)key];
+            id<MKMSignKey> key = [self privateKeyForSignature:user];
+            if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
+                keys = @[(id<MKMDecryptKey>)key];
             }
         }
     }
     return keys;
 }
 
-- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)ID {
 //    if (![self cacheContacts:contacts user:ID]) {
 //        return NO;
 //    }
@@ -294,15 +284,15 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return OK;
 }
 
-- (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)ID {
+- (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)ID {
     return [_database contactsOfUser:ID];
 }
 
-- (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
     return [_database membersOfGroup:group];
 }
 
-- (BOOL)saveMembers:(NSArray<DIMID *> *)members group:(DIMID *)ID {
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
     BOOL OK = [_database saveMembers:members group:ID];
     if (OK) {
         NSDictionary *info = @{@"group": ID};
@@ -313,12 +303,12 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return OK;
 }
 
-- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
+- (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
     return @[
         // dev
-        [self IDWithString:@"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq"],
+        MKMIDFromString(@"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq"),
         // desktop.dim.chat
-        [self IDWithString:@"assistant@4WBSiDzg9cpZGPqFrQ4bHcq4U5z9QAQLHS"],
+        MKMIDFromString(@"assistant@4WBSiDzg9cpZGPqFrQ4bHcq4U5z9QAQLHS"),
     ];
     //return [super assistantsOfGroup:group];
 }
@@ -333,28 +323,28 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [_SharedFacebook sharedInstance];
 }
 
-- (void)setCurrentUser:(DIMUser *)user {
+- (void)setCurrentUser:(MKMUser *)user {
     NSAssert(false, @"implement me!");
 }
 
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list {
-    NSAssert(false, @"implement me!");
-    return NO;
-}
-
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID {
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list {
     NSAssert(false, @"implement me!");
     return NO;
 }
 
-- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID {
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key user:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return NO;
 }
 
-- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact {
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)ID {
+    NSAssert(false, @"implement me!");
+    return NO;
+}
+
+- (BOOL)user:(id<MKMID>)user addContact:(id<MKMID>)contact {
     NSLog(@"user %@ add contact %@", user, contact);
-    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
+    NSArray<id<MKMID>> *contacts = [self contactsOfUser:user];
     if (contacts) {
         if ([contacts containsObject:contact]) {
             NSLog(@"contact %@ already exists, user: %@", contact, user);
@@ -370,9 +360,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [self saveContacts:contacts user:user];
 }
 
-- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact {
+- (BOOL)user:(id<MKMID>)user removeContact:(id<MKMID>)contact {
     NSLog(@"user %@ remove contact %@", user, contact);
-    NSArray<DIMID *> *contacts = [self contactsOfUser:user];
+    NSArray<id<MKMID>> *contacts = [self contactsOfUser:user];
     if (contacts) {
         if (![contacts containsObject:contact]) {
             NSLog(@"contact %@ not exists, user: %@", contact, user);
@@ -389,9 +379,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [self saveContacts:contacts user:user];
 }
 
-- (BOOL)group:(DIMID *)group addMember:(DIMID *)member {
+- (BOOL)group:(id<MKMID>)group addMember:(id<MKMID>)member {
     NSLog(@"group %@ add member %@", group, member);
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
+    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
     if (members) {
         if ([members containsObject:member]) {
             NSLog(@"member %@ already exists, group: %@", member, group);
@@ -407,9 +397,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [self saveMembers:members group:group];
 }
 
-- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member {
+- (BOOL)group:(id<MKMID>)group removeMember:(id<MKMID>)member {
     NSLog(@"group %@ remove member %@", group, member);
-    NSArray<DIMID *> *members = [self membersOfGroup:group];
+    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
     if (members) {
         if (![members containsObject:member]) {
             NSLog(@"members %@ not exists, group: %@", member, group);
@@ -426,10 +416,9 @@ SingletonImplementations(_SharedFacebook, sharedInstance)
     return [self saveMembers:members group:group];
 }
 
-- (nullable NSArray<DIMID *> *)assistantsOfGroup:(DIMID *)group {
-    NSAssert([group isGroup], @"group ID error: %@", group);
-    DIMID *assistant = [self IDWithString:@"assistant"];
-    if ([assistant isValid]) {
+- (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
+    id<MKMID> assistant = nil;//[self IDWithString:@"assistant"];
+    if (assistant) {
         return @[assistant];
     } else {
         return nil;

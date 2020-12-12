@@ -60,11 +60,11 @@
     return self;
 }
 
-- (NSArray<DIMID *> *)allConversations {
+- (NSArray<id<MKMID>> *)allConversations {
     return [_messageTable allConversations];
 }
 
-- (BOOL)removeConversation:(DIMID *)chatBox {
+- (BOOL)removeConversation:(id<MKMID>)chatBox {
     BOOL result = [_messageTable removeConversation:chatBox];
     
     if(result){
@@ -76,15 +76,15 @@
     return result;
 }
 
-- (BOOL)clearConversation:(DIMID *)chatBox {
+- (BOOL)clearConversation:(id<MKMID>)chatBox {
     return [_messageTable clearConversation:chatBox];
 }
 
-- (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)chatBox {
+- (NSArray<id<DKDInstantMessage>> *)messagesInConversation:(id<MKMID>)chatBox {
     return [_messageTable messagesInConversation:chatBox];
 }
 
--(BOOL)markConversationMessageRead:(DIMID *)chatBox{
+-(BOOL)markConversationMessageRead:(id<MKMID>)chatBox{
     BOOL result = [_messageTable markConversationMessageRead:chatBox];
     
     if(result){
@@ -98,14 +98,14 @@
 
 #pragma mark DIMConversationDataSource
 
-- (NSInteger)numberOfMessagesInConversation:(DIMID *)chatBox {
-    NSArray<DIMInstantMessage *> *messages;
+- (NSInteger)numberOfMessagesInConversation:(id<MKMID>)chatBox {
+    NSArray<id<DKDInstantMessage>> *messages;
     messages = [_messageTable messagesInConversation:chatBox];
     return messages.count;
 }
 
-- (DIMInstantMessage *)conversation:(DIMID *)chatBox messageAtIndex:(NSInteger)index {
-    NSArray<DIMInstantMessage *> *messages;
+- (id<DKDInstantMessage>)conversation:(id<MKMID>)chatBox messageAtIndex:(NSInteger)index {
+    NSArray<id<DKDInstantMessage>> *messages;
     messages = [_messageTable messagesInConversation:chatBox];
     NSAssert(index < messages.count, @"out of data: %ld, %lu", index, messages.count);
     return [messages objectAtIndex:index];
@@ -113,7 +113,7 @@
 
 #pragma mark DIMConversationDelegate
 
-- (BOOL)conversation:(DIMID *)chatBox insertMessage:(DIMInstantMessage *)iMsg {
+- (BOOL)conversation:(id<MKMID>)chatBox insertMessage:(id<DKDInstantMessage>)iMsg {
     
     BOOL OK = [_messageTable addMessage:iMsg toConversation:chatBox];
     
@@ -129,7 +129,7 @@
     
     return OK;
     
-//    NSArray<DIMInstantMessage *> *messages;
+//    NSArray<id<DKDInstantMessage>> *messages;
 //    messages = [_messageTable messagesInConversation:chatBox.ID];
 //    if (!messages) {
 //        messages = [[NSMutableArray alloc] initWithCapacity:1];

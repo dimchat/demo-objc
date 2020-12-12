@@ -50,15 +50,15 @@ typedef UInt8 DIMConversationType;
 
 @property (readonly, nonatomic) DIMConversationType type; // Network ID
 
-@property (readonly, strong, nonatomic) DIMID *ID;
+@property (readonly, strong, nonatomic) id<MKMID>ID;
 @property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, strong, nonatomic) NSString *title;
-@property (readonly, strong, nonatomic, nullable) DIMProfile *profile;
+@property (readonly, strong, nonatomic, nullable) id<MKMDocument>profile;
 
 @property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;
 
-- (instancetype)initWithEntity:(DIMEntity *)entity
+- (instancetype)initWithEntity:(MKMEntity *)entity
 NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Read
@@ -76,7 +76,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param index - start from 0, latest first
  * @return instant message
  */
-- (DIMInstantMessage *)messageAtIndex:(NSInteger)index;
+- (id<DKDInstantMessage>)messageAtIndex:(NSInteger)index;
 
 #pragma mark - Write
 
@@ -85,21 +85,21 @@ NS_DESIGNATED_INITIALIZER;
  *
  * @param iMsg - instant message
  */
-- (BOOL)insertMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)insertMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Delete the message
  *
  * @param iMsg - instant message
  */
-- (BOOL)removeMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)removeMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Try to withdraw the message
  *
  * @param iMsg - instant message
  */
-- (BOOL)withdrawMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)withdrawMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 

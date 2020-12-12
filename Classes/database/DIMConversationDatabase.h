@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @return total count
  */
-- (NSInteger)numberOfMessagesInConversation:(DIMID *)chatBox;
+- (NSInteger)numberOfMessagesInConversation:(id<MKMID>)chatBox;
 
 /**
  *  Get message at index of this conversation
@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param index - start from 0, latest first
  * @return instant message
  */
-- (DIMInstantMessage *)conversation:(DIMID *)chatBox
+- (id<DKDInstantMessage>)conversation:(id<MKMID>)chatBox
                      messageAtIndex:(NSInteger)index;
 
 @end
@@ -69,8 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(DIMID *)chatBox
-       insertMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)conversation:(id<MKMID>)chatBox
+       insertMessage:(id<DKDInstantMessage>)iMsg;
 
 @optional
 
@@ -80,8 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(DIMID *)chatBox
-       removeMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)conversation:(id<MKMID>)chatBox
+       removeMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Try to withdraw the message, maybe won't success
@@ -89,19 +89,19 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(DIMID *)chatBox
-     withdrawMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)conversation:(id<MKMID>)chatBox
+     withdrawMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 
 @interface DIMConversationDatabase : NSObject <DIMConversationDataSource, DIMConversationDelegate>
 
-- (NSArray<DIMID *> *)allConversations;
-- (BOOL)removeConversation:(DIMID *)chatBox;
-- (BOOL)clearConversation:(DIMID *)chatBox;
-- (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)chatBox;
+- (NSArray<id<MKMID>> *)allConversations;
+- (BOOL)removeConversation:(id<MKMID>)chatBox;
+- (BOOL)clearConversation:(id<MKMID>)chatBox;
+- (NSArray<id<DKDInstantMessage>> *)messagesInConversation:(id<MKMID>)chatBox;
 
--(BOOL)markConversationMessageRead:(DIMID *)chatBox;
+-(BOOL)markConversationMessageRead:(id<MKMID>)chatBox;
 
 @end
 

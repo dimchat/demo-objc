@@ -41,9 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMAddressNameTable : DIMStorage
 
-- (BOOL)saveRecord:(DIMID *)ID forName:(NSString *)name;
+- (BOOL)saveRecord:(id<MKMID>)ID forName:(NSString *)name;
 
-- (DIMID *)recordForName:(NSString *)name;
+- (id<MKMID>)recordForName:(NSString *)name;
 
 - (NSArray<NSString *> *)namesWithRecord:(NSString *)ID;
 

@@ -309,7 +309,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 - (NSURL *)uploadEncryptedData:(NSData *)data
                       filename:(nullable NSString *)name
-                        sender:(DIMID *)from {
+                        sender:(id<MKMID>)from {
     
     // prepare filename (make sure that filenames won't conflict)
     NSString *filename = MKMHexEncode(MKMMD5Digest(data));
@@ -347,7 +347,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 - (nullable NSData *)decryptDataFromURL:(NSURL *)url
                                filename:(NSString *)name
-                                wityKey:(DIMSymmetricKey *)key {
+                                wityKey:(id<MKMSymmetricKey>)key {
     // check file with local cache path
     NSString *filename1 = [url lastPathComponent];
     NSString *path1 = data_filepath(filename1, NO);
@@ -415,7 +415,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
 
 #pragma mark Avatar
 
-- (NSURL *)uploadAvatar:(NSData *)data filename:(nullable NSString *)name sender:(DIMID *)ID {
+- (NSURL *)uploadAvatar:(NSData *)data filename:(nullable NSString *)name sender:(id<MKMID>)ID {
     
     // upload to CDN
     NSString *upload = _uploadAPI;

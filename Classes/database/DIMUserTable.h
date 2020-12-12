@@ -41,13 +41,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMUserTable : DIMStorage
 
-- (nullable NSArray<DIMID *> *)allUsers;
+- (nullable NSArray<id<MKMID>> *)allUsers;
 
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list;
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list;
 
-- (nullable NSArray<DIMID *> *)contactsOfUser:(DIMID *)user;
+- (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user;
 
-- (BOOL)saveContacts:(NSArray *)contacts user:(DIMID *)user;
+- (BOOL)saveContacts:(NSArray *)contacts user:(id<MKMID>)user;
 
 @end
 

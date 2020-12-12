@@ -42,34 +42,34 @@
 
 @interface DIMGroupManager ()
 
-@property (strong, nonatomic) MKMID *group;
+@property (strong, nonatomic) id<MKMID> group;
 
 @end
 
 @implementation DIMGroupManager
 
-- (instancetype)initWithGroupID:(DIMID *)ID {
+- (instancetype)initWithGroupID:(id<MKMID>)ID {
     if (self = [super init]) {
         self.group = ID;
     }
     return self;
 }
 
-- (BOOL)send:(DIMContent *)content {
+- (BOOL)send:(id<DKDContent>)content {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // check group ID
-    NSString *gid = [content group];
-    if (gid) {
-        NSAssert([self.group isEqual:gid], @"group ID not match: %@, %@", self.group, content);
+    id<MKMID> group = [content group];
+    if (group) {
+        NSAssert([self.group isEqual:group], @"group ID not match: %@, %@", self.group, content);
     } else {
         content.group = self.group;
     }
     // check members
-    NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     if ([members count] == 0) {
         // get group assistant
-        NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:self.group];
+        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
         NSAssert([assistants count] > 0, @"failed to get assistant for group: %@", self.group);
         // querying assistants for group info
         [messenger queryGroupForID:self.group fromMembers:assistants];
@@ -81,10 +81,10 @@
 
 #pragma mark Group commands
 
-- (BOOL)_sendGroupCommand:(DIMCommand *)cmd to:(NSArray<DIMID *> *)members {
+- (BOOL)_sendGroupCommand:(DIMCommand *)cmd to:(NSArray<id<MKMID>> *)members {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     BOOL OK = YES;
-    for (DIMID *receiver in members) {
+    for (id<MKMID>receiver in members) {
         if (![messenger sendContent:cmd receiver:receiver callback:NULL]) {
             OK = NO;
         }
@@ -92,28 +92,29 @@
     return OK;
 }
 
-- (BOOL)invite:(NSArray<DIMID *> *)newMembers {
+- (BOOL)invite:(NSArray<id<MKMID>> *)newMembers {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     DIMCommand *cmd;
     
     // 0. send 'meta/profile' command to new members
-    DIMMeta *meta = [facebook metaForID:self.group];
+    id<MKMMeta>meta = [facebook metaForID:self.group];
     NSAssert(meta, @"failed to get meta for group: %@", self.group);
-    DIMProfile *profile = [facebook profileForID:self.group];
+    id<MKMDocument>profile = [facebook documentForID:self.group
+                                                type:MKMDocument_Bulletin];
     if ([[profile propertyKeys] count] == 0) {
         cmd = [[DIMMetaCommand alloc] initWithID:self.group
                                             meta:meta];
     } else {
-        cmd = [[DIMProfileCommand alloc] initWithID:self.group
-                                               meta:meta
-                                            profile:profile];
+        cmd = [[DIMDocumentCommand alloc] initWithID:self.group
+                                                meta:meta
+                                             profile:profile];
     }
     [self _sendGroupCommand:cmd to:newMembers];
     
     // 1. send 'invite' command with new members to existed members
-    DIMID *owner = [facebook ownerOfGroup:self.group];
-    NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:self.group];
-    NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
+    id<MKMID>owner = [facebook ownerOfGroup:self.group];
+    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSAssert([assistants count] > 0, @"failed to get assistant for group: %@", self.group);
     members = [members copy];    
     cmd = [[DIMInviteCommand alloc] initWithGroup:self.group members:newMembers];
@@ -137,18 +138,18 @@
     return YES;
 }
 
-- (BOOL)expel:(NSArray<DIMID *> *)outMembers {
+- (BOOL)expel:(NSArray<id<MKMID>> *)outMembers {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     
-    DIMID *owner = [facebook ownerOfGroup:self.group];
-    NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:self.group];
-    NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
+    id<MKMID>owner = [facebook ownerOfGroup:self.group];
+    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSAssert(owner, @"failed to get owner group: %@", self.group);
     NSAssert([assistants count] > 0, @"failed to get assistant for group: %@", self.group);
     NSAssert([members count] > 0, @"failed to get members of group: %@", self.group);
     
     // 0. check members list
-    for (DIMID *ass in assistants) {
+    for (id<MKMID>ass in assistants) {
         if ([outMembers containsObject:ass]) {
             NSAssert(false, @"Cannot expel group assistant: %@", ass);
             return false;
@@ -174,18 +175,18 @@
     return [self removeMembers:outMembers];
 }
 
-- (BOOL)quit:(DIMID *)me {
+- (BOOL)quit:(id<MKMID>)me {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     
-    DIMID *owner = [facebook ownerOfGroup:self.group];
-    NSArray<DIMID *> *assistants = [facebook assistantsOfGroup:self.group];
-    NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
+    id<MKMID>owner = [facebook ownerOfGroup:self.group];
+    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSAssert(owner, @"failed to get owner group: %@", self.group);
     NSAssert([assistants count] > 0, @"failed to get assistant for group: %@", self.group);
     NSAssert([members count] > 0, @"failed to get members of group: %@", self.group);
     
     // 0. check members list
-    for (DIMID *ass in assistants) {
+    for (id<MKMID>ass in assistants) {
         if ([ass isEqual:me]) {
             NSAssert(false, @"Group assistant cannot quit: %@", ass);
             return false;
@@ -213,9 +214,9 @@
 
 #pragma mark Local storage
 
-- (BOOL)addMembers:(NSArray<DIMID *> *)newMembers {
+- (BOOL)addMembers:(NSArray<id<MKMID>> *)newMembers {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSMutableArray *mArray;
     if (members) {
         mArray = [members mutableCopy];
@@ -223,7 +224,7 @@
         mArray = [[NSMutableArray alloc] initWithCapacity:newMembers.count];
     }
     BOOL count = 0;
-    for (DIMID *ID in newMembers) {
+    for (id<MKMID>ID in newMembers) {
         if ([mArray containsObject:ID]) {
             NSLog(@"member %@ already exists, group: %@", ID, self.group);
             continue;
@@ -237,9 +238,9 @@
     return [facebook saveMembers:mArray group:self.group];
 }
 
-- (BOOL)removeMembers:(NSArray<DIMID *> *)outMembers {
+- (BOOL)removeMembers:(NSArray<id<MKMID>> *)outMembers {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    NSArray<DIMID *> *members = [facebook membersOfGroup:self.group];
+    NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSMutableArray *mArray;
     if (members) {
         mArray = [members mutableCopy];
@@ -247,7 +248,7 @@
         mArray = [[NSMutableArray alloc] initWithCapacity:outMembers.count];
     }
     BOOL count = 0;
-    for (DIMID *ID in outMembers) {
+    for (id<MKMID>ID in outMembers) {
         if (![mArray containsObject:ID]) {
             NSLog(@"member %@ not exists, group: %@", ID, self.group);
             continue;
@@ -261,11 +262,11 @@
     return [facebook saveMembers:mArray group:self.group];
 }
 
-- (BOOL)addMember:(DIMID *)member {
+- (BOOL)addMember:(id<MKMID>)member {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     return [facebook group:self.group addMember:member];
 }
-- (BOOL)removeMember:(DIMID *)member {
+- (BOOL)removeMember:(id<MKMID>)member {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     return [facebook group:self.group removeMember:member];
 }

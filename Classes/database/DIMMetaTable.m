@@ -39,13 +39,13 @@
 
 #import "DIMMetaTable.h"
 
-typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
+typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
 
 @interface DIMMetaTable () {
 
     CacheTableM *_caches;
     
-    DIMMeta *_emptyMeta;
+    id<MKMMeta>_emptyMeta;
 }
 
 @end
@@ -56,7 +56,7 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
     if (self = [super init]) {
         _caches = [[CacheTableM alloc] init];
         
-        _emptyMeta = [[DIMMeta alloc] initWithDictionary:@{}];
+        _emptyMeta = [[MKMMeta alloc] initWithDictionary:@{}];
     }
     return self;
 }
@@ -67,17 +67,17 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
  * @param ID - entity ID
  * @return "Documents/.mkm/{address}/meta.plist"
  */
-- (NSString *)_filePathWithID:(DIMID *)ID {
+- (NSString *)_filePathWithID:(id<MKMID>)ID {
     return [self _filePathWithAddress:ID.address];
 }
-- (NSString *)_filePathWithAddress:(DIMAddress *)address {
+- (NSString *)_filePathWithAddress:(id<MKMAddress>)address {
     NSString *dir = self.documentDirectory;
     dir = [dir stringByAppendingPathComponent:@".mkm"];
-    dir = [dir stringByAppendingPathComponent:address];
+    dir = [dir stringByAppendingPathComponent:address.string];
     return [dir stringByAppendingPathComponent:@"meta.plist"];
 }
 
-- (BOOL)_cacheMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+- (BOOL)_cacheMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     if (![meta matchID:ID]) {
         NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
         return NO;
@@ -86,7 +86,7 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
     return YES;
 }
 
-- (nullable DIMMeta *)_loadMetaForID:(DIMID *)ID {
+- (nullable id<MKMMeta>)_loadMetaForID:(id<MKMID>)ID {
     NSString *path = [self _filePathWithID:ID];
     NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
     if (!dict) {
@@ -97,8 +97,8 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
     return MKMMetaFromDictionary(dict);
 }
 
-- (nullable DIMMeta *)metaForID:(DIMID *)ID {
-    DIMMeta *meta = [_caches objectForKey:ID];
+- (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
+    id<MKMMeta>meta = [_caches objectForKey:ID];
     if (meta) {
         if (meta == _emptyMeta) {
             NSLog(@"meta not found: %@", ID);
@@ -118,7 +118,7 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
     return meta;
 }
 
-- (BOOL)saveMeta:(DIMMeta *)meta forID:(DIMID *)ID {
+- (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
     if (![meta matchID:ID]) {
         NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
         return NO;
@@ -133,7 +133,7 @@ typedef NSMutableDictionary<DIMID *, DIMMeta *> CacheTableM;
         return YES;
     }
     NSLog(@"saving meta into: %@", path);
-    return [self dictionary:meta writeToBinaryFile:path];
+    return [self dictionary:meta.dictionary writeToBinaryFile:path];
 }
 
 @end

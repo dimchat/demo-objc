@@ -44,6 +44,8 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 @interface DIMMessenger (Extension)
 
+@property (strong, nonatomic) DIMStation *currentServer;
+
 + (instancetype)sharedInstance;
 
 /**
@@ -52,7 +54,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param content - broadcast content
  * @return YES on sucess
  */
-- (BOOL)broadcastContent:(DIMContent *)content;
+- (BOOL)broadcastContent:(id<DKDContent>)content;
 
 /**
  *  pack and send command to station
@@ -68,7 +70,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param ID - entity ID
  * @return YES on success
  */
-- (BOOL)queryMetaForID:(DIMID *)ID;
+- (BOOL)queryMetaForID:(id<MKMID>)ID;
 
 /**
  *  Interface for client to query profile from station
@@ -76,7 +78,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param ID - entity ID
  * @return YES on success
  */
-- (BOOL)queryProfileForID:(DIMID *)ID;
+- (BOOL)queryProfileForID:(id<MKMID>)ID;
 
 /**
  *  Query group member list from any member
@@ -85,8 +87,8 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param member - member ID
  * @return YES on success
  */
-- (BOOL)queryGroupForID:(DIMID *)group fromMember:(DIMID *)member;
-- (BOOL)queryGroupForID:(DIMID *)group fromMembers:(NSArray<DIMID *> *)members;
+- (BOOL)queryGroupForID:(id<MKMID>)group fromMember:(id<MKMID>)member;
+- (BOOL)queryGroupForID:(id<MKMID>)group fromMembers:(NSArray<id<MKMID>> *)members;
 
 /**
  *  Post profile to station
@@ -94,7 +96,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param profile - user profile
  * @return YES on success
  */
-- (BOOL)postProfile:(DIMProfile *)profile;
+- (BOOL)postProfile:(id<MKMDocument>)profile;
 
 /**
  *  Broadcast profile to all contacts
@@ -102,7 +104,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param profile - user profile
  * @return YES on success
  */
-- (BOOL)broadcastProfile:(DIMProfile *)profile;
+- (BOOL)broadcastProfile:(id<MKMDocument>)profile;
 
 /**
  *  Encrypt and post contacts list to station
@@ -110,7 +112,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param contacts - ID list
  * @return YES on success
  */
-- (BOOL)postContacts:(NSArray<DIMID *> *)contacts;
+- (BOOL)postContacts:(NSArray<id<MKMID>> *)contacts;
 
 /**
  *  Query contacts while login from a new device
@@ -140,6 +142,15 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @return YES on success
  */
 - (BOOL)searchUsersWithKeywords:(NSString *)keywords;
+
+/**
+ *  check whether need to update group
+ *
+ * @param content - received message content
+ * @param sender - message sender
+ * @return YES on querying
+ */
+- (BOOL)checkingGroup:(id<DKDContent>)content sender:(id<MKMID>)sender;
 
 @end
 

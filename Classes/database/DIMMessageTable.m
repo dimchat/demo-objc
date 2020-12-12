@@ -40,12 +40,12 @@
 #import "LocalDatabaseManager.h"
 #import "DIMMessageTable.h"
 
-typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
+typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
 
 @interface DIMMessageTable () {
     
     CacheTableM *_caches;
-    NSMutableArray<DIMID *> *_conversations;
+    NSMutableArray<id<MKMID>> *_conversations;
 }
 
 @end
@@ -60,7 +60,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return self;
 }
 
-- (NSMutableArray<DIMID *> *)allConversations {
+- (NSMutableArray<id<MKMID>> *)allConversations {
     
     if(_conversations == nil || _conversations.count == 0){
         _conversations = [[LocalDatabaseManager sharedInstance] loadAllConversations];
@@ -69,7 +69,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return _conversations;
 }
 
-- (void)_updateCache:(NSArray *)messages conversation:(DIMID *)ID {
+- (void)_updateCache:(NSArray *)messages conversation:(id<MKMID>)ID {
     NSMutableArray *list = (NSMutableArray *)[self allConversations];
     
     if (messages) {
@@ -90,12 +90,12 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     }
 }
 
-- (nullable NSArray<DIMInstantMessage *> *)_loadMessages:(DIMID *)ID {
+- (nullable NSArray<id<DKDInstantMessage>> *)_loadMessages:(id<MKMID>)ID {
     return [[LocalDatabaseManager sharedInstance] loadMessagesInConversation:ID limit:-1 offset:-1];
 }
 
-- (NSArray<DIMInstantMessage *> *)messagesInConversation:(DIMID *)ID {
-    NSArray<DIMInstantMessage *> *messages = [_caches objectForKey:ID];
+- (NSArray<id<DKDInstantMessage>> *)messagesInConversation:(id<MKMID>)ID {
+    NSArray<id<DKDInstantMessage>> *messages = [_caches objectForKey:ID];
     if (!messages) {
         messages = [self _loadMessages:ID];
         [self _updateCache:messages conversation:ID];
@@ -103,7 +103,7 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return messages;
 }
 
-- (BOOL)addMessage:(DIMInstantMessage *)message toConversation:(DIMID *)ID{
+- (BOOL)addMessage:(id<DKDInstantMessage>)message toConversation:(id<MKMID>)ID{
     
     BOOL insertSuccess = [[LocalDatabaseManager sharedInstance] addMessage:message toConversation:ID];
     
@@ -121,16 +121,16 @@ typedef NSMutableDictionary<DIMID *, NSArray *> CacheTableM;
     return insertSuccess;
 }
 
-- (BOOL)clearConversation:(DIMID *)ID{
+- (BOOL)clearConversation:(id<MKMID>)ID{
     [self _updateCache:[NSArray array] conversation:ID];
     return [[LocalDatabaseManager sharedInstance] clearConversation:ID];
 }
 
-- (BOOL)removeConversation:(DIMID *)ID {
+- (BOOL)removeConversation:(id<MKMID>)ID {
     return [[LocalDatabaseManager sharedInstance] deleteConversation:ID];
 }
 
--(BOOL)markConversationMessageRead:(DIMID *)chatBox{
+-(BOOL)markConversationMessageRead:(id<MKMID>)chatBox{
     return [[LocalDatabaseManager sharedInstance] markMessageRead:chatBox];
 }
 

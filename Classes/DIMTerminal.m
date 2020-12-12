@@ -39,7 +39,7 @@
 
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
-#import "MKMGroup+Extension.h"
+#import "MKMEntity+Extension.h"
 
 #import "DIMAmanuensis.h"
 
@@ -73,15 +73,15 @@
 
 #pragma mark - User(s)
 
-- (NSArray<DIMUser *> *)users {
+- (NSArray<MKMUser *> *)users {
     return [_users mutableCopy];
 }
 
-- (DIMUser *)currentUser {
+- (MKMUser *)currentUser {
     return _currentStation.currentUser;
 }
 
-- (void)setCurrentUser:(DIMUser *)user {
+- (void)setCurrentUser:(MKMUser *)user {
     _currentStation.currentUser = user;
     if (user && ![_users containsObject:user]) {
         // insert the user to the first
@@ -95,8 +95,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)addUser:(DIMUser *)user {
-    NSAssert([user.ID isValid], @"invalid user: %@", user);
+- (void)addUser:(MKMUser *)user {
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
     }
@@ -106,7 +105,7 @@
     }
 }
 
-- (void)removeUser:(DIMUser *)user {
+- (void)removeUser:(MKMUser *)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }
@@ -116,7 +115,7 @@
     }
 }
 
-- (BOOL)login:(DIMUser *)user {
+- (BOOL)login:(MKMUser *)user {
     if (!user || [self.currentUser isEqual:user]) {
         NSLog(@"user not change");
         return NO;
@@ -148,14 +147,14 @@
 
 - (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    DIMUser *user = self.currentUser;
+    MKMUser *user = self.currentUser;
     // post current profile to station
-    DIMProfile *profile = user.profile;
+    id<MKMDocument>profile = [user documentWithType:MKMDocument_Visa];
     if (profile) {
         [messenger postProfile:profile];
     }
     // post contacts(encrypted) to station
-    NSArray<DIMID *> *contacts = user.contacts;
+    NSArray<id<MKMID>> *contacts = user.contacts;
     if (contacts) {
         [messenger postContacts:contacts];
     }
@@ -163,7 +162,7 @@
     DIMLoginCommand *login = [[DIMLoginCommand alloc] initWithID:user.ID];
     [login setAgent:self.userAgent];
     [login copyStationInfo:server];
-    [login copyProviderInfo:server.SP];
+    //[login copyProviderInfo:server.SP];
     [messenger broadcastContent:login];
 }
 

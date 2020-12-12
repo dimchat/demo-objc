@@ -41,7 +41,7 @@
 
 #import "DIMAddressNameTable.h"
 
-typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
+typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
 
 @interface DIMAddressNameTable () {
     
@@ -81,13 +81,12 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
 
 - (CacheTableM *)_loadRecords {
     CacheTableM *caches = [[CacheTableM alloc] init];
-    DIMID *ID;
+    id<MKMID>ID;
     NSString *path = [self _ansFilePath];
     NSLog(@"loading ANS records from: %@", path);
     NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
     for (NSString *name in dict) {
-        ID = DIMIDWithString([dict objectForKey:name]);
-        NSAssert([ID isValid], @"ID error: %@ -> %@", name, [dict objectForKey:name]);
+        ID = MKMIDFromString([dict objectForKey:name]);
         [caches setObject:ID forKey:name];
     }
     
@@ -95,11 +94,11 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
     static NSString *moky = @"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ";
     static NSString *robot = @"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq";
     
-    DIMID *founder = MKMIDFromString(moky);
-    DIMID *assistant = MKMIDFromString(robot);
+    id<MKMID>founder = MKMIDFromString(moky);
+    id<MKMID>assistant = MKMIDFromString(robot);
     
-    DIMID *anyone = MKMAnyone();
-    DIMID *everyone = MKMEveryone();
+    id<MKMID>anyone = MKMAnyone();
+    id<MKMID>everyone = MKMEveryone();
     
     // Reserved names
     [caches setObject:founder forKey:@"founder"];
@@ -112,11 +111,10 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
     return caches;
 }
 
-- (BOOL)saveRecord:(DIMID *)ID forName:(NSString *)name {
+- (BOOL)saveRecord:(id<MKMID>)ID forName:(NSString *)name {
     if ([name length] == 0) {
         return NO;
     }
-    NSAssert([ID isValid], @"ID not valid: %@", ID);
     // cache
     [self.caches setObject:ID forKey:name];
     // save
@@ -125,13 +123,13 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
     return [self dictionary:self.caches writeToBinaryFile:path];
 }
 
-- (DIMID *)recordForName:(NSString *)name {
+- (id<MKMID>)recordForName:(NSString *)name {
     NSString *lowercase = [name lowercaseString];
     return [self.caches objectForKey:lowercase];
 }
 
 - (NSArray<NSString *> *)namesWithRecord:(NSString *)ID {
-    NSDictionary<NSString *, DIMID *> *dict = self.caches;
+    NSDictionary<NSString *, id<MKMID>> *dict = self.caches;
     NSArray<NSString *> *allKeys = [dict allKeys];
     // all names
     if ([ID isEqualToString:@"*"]) {
@@ -139,7 +137,7 @@ typedef NSMutableDictionary<NSString *, DIMID *> CacheTableM;
     }
     // get keys with the same value
     NSMutableArray<NSString *> *keys = [[NSMutableArray alloc] init];
-    DIMID *value;
+    id<MKMID>value;
     for (NSString *name in allKeys) {
         value = [dict objectForKey:name];
         if ([value isEqual:ID]) {

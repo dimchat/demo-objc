@@ -46,7 +46,7 @@
 
 @interface DIMAmanuensis () {
     
-    NSMutableDictionary<DIMAddress *, DIMConversation *> *_conversations;
+    NSMutableDictionary<id<MKMAddress>, DIMConversation *> *_conversations;
 }
 
 @end
@@ -64,7 +64,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 - (void)setConversationDataSource:(id<DIMConversationDataSource>)dataSource {
     if (dataSource) {
-        NSMutableDictionary<DIMAddress *, DIMConversation *> *list;
+        NSMutableDictionary<id<MKMAddress>, DIMConversation *> *list;
         list = [_conversations copy];
         // update exists chat boxes
         DIMConversation *chatBox;
@@ -80,7 +80,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 - (void)setConversationDelegate:(id<DIMConversationDelegate>)delegate {
     if (delegate) {
-        NSMutableDictionary<DIMAddress *, DIMConversation *> *list;
+        NSMutableDictionary<id<MKMAddress>, DIMConversation *> *list;
         list = [_conversations copy];
         // update exists chat boxes
         DIMConversation *chatBox;
@@ -94,15 +94,15 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     _conversationDelegate = delegate;
 }
 
-- (DIMConversation *)conversationWithID:(DIMID *)ID {
+- (DIMConversation *)conversationWithID:(id<MKMID>)ID {
     DIMConversation *chatBox = [_conversations objectForKey:ID.address];
     if (!chatBox) {
         // create directly if we can find the entity
         // get entity with ID
-        DIMEntity *entity = nil;
-        if ([ID isUser]) {
+        MKMEntity *entity = nil;
+        if (MKMIDIsUser(ID)) {
             entity = DIMUserWithID(ID);
-        } else if ([ID isGroup]) {
+        } else if (MKMIDIsGroup(ID)) {
             entity = DIMGroupWithID(ID);
         }
         //NSAssert(entity, @"ID error: %@", ID);
@@ -119,7 +119,6 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (void)addConversation:(DIMConversation *)chatBox {
-    NSAssert([chatBox.ID isValid], @"conversation invalid: %@", chatBox.ID);
     // check data source
     if (chatBox.dataSource == nil) {
         chatBox.dataSource = _conversationDataSource;
@@ -128,12 +127,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     if (chatBox.delegate == nil) {
         chatBox.delegate = _conversationDelegate;
     }
-    DIMID *ID = chatBox.ID;
+    id<MKMID>ID = chatBox.ID;
     [_conversations setObject:chatBox forKey:ID.address];
 }
 
 - (void)removeConversation:(DIMConversation *)chatBox {
-    DIMID *ID = chatBox.ID;
+    id<MKMID>ID = chatBox.ID;
     [_conversations removeObjectForKey:ID.address];
 }
 
@@ -141,8 +140,8 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 
 @implementation DIMAmanuensis (Message)
 
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg {
-    DIMContent *content = iMsg.content;
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
+    id<DKDContent>content = iMsg.content;
     if ([content isKindOfClass:[DIMReceiptCommand class]]) {
         // it's a receipt
         NSLog(@"update target msg.state with receipt: %@", content);
@@ -153,12 +152,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     
     DIMConversation *chatBox = nil;
     
-    DIMEnvelope *env = iMsg.envelope;
-    DIMID *sender = env.sender;
-    DIMID *receiver = env.receiver;
-    DIMID *groupID = iMsg.content.group;
+    id<DKDEnvelope> env = iMsg.envelope;
+    id<MKMID> sender = env.sender;
+    id<MKMID> receiver = env.receiver;
+    id<MKMID> groupID = iMsg.content.group;
     
-    if ([receiver isGroup]) {
+    if (MKMIDIsGroup(receiver)) {
         // group chat, get chat box with group ID
         chatBox = [self conversationWithID:receiver];
     } else if (groupID) {
@@ -167,7 +166,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     } else {
         // personal chat, get chat box with contact ID
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
-        DIMUser *user = [facebook currentUser];
+        MKMUser *user = [facebook currentUser];
         if ([sender isEqual:user.ID]) {
             chatBox = [self conversationWithID:receiver];
         } else {
@@ -179,8 +178,8 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     return [chatBox insertMessage:iMsg];
 }
 
-- (BOOL)saveReceipt:(DIMInstantMessage *)iMsg {
-    DIMContent *content = iMsg.content;
+- (BOOL)saveReceipt:(id<DKDInstantMessage>)iMsg {
+    id<DKDContent>content = iMsg.content;
     if (![content isKindOfClass:[DIMReceiptCommand class]]) {
         NSAssert(false, @"this is not a receipt: %@", iMsg);
         return NO;
@@ -192,15 +191,15 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     
     // NOTE: this is the receipt's commander,
     //       it can be a station, or the original message's receiver
-    DIMID *sender = iMsg.envelope.sender;
+    id<MKMID>sender = iMsg.envelope.sender;
     
     // NOTE: this is the original message's receiver
-    DIMID *receiver = receipt.envelope.receiver;
+    id<MKMID>receiver = receipt.envelope.receiver;
     
     // FIXME: only the real receiver will know the exact message detail, so
     //        the station may not know if this is a group message.
     //        maybe we should try another way to search the exact conversation.
-    DIMID *groupID = receipt.group;
+    id<MKMID>groupID = receipt.group;
     
     if (receiver == nil) {
         NSLog(@"receiver not found, it's not a receipt for instant message");
@@ -216,22 +215,23 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     }
     
     NSAssert(chatBox, @"chat box not found for receipt: %@", receipt);
-    DIMInstantMessage *targetMessage;
+    id<DKDInstantMessage>targetMessage;
     targetMessage = [self _conversation:chatBox messageMatchReceipt:receipt];
     if (targetMessage) {
+        DKDContent *targetContent = targetMessage.content;
         if ([sender isEqual:receiver]) {
             // the receiver's client feedback
             if ([receipt.message containsString:@"read"]) {
-                targetMessage.content.state = DIMMessageState_Read;
+                targetContent.state = DIMMessageState_Read;
             } else {
-                targetMessage.content.state = DIMMessageState_Arrived;
+                targetContent.state = DIMMessageState_Arrived;
             }
         } else if (MKMNetwork_IsStation(sender.type)) {
             // delivering or delivered to receiver (station said)
             if ([receipt.message containsString:@"delivered"]) {
-                targetMessage.content.state = DIMMessageState_Delivered;
+                targetContent.state = DIMMessageState_Delivered;
             } else {
-                targetMessage.content.state = DIMMessageState_Delivering;
+                targetContent.state = DIMMessageState_Delivering;
             }
         } else {
             NSAssert(false, @"unexpect receipt sender: %@", sender);
@@ -244,13 +244,13 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     return NO;
 }
 
-- (nullable DIMInstantMessage *)_conversation:(DIMConversation *)chatBox
+- (nullable id<DKDInstantMessage>)_conversation:(DIMConversation *)chatBox
                           messageMatchReceipt:(DIMReceiptCommand *)receipt {
-    DIMInstantMessage *iMsg = nil;
+    id<DKDInstantMessage> iMsg = nil;
     NSInteger count = [chatBox numberOfMessage];
     for (NSInteger index = count - 1; index >= 0; --index) {
         iMsg = [chatBox messageAtIndex:index];
-        if ([iMsg matchReceipt:receipt]) {
+        if ([(DKDInstantMessage *)iMsg matchReceipt:receipt]) {
             return iMsg;
         }
     }

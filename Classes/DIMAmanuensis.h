@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - entity ID
  * @return conversation(chat box)
  */
-- (DIMConversation *)conversationWithID:(DIMID *)ID;
+- (DIMConversation *)conversationWithID:(id<MKMID>)ID;
 
 - (void)addConversation:(DIMConversation *)chatBox;
 - (void)removeConversation:(DIMConversation *)chatBox;
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param iMsg - instant message
  * @return YES on success
  */
-- (BOOL)saveMessage:(DIMInstantMessage *)iMsg;
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Update message state with receipt
@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param iMsg - receipt message
  * @return YES while target message found
  */
-- (BOOL)saveReceipt:(DIMInstantMessage *)iMsg;
+- (BOOL)saveReceipt:(id<DKDInstantMessage>)iMsg;
 
 @end
 

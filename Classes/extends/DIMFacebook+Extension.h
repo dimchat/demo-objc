@@ -40,7 +40,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #define DIMMetaForID(ID)         [[DIMFacebook sharedInstance] metaForID:(ID)]
-#define DIMProfileForID(ID)      [[DIMFacebook sharedInstance] profileForID:(ID)]
+#define DIMDocumentForID(ID, DT) [[DIMFacebook sharedInstance] documentForID:(ID) type:(DT)]
+#define DIMVisaForID(ID)         DIMDocumentForID(ID, MKMDocument_Visa)
 
 #define DIMUserWithID(ID)        [[DIMFacebook sharedInstance] userWithID:(ID)]
 #define DIMGroupWithID(ID)       [[DIMFacebook sharedInstance] groupWithID:(ID)]
@@ -49,24 +50,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (void)setCurrentUser:(DIMUser *)user;
+- (void)setCurrentUser:(MKMUser *)user;
 
-- (BOOL)saveUsers:(NSArray<DIMID *> *)list;
+- (BOOL)saveUsers:(NSArray<id<MKMID>> *)list;
 
-- (BOOL)savePrivateKey:(DIMPrivateKey *)key user:(DIMID *)ID;
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key user:(id<MKMID>)ID;
 
 //
 //  contacts
 //
-- (BOOL)saveContacts:(NSArray<DIMID *> *)contacts user:(DIMID *)ID;
-- (BOOL)user:(DIMID *)user addContact:(DIMID *)contact;
-- (BOOL)user:(DIMID *)user removeContact:(DIMID *)contact;
+- (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)ID;
+- (BOOL)user:(id<MKMID>)user addContact:(id<MKMID>)contact;
+- (BOOL)user:(id<MKMID>)user removeContact:(id<MKMID>)contact;
 
 //
 //  group members
 //
-- (BOOL)group:(DIMID *)group addMember:(DIMID *)member;
-- (BOOL)group:(DIMID *)group removeMember:(DIMID *)member;
+- (BOOL)group:(id<MKMID>)group addMember:(id<MKMID>)member;
+- (BOOL)group:(id<MKMID>)group removeMember:(id<MKMID>)member;
 
 @end
 

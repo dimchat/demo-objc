@@ -41,13 +41,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroupTable : DIMStorage
 
-- (nullable DIMID *)founderOfGroup:(DIMID *)group;
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group;
 
-- (nullable DIMID *)ownerOfGroup:(DIMID *)group;
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group;
 
-- (nullable NSArray<DIMID *> *)membersOfGroup:(DIMID *)group;
+- (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group;
 
-- (BOOL)saveMembers:(NSArray *)members group:(DIMID *)group;
+- (BOOL)saveMembers:(NSArray *)members group:(id<MKMID>)group;
 
 @end
 

@@ -41,25 +41,24 @@
 
 @implementation DIMHandshakeCommandProcessor
 
-- (nullable DIMContent *)_success {
-    NSString *sessionKey = [self valueForContextName:@"session_key"];
-    DIMServer *server = [self valueForContextName:@"server"];
-    [server handshakeAccepted:YES session:sessionKey];
+- (nullable id<DKDContent>)_success {
+//    NSString *sessionKey = [self valueForContextName:@"session_key"];
+//    DIMServer *server = [self valueForContextName:@"server"];
+//    [server handshakeAccepted:YES session:sessionKey];
     return nil;
 }
 
-- (nullable DIMContent *)_ask:(NSString *)sessionKey {
-    NSAssert([sessionKey length] > 0, @"session key should not be empty");
-    [self setContextValue:sessionKey forName:@"session_key"];
+- (nullable id<DKDContent>)_ask:(NSString *)sessionKey {
+//    NSAssert([sessionKey length] > 0, @"session key should not be empty");
+//    [self setContextValue:sessionKey forName:@"session_key"];
     return [[DIMHandshakeCommand alloc] initWithSessionKey:sessionKey];
 }
 
 //
 //  Main
 //
-- (nullable DIMContent *)processContent:(DIMContent *)content
-                                 sender:(DIMID *)sender
-                                message:(DIMReliableMessage *)rMsg {
+- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+                              withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
     DIMHandshakeCommand *cmd = (DIMHandshakeCommand *)content;
     NSString *message = cmd.message;

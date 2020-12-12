@@ -94,7 +94,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 @implementation DIMServer
 
 /* designated initializer */
-- (instancetype)initWithID:(DIMID *)ID {
+- (instancetype)initWithID:(id<MKMID>)ID {
     if (self = [super initWithID:ID]) {
         _currentUser = nil;
         
@@ -111,7 +111,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return self;
 }
 
-- (void)setCurrentUser:(DIMUser *)newUser {
+- (void)setCurrentUser:(MKMUser *)newUser {
     if (![_currentUser isEqual:newUser]) {
         _currentUser = newUser;
         
@@ -121,7 +121,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (void)handshakeWithSession:(nullable NSString *)session {
-    if (![_currentUser.ID isValid]) {
+    if (!_currentUser.ID) {
         NSAssert(false, @"current user error: %@", _currentUser);
         return ;
     }
@@ -143,8 +143,10 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
     NSLog(@"handshake command: %@", cmd);
     
-    DIMInstantMessage *iMsg = DKDInstantMessageCreate(cmd, _currentUser.ID, _ID, nil);
-    DIMReliableMessage *rMsg = [messenger signMessage:[messenger encryptMessage:iMsg]];
+    id<DKDEnvelope> env = DKDEnvelopeCreate(_currentUser.ID, _ID, nil);
+    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
+    id<DKDSecureMessage> sMsg = [messenger.processor encryptMessage:iMsg];
+    id<DKDReliableMessage> rMsg = [messenger.processor signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
         return ;
@@ -156,7 +158,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
     
     // send out directly
-    NSData *data = [messenger serializeMessage:rMsg];
+    NSData *data = [messenger.processor serializeMessage:rMsg];
     [_star send:data];
 }
 
@@ -170,8 +172,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         NSLog(@"handshake success: %@", session);
         _fsm.session = session;
         // call client
-        if ([_delegate respondsToSelector:@selector(station:onHandshakeAccepted:)]) {
-            [_delegate station:self onHandshakeAccepted:session];
+        if ([self.delegate respondsToSelector:@selector(station:onHandshakeAccepted:)]) {
+            [self.delegate station:self onHandshakeAccepted:session];
         }
     } else {
         NSLog(@"handshake failed");
@@ -242,8 +244,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 - (NSInteger)star:(id<SGStar>)star onReceive:(NSData *)responseData {
     NSLog(@"response data len: %ld", responseData.length);
-    NSAssert(_delegate, @"station delegate not set");
-    [_delegate station:self onReceivePackage:responseData];
+    NSAssert(self.delegate, @"station delegate not set");
+    [self.delegate station:self onReceivePackage:responseData];
     return 0;
 }
 
@@ -267,13 +269,13 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     if (error == nil) {
         // send sucess
-        if ([_delegate respondsToSelector:@selector(station:didSendPackage:)]) {
-            [_delegate station:self didSendPackage:requestData];
+        if ([self.delegate respondsToSelector:@selector(station:didSendPackage:)]) {
+            [self.delegate station:self didSendPackage:requestData];
         }
         NSLog(@"send data package success");
     } else {
-        if ([_delegate respondsToSelector:@selector(station:sendPackage:didFailWithError:)]) {
-            [_delegate station:self sendPackage:requestData didFailWithError:error];
+        if ([self.delegate respondsToSelector:@selector(station:sendPackage:didFailWithError:)]) {
+            [self.delegate station:self sendPackage:requestData didFailWithError:error];
         }
         NSLog(@"send data package failed: %@", error);
     }
@@ -307,8 +309,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return [_star send:data] == 0;
 }
 
-- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(DIMInstantMessage *)iMsg {
-    DIMID *sender = iMsg.envelope.sender;
+- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg {
+    id<MKMID>sender = iMsg.envelope.sender;
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;
     
@@ -316,7 +318,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return [ftp uploadEncryptedData:CT filename:filename sender:sender];
 }
 
-- (nullable NSData *)downloadData:(NSURL *)url forMessage:(DIMInstantMessage *)iMsg {
+- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg {
     
     DIMFileServer *ftp = [DIMFileServer sharedInstance];
     return [ftp downloadEncryptedDataFromURL:url];

@@ -6,8 +6,7 @@
 //  Copyright © 2019 John Chen. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "dimMacros.h"
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,22 +16,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)createTables;
 
--(BOOL)insertConversation:(DIMID *)conversationID;
--(BOOL)updateConversation:(DIMID *)conversationID name:(NSString *)name image:(NSString *)imagePath lastMessage:(DIMInstantMessage *)msg;
--(NSMutableArray<DIMID *> *)loadAllConversations;
--(BOOL)clearConversation:(DIMID *)conversationID;
--(BOOL)deleteConversation:(DIMID *)conversationID;
+-(BOOL)insertConversation:(id<MKMID>)conversationID;
+-(BOOL)updateConversation:(id<MKMID>)conversationID name:(NSString *)name image:(NSString *)imagePath lastMessage:(id<DKDInstantMessage>)msg;
+-(NSMutableArray<id<MKMID>> *)loadAllConversations;
+-(BOOL)clearConversation:(id<MKMID>)conversationID;
+-(BOOL)deleteConversation:(id<MKMID>)conversationID;
     
--(BOOL)addMessage:(DIMInstantMessage *)msg toConversation:(DIMID *)conversationID;
--(NSMutableArray<DIMInstantMessage *> *)loadMessagesInConversation:(DIMID *)conversationID limit:(NSInteger)limit offset:(NSInteger)offset;
--(BOOL)markMessageRead:(DIMID *)conversationID;
--(NSInteger)getUnreadMessageCount:(nullable DIMID *)conversationID;
+-(BOOL)addMessage:(id<DKDInstantMessage>)msg toConversation:(id<MKMID>)conversationID;
+-(NSMutableArray<id<DKDInstantMessage>> *)loadMessagesInConversation:(id<MKMID>)conversationID limit:(NSInteger)limit offset:(NSInteger)offset;
+-(BOOL)markMessageRead:(id<MKMID>)conversationID;
+-(NSInteger)getUnreadMessageCount:(nullable id<MKMID>)conversationID;
 
--(NSArray <DIMID *>*)muteListForUser:(DIMID *)user;
--(BOOL)isConversation:(DIMID *)conversation forUser:(DIMID *)user;
--(BOOL)muteConversation:(DIMID *)conversation forUser:(DIMID *)user;
--(BOOL)unmuteConversation:(DIMID *)conversation forUser:(DIMID *)user;
--(BOOL)unmuteAllConversationForUser:(DIMID *)user;
+-(NSArray <id<MKMID>>*)muteListForUser:(id<MKMID>)user;
+-(BOOL)isConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
+-(BOOL)muteConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
+-(BOOL)unmuteConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
+-(BOOL)unmuteAllConversationForUser:(id<MKMID>)user;
 
 @end
 
