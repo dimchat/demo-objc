@@ -55,6 +55,8 @@
 #define DIMAddress                      id<MKMAddress>
 #define DIMMeta                         id<MKMMeta>
 #define DIMDocument                     id<MKMDocument>
+#define DIMVisa                         id<MKMVisa>
+#define DIMBulletin                     id<MKMBulletin>
 #define DIMEntity                       MKMEntity *
 #define DIMEntityDataSource             id<MKMEntityDataSource>
 

@@ -126,7 +126,7 @@
 
 - (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
     NSAssert(_key, @"private key not set yet");
-    id<MKMVisa>profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
+    id<MKMVisa> profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
     [profile setName:name];
     if (url) {
         [profile setAvatar:url];
@@ -137,7 +137,7 @@
 
 - (id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info {
     NSAssert(_key, @"private key not set yet");
-    id<MKMVisa>profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
+    id<MKMVisa> profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
     for (NSString *name in info) {
         [profile setProperty:[info objectForKey:name] forKey:name];
     }
