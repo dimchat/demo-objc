@@ -114,9 +114,10 @@
 }
 
 - (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(MKMNetworkType)type {
-    if ([meta isKindOfClass:[MKMMetaBTC class]]) {
-        return [(MKMMetaBTC *)meta generateID:type];
+    if ([meta isKindOfClass:[MKMMetaDefault class]]) {
+        return [(MKMMetaDefault *)meta generateID:type];
     }
+    // TODO: generate ID with BTC, ETH meta
     return nil;
 }
 
