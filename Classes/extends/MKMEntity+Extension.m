@@ -69,8 +69,9 @@
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     [facebook saveMeta:meta forID:ID];
     
-    id<MKMPrivateKey> SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
-    //[SK saveKeyWithIdentifier:ID.address];
+    // save private key paired to meta.key
+    MKMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
+    [facebook savePrivateKey:SK type:DIMPrivateKeyType_Meta user:ID];
     
     MKMUser *user = DIMUserWithID(ID);
     

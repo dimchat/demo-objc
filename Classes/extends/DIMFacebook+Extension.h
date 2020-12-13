@@ -46,6 +46,9 @@ NS_ASSUME_NONNULL_BEGIN
 #define DIMUserWithID(ID)        [[DIMFacebook sharedInstance] userWithID:(ID)]
 #define DIMGroupWithID(ID)       [[DIMFacebook sharedInstance] groupWithID:(ID)]
 
+#define DIMPrivateKeyType_Visa   @"visa"
+#define DIMPrivateKeyType_Meta   @"meta"
+
 @interface DIMFacebook (Extension)
 
 + (instancetype)sharedInstance;
@@ -54,7 +57,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)saveUsers:(NSArray<id<MKMID>> *)list;
 
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key user:(id<MKMID>)ID;
+/**
+ *  Save private key for user with key type
+ *
+ * @param key - private key
+ * @param type - "visa" or "meta"
+ * @param ID - user ID
+ * @return NO on failed
+ */
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type user:(id<MKMID>)ID;
 
 //
 //  contacts

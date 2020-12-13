@@ -222,17 +222,8 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return profile;
 }
 
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key user:(id<MKMID>)ID {
-    return [_database savePrivateKey:key forID:ID];
-}
-
-- (id<MKMSignKey>)privateKeyForSignature:(id<MKMID>)user {
-    id<MKMSignKey> key = [_database privateKeyForSignature:user];
-    if (!key) {
-        // try immortals
-        key = [_immortals privateKeyForSignature:user];
-    }
-    return key;
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type user:(id<MKMID>)ID {
+    return [_database savePrivateKey:key type:type forID:ID];
 }
 
 - (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
@@ -250,6 +241,24 @@ SingletonImplementations(SCFacebook, sharedInstance)
         }
     }
     return keys;
+}
+
+- (id<MKMSignKey>)privateKeyForSignature:(id<MKMID>)user {
+    id<MKMSignKey> key = [_database privateKeyForSignature:user];
+    if (!key) {
+        // try immortals
+        key = [_immortals privateKeyForSignature:user];
+    }
+    return key;
+}
+
+- (id<MKMSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
+    id<MKMSignKey> key = [_database privateKeyForVisaSignature:user];
+    if (!key) {
+        // try immortals
+        key = [_immortals privateKeyForVisaSignature:user];
+    }
+    return key;
 }
 
 - (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)ID {

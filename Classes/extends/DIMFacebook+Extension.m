@@ -54,7 +54,7 @@
     return NO;
 }
 
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key user:(id<MKMID>)ID {
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type user:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return NO;
 }

@@ -35,7 +35,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)saveUser:(id<MKMID>)user;
 - (BOOL)removeUser:(id<MKMID>)user;
 
-- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key forID:(id<MKMID>)ID;
+- (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type forID:(id<MKMID>)ID;
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
 - (BOOL)saveDocument:(id<MKMDocument>)profile;
 

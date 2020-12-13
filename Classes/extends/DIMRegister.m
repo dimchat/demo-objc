@@ -62,7 +62,7 @@
     //    don't forget to upload them onto the DIM station
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     [facebook saveMeta:meta forID:ID];
-    [facebook savePrivateKey:_key user:ID];
+    [facebook savePrivateKey:_key type:DIMPrivateKeyType_Meta user:ID];
     [facebook saveDocument:profile];
     // 6. create user
     return [facebook userWithID:ID];
