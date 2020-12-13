@@ -45,6 +45,9 @@
 
 #import "DIMMessenger+Extension.h"
 
+#import "SCKeyStore.h"
+#import "SCMessageProcessor.h"
+
 #import "SCMessenger.h"
 
 @implementation SCMessenger
@@ -55,7 +58,8 @@ SingletonImplementations(SCMessenger, sharedInstance)
     if (self = [super init]) {
         
         self.barrack = [DIMFacebook sharedInstance];
-        self.keyCache = nil;//[DIMKeyStore sharedInstance];
+        self.keyCache = [SCKeyStore sharedInstance];
+        self.processor = [[SCMessageProcessor alloc] initWithMessenger:self];
         
         // query tables
         _metaQueryTable    = [[NSMutableDictionary alloc] init];

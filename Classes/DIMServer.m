@@ -94,8 +94,10 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 @implementation DIMServer
 
 /* designated initializer */
-- (instancetype)initWithID:(id<MKMID>)ID {
-    if (self = [super initWithID:ID]) {
+- (instancetype)initWithID:(id<MKMID>)ID
+                      host:(NSString *)IP
+                      port:(UInt32)port {
+    if (self = [super initWithID:ID host:IP port:port]) {
         _currentUser = nil;
         
         _waitingList = [[NSMutableArray alloc] init];
@@ -137,6 +139,9 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         NSLog(@"star status error: %d", _star.status);
         return ;
     }
+    if (session.length > 0) {
+        self.sessionKey = session;
+    }
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     
     DIMHandshakeCommand *cmd;
@@ -162,18 +167,18 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     [_star send:data];
 }
 
-- (void)handshakeAccepted:(BOOL)success session:(nullable NSString *)session {
+- (void)handshakeAccepted:(BOOL)success {
     if (![_fsm.currentState.name isEqualToString:kDIMServerState_Handshaking]) {
         // FIXME: sometimes the current state will be not 'handshaking' here
         //NSAssert(false, @"state error: %@", _fsm.currentState.name);
         return ;
     }
     if (success) {
-        NSLog(@"handshake success: %@", session);
-        _fsm.session = session;
+        NSLog(@"handshake success: %@", self.sessionKey);
+        _fsm.session = self.sessionKey;
         // call client
         if ([self.delegate respondsToSelector:@selector(station:onHandshakeAccepted:)]) {
-            [self.delegate station:self onHandshakeAccepted:session];
+            [self.delegate station:self onHandshakeAccepted:self.sessionKey];
         }
     } else {
         NSLog(@"handshake failed");

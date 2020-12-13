@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  SeChat : Secure/secret Chat Application
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,43 +28,55 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMServer.h
+//  SCKeyStore.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/3/1.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/13.
+//  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
-#import <MarsGate/StarGate.h>
-
-#import "DIMServerState.h"
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString * const kNotificationName_ServerStateChanged;
+@interface SCKeyStore : NSObject <DIMCipherKeyDelegate>
 
-@interface DIMServer : DIMStation <DIMMessengerDelegate, SGStarDelegate, FSMDelegate> {
-    
-    DIMServerStateMachine *_fsm;
-}
++ (instancetype)sharedInstance;
 
-@property (strong, nonatomic, nullable) MKMUser *currentUser;
+/**
+ *  Trigger for saving cipher key map
+ */
+- (void)flush;
 
-@property (strong, nonatomic, nullable) NSString *sessionKey;
+/**
+ *  Callback for saving cipher key map into local storage
+ *  (Override it to access database)
+ *
+ * @param keyMap - all cipher keys(with direction) from memory cache
+ * @return YES on success
+ */
+- (BOOL)saveKeys:(NSDictionary *)keyMap;
 
-@property (readonly, strong, nonatomic) id<SGStar> star;
+/**
+ *  Load cipher key map from local storage
+ *  (Override it to access database)
+ *
+ * @return keys map
+ */
+- (nullable NSDictionary *)loadKeys;
 
-- (void)handshakeWithSession:(nullable NSString *)session;
-- (void)handshakeAccepted:(BOOL)success;
+/**
+ *  Update cipher key map into memory cache
+ *
+ * @param keyMap - cipher keys(with direction) from local storage
+ * @return NO on nothing changed
+ */
+- (BOOL)updateKeys:(NSDictionary *)keyMap;
 
-#pragma mark -
-
-- (void)startWithOptions:(nullable NSDictionary *)launchOptions;
-- (void)end;
-
-- (void)pause;
-- (void)resume;
+/**
+ *  Trigger for load and update cipher key map
+ */
+- (BOOL)reload;
 
 @end
 

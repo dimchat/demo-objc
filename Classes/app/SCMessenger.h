@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableDictionary<id<MKMID>, NSDate *> *_groupQueryTable;
 }
 
++ (instancetype)sharedInstance;
+
 @end
 
 NS_ASSUME_NONNULL_END

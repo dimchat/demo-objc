@@ -86,6 +86,8 @@
 		E99B1FEF25852D8F001A05F1 /* SCMessageProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B1FED25852D8F001A05F1 /* SCMessageProcessor.m */; };
 		E99B1FF225852DA4001A05F1 /* SCMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B1FF025852DA4001A05F1 /* SCMessenger.h */; };
 		E99B1FF325852DA4001A05F1 /* SCMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B1FF125852DA4001A05F1 /* SCMessenger.m */; };
+		E99B200325866AD2001A05F1 /* SCKeyStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B200125866AD2001A05F1 /* SCKeyStore.h */; };
+		E99B200425866AD2001A05F1 /* SCKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B200225866AD2001A05F1 /* SCKeyStore.m */; };
 		E9A4A58F23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A4A58A23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A4A58E23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m */; };
 		E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
@@ -259,6 +261,8 @@
 		E99B1FED25852D8F001A05F1 /* SCMessageProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessageProcessor.m; sourceTree = "<group>"; };
 		E99B1FF025852DA4001A05F1 /* SCMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCMessenger.h; sourceTree = "<group>"; };
 		E99B1FF125852DA4001A05F1 /* SCMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessenger.m; sourceTree = "<group>"; };
+		E99B200125866AD2001A05F1 /* SCKeyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCKeyStore.h; sourceTree = "<group>"; };
+		E99B200225866AD2001A05F1 /* SCKeyStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCKeyStore.m; sourceTree = "<group>"; };
 		E9A4A58A23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMReceiptCommandProcessor.h; sourceTree = "<group>"; };
 		E9A4A58E23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMReceiptCommandProcessor.m; sourceTree = "<group>"; };
 		E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = ../../../moky/FiniteStateMachine/FiniteStateMachine/FiniteStateMachine.xcodeproj; sourceTree = "<group>"; };
@@ -495,6 +499,8 @@
 			children = (
 				E99B1FE825852B92001A05F1 /* SCFacebook.h */,
 				E99B1FE925852B92001A05F1 /* SCFacebook.m */,
+				E99B200125866AD2001A05F1 /* SCKeyStore.h */,
+				E99B200225866AD2001A05F1 /* SCKeyStore.m */,
 				E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */,
 				E99B1FED25852D8F001A05F1 /* SCMessageProcessor.m */,
 				E99B1FF025852DA4001A05F1 /* SCMessenger.h */,
@@ -576,6 +582,7 @@
 				E9BBBE4B223FA6D400E6ACDA /* NSDate+Extension.h in Headers */,
 				E99B1FF225852DA4001A05F1 /* SCMessenger.h in Headers */,
 				E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */,
+				E99B200325866AD2001A05F1 /* SCKeyStore.h in Headers */,
 				E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */,
 				52DBA30D2340372C0000C2B4 /* FMDatabasePool.h in Headers */,
 				52DBA30A2340372C0000C2B4 /* FMDatabase.h in Headers */,
@@ -763,6 +770,7 @@
 				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
 				E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */,
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
+				E99B200425866AD2001A05F1 /* SCKeyStore.m in Sources */,
 				52DBA3132340372C0000C2B4 /* FMDatabasePool.m in Sources */,
 				E915CDC62439C95600B98FE3 /* DIMGroupManager.m in Sources */,
 				E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */,

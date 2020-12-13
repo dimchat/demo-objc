@@ -37,14 +37,15 @@
 
 #import "DIMServer.h"
 
+#import "DIMMessenger+Extension.h"
+
 #import "DIMHandshakeCommandProcessor.h"
 
 @implementation DIMHandshakeCommandProcessor
 
 - (nullable id<DKDContent>)_success {
-//    NSString *sessionKey = [self valueForContextName:@"session_key"];
-//    DIMServer *server = [self valueForContextName:@"server"];
-//    [server handshakeAccepted:YES session:sessionKey];
+    DIMServer *server = (DIMServer *)[self.messenger currentServer];
+    [server handshakeAccepted:YES];
     return nil;
 }
 

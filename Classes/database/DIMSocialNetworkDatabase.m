@@ -183,7 +183,7 @@
     // get private key paired with meta.key
     NSString *label = [NSString stringWithFormat:@"meta:%@", user.address];
     id<MKMPrivateKey> key = [MKMPrivateKey loadKeyWithIdentifier:label];
-    if (!label) {
+    if (!key) {
         label = [NSString stringWithFormat:@"%@", user.address];
         key = [MKMPrivateKey loadKeyWithIdentifier:label];
     }
