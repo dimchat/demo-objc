@@ -139,12 +139,15 @@
 }
 
 - (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
-    id<MKMID> assistant = nil;//[self IDWithString:@"assistant"];
-    if (assistant) {
-        return @[assistant];
-    } else {
-        return nil;
+    id<MKMBulletin> doc = DIMDocumentForID(group, MKMDocument_Bulletin);
+    NSArray<id<MKMID>> *assistants = [doc assistants];
+    if (assistants.count == 0) {
+        id<MKMID> ass = MKMIDFromString(@"assistant");
+        if (ass) {
+            assistants = @[ass];
+        }
     }
+    return assistants;
 }
 
 @end
