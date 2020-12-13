@@ -50,9 +50,9 @@
 }
 
 - (nullable id<DKDContent>)_ask:(NSString *)sessionKey {
-//    NSAssert([sessionKey length] > 0, @"session key should not be empty");
-//    [self setContextValue:sessionKey forName:@"session_key"];
-    return [[DIMHandshakeCommand alloc] initWithSessionKey:sessionKey];
+    DIMServer *server = (DIMServer *)[self.messenger currentServer];
+    [server handshakeWithSession:sessionKey];
+    return nil;
 }
 
 //
