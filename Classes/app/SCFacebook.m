@@ -189,35 +189,48 @@ SingletonImplementations(SCFacebook, sharedInstance)
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type {
     // try from database
-    id<MKMDocument>profile = [_database documentForID:ID type:type];
-    if (profile) {
-        // check expired time
+    id<MKMDocument> profile = [_database documentForID:ID type:type];
+    if ([self isEmptyDocument:profile]) {
+        // try fron immortals
+        if (ID.type == MKMNetwork_Main) {
+            id<MKMDocument>tai = [_immortals documentForID:ID type:type];
+            if (tai) {
+                [_database saveDocument:tai];
+                return tai;
+            }
+        }
+    }
+    if ([self isExpiredDocument:profile]) {
+        // update EXPIRES value
         NSDate *now = [[NSDate alloc] init];
         NSTimeInterval timestamp = [now timeIntervalSince1970];
-        NSNumber *expires = [profile objectForKey:PROFILE_EXPIRES_KEY];
-        if (!expires) {
-            // set expired time
-            [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
-            // is empty?
-            if ([profile.propertyKeys count] > 0) {
-                return profile;
-            }
-        } else if ([expires longValue] > timestamp) {
-            // not expired yet
-            return profile;
-        }
+        [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+        NSLog(@"profile(%@) expired, querying fron network...", ID);
+        // query from DIM network
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        [messenger queryProfileForID:ID];
     }
-    // try fron immortals
-    if (ID.type == MKMNetwork_Main) {
-        id<MKMDocument>tai = [_immortals documentForID:ID type:type];
-        if (tai) {
-            return tai;
-        }
-    }
-    // query from DIM network
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    [messenger queryProfileForID:ID];
     return profile;
+}
+
+- (BOOL)isSignedDocument:(id<MKMDocument>)profile {
+    if ([self isEmptyDocument:profile]) {
+        return NO;
+    }
+    NSString *base64 = [profile objectForKey:@"signature"];
+    return base64.length > 0;
+}
+
+- (BOOL)isExpiredDocument:(id<MKMDocument>)profile {
+    NSDate *now = [[NSDate alloc] init];
+    NSTimeInterval timestamp = [now timeIntervalSince1970];
+    NSNumber *expires = [profile objectForKey:PROFILE_EXPIRES_KEY];
+    if (!expires) {
+        // set expired time
+        [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+        return NO;
+    }
+    return timestamp > [expires doubleValue];
 }
 
 - (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type user:(id<MKMID>)ID {
