@@ -114,11 +114,7 @@
 }
 
 - (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(MKMNetworkType)type {
-    if ([meta isKindOfClass:[MKMMetaDefault class]]) {
-        return [(MKMMetaDefault *)meta generateID:type];
-    }
-    // TODO: generate ID with BTC, ETH meta
-    return nil;
+    return [meta generateID:type terminal:nil];
 }
 
 - (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name {
