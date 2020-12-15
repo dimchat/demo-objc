@@ -42,8 +42,6 @@
 
 #import "DIMMessenger+Extension.h"
 
-#import "MKMImmortals.h"
-
 #import "SCFacebook.h"
 
 @interface ANS : DIMAddressNameService {

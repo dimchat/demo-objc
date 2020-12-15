@@ -28,6 +28,12 @@
 		E90E1EDB232AA5A90012B23E /* DIMAddressNameTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E90E1ED9232AA5A80012B23E /* DIMAddressNameTable.m */; };
 		E915CDC52439C95600B98FE3 /* DIMGroupManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E915CDC32439C95600B98FE3 /* DIMGroupManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E915CDC62439C95600B98FE3 /* DIMGroupManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E915CDC42439C95600B98FE3 /* DIMGroupManager.m */; };
+		E91FE1672588C5D000B45E68 /* NSObject+Compare.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE1652588C5D000B45E68 /* NSObject+Compare.h */; };
+		E91FE1682588C5D000B45E68 /* NSObject+Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE1662588C5D000B45E68 /* NSObject+Singleton.h */; };
+		E91FE16B2588C5F700B45E68 /* NSDictionary+Binary.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE1692588C5F600B45E68 /* NSDictionary+Binary.h */; };
+		E91FE16C2588C5F700B45E68 /* NSDictionary+Binary.m in Sources */ = {isa = PBXBuildFile; fileRef = E91FE16A2588C5F700B45E68 /* NSDictionary+Binary.m */; };
+		E91FE16F2588CABE00B45E68 /* NSDate+Timestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE16D2588CABE00B45E68 /* NSDate+Timestamp.h */; };
+		E91FE1702588CABE00B45E68 /* NSDate+Timestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = E91FE16E2588CABE00B45E68 /* NSDate+Timestamp.m */; };
 		E94901332392696300107C06 /* DIMStorageCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E94901312392696300107C06 /* DIMStorageCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E94901342392696300107C06 /* DIMStorageCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E94901322392696300107C06 /* DIMStorageCommandProcessor.m */; };
 		E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */ = {isa = PBXBuildFile; fileRef = E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -200,6 +206,12 @@
 		E90E1ED9232AA5A80012B23E /* DIMAddressNameTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMAddressNameTable.m; sourceTree = "<group>"; };
 		E915CDC32439C95600B98FE3 /* DIMGroupManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMGroupManager.h; sourceTree = "<group>"; };
 		E915CDC42439C95600B98FE3 /* DIMGroupManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMGroupManager.m; sourceTree = "<group>"; };
+		E91FE1652588C5D000B45E68 /* NSObject+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Compare.h"; sourceTree = "<group>"; };
+		E91FE1662588C5D000B45E68 /* NSObject+Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Singleton.h"; sourceTree = "<group>"; };
+		E91FE1692588C5F600B45E68 /* NSDictionary+Binary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Binary.h"; sourceTree = "<group>"; };
+		E91FE16A2588C5F700B45E68 /* NSDictionary+Binary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+Binary.m"; sourceTree = "<group>"; };
+		E91FE16D2588CABE00B45E68 /* NSDate+Timestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Timestamp.h"; sourceTree = "<group>"; };
+		E91FE16E2588CABE00B45E68 /* NSDate+Timestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Timestamp.m"; sourceTree = "<group>"; };
 		E94901312392696300107C06 /* DIMStorageCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorageCommandProcessor.h; sourceTree = "<group>"; };
 		E94901322392696300107C06 /* DIMStorageCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorageCommandProcessor.m; sourceTree = "<group>"; };
 		E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAmanuensis.h; sourceTree = "<group>"; };
@@ -463,10 +475,16 @@
 		E97926D2222A54B9005ED1F0 /* extends */ = {
 			isa = PBXGroup;
 			children = (
-				E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */,
-				E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */,
+				E91FE1652588C5D000B45E68 /* NSObject+Compare.h */,
+				E91FE1662588C5D000B45E68 /* NSObject+Singleton.h */,
 				E9E8248322475AFD00A029F1 /* NSObject+Extension.h */,
 				E9E8248422475AFD00A029F1 /* NSObject+Extension.m */,
+				E91FE16D2588CABE00B45E68 /* NSDate+Timestamp.h */,
+				E91FE16E2588CABE00B45E68 /* NSDate+Timestamp.m */,
+				E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */,
+				E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */,
+				E91FE1692588C5F600B45E68 /* NSDictionary+Binary.h */,
+				E91FE16A2588C5F700B45E68 /* NSDictionary+Binary.m */,
 				E9B2FCB8230477E700E153EE /* MKMEntity+Extension.h */,
 				E9B2FCBC230477E700E153EE /* MKMEntity+Extension.m */,
 				E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */,
@@ -568,6 +586,7 @@
 				52DBA3122340372C0000C2B4 /* FMDatabaseAdditions.h in Headers */,
 				520ECCB1235D5CAE00822B97 /* DIMClientConstants.h in Headers */,
 				52DBA3092340372C0000C2B4 /* LocalDatabaseManager.h in Headers */,
+				E91FE16F2588CABE00B45E68 /* NSDate+Timestamp.h in Headers */,
 				E99B1FEE25852D8F001A05F1 /* SCMessageProcessor.h in Headers */,
 				E989F656244DCE7D009AA4B6 /* DIMCommand+Extension.h in Headers */,
 				E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */,
@@ -580,14 +599,17 @@
 				E97C332423ACC66400C47BBF /* DIMRegister.h in Headers */,
 				E97907A1225621890024C830 /* DIMFileServer.h in Headers */,
 				E9BBBE4B223FA6D400E6ACDA /* NSDate+Extension.h in Headers */,
+				E91FE1672588C5D000B45E68 /* NSObject+Compare.h in Headers */,
 				E99B1FF225852DA4001A05F1 /* SCMessenger.h in Headers */,
 				E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */,
+				E91FE1682588C5D000B45E68 /* NSObject+Singleton.h in Headers */,
 				E99B200325866AD2001A05F1 /* SCKeyStore.h in Headers */,
 				E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */,
 				52DBA30D2340372C0000C2B4 /* FMDatabasePool.h in Headers */,
 				52DBA30A2340372C0000C2B4 /* FMDatabase.h in Headers */,
 				E97926BB22284D59005ED1F0 /* DIMServer.h in Headers */,
 				E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */,
+				E91FE16B2588C5F700B45E68 /* NSDictionary+Binary.h in Headers */,
 				52DBA3112340372C0000C2B4 /* FMDB.h in Headers */,
 				52DBA3102340372C0000C2B4 /* FMDatabaseQueue.h in Headers */,
 				52DBA3162340372C0000C2B4 /* FolderUtility.h in Headers */,
@@ -784,6 +806,7 @@
 				E959658123919D7200DAA870 /* DIMSearchCommandProcessor.m in Sources */,
 				E99B1FF325852DA4001A05F1 /* SCMessenger.m in Sources */,
 				520ECCB2235D5CAE00822B97 /* DIMClientConstants.m in Sources */,
+				E91FE1702588CABE00B45E68 /* NSDate+Timestamp.m in Sources */,
 				E959656423916BB600DAA870 /* DIMMessenger+Extension.m in Sources */,
 				E9E8248622475AFD00A029F1 /* NSObject+Extension.m in Sources */,
 				E96D14B62322455E00B5EA59 /* DIMSocialNetworkDatabase.m in Sources */,
@@ -794,6 +817,7 @@
 				E96D14CA2322614C00B5EA59 /* DIMGroupTable.m in Sources */,
 				E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */,
 				E989F65B244EED17009AA4B6 /* DIMLoginCommandProcessor.m in Sources */,
+				E91FE16C2588C5F700B45E68 /* NSDictionary+Binary.m in Sources */,
 				E97907A2225621890024C830 /* DIMFileServer.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
 				E97926BC22284D59005ED1F0 /* DIMServer.m in Sources */,
@@ -965,12 +989,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = YES;
-				HEADER_SEARCH_PATHS = (
-					"../../sdk-objc/Classes/**",
-					"../../core-objc/Classes/**",
-					"../../dkd-objc/Classes/**",
-					"../../mkm-objc/Classes/**",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -997,12 +1016,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = YES;
-				HEADER_SEARCH_PATHS = (
-					"../../sdk-objc/Classes/**",
-					"../../core-objc/Classes/**",
-					"../../dkd-objc/Classes/**",
-					"../../mkm-objc/Classes/**",
-				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
