@@ -91,7 +91,19 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
         return nil;
     }
     NSLog(@"profile from: %@", path);
-    return MKMDocumentFromDictionary(dict);
+    NSString *type = [MKMDocument type:dict];
+    if (!type) {
+        if (MKMIDIsGroup(ID)) {
+            type = MKMDocument_Bulletin;
+        } else if (MKMIDIsUser(ID)) {
+            type = MKMDocument_Visa;
+        } else {
+            type = MKMDocument_Profile;
+        }
+    }
+    NSData *data = MKMUTF8Encode([dict objectForKey:@"data"]);
+    NSData *signature = MKMBase64Decode([dict objectForKey:@"signature"]);
+    return MKMDocumentCreate(ID, type, data, signature);
 }
 
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
