@@ -77,6 +77,8 @@ SingletonImplementations(SCMessenger, sharedInstance)
     _server = server;
 }
 
+#define QUERY_INTERVAL  120  // query interval (2 minutes)
+
 - (BOOL)queryMetaForID:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
         // broadcast ID has not meta
@@ -86,11 +88,12 @@ SingletonImplementations(SCMessenger, sharedInstance)
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
     NSDate *lastTime = [_metaQueryTable objectForKey:ID];
-    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < 30) {
+    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < QUERY_INTERVAL) {
         return NO;
     }
     [_metaQueryTable setObject:now forKey:ID];
-    
+    NSLog(@"querying meta of %@ fron network...", ID);
+
     DIMCommand *cmd = [[DIMMetaCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];
 }
@@ -99,11 +102,12 @@ SingletonImplementations(SCMessenger, sharedInstance)
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
     NSDate *lastTime = [_profileQueryTable objectForKey:ID];
-    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < 30) {
+    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < QUERY_INTERVAL) {
         return NO;
     }
     [_profileQueryTable setObject:now forKey:ID];
-    
+    NSLog(@"querying profile of %@ fron network...", ID);
+
     DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];
 }
@@ -116,7 +120,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
     NSDate *lastTime = [_groupQueryTable objectForKey:group];
-    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < 30) {
+    if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < QUERY_INTERVAL) {
         return NO;
     }
     [_groupQueryTable setObject:now forKey:group];

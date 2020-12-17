@@ -200,12 +200,11 @@ SingletonImplementations(SCFacebook, sharedInstance)
             }
         }
     }
-    if ([self isExpiredDocument:profile]) {
+    if ([self isEmptyDocument:profile] || [self isExpiredDocument:profile]) {
         // update EXPIRES value
         NSDate *now = [[NSDate alloc] init];
         NSTimeInterval timestamp = [now timeIntervalSince1970];
         [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
-        NSLog(@"profile(%@) expired, querying fron network...", ID);
         // query from DIM network
         DIMMessenger *messenger = [DIMMessenger sharedInstance];
         [messenger queryProfileForID:ID];
