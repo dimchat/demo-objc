@@ -40,7 +40,7 @@
 #import "DIMCommand+Extension.h"
 
 static inline NSString *readable_name(id<MKMID>ID) {
-    id<MKMDocument>profile = DIMDocumentForID(ID, MKMDocument_Any);
+    id<MKMDocument>profile = DIMDocumentForID(ID, @"*");
     NSString *nickname = profile.name;
     NSString *username = ID.name;
     if (nickname) {

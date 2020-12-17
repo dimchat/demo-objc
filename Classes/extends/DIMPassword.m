@@ -41,7 +41,7 @@
 
 @implementation DIMPassword
 
-+ (MKMSymmetricKey *)generateWithString:(NSString *)pwd {
++ (id<MKMSymmetricKey>)generateWithString:(NSString *)pwd {
     NSData *data = MKMUTF8Encode(pwd);
     NSData *digest = MKMSHA256Digest(data);
     // AES key data

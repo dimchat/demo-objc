@@ -43,12 +43,16 @@
 @implementation MKMEntity (Name)
 
 - (NSString *)name {
-    id<MKMDocument> doc = [self documentWithType:MKMDocument_Any];
+    id<MKMDocument> doc = [self documentWithType:@"*"];
     NSString *name = [doc name];
     if (name.length > 0) {
         return name;
     }
-    return [self.ID name];
+    name = [self.ID name];
+    if (name.length > 0) {
+        return name;
+    }
+    return [self.ID string];
 }
 
 @end
@@ -70,7 +74,7 @@
     [facebook saveMeta:meta forID:ID];
     
     // save private key paired to meta.key
-    MKMPrivateKey *SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
+    id<MKMPrivateKey> SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
     [facebook savePrivateKey:SK type:DIMPrivateKeyType_Meta user:ID];
     
     MKMUser *user = DIMUserWithID(ID);

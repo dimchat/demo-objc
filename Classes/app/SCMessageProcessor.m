@@ -52,8 +52,8 @@
 #import "SCMessageProcessor.h"
 
 static inline void load_cmd_classes(void) {
-    DIMCommandParserRegisterClass(DIMCommand_Search, DIMSearchCommand);
-    DIMCommandParserRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
 }
 
 static inline void load_cpu_classes(void) {

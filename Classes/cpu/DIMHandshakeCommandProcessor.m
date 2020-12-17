@@ -55,10 +55,7 @@
     return nil;
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
     DIMHandshakeCommand *cmd = (DIMHandshakeCommand *)content;

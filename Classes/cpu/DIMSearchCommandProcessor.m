@@ -65,10 +65,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMSearchCommand class]], @"search command error: %@", content);
     DIMSearchCommand *cmd = (DIMSearchCommand *)content;

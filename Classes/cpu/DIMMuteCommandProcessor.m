@@ -41,10 +41,7 @@
 
 @implementation DIMMuteCommandProcessor
 
-//
-//  Main
-//
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
+- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMuteCommand class]], @"mute command error: %@", content);
     DIMMuteCommand *cmd = (DIMMuteCommand *)content;

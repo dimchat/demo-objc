@@ -96,7 +96,7 @@
 }
 
 - (nullable __kindof id<MKMDocument>)profile {
-    return [_entity documentWithType:MKMDocument_Any];
+    return [_entity documentWithType:@"*"];
 }
 
 #pragma mark - Read from data source
