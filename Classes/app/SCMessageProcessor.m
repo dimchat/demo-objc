@@ -47,6 +47,7 @@
 #import "DIMSearchCommandProcessor.h"
 #import "DIMStorageCommandProcessor.h"
 
+#import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 
 #import "SCMessageProcessor.h"
@@ -78,8 +79,10 @@ static inline void load_cpu_classes(void) {
 
 @implementation SCMessageProcessor
 
-- (instancetype)initWithMessenger:(DIMMessenger *)messenger {
-    if (self = [super initWithMessenger:messenger]) {
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+                          packer:(DIMPacker *)messagePacker {
+    if (self = [super initWithFacebook:barrack messenger:transceiver packer:messagePacker]) {
         
         // register CPU classes
         SingletonDispatchOnce(^{
@@ -90,79 +93,64 @@ static inline void load_cpu_classes(void) {
     return self;
 }
 
-- (void)_attachKeyDigest:(id<DKDReliableMessage>)rMsg {
-    if (rMsg.delegate == nil) {
-        rMsg.delegate = self.messenger;
+- (BOOL)isEmptyGroup:(id<MKMID>)group {
+    id<MKMID> owner = [self.facebook ownerOfGroup:group];
+    NSArray *members = [self.facebook membersOfGroup:group];
+    return !owner || members.count == 0;
+}
+
+// check whether need to update group
+- (BOOL)isWaitingGroup:(id<DKDContent>)content sender:(id<MKMID>)sender {
+    // Check if it is a group message, and whether the group members info needs update
+    id<MKMID>group = content.group;
+    if (!group || MKMIDIsBroadcast(group)) {
+        // 1. personal message
+        // 2. broadcast message
+        return NO;
     }
-    if ([rMsg encryptedKey]) {
-        // 'key' exists
-        return;
+    // chek meta for new group ID
+    id<MKMMeta>meta = [self.facebook metaForID:group];
+    if (!meta) {
+        // NOTICE: if meta for group not found,
+        //         facebook should query it from DIM network automatically
+        // TODO: insert the message to a temporary queue to wait meta
+        //NSAssert(false, @"group meta not found: %@", group);
+        return YES;
     }
-    NSDictionary *keys = [rMsg encryptedKeys];
-    if ([keys objectForKey:@"digest"]) {
-        // key digest already exists
-        return;
-    }
-    // get key with direction
-    id<MKMSymmetricKey> key;
-    id<MKMID>sender = rMsg.envelope.sender;
-    id<MKMID>group = rMsg.envelope.group;
-    if (group) {
-        key = [self.keyCache cipherKeyFrom:sender to:group generate:NO];
-    } else {
-        id<MKMID>receiver = rMsg.envelope.receiver;
-        key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
-    }
-    // get key data
-    NSData *data = key.data;
-    if ([data length] < 6) {
-        if ([key.algorithm isEqualToString:@"PLAIN"]) {
-            NSLog(@"broadcast message has no key: %@", rMsg);
-            return;
+    // query group command
+    if ([self isEmptyGroup:group]) {
+        // NOTICE: if the group info not found, and this is not an 'invite' command
+        //         query group info from the sender
+        if ([content isKindOfClass:[DIMInviteCommand class]] ||
+            [content isKindOfClass:[DIMResetGroupCommand class]]) {
+            // FIXME: can we trust this stranger?
+            //        may be we should keep this members list temporary,
+            //        and send 'query' to the owner immediately.
+            // TODO: check whether the members list is a full list,
+            //       it should contain the group owner(owner)
+            return NO;
+        } else {
+            return [self.messenger queryGroupForID:group fromMember:sender];
         }
-        NSAssert(false, @"key data error: %@", key);
-        return;
+    } else if ([self.facebook group:group containsMember:sender] ||
+               [self.facebook group:group containsAssistant:sender] ||
+               [self.facebook group:group isOwner:sender]) {
+        // normal membership
+        return NO;
+    } else {
+        // if assistants exist, query them
+        NSArray<id<MKMID>> *assistants = [self.facebook assistantsOfGroup:group];
+        NSMutableArray<id<MKMID>> *mArray = [[NSMutableArray alloc] initWithCapacity:(assistants.count+1)];
+        for (id<MKMID>item in assistants) {
+            [mArray addObject:item];
+        }
+        // if owner found, query it
+        id<MKMID>owner = [self.facebook ownerOfGroup:group];
+        if (owner && ![mArray containsObject:owner]) {
+            [mArray addObject:owner];
+        }
+        return [self.messenger queryGroupForID:group fromMembers:mArray];
     }
-    // get digest
-    NSRange range = NSMakeRange([data length] - 6, 6);
-    NSData *part = [data subdataWithRange:range];
-    NSData *digest = MKMSHA256Digest(part);
-    NSString *base64 = MKMBase64Encode(digest);
-    // set digest
-    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
-    NSUInteger pos = base64.length - 8;
-    [mDict setObject:[base64 substringFromIndex:pos] forKey:@"digest"];
-    [rMsg setObject:mDict forKey:@"keys"];
-}
-
-#pragma mark Serialization
-
-- (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
-    [self _attachKeyDigest:rMsg];
-    return [super serializeMessage:rMsg];
-}
-
-- (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    if ([data length] == 0) {
-        return nil;
-    }
-    return [super deserializeMessage:data];
-}
-
-#pragma mark Reuse message key
-
-- (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    id<DKDSecureMessage> sMsg = [super encryptMessage:iMsg];
-    id<DKDEnvelope> env = iMsg.envelope;
-    id<MKMID> receiver = env.receiver;
-    if (MKMIDIsGroup(receiver)) {
-        // reuse group message keys
-        id<MKMID> sender = env.sender;
-        id<MKMSymmetricKey> key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
-        [key setObject:@(YES) forKey:@"reused"];
-    }
-    // TODO: reuse personal message key?
-    return sMsg;
 }
 
 #pragma mark Process
@@ -170,13 +158,13 @@ static inline void load_cpu_classes(void) {
 - (nullable id<DKDContent>)processContent:(id<DKDContent>)content
                               withMessage:(id<DKDReliableMessage>)rMsg {
     id<MKMID> sender = rMsg.sender;
-    if ([self.messenger checkingGroup:content sender:sender]) {
+    if ([self isWaitingGroup:content sender:sender]) {
         // save this message in a queue to wait group meta response
         [self.messenger suspendMessage:rMsg];
         return nil;
     }
     
-    id<DKDContent>res = [super processContent:content withMessage:rMsg];
+    id<DKDContent> res = [super processContent:content withMessage:rMsg];
     if (!res) {
         // respond nothing
         return nil;
@@ -204,7 +192,7 @@ static inline void load_cpu_classes(void) {
     id<DKDEnvelope> env = DKDEnvelopeCreate(user.ID, sender, nil);
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, res);
     // normal response
-    [self.messenger sendInstantMessage:iMsg callback:NULL];
+    [self.messenger sendInstantMessage:iMsg callback:NULL priority:1];
     // DON'T respond to station directly
     return nil;
 }

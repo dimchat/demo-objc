@@ -48,6 +48,8 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 + (instancetype)sharedInstance;
 
+- (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver;
+
 /**
  *  broadcast message content to everyone@everywhere
  *
@@ -142,15 +144,6 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @return YES on success
  */
 - (BOOL)searchUsersWithKeywords:(NSString *)keywords;
-
-/**
- *  check whether need to update group
- *
- * @param content - received message content
- * @param sender - message sender
- * @return YES on querying
- */
-- (BOOL)checkingGroup:(id<DKDContent>)content sender:(id<MKMID>)sender;
 
 @end
 

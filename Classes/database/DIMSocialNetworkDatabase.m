@@ -146,8 +146,13 @@
     return [_userTable contactsOfUser:user];
 }
 
+- (nullable id<MKMEncryptKey>)publicKeyForEncryption:(id<MKMID>)user {
+    NSAssert(false, @"should not happen");
+    return nil;
+}
+
 - (nullable NSArray<id<MKMVerifyKey>> *)publicKeysForVerification:(id<MKMID>)user {
-    // return nil to use [visa.key, meta.key]
+    NSAssert(false, @"should not happen");
     return nil;
 }
 
@@ -225,6 +230,11 @@
 
 - (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
     return [_groupTable membersOfGroup:group];
+}
+
+- (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
+    NSAssert(false, @"should not happen");
+    return nil;
 }
 
 @end

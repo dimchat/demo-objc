@@ -76,7 +76,7 @@
         return NO;
     }
     // let group assistant to splie and deliver this message to all members
-    return [messenger sendContent:content receiver:self.group callback:NULL];
+    return [messenger sendContent:content receiver:self.group];
 }
 
 #pragma mark Group commands
@@ -85,7 +85,7 @@
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     BOOL OK = YES;
     for (id<MKMID>receiver in members) {
-        if (![messenger sendContent:cmd receiver:receiver callback:NULL]) {
+        if (![messenger sendContent:cmd receiver:receiver]) {
             OK = NO;
         }
     }

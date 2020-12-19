@@ -219,7 +219,7 @@
     // 2. send to group assistants
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:ID];
     for (id<MKMID>ass in assistants) {
-        [messenger sendContent:cmd receiver:ass callback:NULL];
+        [messenger sendContent:cmd receiver:ass];
     }
     return YES;
 }

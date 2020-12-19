@@ -150,4 +150,14 @@
     return assistants;
 }
 
+- (BOOL)group:(id<MKMID>)group containsMember:(id<MKMID>)member {
+    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
+    return [members containsObject:member];
+}
+
+- (BOOL)group:(id<MKMID>)group containsAssistant:(id<MKMID>)assistant {
+    NSArray<id<MKMID>> *assistants = [self assistantsOfGroup:group];
+    return [assistants containsObject:assistant];
+}
+
 @end

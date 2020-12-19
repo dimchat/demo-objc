@@ -59,7 +59,6 @@ SingletonImplementations(SCMessenger, sharedInstance)
         
         self.barrack = [DIMFacebook sharedInstance];
         self.keyCache = [SCKeyStore sharedInstance];
-        self.processor = [[SCMessageProcessor alloc] initWithMessenger:self];
         
         // query tables
         _metaQueryTable    = [[NSMutableDictionary alloc] init];
@@ -67,6 +66,12 @@ SingletonImplementations(SCMessenger, sharedInstance)
         _groupQueryTable = [[NSMutableDictionary alloc] init];
     }
     return self;
+}
+
+- (DIMMessageProcessor *)newMessageProcessor {
+    return [[SCMessageProcessor alloc] initWithFacebook:self.facebook
+                                              messenger:self
+                                                 packer:self.messagePacker];
 }
 
 - (DIMStation *)currentServer {
@@ -154,7 +159,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc postNotificationName:name object:self userInfo:info];
     };
-    return [self sendContent:content receiver:receiver callback:callback];
+    return [self sendContent:content receiver:receiver callback:callback priority:1];
 }
 
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg

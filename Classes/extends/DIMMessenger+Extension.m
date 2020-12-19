@@ -59,18 +59,22 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     NSAssert(false, @"implement me!");
 }
 
+- (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver {
+    return [self sendContent:content receiver:receiver callback:NULL priority:1];
+}
+
 - (BOOL)broadcastContent:(id<DKDContent>)content {
     NSAssert(self.currentServer, @"station not connected yet");
     // broadcast IDs
     id<MKMID>everyone = MKMIDFromString(@"everyone@everywhere");
     [content setGroup:everyone];
-    return [self sendContent:content receiver:everyone callback:NULL];
+    return [self sendContent:content receiver:everyone];
 }
 
 - (BOOL)sendCommand:(DIMCommand *)cmd {
     DIMStation *server = [self currentServer];
     NSAssert(server, @"server not connected yet");
-    return [self sendContent:cmd receiver:server.ID callback:NULL];
+    return [self sendContent:cmd receiver:server.ID];
 }
 
 - (BOOL)queryMetaForID:(id<MKMID>)ID {
@@ -127,7 +131,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
             NSLog(@"%@ is not a user, do not broadcaset profile to it", contact);
             continue;
         }
-        if (![self sendContent:cmd receiver:contact callback:NULL]) {
+        if (![self sendContent:cmd receiver:contact]) {
             OK = NO;
         }
     }
@@ -178,69 +182,6 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 - (BOOL)searchUsersWithKeywords:(NSString *)keywords {
     DIMCommand *cmd = [[DIMSearchCommand alloc] initWithKeywords:keywords];
     return [self sendCommand:cmd];
-}
-
-- (BOOL)_isEmptyGroup:(id<MKMID>)group {
-    NSArray *members = [self.facebook membersOfGroup:group];
-    if ([members count] == 0) {
-        return YES;
-    }
-    id<MKMID>owner = [self.facebook ownerOfGroup:group];
-    return !owner;
-}
-
-// check whether need to update group
-- (BOOL)checkingGroup:(id<DKDContent>)content sender:(id<MKMID>)sender {
-    // Check if it is a group message, and whether the group members info needs update
-    id<MKMID>group = content.group;
-    if (!group || MKMIDIsBroadcast(group)) {
-        // 1. personal message
-        // 2. broadcast message
-        return NO;
-    }
-    // chek meta for new group ID
-    id<MKMMeta>meta = [self.facebook metaForID:group];
-    if (!meta) {
-        // NOTICE: if meta for group not found,
-        //         facebook should query it from DIM network automatically
-        // TODO: insert the message to a temporary queue to wait meta
-        //NSAssert(false, @"group meta not found: %@", group);
-        return YES;
-    }
-    // query group command
-    if ([self _isEmptyGroup:group]) {
-        // NOTICE: if the group info not found, and this is not an 'invite' command
-        //         query group info from the sender
-        if ([content isKindOfClass:[DIMInviteCommand class]] ||
-            [content isKindOfClass:[DIMResetGroupCommand class]]) {
-            // FIXME: can we trust this stranger?
-            //        may be we should keep this members list temporary,
-            //        and send 'query' to the owner immediately.
-            // TODO: check whether the members list is a full list,
-            //       it should contain the group owner(owner)
-            return NO;
-        } else {
-            return [self queryGroupForID:group fromMember:sender];
-        }
-    } else if ([self.facebook group:group containsMember:sender] ||
-               [self.facebook group:group containsAssistant:sender] ||
-               [self.facebook group:group isOwner:sender]) {
-        // normal membership
-        return NO;
-    } else {
-        // if assistants exist, query them
-        NSArray<id<MKMID>> *assistants = [self.facebook assistantsOfGroup:group];
-        NSMutableArray<id<MKMID>> *mArray = [[NSMutableArray alloc] initWithCapacity:(assistants.count+1)];
-        for (id<MKMID>item in assistants) {
-            [mArray addObject:item];
-        }
-        // if owner found, query it
-        id<MKMID>owner = [self.facebook ownerOfGroup:group];
-        if (owner && ![mArray containsObject:owner]) {
-            [mArray addObject:owner];
-        }
-        return [self queryGroupForID:group fromMembers:mArray];
-    }
 }
 
 @end

@@ -40,6 +40,8 @@
 		E94E13EF2276EB0F009D5275 /* DIMAmanuensis.m in Sources */ = {isa = PBXBuildFile; fileRef = E94E13EB2276EB0F009D5275 /* DIMAmanuensis.m */; };
 		E94E13F02276EB0F009D5275 /* DIMConversation.m in Sources */ = {isa = PBXBuildFile; fileRef = E94E13EC2276EB0F009D5275 /* DIMConversation.m */; };
 		E94E13F12276EB0F009D5275 /* DIMConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = E94E13ED2276EB0F009D5275 /* DIMConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E953814F258E4E5C0016F2F4 /* SCMessagePacker.h in Headers */ = {isa = PBXBuildFile; fileRef = E953814D258E4E5C0016F2F4 /* SCMessagePacker.h */; };
+		E9538150258E4E5C0016F2F4 /* SCMessagePacker.m in Sources */ = {isa = PBXBuildFile; fileRef = E953814E258E4E5C0016F2F4 /* SCMessagePacker.m */; };
 		E959652E239125CA00DAA870 /* DIMFacebook+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E959652F239125CA00DAA870 /* DIMFacebook+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */; };
 		E959656323916BB600DAA870 /* DIMMessenger+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E959656123916BB600DAA870 /* DIMMessenger+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -218,6 +220,8 @@
 		E94E13EB2276EB0F009D5275 /* DIMAmanuensis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMAmanuensis.m; sourceTree = "<group>"; };
 		E94E13EC2276EB0F009D5275 /* DIMConversation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMConversation.m; sourceTree = "<group>"; };
 		E94E13ED2276EB0F009D5275 /* DIMConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMConversation.h; sourceTree = "<group>"; };
+		E953814D258E4E5C0016F2F4 /* SCMessagePacker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCMessagePacker.h; sourceTree = "<group>"; };
+		E953814E258E4E5C0016F2F4 /* SCMessagePacker.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessagePacker.m; sourceTree = "<group>"; };
 		E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMFacebook+Extension.h"; sourceTree = "<group>"; };
 		E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMFacebook+Extension.m"; sourceTree = "<group>"; };
 		E959656123916BB600DAA870 /* DIMMessenger+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMMessenger+Extension.h"; sourceTree = "<group>"; };
@@ -519,6 +523,8 @@
 				E99B1FE925852B92001A05F1 /* SCFacebook.m */,
 				E99B200125866AD2001A05F1 /* SCKeyStore.h */,
 				E99B200225866AD2001A05F1 /* SCKeyStore.m */,
+				E953814D258E4E5C0016F2F4 /* SCMessagePacker.h */,
+				E953814E258E4E5C0016F2F4 /* SCMessagePacker.m */,
 				E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */,
 				E99B1FED25852D8F001A05F1 /* SCMessageProcessor.m */,
 				E99B1FF025852DA4001A05F1 /* SCMessenger.h */,
@@ -576,6 +582,7 @@
 				E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */,
 				E96D14F623227DD200B5EA59 /* DIMConversationDatabase.h in Headers */,
 				52DBA30C2340372C0000C2B4 /* FMResultSet.h in Headers */,
+				E953814F258E4E5C0016F2F4 /* SCMessagePacker.h in Headers */,
 				E96D14B52322455E00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */,
 				E915CDC52439C95600B98FE3 /* DIMGroupManager.h in Headers */,
 				E90E1EDA232AA5A90012B23E /* DIMAddressNameTable.h in Headers */,
@@ -821,6 +828,7 @@
 				E97907A2225621890024C830 /* DIMFileServer.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
 				E97926BC22284D59005ED1F0 /* DIMServer.m in Sources */,
+				E9538150258E4E5C0016F2F4 /* SCMessagePacker.m in Sources */,
 				52DBA3152340372C0000C2B4 /* FolderUtility.m in Sources */,
 				E9B2FCBE230477E700E153EE /* MKMEntity+Extension.m in Sources */,
 			);

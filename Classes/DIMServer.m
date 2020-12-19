@@ -108,7 +108,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         _fsm.delegate = self;
         _star = nil;
         
-        [[DIMFacebook sharedInstance] cacheUser:self];
+        //[[DIMFacebook sharedInstance] cacheUser:self];
     }
     return self;
 }
@@ -150,8 +150,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     id<DKDEnvelope> env = DKDEnvelopeCreate(_currentUser.ID, _ID, nil);
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
-    id<DKDSecureMessage> sMsg = [messenger.processor encryptMessage:iMsg];
-    id<DKDReliableMessage> rMsg = [messenger.processor signMessage:sMsg];
+    id<DKDSecureMessage> sMsg = [messenger encryptMessage:iMsg];
+    id<DKDReliableMessage> rMsg = [messenger signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to encrypt and sign message: %@", iMsg);
         return ;
@@ -163,7 +163,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
     
     // send out directly
-    NSData *data = [messenger.processor serializeMessage:rMsg];
+    NSData *data = [messenger serializeMessage:rMsg];
     [_star send:data];
 }
 
@@ -191,7 +191,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     NSLog(@"carry out %lu waiting task(s)...", waitingList.count);
     for (PackageHandler *wrapper in waitingList) {
         if ([_fsm.currentState.name isEqualToString:kDIMServerState_Running]) {
-            [self sendPackage:wrapper.data completionHandler:wrapper.handler];
+            [self sendPackageData:wrapper.data completionHandler:wrapper.handler priority:1];
             [_waitingList removeObject:wrapper];
         } else {
             NSLog(@"connection lost again, waiting task(s) interrupted");
@@ -293,7 +293,9 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 
 #pragma mark DIMMessengerDelegate
 
-- (BOOL)sendPackage:(NSData *)data completionHandler:(nullable DIMMessengerCompletionHandler)handler {
+- (BOOL)sendPackageData:(NSData *)data
+      completionHandler:(nullable DIMMessengerCompletionHandler)handler
+               priority:(NSInteger)prior {
     NSLog(@"sending data len: %ld", data.length);
     NSAssert(_star, @"star not found");
     
