@@ -127,12 +127,12 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     if (chatBox.delegate == nil) {
         chatBox.delegate = _conversationDelegate;
     }
-    id<MKMID>ID = chatBox.ID;
+    id<MKMID> ID = chatBox.ID;
     [_conversations setObject:chatBox forKey:ID.address];
 }
 
 - (void)removeConversation:(DIMConversation *)chatBox {
-    id<MKMID>ID = chatBox.ID;
+    id<MKMID> ID = chatBox.ID;
     [_conversations removeObjectForKey:ID.address];
 }
 
@@ -141,7 +141,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 @implementation DIMAmanuensis (Message)
 
 - (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
-    id<DKDContent>content = iMsg.content;
+    id<DKDContent> content = iMsg.content;
     if ([content isKindOfClass:[DIMReceiptCommand class]]) {
         // it's a receipt
         NSLog(@"update target msg.state with receipt: %@", content);
@@ -179,7 +179,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
 }
 
 - (BOOL)saveReceipt:(id<DKDInstantMessage>)iMsg {
-    id<DKDContent>content = iMsg.content;
+    id<DKDContent> content = iMsg.content;
     if (![content isKindOfClass:[DIMReceiptCommand class]]) {
         NSAssert(false, @"this is not a receipt: %@", iMsg);
         return NO;
@@ -191,15 +191,15 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     
     // NOTE: this is the receipt's commander,
     //       it can be a station, or the original message's receiver
-    id<MKMID>sender = iMsg.envelope.sender;
+    id<MKMID> sender = iMsg.envelope.sender;
     
     // NOTE: this is the original message's receiver
-    id<MKMID>receiver = receipt.envelope.receiver;
+    id<MKMID> receiver = receipt.envelope.receiver;
     
     // FIXME: only the real receiver will know the exact message detail, so
     //        the station may not know if this is a group message.
     //        maybe we should try another way to search the exact conversation.
-    id<MKMID>groupID = receipt.group;
+    id<MKMID> groupID = receipt.group;
     
     if (receiver == nil) {
         NSLog(@"receiver not found, it's not a receipt for instant message");
@@ -215,7 +215,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     }
     
     NSAssert(chatBox, @"chat box not found for receipt: %@", receipt);
-    id<DKDInstantMessage>targetMessage;
+    id<DKDInstantMessage> targetMessage;
     targetMessage = [self _conversation:chatBox messageMatchReceipt:receipt];
     if (targetMessage) {
         DKDContent *targetContent = targetMessage.content;

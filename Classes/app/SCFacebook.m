@@ -63,7 +63,7 @@
 }
 
 - (nullable id<MKMID>)IDWithName:(NSString *)username {
-    id<MKMID>ID = [_database ansRecordForName:username];
+    id<MKMID> ID = [_database ansRecordForName:username];
     if (ID) {
         return ID;
     }
@@ -159,7 +159,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
         return nil;
     }
     // try from database
-    id<MKMMeta>meta = [_database metaForID:ID];
+    id<MKMMeta> meta = [_database metaForID:ID];
     if (meta) {
         // is empty?
         if (meta.key) {

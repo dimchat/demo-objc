@@ -150,7 +150,7 @@
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     MKMUser *user = self.currentUser;
     // post current profile to station
-    id<MKMDocument>profile = [user documentWithType:MKMDocument_Visa];
+    id<MKMDocument> profile = [user documentWithType:MKMDocument_Visa];
     if (profile) {
         [messenger postProfile:profile];
     }

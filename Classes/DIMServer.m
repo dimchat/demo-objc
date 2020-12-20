@@ -159,7 +159,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     // first handshake?
     if (cmd.state == DIMHandshake_Start) {
-        rMsg.meta = _currentUser.meta;
+        rMsg.meta = [_currentUser meta];
+        rMsg.visa = [_currentUser documentWithType:MKMDocument_Visa];
     }
     
     // send out directly
@@ -317,7 +318,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg {
-    id<MKMID>sender = iMsg.envelope.sender;
+    id<MKMID> sender = iMsg.envelope.sender;
     DIMFileContent *content = (DIMFileContent *)iMsg.content;
     NSString *filename = content.filename;
     

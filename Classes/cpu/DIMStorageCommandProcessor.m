@@ -43,7 +43,7 @@
 
 - (nullable id<DKDContent>)_saveContacts:(NSArray *)contacts forUser:(MKMUser *)user {
     DIMFacebook *facebook = self.facebook;
-    id<MKMID>ID;
+    id<MKMID> ID;
     for (NSString *item in contacts) {
         ID = MKMIDFromString(item);
         // request contact/group meta and save to local

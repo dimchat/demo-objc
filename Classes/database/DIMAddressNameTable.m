@@ -81,7 +81,7 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
 
 - (CacheTableM *)_loadRecords {
     CacheTableM *caches = [[CacheTableM alloc] init];
-    id<MKMID>ID;
+    id<MKMID> ID;
     NSString *path = [self _ansFilePath];
     NSLog(@"loading ANS records from: %@", path);
     NSDictionary *dict = [self dictionaryWithContentsOfFile:path];

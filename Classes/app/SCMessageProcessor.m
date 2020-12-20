@@ -102,14 +102,14 @@ static inline void load_cpu_classes(void) {
 // check whether need to update group
 - (BOOL)isWaitingGroup:(id<DKDContent>)content sender:(id<MKMID>)sender {
     // Check if it is a group message, and whether the group members info needs update
-    id<MKMID>group = content.group;
+    id<MKMID> group = content.group;
     if (!group || MKMIDIsBroadcast(group)) {
         // 1. personal message
         // 2. broadcast message
         return NO;
     }
     // chek meta for new group ID
-    id<MKMMeta>meta = [self.facebook metaForID:group];
+    id<MKMMeta> meta = [self.facebook metaForID:group];
     if (!meta) {
         // NOTICE: if meta for group not found,
         //         facebook should query it from DIM network automatically
@@ -175,7 +175,7 @@ static inline void load_cpu_classes(void) {
     }
     /*
     if ([res isKindOfClass:[DIMReceiptCommand class]]) {
-        id<MKMID>receiver = rMsg.envelope.receiver;
+        id<MKMID> receiver = rMsg.envelope.receiver;
         if (MKMNetwork_IsStation(receiver.type)) {
             // no need to respond receipt to station
             return nil;
@@ -184,7 +184,7 @@ static inline void load_cpu_classes(void) {
      */
     
     // check receiver
-    id<MKMID>receiver = rMsg.envelope.receiver;
+    id<MKMID> receiver = rMsg.envelope.receiver;
     MKMUser *user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     

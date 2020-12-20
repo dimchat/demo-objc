@@ -94,7 +94,7 @@
     while ([s next]) {
         
         NSString *IDString = [s stringForColumnIndex:0];
-        id<MKMID>ID = MKMIDFromString(IDString);
+        id<MKMID> ID = MKMIDFromString(IDString);
         [array addObject:ID];
     }
     return array;
@@ -211,7 +211,7 @@
     while ([s next]) {
         
         NSString *IDString = [s stringForColumnIndex:0];
-        id<MKMID>ID = MKMIDFromString(IDString);
+        id<MKMID> ID = MKMIDFromString(IDString);
         [array addObject:ID];
     }
     return array;
@@ -242,7 +242,7 @@
             @"status": [NSNumber numberWithInteger:status]
         };
         
-        id<DKDInstantMessage>msg = DKDInstantMessageFromDictionary(messageDict);
+        id<DKDInstantMessage> msg = DKDInstantMessageFromDictionary(messageDict);
         if (!msg) {
             NSAssert(false, @"message invalid: %@", messageDict);
             continue;

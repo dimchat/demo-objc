@@ -67,8 +67,8 @@
         return nil;
     }
     
-    id<MKMID>ID = MKMIDFromString([dict objectForKey:@"ID"]);
-    id<MKMMeta>meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
+    id<MKMID> ID = MKMIDFromString([dict objectForKey:@"ID"]);
+    id<MKMMeta> meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
     
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     [facebook saveMeta:meta forID:ID];
@@ -116,7 +116,7 @@
     if (founder) {
         return [founder isEqual:ID];
     } else {
-        id<MKMMeta>meta = [self meta];
+        id<MKMMeta> meta = [self meta];
         id<MKMVerifyKey> PK = [DIMMetaForID(ID) key];
         //NSAssert(PK, @"failed to get meta for ID: %@", ID);
         return [meta matchPublicKey:PK];

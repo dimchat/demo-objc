@@ -54,12 +54,12 @@
     }
     // get key with direction
     id<MKMSymmetricKey> key;
-    id<MKMID>sender = rMsg.envelope.sender;
-    id<MKMID>group = rMsg.envelope.group;
+    id<MKMID> sender = rMsg.envelope.sender;
+    id<MKMID> group = rMsg.envelope.group;
     if (group) {
         key = [self.keyCache cipherKeyFrom:sender to:group generate:NO];
     } else {
-        id<MKMID>receiver = rMsg.envelope.receiver;
+        id<MKMID> receiver = rMsg.envelope.receiver;
         key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
     }
     // get key data

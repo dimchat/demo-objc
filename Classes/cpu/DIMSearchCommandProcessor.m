@@ -50,8 +50,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
         return;
     }
     DIMFacebook *facebook = self.facebook;
-    id<MKMID>ID;
-    id<MKMMeta>meta;
+    id<MKMID> ID;
+    id<MKMMeta> meta;
     NSString *key;
     NSDictionary *value;
     for (key in result) {

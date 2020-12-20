@@ -39,8 +39,8 @@
 
 #import "DIMCommand+Extension.h"
 
-static inline NSString *readable_name(id<MKMID>ID) {
-    id<MKMDocument>profile = DIMDocumentForID(ID, @"*");
+static inline NSString *readable_name(id<MKMID> ID) {
+    id<MKMDocument> profile = DIMDocumentForID(ID, @"*");
     NSString *nickname = profile.name;
     NSString *username = ID.name;
     if (nickname) {
@@ -154,7 +154,7 @@ NSString *DIMGroupCommand_BuildText(DIMGroupCommand *cmd, id<MKMID>commander) {
 #pragma mark System Commands
 
 NSString *DIMLoginCommand_BuildText(DIMLoginCommand *cmd, id<MKMID>commander) {
-    id<MKMID>ID = cmd.ID;
+    id<MKMID> ID = cmd.ID;
     NSDictionary *station = cmd.stationInfo;
     NSString *format = NSLocalizedString(@"%@ login: %@", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(ID), station];
@@ -176,7 +176,7 @@ NSString *DIMCommand_BuildText(DIMCommand *cmd, id<MKMID>commander) {
     return [NSString stringWithFormat:format, [cmd command]];
 }
 
-NSString *DIMContent_BuildText(id<DKDContent>content) {
+NSString *DIMContent_BuildText(id<DKDContent> content) {
     // Text
     if ([content isKindOfClass:[DIMTextContent class]]) {
         return [(DIMTextContent *)content text];

@@ -80,7 +80,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
         return _users;
     }
     _users = [[NSMutableArray alloc] init];
-    id<MKMID>ID;
+    id<MKMID> ID;
     
     NSString *path = [self _usersFilePath];
     NSLog(@"loading users: %@", path);
@@ -124,7 +124,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     }
     NSLog(@"contacts from %@", path);
     NSMutableArray<id<MKMID>> *contacts;
-    id<MKMID>ID;
+    id<MKMID> ID;
     contacts = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (NSString *item in array) {
         ID = MKMIDFromString(item);

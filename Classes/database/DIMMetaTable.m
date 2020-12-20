@@ -98,7 +98,7 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
 }
 
 - (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
-    id<MKMMeta>meta = [_caches objectForKey:ID];
+    id<MKMMeta> meta = [_caches objectForKey:ID];
     if (meta) {
         if (meta == _emptyMeta) {
             NSLog(@"meta not found: %@", ID);

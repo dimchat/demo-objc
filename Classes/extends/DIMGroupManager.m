@@ -84,7 +84,7 @@
 - (BOOL)_sendGroupCommand:(DIMCommand *)cmd to:(NSArray<id<MKMID>> *)members {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     BOOL OK = YES;
-    for (id<MKMID>receiver in members) {
+    for (id<MKMID> receiver in members) {
         if (![messenger sendContent:cmd receiver:receiver]) {
             OK = NO;
         }
@@ -97,9 +97,9 @@
     DIMCommand *cmd;
     
     // 0. send 'meta/profile' command to new members
-    id<MKMMeta>meta = [facebook metaForID:self.group];
+    id<MKMMeta> meta = [facebook metaForID:self.group];
     NSAssert(meta, @"failed to get meta for group: %@", self.group);
-    id<MKMDocument>profile = [facebook documentForID:self.group
+    id<MKMDocument> profile = [facebook documentForID:self.group
                                                 type:MKMDocument_Bulletin];
     if ([[profile propertyKeys] count] == 0) {
         cmd = [[DIMMetaCommand alloc] initWithID:self.group
@@ -224,7 +224,7 @@
         mArray = [[NSMutableArray alloc] initWithCapacity:newMembers.count];
     }
     BOOL count = 0;
-    for (id<MKMID>ID in newMembers) {
+    for (id<MKMID> ID in newMembers) {
         if ([mArray containsObject:ID]) {
             NSLog(@"member %@ already exists, group: %@", ID, self.group);
             continue;
@@ -248,7 +248,7 @@
         mArray = [[NSMutableArray alloc] initWithCapacity:outMembers.count];
     }
     BOOL count = 0;
-    for (id<MKMID>ID in outMembers) {
+    for (id<MKMID> ID in outMembers) {
         if (![mArray containsObject:ID]) {
             NSLog(@"member %@ not exists, group: %@", ID, self.group);
             continue;

@@ -204,7 +204,7 @@
     // check each member's public key with group meta
     id<MKMMeta>gMeta = [self metaForID:group];
     NSArray<id<MKMID>> *members = [self membersOfGroup:group];
-    id<MKMMeta>meta;
+    id<MKMMeta> meta;
     for (id<MKMID>member in members) {
         // if the user's public key matches with the group's meta,
         // it means this meta was generate by the user's private key

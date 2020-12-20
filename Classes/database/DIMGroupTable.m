@@ -82,7 +82,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     }
     NSLog(@"members from %@", path);
     NSMutableArray<id<MKMID>> *members;
-    id<MKMID>ID;
+    id<MKMID> ID;
     members = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (NSString *item in array) {
         ID = MKMIDFromString(item);

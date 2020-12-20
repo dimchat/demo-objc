@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param url - avatar URL
  * @return User object
  */
-- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(NSString *)url;
+- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url;
 
 /**
  *  Generate group account (Polylogue)
@@ -72,16 +72,17 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return private key (RSA)
  */
-- (id<MKMPrivateKey>)generatePrivateKey;
-- (id<MKMPrivateKey>)generatePrivateKey:(NSString *)algorithm;
+- (__kindof id<MKMPrivateKey>)generatePrivateKey;
+- (__kindof id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm;
 
 /**
  *  Step 2. generate meta with private key (and meta seed)
  *
- * @param seed - "username" or "group-name"
+ * @param name - "username" or "group-name"
  * @return meta
  */
-- (id<MKMMeta>)generateMeta:(NSString *)seed;
+- (__kindof id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name;
+- (__kindof id<MKMMeta>)generateGroupMetaWithSeed:(NSString *)name;
 
 /**
  *  Step 3. generate ID with meta (and network type)
@@ -99,9 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name - user/group name
  * @return user/group profile
  */
-- (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name;
-- (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
-- (id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info;
+- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name;
+- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
+- (__kindof id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info;
 
 /**
  *  Step 5. upload meta & profile for ID

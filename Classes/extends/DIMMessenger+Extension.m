@@ -99,13 +99,13 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 - (BOOL)postProfile:(id<MKMDocument>)profile {
     MKMUser *user = [self.facebook currentUser];
-    id<MKMID>ID = user.ID;
+    id<MKMID> ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return NO;
     }
     
-    id<MKMMeta>meta = user.meta;
+    id<MKMMeta> meta = user.meta;
     if (![profile verify:meta.key]){
         return NO;
     }
@@ -117,7 +117,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 - (BOOL)broadcastProfile:(id<MKMDocument>)profile {
     MKMUser *user = [self.facebook currentUser];
-    id<MKMID>ID = user.ID;
+    id<MKMID> ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
         return NO;

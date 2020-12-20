@@ -49,20 +49,20 @@
     return self;
 }
 
-- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(NSString *)url {
+- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url {
     // 1. generate private key
-    [self generatePrivateKey];
+    _key = [self generatePrivateKey];
     // 2. generate meta
-    id<MKMMeta>meta = [self generateMeta:@"user"];
+    id<MKMMeta> meta = [self generateUserMetaWithSeed:@"user"];
     // 3. generate ID
-    id<MKMID>ID = [self generateIDWithMeta:meta];
+    id<MKMID> ID = [self generateIDWithMeta:meta];
     // 4. generate profile
-    id<MKMDocument>profile = [self createProfileWithID:ID name:nickname avatar:url];
+    id<MKMDocument> profile = [self createProfileWithID:ID name:nickname avatar:url];
     // 5. save private key, meta & profile in local storage
     //    don't forget to upload them onto the DIM station
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    [facebook saveMeta:meta forID:ID];
     [facebook savePrivateKey:_key type:DIMPrivateKeyType_Meta user:ID];
+    [facebook saveMeta:meta forID:ID];
     [facebook saveDocument:profile];
     // 6. create user
     return [facebook userWithID:ID];
@@ -81,11 +81,11 @@
     // 1. get private key
     _key = (id<MKMPrivateKey>)[facebook privateKeyForSignature:founder];
     // 2. generate meta
-    id<MKMMeta>meta = [self generateMeta:seed];
+    id<MKMMeta> meta = [self generateGroupMetaWithSeed:seed];
     // 3. generate ID
-    id<MKMID>group = [self generateIDWithMeta:meta network:MKMNetwork_Polylogue];
+    id<MKMID> group = [self generateIDWithMeta:meta network:MKMNetwork_Polylogue];
     // 4. generate profile
-    id<MKMDocument>profile = [self createProfileWithID:group name:name];
+    id<MKMDocument> profile = [self createProfileWithID:group name:name];
     // 5. save meta & profile in local storage
     //    don't forget to upload them onto the DIM station
     [facebook saveMeta:meta forID:group];
@@ -96,17 +96,27 @@
     return [facebook groupWithID:group];
 }
 
-- (id<MKMPrivateKey>)generatePrivateKey {
-    return [self generatePrivateKey:ACAlgorithmRSA];
+- (__kindof id<MKMPrivateKey>)generatePrivateKey {
+    return [self generatePrivateKeyWithAlgorithm:ACAlgorithmECC];
 }
 
-- (id<MKMPrivateKey>)generatePrivateKey:(NSString *)algorithm {
+- (__kindof id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm {
     return MKMPrivateKeyWithAlgorithm(algorithm);
 }
 
-- (id<MKMMeta>)generateMeta:(NSString *)seed {
+- (__kindof id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name {
+    // meta type "ETH" has no seed
+    name = nil;
+    return [self generateMetaWithType:MKMMetaVersion_ETH seed:name];
+}
+
+- (__kindof id<MKMMeta>)generateGroupMetaWithSeed:(NSString *)name {
+    return [self generateMetaWithType:MKMMetaDefaultVersion seed:name];
+}
+
+- (__kindof id<MKMMeta>)generateMetaWithType:(MKMMetaType)type seed:(nullable NSString *)name {
     NSAssert(_key, @"private key not set yet");
-    return MKMMetaGenerate(MKMMetaDefaultVersion, _key, seed);
+    return MKMMetaGenerate(type, _key, name);
 }
 
 - (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta {
@@ -117,22 +127,28 @@
     return [meta generateID:type terminal:nil];
 }
 
-- (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name {
+- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name {
     return [self createProfileWithID:ID name:name avatar:nil];
 }
 
-- (id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
+- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
     NSAssert(_key, @"private key not set yet");
     id<MKMVisa> profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
     [profile setName:name];
     if (url) {
         [profile setAvatar:url];
     }
+    if (![_key conformsToProtocol:@protocol(MKMDecryptKey)]) {
+        MKMPrivateKey *sKey = [self generatePrivateKeyWithAlgorithm:ACAlgorithmRSA];
+        DIMFacebook *facebook = [DIMFacebook sharedInstance];
+        [facebook savePrivateKey:sKey type:DIMPrivateKeyType_Visa user:ID];
+        [profile setKey:sKey.publicKey];
+    }
     [profile sign:_key];
     return profile;
 }
 
-- (id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info {
+- (__kindof id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info {
     NSAssert(_key, @"private key not set yet");
     id<MKMVisa> profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
     for (NSString *name in info) {

@@ -108,7 +108,7 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
 
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type {
-    id<MKMDocument>profile = [_caches objectForKey:ID];
+    id<MKMDocument> profile = [_caches objectForKey:ID];
     if (!profile) {
         // first access, try to load from local storage
         profile = [self _loadProfileForID:ID];
@@ -132,15 +132,15 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
     if (![self _cacheProfile:profile]) {
         return NO;
     }
-    id<MKMID>ID = profile.ID;
+    id<MKMID> ID = profile.ID;
     NSString *path = [self _filePathWithID:ID];
     NSLog(@"saving profile into: %@", path);
     BOOL result = [self dictionary:profile.dictionary writeToBinaryFile:path];
     
-    if(result){
+    if (result) {
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc postNotificationName:kNotificationName_ProfileUpdated object:nil
-                        userInfo:@{@"ID":profile.ID}];
+                        userInfo:profile.dictionary];
     }
     
     return result;
