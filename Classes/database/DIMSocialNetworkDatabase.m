@@ -217,7 +217,7 @@
 }
 
 - (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group {
-    id<MKMID>owner = [_groupTable ownerOfGroup:group];
+    id<MKMID> owner = [_groupTable ownerOfGroup:group];
     if (owner) {
         return owner;
     }

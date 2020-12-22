@@ -128,7 +128,7 @@
         return [self isFounder:ID];
     }
     // check owner
-    id<MKMID>owner = [self owner];
+    id<MKMID> owner = [self owner];
     return [owner isEqual:ID];
 }
 

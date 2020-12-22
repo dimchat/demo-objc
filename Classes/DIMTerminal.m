@@ -229,7 +229,7 @@
                   profile:(nullable id<MKMDocument>)profile {
     DIMGroupManager *gm = [[DIMGroupManager alloc] initWithGroupID:group];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
-    id<MKMID>owner = [facebook ownerOfGroup:group];
+    id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
     MKMUser *user = self.currentUser;
 

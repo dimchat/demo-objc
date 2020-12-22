@@ -112,7 +112,7 @@
     [self _sendGroupCommand:cmd to:newMembers];
     
     // 1. send 'invite' command with new members to existed members
-    id<MKMID>owner = [facebook ownerOfGroup:self.group];
+    id<MKMID> owner = [facebook ownerOfGroup:self.group];
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSAssert([assistants count] > 0, @"failed to get assistant for group: %@", self.group);
@@ -141,7 +141,7 @@
 - (BOOL)expel:(NSArray<id<MKMID>> *)outMembers {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     
-    id<MKMID>owner = [facebook ownerOfGroup:self.group];
+    id<MKMID> owner = [facebook ownerOfGroup:self.group];
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSAssert(owner, @"failed to get owner group: %@", self.group);
@@ -178,7 +178,7 @@
 - (BOOL)quit:(id<MKMID>)me {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     
-    id<MKMID>owner = [facebook ownerOfGroup:self.group];
+    id<MKMID> owner = [facebook ownerOfGroup:self.group];
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:self.group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:self.group];
     NSAssert(owner, @"failed to get owner group: %@", self.group);

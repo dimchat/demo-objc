@@ -69,9 +69,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
 }
 
 - (DIMMessageProcessor *)newMessageProcessor {
-    return [[SCMessageProcessor alloc] initWithFacebook:self.facebook
-                                              messenger:self
-                                                 packer:self.messagePacker];
+    return [[SCMessageProcessor alloc] initWithMessenger:self];
 }
 
 - (DIMStation *)currentServer {
@@ -138,28 +136,6 @@ SingletonImplementations(SCMessenger, sharedInstance)
         }
     }
     return checking;
-}
-
-- (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver {
-    DKDContent *cont = (DKDContent *)content;
-    DIMMessengerCallback callback = ^(id<DKDReliableMessage> rMsg, NSError *error) {
-        NSString *name = nil;
-        if (error) {
-            NSLog(@"send message error: %@", error);
-            name = kNotificationName_SendMessageFailed;
-            cont.state = DIMMessageState_Error;
-            cont.error = [error localizedDescription];
-        } else {
-            NSLog(@"sent message: %@ -> %@", content, rMsg);
-            name = kNotificationName_MessageSent;
-            cont.state = DIMMessageState_Accepted;
-        }
-        
-        NSDictionary *info = @{@"content": content};
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc postNotificationName:name object:self userInfo:info];
-    };
-    return [self sendContent:content receiver:receiver callback:callback priority:1];
 }
 
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg

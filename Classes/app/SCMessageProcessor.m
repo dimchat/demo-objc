@@ -79,10 +79,8 @@ static inline void load_cpu_classes(void) {
 
 @implementation SCMessageProcessor
 
-- (instancetype)initWithFacebook:(DIMFacebook *)barrack
-                       messenger:(DIMMessenger *)transceiver
-                          packer:(DIMPacker *)messagePacker {
-    if (self = [super initWithFacebook:barrack messenger:transceiver packer:messagePacker]) {
+- (instancetype)initWithMessenger:(DIMMessenger *)transceiver {
+    if (self = [super initWithMessenger:transceiver]) {
         
         // register CPU classes
         SingletonDispatchOnce(^{
@@ -91,6 +89,10 @@ static inline void load_cpu_classes(void) {
         });
     }
     return self;
+}
+
+- (DIMFacebook *)facebook {
+    return [self.messenger facebook];
 }
 
 - (BOOL)isEmptyGroup:(id<MKMID>)group {
@@ -145,7 +147,7 @@ static inline void load_cpu_classes(void) {
             [mArray addObject:item];
         }
         // if owner found, query it
-        id<MKMID>owner = [self.facebook ownerOfGroup:group];
+        id<MKMID> owner = [self.facebook ownerOfGroup:group];
         if (owner && ![mArray containsObject:owner]) {
             [mArray addObject:owner];
         }
