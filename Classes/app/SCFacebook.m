@@ -121,10 +121,6 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return _allUsers;
 }
 
-- (nullable MKMUser *)currentUser {
-    return [super currentUser];
-}
-
 - (void)setCurrentUser:(MKMUser *)user {
     if (!user) {
         NSAssert(false, @"current user cannot be empty");
@@ -145,6 +141,28 @@ SingletonImplementations(SCFacebook, sharedInstance)
 
 - (BOOL)saveUsers:(NSArray<id<MKMID>> *)list {
     return [_database saveUsers:list];
+}
+
+- (BOOL)isWaitingMeta:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
+        // broadcast ID doesn't contain meta
+        return NO;
+    }
+    return [self metaForID:ID] == nil;
+}
+
+- (nullable MKMUser *)createUser:(id<MKMID>)ID {
+    if ([self isWaitingMeta:ID]) {
+        return nil;
+    }
+    return [super createUser:ID];
+}
+
+- (nullable MKMGroup *)createGroup:(id<MKMID>)ID {
+    if ([self isWaitingMeta:ID]) {
+        return nil;
+    }
+    return [super createGroup:ID];
 }
 
 #pragma mark Storage
@@ -287,10 +305,15 @@ SingletonImplementations(SCFacebook, sharedInstance)
 
 - (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)ID {
     return [_database contactsOfUser:ID];
+    //return [super contactsOfUser:ID];
 }
 
 - (nullable NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
-    return [_database membersOfGroup:group];
+    NSArray<id<MKMID>> *members = [_database membersOfGroup:group];
+    if (members.count > 0) {
+        return members;
+    }
+    return [super membersOfGroup:group];
 }
 
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {

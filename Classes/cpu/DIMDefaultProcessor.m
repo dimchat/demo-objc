@@ -73,7 +73,7 @@
         text = @"Web page received";
     } else {
         text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
-        id<DKDContent>res = [[DIMTextContent alloc] initWithText:text];
+        id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
         res.group = content.group;
         return res;
     }
