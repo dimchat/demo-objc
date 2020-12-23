@@ -119,11 +119,26 @@
     id<MKMID> sender = rMsg.sender;
     if ([self isWaitingGroup:content sender:sender]) {
         // save this message in a queue to wait group meta response
+        [rMsg setObject:rMsg.group forKey:@"waiting"];
         [self.messenger suspendMessage:rMsg];
         return nil;
     }
     
-    id<DKDContent> res = [super processContent:content withMessage:rMsg];
+    id<DKDContent> res;
+    @try {
+        res = [super processContent:content withMessage:rMsg];
+    } @catch (NSException *e) {
+        if ([e.name isEqualToString:@"GroupError"]) {
+            NSAssert([e.reason isEqualToString:@"not ready"], @"error: %@", e);
+            id<MKMID> group = [e.userInfo objectForKey:@"group"];
+            if (group) {
+                [rMsg setObject:group forKey:@"waiting"];
+                [self.messenger suspendMessage:rMsg];
+            }
+        }
+    } @finally {
+        //
+    }
     if (!res) {
         // respond nothing
         return nil;
@@ -132,15 +147,14 @@
         // urgent command
         return res;
     }
-    /*
+    
     if ([res isKindOfClass:[DIMReceiptCommand class]]) {
-        id<MKMID> receiver = rMsg.envelope.receiver;
-        if (MKMNetwork_IsStation(receiver.type)) {
+        if (MKMNetwork_IsStation(sender.type)) {
             // no need to respond receipt to station
             return nil;
         }
+        NSLog(@"receipt to sender: %@", sender);
     }
-     */
     
     // check receiver
     id<MKMID> receiver = rMsg.envelope.receiver;

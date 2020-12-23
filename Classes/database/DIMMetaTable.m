@@ -37,6 +37,8 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "DIMClientConstants.h"
+
 #import "DIMMetaTable.h"
 
 typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
@@ -133,7 +135,18 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
         return YES;
     }
     NSLog(@"saving meta into: %@", path);
-    return [self dictionary:meta.dictionary writeToBinaryFile:path];
+    BOOL result = [self dictionary:meta.dictionary writeToBinaryFile:path];
+    
+    if (result) {
+        NSDictionary *info = @{
+            @"ID": ID,
+            @"meta": meta,
+        };
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:kNotificationName_MetaSaved object:nil userInfo:info];
+    }
+    
+    return result;
 }
 
 @end

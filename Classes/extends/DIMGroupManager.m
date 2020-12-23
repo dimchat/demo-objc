@@ -98,6 +98,12 @@
     
     // 0. send 'meta/profile' command to new members
     id<MKMMeta> meta = [facebook metaForID:self.group];
+    if (!meta) {
+        NSDictionary *info = @{
+            @"group" : self.group,
+        };
+        @throw [NSException exceptionWithName:@"GroupError" reason:@"not ready" userInfo:info];
+    }
     NSAssert(meta, @"failed to get meta for group: %@", self.group);
     id<MKMDocument> profile = [facebook documentForID:self.group
                                                 type:MKMDocument_Bulletin];

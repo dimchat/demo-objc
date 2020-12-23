@@ -39,6 +39,7 @@
 
 #import "DIMSearchCommand.h"
 
+#import "SCMessageDataSource.h"
 #import "DIMAmanuensis.h"
 
 #import "DIMFacebook+Extension.h"
@@ -58,8 +59,9 @@ SingletonImplementations(SCMessenger, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         
-        self.barrack = [DIMFacebook sharedInstance];
         self.keyCache = [SCKeyStore sharedInstance];
+        self.dataSource = [SCMessageDataSource sharedInstance];
+        self.barrack = [DIMFacebook sharedInstance];
         
         // query tables
         _metaQueryTable    = [[NSMutableDictionary alloc] init];
@@ -153,90 +155,6 @@ SingletonImplementations(SCMessenger, sharedInstance)
         }
     }
     return [super message:iMsg serializeKey:password];
-}
-
-#pragma mark Storage
-
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
-    id<DKDContent> content = iMsg.content;
-    // TODO: check message type
-    //       only save normal message and group commands
-    //       ignore 'Handshake', ...
-    //       return true to allow responding
-    
-    if ([content isKindOfClass:[DIMHandshakeCommand class]]) {
-        // handshake command will be processed by CPUs
-        // no need to save handshake command here
-        return YES;
-    }
-    if ([content isKindOfClass:[DIMMetaCommand class]]) {
-        // meta & profile command will be checked and saved by CPUs
-        // no need to save meta & profile command here
-        return YES;
-    }
-    if ([content isKindOfClass:[DIMMuteCommand class]] ||
-        [content isKindOfClass:[DIMBlockCommand class]]) {
-        // TODO: create CPUs for mute & block command
-        // no need to save mute & block command here
-        return YES;
-    }
-    if ([content isKindOfClass:[DIMSearchCommand class]]) {
-        // search result will be parsed by CPUs
-        // no need to save search command here
-        return YES;
-    }
-    if ([content isKindOfClass:[DIMForwardContent class]]) {
-        // forward content will be parsed, if secret message decrypted, save it
-        // no need to save forward content itself
-        return YES;
-    }
-    
-    if ([content isKindOfClass:[DIMInviteCommand class]]) {
-        // send keys again
-        id<MKMID>me = iMsg.envelope.receiver;
-        id<MKMID> group = content.group;
-        id<MKMSymmetricKey>key = [self.keyCache cipherKeyFrom:me to:group generate:NO];
-        [key removeObjectForKey:@"reused"];
-        NSLog(@"key (%@ => %@): %@", me, group, key);
-    }
-    if ([content isKindOfClass:[DIMQueryGroupCommand class]]) {
-        // FIXME: same query command sent to different members?
-        return YES;
-    }
-    
-    if ([content isKindOfClass:[DIMStorageCommand class]]) {
-        return YES;
-    }
-    
-    //Check whether is a command
-    if ([content isKindOfClass:[DIMLoginCommand class]]) {
-        return YES;
-    }
-    
-    if([content isKindOfClass:[DIMCommand class]]){
-        DIMCommand *command = (DIMCommand *)content;
-        if([command.command isEqualToString:@"broadcast"]){
-            NSLog(@"It is a broadcast command, skip : %@", content);
-            return YES;
-        }
-    }
-    
-    DIMAmanuensis *clerk = [DIMAmanuensis sharedInstance];
-    
-    if ([content isKindOfClass:[DIMReceiptCommand class]]) {
-        return [clerk saveReceipt:iMsg];
-    } else {
-        return [clerk saveMessage:iMsg];
-    }
-}
-
-- (BOOL)suspendMessage:(id<DKDMessage>)msg {
-    if ([msg conformsToProtocol:@protocol(DKDReliableMessage)]) {
-        // TODO: save this message in a queue waiting sender's meta response
-    } else if ([msg conformsToProtocol:@protocol(DKDInstantMessage)]) {
-        // TODO: save this message in a queue waiting receiver's meta response
-    }
-    return NO;
 }
 
 @end

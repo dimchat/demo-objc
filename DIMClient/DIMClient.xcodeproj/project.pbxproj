@@ -40,6 +40,8 @@
 		E921FC6A2593250A001ACA11 /* DIMBlockCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E921FC682593250A001ACA11 /* DIMBlockCommandProcessor.m */; };
 		E921FC6D2593429B001ACA11 /* DIMMessageProcessor+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E921FC6B2593429B001ACA11 /* DIMMessageProcessor+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E921FC6E2593429B001ACA11 /* DIMMessageProcessor+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E921FC6C2593429B001ACA11 /* DIMMessageProcessor+Extension.m */; };
+		E921FC75259359BB001ACA11 /* SCMessageDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E921FC73259359BB001ACA11 /* SCMessageDataSource.h */; };
+		E921FC76259359BB001ACA11 /* SCMessageDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = E921FC74259359BB001ACA11 /* SCMessageDataSource.m */; };
 		E94901332392696300107C06 /* DIMStorageCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E94901312392696300107C06 /* DIMStorageCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E94901342392696300107C06 /* DIMStorageCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E94901322392696300107C06 /* DIMStorageCommandProcessor.m */; };
 		E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */ = {isa = PBXBuildFile; fileRef = E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -226,6 +228,8 @@
 		E921FC682593250A001ACA11 /* DIMBlockCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMBlockCommandProcessor.m; sourceTree = "<group>"; };
 		E921FC6B2593429B001ACA11 /* DIMMessageProcessor+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIMMessageProcessor+Extension.h"; sourceTree = "<group>"; };
 		E921FC6C2593429B001ACA11 /* DIMMessageProcessor+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMMessageProcessor+Extension.m"; sourceTree = "<group>"; };
+		E921FC73259359BB001ACA11 /* SCMessageDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCMessageDataSource.h; sourceTree = "<group>"; };
+		E921FC74259359BB001ACA11 /* SCMessageDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessageDataSource.m; sourceTree = "<group>"; };
 		E94901312392696300107C06 /* DIMStorageCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorageCommandProcessor.h; sourceTree = "<group>"; };
 		E94901322392696300107C06 /* DIMStorageCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorageCommandProcessor.m; sourceTree = "<group>"; };
 		E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAmanuensis.h; sourceTree = "<group>"; };
@@ -543,6 +547,8 @@
 				E953814E258E4E5C0016F2F4 /* SCMessagePacker.m */,
 				E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */,
 				E99B1FED25852D8F001A05F1 /* SCMessageProcessor.m */,
+				E921FC73259359BB001ACA11 /* SCMessageDataSource.h */,
+				E921FC74259359BB001ACA11 /* SCMessageDataSource.m */,
 				E99B1FF025852DA4001A05F1 /* SCMessenger.h */,
 				E99B1FF125852DA4001A05F1 /* SCMessenger.m */,
 			);
@@ -590,6 +596,7 @@
 			files = (
 				E959658823919E0600DAA870 /* DIMSearchCommand.h in Headers */,
 				E94901332392696300107C06 /* DIMStorageCommandProcessor.h in Headers */,
+				E921FC75259359BB001ACA11 /* SCMessageDataSource.h in Headers */,
 				E989F65A244EED17009AA4B6 /* DIMLoginCommandProcessor.h in Headers */,
 				E9705CD4239521A200289441 /* DIMMuteCommandProcessor.h in Headers */,
 				E959658023919D7200DAA870 /* DIMSearchCommandProcessor.h in Headers */,
@@ -819,6 +826,7 @@
 				52DBA30B2340372C0000C2B4 /* FMDatabaseQueue.m in Sources */,
 				E921FC6A2593250A001ACA11 /* DIMBlockCommandProcessor.m in Sources */,
 				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
+				E921FC76259359BB001ACA11 /* SCMessageDataSource.m in Sources */,
 				E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */,
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
 				E99B200425866AD2001A05F1 /* SCKeyStore.m in Sources */,
