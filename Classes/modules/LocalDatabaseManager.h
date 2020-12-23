@@ -29,9 +29,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(NSArray <id<MKMID>>*)muteListForUser:(id<MKMID>)user;
 -(BOOL)isConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
+
+// mute
 -(BOOL)muteConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
 -(BOOL)unmuteConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
 -(BOOL)unmuteAllConversationForUser:(id<MKMID>)user;
+
+// block
+-(BOOL)blockConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
+-(BOOL)unblockConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user;
+-(BOOL)unblockAllConversationForUser:(id<MKMID>)user;
 
 @end
 

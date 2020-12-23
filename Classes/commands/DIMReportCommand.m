@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,44 +28,31 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMSearchCommand.h
+//  DIMReportCommand.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/11/30.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/23.
+//  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMReportCommand.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation DIMReportCommand
 
-#define DIMCommand_Search      @"search"
-#define DIMCommand_OnlineUsers @"users"
+- (instancetype)initWithTitle:(NSString *)title {
+    if (self = [super initWithCommand:DIMCommand_Report]) {
+        self.title = title;
+    }
+    return self;
+}
 
-/*
- *  Command message: {
- *      type : 0x88,
- *      sn   : 123,
- *
- *      command  : "search",        // or "users"
- *
- *      keywords : "keywords",      // keyword string
- *      users    : ["ID"],          // user ID list
- *      results  : {"ID": {meta}, } // user's meta map
- *  }
- */
-@protocol DIMSearchCommand <DIMCommand>
+- (NSString *)title {
+    return [self objectForKey:@"title"];
+}
 
-@property (readonly, strong, nonatomic, nullable) NSString *keywords;
-@property (readonly, strong, nonatomic, nullable) NSArray *users;
-@property (readonly, strong, nonatomic, nullable) NSDictionary *results;
+- (void)setTitle:(NSString *)title {
+    NSAssert(title.length > 0, @"title of report command should not be empty");
+    [self setObject:title forKey:@"title"];
+}
 
 @end
-
-@interface DIMSearchCommand : DIMCommand <DIMSearchCommand>
-
-- (instancetype)initWithKeywords:(NSString *)string;
-
-@end
-
-NS_ASSUME_NONNULL_END

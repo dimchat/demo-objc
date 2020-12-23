@@ -128,6 +128,21 @@
     return success;
 }
 
+-(BOOL)blockConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user {
+    // TODO: insert into block_list
+    return NO;
+}
+
+-(BOOL)unblockConversation:(id<MKMID>)conversation forUser:(id<MKMID>)user {
+    // TODO: delete from block_list
+    return NO;
+}
+
+-(BOOL)unblockAllConversationForUser:(id<MKMID>)user {
+    // TODO: delete from block_list
+    return NO;
+}
+
 -(BOOL)insertConversation:(id<MKMID>)conversationID{
     
     NSString *sql = [NSString stringWithFormat:@"INSERT INTO conversation (conversation_id, name, image, last_message, last_time) VALUES ('%@', '', '', '', 0);", conversationID];

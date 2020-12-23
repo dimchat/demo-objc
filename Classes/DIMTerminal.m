@@ -37,9 +37,13 @@
 
 #import <DIMSDK/DIMSDK.h>
 
+#import "NSDate+Extension.h"
+
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 #import "MKMEntity+Extension.h"
+
+#import "DIMReportCommand.h"
 
 #import "DIMRegister.h"
 #import "DIMGroupManager.h"
@@ -282,6 +286,46 @@
     }
     
     return YES;
+}
+
+@end
+
+@implementation DIMTerminal (Report)
+
+static NSDate *offlineTime = nil;
+
+- (void)reportOnline {
+    MKMUser *user = [self currentUser];
+    if (!user) {
+        return;
+    }
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    DIMStation *server = [messenger currentServer];
+    if (!server) {
+        return;
+    }
+    
+    DIMCommand *cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
+    if (offlineTime) {
+        [cmd setObject:NSStringFromDate(offlineTime) forKey:@"last_time"];
+    }
+    [messenger sendCommand:cmd];
+}
+
+- (void)reportOffline {
+    MKMUser *user = [self currentUser];
+    if (!user) {
+        return;
+    }
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    DIMStation *server = [messenger currentServer];
+    if (!server) {
+        return;
+    }
+    
+    DIMCommand *cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
+    offlineTime = [cmd time];
+    [messenger sendCommand:cmd];
 }
 
 @end

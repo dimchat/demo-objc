@@ -55,6 +55,10 @@
     return self;
 }
 
+- (nullable NSString *)keywords {
+    return [self objectForKey:@"keywords"];
+}
+
 - (nullable NSArray *)users {
     return [self objectForKey:@"users"];
 }
