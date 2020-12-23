@@ -37,7 +37,7 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import "NSDate+Extension.h"
+#import "NSDate+Timestamp.h"
 
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
@@ -307,9 +307,11 @@ static NSDate *offlineTime = nil;
     
     DIMCommand *cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
     if (offlineTime) {
-        [cmd setObject:NSStringFromDate(offlineTime) forKey:@"last_time"];
+        [cmd setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
     }
     [messenger sendCommand:cmd];
+    
+    NSLog(@"[REPORT] user online: %@, %@", user, cmd);
 }
 
 - (void)reportOffline {
@@ -326,6 +328,8 @@ static NSDate *offlineTime = nil;
     DIMCommand *cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
     offlineTime = [cmd time];
     [messenger sendCommand:cmd];
+    
+    NSLog(@"[REPORT] user offline: %@, %@", user, cmd);
 }
 
 @end

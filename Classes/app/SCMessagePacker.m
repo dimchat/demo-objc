@@ -92,7 +92,7 @@
 }
 
 - (nullable id<DKDReliableMessage>)deserializeMessage:(NSData *)data {
-    if ([data length] == 0) {
+    if ([data length] < 2) {
         return nil;
     }
     return [super deserializeMessage:data];
@@ -111,6 +111,7 @@
         [key setObject:@(YES) forKey:@"reused"];
     }
     // TODO: reuse personal message key?
+    
     return sMsg;
 }
 

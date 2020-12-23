@@ -35,66 +35,15 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
-
-#import "DIMSearchCommand.h"
-#import "DIMReportCommand.h"
-
-#import "DIMDefaultProcessor.h"
-
-#import "DIMReceiptCommandProcessor.h"
-#import "DIMMuteCommandProcessor.h"
-#import "DIMBlockCommandProcessor.h"
-#import "DIMHandshakeCommandProcessor.h"
-#import "DIMLoginCommandProcessor.h"
-#import "DIMStorageCommandProcessor.h"
-#import "DIMSearchCommandProcessor.h"
-
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 
 #import "SCMessageProcessor.h"
 
-static inline void load_cmd_classes(void) {
-    DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
-    
-    DIMCommandFactoryRegisterClass(DIMCommand_Report, DIMReportCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Online, DIMReportCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Offline, DIMReportCommand);
-}
-
-static inline void load_cpu_classes(void) {
-    
-    DIMContentProcessorRegisterClass(DKDContentType_Unknown, DIMDefaultContentProcessor);
-    
-    DIMCommandProcessorRegisterClass(DIMCommand_Receipt, DIMReceiptCommandProcessor);
-    DIMCommandProcessorRegisterClass(DIMCommand_Mute, DIMMuteCommandProcessor);
-    DIMCommandProcessorRegisterClass(DIMCommand_Block, DIMBlockCommandProcessor);
-
-    DIMCommandProcessorRegisterClass(DIMCommand_Handshake, DIMHandshakeCommandProcessor);
-    DIMCommandProcessorRegisterClass(DIMCommand_Login, DIMLoginCommandProcessor);
-    
-    DIMStorageCommandProcessor *storeProcessor = [[DIMStorageCommandProcessor alloc] init];
-    DIMCommandProcessorRegister(DIMCommand_Storage, storeProcessor);
-    DIMCommandProcessorRegister(DIMCommand_Contacts, storeProcessor);
-    DIMCommandProcessorRegister(DIMCommand_PrivateKey, storeProcessor);
-    
-    DIMSearchCommandProcessor *searchProcessor = [[DIMSearchCommandProcessor alloc] init];
-    DIMCommandProcessorRegister(DIMCommand_Search, searchProcessor);
-    DIMCommandProcessorRegister(DIMCommand_OnlineUsers, searchProcessor);
-}
-
 @implementation SCMessageProcessor
 
 - (instancetype)initWithMessenger:(DIMMessenger *)transceiver {
     if (self = [super initWithMessenger:transceiver]) {
-        
-        // register CPU classes
-        SingletonDispatchOnce(^{
-            load_cmd_classes();
-            load_cpu_classes();
-        });
     }
     return self;
 }

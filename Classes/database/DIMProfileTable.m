@@ -125,10 +125,6 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
 }
 
 - (BOOL)saveDocument:(id<MKMDocument>)profile {
-    
-    NSDate *now = [[NSDate alloc] init];
-    [profile setObject:NSNumberFromDate(now) forKey:@"lastTime"];
-    
     if (![self _cacheProfile:profile]) {
         return NO;
     }

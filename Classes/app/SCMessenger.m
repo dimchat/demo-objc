@@ -46,6 +46,7 @@
 #import "DIMMessenger+Extension.h"
 
 #import "SCKeyStore.h"
+#import "SCMessagePacker.h"
 #import "SCMessageProcessor.h"
 
 #import "SCMessenger.h"
@@ -68,7 +69,11 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return self;
 }
 
-- (DIMMessageProcessor *)newMessageProcessor {
+- (DIMMessagePacker *)createMessagePacker {
+    return [[SCMessagePacker alloc] initWithMessenger:self];
+}
+
+- (DIMMessageProcessor *)createMessageProcessor {
     return [[SCMessageProcessor alloc] initWithMessenger:self];
 }
 
