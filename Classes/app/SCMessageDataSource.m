@@ -211,7 +211,9 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
 
 - (BOOL)suspendIncomingMessage:(id<DKDReliableMessage>)rMsg {
     id<MKMID> waiting = [rMsg objectForKey:@"waiting"];
-    if (!waiting) {
+    if (waiting) {
+        [rMsg removeObjectForKey:@"waiting"];
+    } else {
         waiting = rMsg.group;
         if (!waiting) {
             waiting = rMsg.sender;
@@ -228,7 +230,9 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
 
 - (BOOL)suspendOutgoingMessage:(id<DKDInstantMessage>)iMsg {
     id<MKMID> waiting = [iMsg objectForKey:@"waiting"];
-    if (!waiting) {
+    if (waiting) {
+        [iMsg removeObjectForKey:@"waiting"];
+    } else {
         waiting = iMsg.group;
         if (!waiting) {
             waiting = iMsg.receiver;
