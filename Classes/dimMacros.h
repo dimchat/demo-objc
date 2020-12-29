@@ -57,13 +57,6 @@
 #define DIMDocument                     id<MKMDocument>
 #define DIMVisa                         id<MKMVisa>
 #define DIMBulletin                     id<MKMBulletin>
-#define DIMEntityDataSource             id<MKMEntityDataSource>
-
-// User
-#define DIMUserDataSource               id<MKMUserDataSource>
-
-// Group
-#define DIMGroupDataSource              id<MKMGroupDataSource>
 
 #import <DaoKeDao/DaoKeDao.h>
 

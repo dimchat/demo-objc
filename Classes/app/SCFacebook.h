@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
     // immortal accounts
     MKMImmortals *_immortals;
     
-    NSMutableArray<MKMUser *> *_allUsers;
+    NSMutableArray<DIMUser *> *_allUsers;
 }
 
 + (instancetype)sharedInstance;

@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMSocialNetworkDatabase : NSObject <MKMUserDataSource, MKMGroupDataSource>
+@interface DIMSocialNetworkDatabase : NSObject <DIMUserDataSource, DIMGroupDataSource>
 
 // Address Name Service
 - (BOOL)saveANSRecord:(id<MKMID>)ID forName:(NSString *)name;

@@ -116,7 +116,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)postProfile:(id<MKMDocument>)profile {
-    MKMUser *user = [self.facebook currentUser];
+    DIMUser *user = [self.facebook currentUser];
     id<MKMID> ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
@@ -134,7 +134,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)broadcastProfile:(id<MKMDocument>)profile {
-    MKMUser *user = [self.facebook currentUser];
+    DIMUser *user = [self.facebook currentUser];
     id<MKMID> ID = user.ID;
     if (![profile.ID isEqual:ID]) {
         NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
@@ -157,7 +157,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)postContacts:(NSArray<id<MKMID>> *)contacts {
-    MKMUser *user = [self.facebook currentUser];
+    DIMUser *user = [self.facebook currentUser];
     NSAssert([contacts count] > 0, @"contacts cannot be empty");
     // generate password
     id<MKMSymmetricKey>password = MKMSymmetricKeyWithAlgorithm(SCAlgorithmAES);
@@ -178,7 +178,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)queryContacts{
-    MKMUser *user = [self.facebook currentUser];
+    DIMUser *user = [self.facebook currentUser];
     // pack 'contacts' command
     DIMStorageCommand *cmd;
     cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];

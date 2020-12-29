@@ -113,7 +113,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return self;
 }
 
-- (void)setCurrentUser:(MKMUser *)newUser {
+- (void)setCurrentUser:(DIMUser *)newUser {
     if (![_currentUser isEqual:newUser]) {
         _currentUser = newUser;
         
@@ -148,7 +148,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
     NSLog(@"handshake command: %@", cmd);
     
-    id<DKDEnvelope> env = DKDEnvelopeCreate(_currentUser.ID, _ID, nil);
+    id<DKDEnvelope> env = DKDEnvelopeCreate(_currentUser.ID, self.ID, nil);
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
     id<DKDSecureMessage> sMsg = [messenger encryptMessage:iMsg];
     id<DKDReliableMessage> rMsg = [messenger signMessage:sMsg];

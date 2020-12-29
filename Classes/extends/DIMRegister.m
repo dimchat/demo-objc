@@ -49,7 +49,7 @@
     return self;
 }
 
-- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url {
+- (DIMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url {
     // 1. generate private key
     _key = [self generatePrivateKey];
     // 2. generate meta
@@ -68,13 +68,13 @@
     return [facebook userWithID:ID];
 }
 
-- (MKMGroup *)createGroupWithName:(NSString *)name founder:(id<MKMID>)founder {
+- (DIMGroup *)createGroupWithName:(NSString *)name founder:(id<MKMID>)founder {
     uint32_t seed = arc4random();
     NSString *string = [NSString stringWithFormat:@"Group-%u", seed];
     return [self createGroupWithSeed:string name:name founder:founder];
 }
 
-- (MKMGroup *)createGroupWithSeed:(NSString *)seed
+- (DIMGroup *)createGroupWithSeed:(NSString *)seed
                              name:(NSString *)name
                           founder:(id<MKMID>)founder {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];

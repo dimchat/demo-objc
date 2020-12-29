@@ -35,13 +35,13 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import "MKMEntity+Extension.h"
+#import "DIMEntity+Extension.h"
 
 #import "DIMConversation.h"
 
 @interface DIMConversation ()
 
-@property (strong, nonatomic) MKMEntity *entity; // User or Group
+@property (strong, nonatomic) DIMEntity *entity; // User or Group
 
 @end
 
@@ -49,11 +49,11 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    MKMEntity *entity = nil;
+    DIMEntity *entity = nil;
     return [self initWithEntity:entity];
 }
 
-- (instancetype)initWithEntity:(MKMEntity *)entity {
+- (instancetype)initWithEntity:(DIMEntity *)entity {
     if (self = [super init]) {
         _entity = entity;
     }
@@ -80,12 +80,12 @@
 - (NSString *)title {
     DIMConversationType type = self.type;
     if (type == DIMConversationPersonal) {
-        MKMUser *user = (MKMUser *)_entity;
+        DIMUser *user = (DIMUser *)_entity;
         NSString *name = user.name;
         // "xxx"
         return name;
     } else if (type == DIMConversationGroup) {
-        MKMGroup *group = (MKMGroup *)_entity;
+        DIMGroup *group = (DIMGroup *)_entity;
         NSString *name = group.name;
         unsigned long count = group.members.count;
         // "yyy (123)"

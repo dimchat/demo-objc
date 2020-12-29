@@ -49,7 +49,7 @@ extern NSString * const kNotificationName_ServerStateChanged;
     DIMServerStateMachine *_fsm;
 }
 
-@property (strong, nonatomic, nullable) MKMUser *currentUser;
+@property (strong, nonatomic, nullable) DIMUser *currentUser;
 
 @property (strong, nonatomic, nullable) NSString *sessionKey;
 

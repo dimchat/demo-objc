@@ -48,7 +48,7 @@
     DIMFacebook *facebook = self.facebook;
     
     NSArray *muteList = cmd.list;
-    MKMUser *user = [facebook currentUser];
+    DIMUser *user = [facebook currentUser];
     
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
     [manager unblockAllConversationForUser:user.ID];

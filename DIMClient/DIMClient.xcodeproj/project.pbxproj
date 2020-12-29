@@ -109,8 +109,8 @@
 		E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
 		E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAEB223116AC001F95C6 /* DIMServerState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAEC223116AC001F95C6 /* DIMServerState.m */; };
-		E9B2FCBD230477E700E153EE /* MKMEntity+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FCB8230477E700E153EE /* MKMEntity+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E9B2FCBE230477E700E153EE /* MKMEntity+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FCBC230477E700E153EE /* MKMEntity+Extension.m */; };
+		E9B2FCBD230477E700E153EE /* DIMEntity+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FCB8230477E700E153EE /* DIMEntity+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9B2FCBE230477E700E153EE /* DIMEntity+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FCBC230477E700E153EE /* DIMEntity+Extension.m */; };
 		E9BBBE4B223FA6D400E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */; };
 		E9BBBE4C223FA6D400E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */; };
 		E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA104234EA1EB00EC507C /* DIMPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -300,8 +300,8 @@
 		E9AFAACD22310A93001F95C6 /* FiniteStateMachine.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = FiniteStateMachine.xcodeproj; path = ../../../moky/FiniteStateMachine/FiniteStateMachine/FiniteStateMachine.xcodeproj; sourceTree = "<group>"; };
 		E9AFAAEB223116AC001F95C6 /* DIMServerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMServerState.h; sourceTree = "<group>"; };
 		E9AFAAEC223116AC001F95C6 /* DIMServerState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMServerState.m; sourceTree = "<group>"; };
-		E9B2FCB8230477E700E153EE /* MKMEntity+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKMEntity+Extension.h"; sourceTree = "<group>"; };
-		E9B2FCBC230477E700E153EE /* MKMEntity+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKMEntity+Extension.m"; sourceTree = "<group>"; };
+		E9B2FCB8230477E700E153EE /* DIMEntity+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DIMEntity+Extension.h"; sourceTree = "<group>"; };
+		E9B2FCBC230477E700E153EE /* DIMEntity+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMEntity+Extension.m"; sourceTree = "<group>"; };
 		E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
 		E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
 		E9CEA104234EA1EB00EC507C /* DIMPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMPassword.h; sourceTree = "<group>"; };
@@ -507,8 +507,8 @@
 				E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */,
 				E91FE1692588C5F600B45E68 /* NSDictionary+Binary.h */,
 				E91FE16A2588C5F700B45E68 /* NSDictionary+Binary.m */,
-				E9B2FCB8230477E700E153EE /* MKMEntity+Extension.h */,
-				E9B2FCBC230477E700E153EE /* MKMEntity+Extension.m */,
+				E9B2FCB8230477E700E153EE /* DIMEntity+Extension.h */,
+				E9B2FCBC230477E700E153EE /* DIMEntity+Extension.m */,
 				E959652C239125CA00DAA870 /* DIMFacebook+Extension.h */,
 				E959652D239125CA00DAA870 /* DIMFacebook+Extension.m */,
 				E921FC6B2593429B001ACA11 /* DIMMessageProcessor+Extension.h */,
@@ -625,7 +625,7 @@
 				E989F656244DCE7D009AA4B6 /* DIMCommand+Extension.h in Headers */,
 				E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */,
 				E96D14C12322523A00B5EA59 /* DIMProfileTable.h in Headers */,
-				E9B2FCBD230477E700E153EE /* MKMEntity+Extension.h in Headers */,
+				E9B2FCBD230477E700E153EE /* DIMEntity+Extension.h in Headers */,
 				E989F652244DC012009AA4B6 /* DIMDefaultProcessor.h in Headers */,
 				E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */,
 				E98E1C982584CF0D00F1FD55 /* dimMacros.h in Headers */,
@@ -862,7 +862,7 @@
 				E9538150258E4E5C0016F2F4 /* SCMessagePacker.m in Sources */,
 				52DBA3152340372C0000C2B4 /* FolderUtility.m in Sources */,
 				E921FC6E2593429B001ACA11 /* DIMMessageProcessor+Extension.m in Sources */,
-				E9B2FCBE230477E700E153EE /* MKMEntity+Extension.m in Sources */,
+				E9B2FCBE230477E700E153EE /* DIMEntity+Extension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

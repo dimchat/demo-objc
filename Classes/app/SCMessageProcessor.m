@@ -158,7 +158,7 @@
     
     // check receiver
     id<MKMID> receiver = rMsg.envelope.receiver;
-    MKMUser *user = [self.facebook selectLocalUserWithID:receiver];
+    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // pack message

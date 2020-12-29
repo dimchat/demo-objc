@@ -28,19 +28,17 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMEntity+Extension.m
+//  DIMEntity+Extension.m
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/8/12.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
-
 #import "DIMFacebook+Extension.h"
-#import "MKMEntity+Extension.h"
+#import "DIMEntity+Extension.h"
 
-@implementation MKMEntity (Name)
+@implementation DIMEntity (Name)
 
 - (NSString *)name {
     id<MKMDocument> doc = [self documentWithType:@"*"];
@@ -57,7 +55,7 @@
 
 @end
 
-@implementation MKMUser (LocalUser)
+@implementation DIMUser (LocalUser)
 
 + (nullable instancetype)userWithConfigFile:(NSString *)config {
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:config];
@@ -77,7 +75,7 @@
     id<MKMPrivateKey> SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
     [facebook savePrivateKey:SK type:DIMPrivateKeyType_Meta user:ID];
     
-    MKMUser *user = DIMUserWithID(ID);
+    DIMUser *user = DIMUserWithID(ID);
     
     // profile
     id profile = [dict objectForKey:@"profile"];
@@ -94,16 +92,16 @@
 }
 
 - (void)addContact:(id<MKMID>)contact {
-    [[DIMFacebook sharedInstance] user:_ID addContact:contact];
+    [[DIMFacebook sharedInstance] user:self.ID addContact:contact];
 }
 
 - (void)removeContact:(id<MKMID>)contact {
-    [[DIMFacebook sharedInstance] user:_ID removeContact:contact];
+    [[DIMFacebook sharedInstance] user:self.ID removeContact:contact];
 }
 
 @end
 
-@implementation MKMGroup (Extension)
+@implementation DIMGroup (Extension)
 
 - (NSArray<id<MKMID>> *)assistants {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
@@ -139,7 +137,7 @@
 
 - (BOOL)existsMember:(id<MKMID>)ID {
     // check broadcast ID
-    if (MKMIDIsBroadcast(_ID)) {
+    if (MKMIDIsBroadcast(self.ID)) {
         // anyone user is a member of the broadcast group 'everyone@everywhere'
         return MKMIDIsUser(ID);
     }

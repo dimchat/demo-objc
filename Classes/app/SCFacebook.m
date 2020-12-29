@@ -107,11 +107,11 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return self;
 }
 
-- (nullable NSArray<MKMUser *> *)localUsers {
+- (nullable NSArray<DIMUser *> *)localUsers {
     if (!_allUsers) {
         _allUsers = [[NSMutableArray alloc] init];
         NSArray<id<MKMID>> *list = [_database allUsers];
-        MKMUser *user;
+        DIMUser *user;
         for (id<MKMID>item in list) {
             user = [self userWithID:item];
             NSAssert(user, @"failed to get local user: %@", item);
@@ -121,7 +121,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return _allUsers;
 }
 
-- (void)setCurrentUser:(MKMUser *)user {
+- (void)setCurrentUser:(DIMUser *)user {
     if (!user) {
         NSAssert(false, @"current user cannot be empty");
         return;
@@ -151,14 +151,14 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return [self metaForID:ID] == nil;
 }
 
-- (nullable MKMUser *)createUser:(id<MKMID>)ID {
+- (nullable DIMUser *)createUser:(id<MKMID>)ID {
     if ([self isWaitingMeta:ID]) {
         return nil;
     }
     return [super createUser:ID];
 }
 
-- (nullable MKMGroup *)createGroup:(id<MKMID>)ID {
+- (nullable DIMGroup *)createGroup:(id<MKMID>)ID {
     if ([self isWaitingMeta:ID]) {
         return nil;
     }

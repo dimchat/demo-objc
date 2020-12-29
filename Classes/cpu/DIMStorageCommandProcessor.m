@@ -41,7 +41,7 @@
 
 @implementation DIMStorageCommandProcessor
 
-- (nullable id<DKDContent>)_saveContacts:(NSArray *)contacts forUser:(MKMUser *)user {
+- (nullable id<DKDContent>)_saveContacts:(NSArray *)contacts forUser:(DIMUser *)user {
     DIMFacebook *facebook = self.facebook;
     id<MKMID> ID;
     for (NSString *item in contacts) {
@@ -54,7 +54,7 @@
     return nil;
 }
 
-- (nullable id<DKDContent>)_decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(MKMUser *)user {
+- (nullable id<DKDContent>)_decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(DIMUser *)user {
     // decrypt key
     key = [user decrypt:key];
     NSDictionary *dict = MKMJSONDecode(key);
@@ -67,7 +67,7 @@
 }
 
 - (nullable id<DKDContent>)_processContactsCommand:(DIMStorageCommand *)cmd sender:(id<MKMID>)sender {
-    MKMUser *user = [self.facebook currentUser];
+    DIMUser *user = [self.facebook currentUser];
     if (![user.ID isEqual:cmd.ID]) {
         NSAssert(false, @"current user %@ not match %@ contacts not saved", user, cmd.ID);
         return nil;

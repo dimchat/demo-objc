@@ -41,7 +41,7 @@
 
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
-#import "MKMEntity+Extension.h"
+#import "DIMEntity+Extension.h"
 
 #import "DIMReportCommand.h"
 
@@ -78,15 +78,15 @@
 
 #pragma mark - User(s)
 
-- (NSArray<MKMUser *> *)users {
+- (NSArray<DIMUser *> *)users {
     return [_users mutableCopy];
 }
 
-- (MKMUser *)currentUser {
+- (DIMUser *)currentUser {
     return _currentStation.currentUser;
 }
 
-- (void)setCurrentUser:(MKMUser *)user {
+- (void)setCurrentUser:(DIMUser *)user {
     _currentStation.currentUser = user;
     if (user && ![_users containsObject:user]) {
         // insert the user to the first
@@ -100,7 +100,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)addUser:(MKMUser *)user {
+- (void)addUser:(DIMUser *)user {
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
     }
@@ -110,7 +110,7 @@
     }
 }
 
-- (void)removeUser:(MKMUser *)user {
+- (void)removeUser:(DIMUser *)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }
@@ -120,7 +120,7 @@
     }
 }
 
-- (BOOL)login:(MKMUser *)user {
+- (BOOL)login:(DIMUser *)user {
     if (!user || [self.currentUser isEqual:user]) {
         NSLog(@"user not change");
         return NO;
@@ -152,7 +152,7 @@
 
 - (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    MKMUser *user = self.currentUser;
+    DIMUser *user = self.currentUser;
     // post current profile to station
     id<MKMDocument> profile = [user documentWithType:MKMDocument_Visa];
     if (profile) {
@@ -175,10 +175,10 @@
 
 @implementation DIMTerminal (GroupManage)
 
-- (nullable MKMGroup *)createGroupWithSeed:(NSString *)seed
+- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
                                       name:(NSString *)name
                                    members:(NSArray<id<MKMID>> *)list {
-    MKMUser *user = self.currentUser;
+    DIMUser *user = self.currentUser;
     id<MKMID>founder = user.ID;
 
     // 0. make sure the founder is in the front
@@ -198,7 +198,7 @@
     
     // 1. create profile
     DIMRegister *reg = [[DIMRegister alloc] init];
-    MKMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
+    DIMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
     
     // 2. send out group info
     id<MKMBulletin> profile = [group documentWithType:MKMDocument_Bulletin];
@@ -235,7 +235,7 @@
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
-    MKMUser *user = self.currentUser;
+    DIMUser *user = self.currentUser;
 
     // 1. update profile
     if (profile) {
@@ -295,7 +295,7 @@
 static NSDate *offlineTime = nil;
 
 - (void)reportOnline {
-    MKMUser *user = [self currentUser];
+    DIMUser *user = [self currentUser];
     if (!user) {
         return;
     }
@@ -315,7 +315,7 @@ static NSDate *offlineTime = nil;
 }
 
 - (void)reportOffline {
-    MKMUser *user = [self currentUser];
+    DIMUser *user = [self currentUser];
     if (!user) {
         return;
     }

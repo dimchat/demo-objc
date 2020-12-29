@@ -45,7 +45,7 @@
     return [SCFacebook sharedInstance];
 }
 
-- (void)setCurrentUser:(MKMUser *)user {
+- (void)setCurrentUser:(DIMUser *)user {
     NSAssert(false, @"implement me!");
 }
 

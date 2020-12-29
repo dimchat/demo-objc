@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param url - avatar URL
  * @return User object
  */
-- (MKMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url;
+- (DIMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url;
 
 /**
  *  Generate group account (Polylogue)
@@ -61,8 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - group founder
  * @return Group object
  */
-- (MKMGroup *)createGroupWithName:(NSString *)name founder:(id<MKMID>)ID;
-- (MKMGroup *)createGroupWithSeed:(NSString *)seed
+- (DIMGroup *)createGroupWithName:(NSString *)name founder:(id<MKMID>)ID;
+- (DIMGroup *)createGroupWithSeed:(NSString *)seed
                              name:(NSString *)name founder:(id<MKMID>)ID;
 
 #pragma mark -

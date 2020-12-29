@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)sharedInstance;
 
-- (void)setCurrentUser:(MKMUser *)user;
+- (void)setCurrentUser:(DIMUser *)user;
 
 - (BOOL)saveUsers:(NSArray<id<MKMID>> *)list;
 

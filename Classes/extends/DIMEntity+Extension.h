@@ -28,24 +28,24 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMEntity+Extension.h
+//  DIMEntity+Extension.h
 //  DIMClient
 //
 //  Created by Albert Moky on 2019/8/12.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <MingKeMing/MingKeMing.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MKMEntity (Name)
+@interface DIMEntity (Name)
 
 @property (readonly, strong, nonatomic) NSString *name;
 
 @end
 
-@interface MKMUser (LocalUser)
+@interface DIMUser (LocalUser)
 
 + (nullable instancetype)userWithConfigFile:(NSString *)config;
 
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MKMGroup (Extension)
+@interface DIMGroup (Extension)
 
 @property (readonly, copy, nonatomic) NSArray<id<MKMID>> *assistants;
 
