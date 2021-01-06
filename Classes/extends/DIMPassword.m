@@ -60,7 +60,7 @@
     NSRange range = NSMakeRange(32 - kCCBlockSizeAES128, kCCBlockSizeAES128);
     NSData *iv = [digest subdataWithRange:range];
     NSDictionary *key = @{
-                          @"algorithm": SCAlgorithmAES,
+                          @"algorithm": MKMAlgorithmAES,
                           @"data": MKMBase64Encode(data),
                           @"iv": MKMBase64Encode(iv),
                           };

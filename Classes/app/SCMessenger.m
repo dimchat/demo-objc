@@ -59,16 +59,32 @@ SingletonImplementations(SCMessenger, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         
-        self.keyCache = [SCKeyStore sharedInstance];
-        self.dataSource = [SCMessageDataSource sharedInstance];
-        self.barrack = [DIMFacebook sharedInstance];
-        
         // query tables
         _metaQueryTable    = [[NSMutableDictionary alloc] init];
         _profileQueryTable = [[NSMutableDictionary alloc] init];
-        _groupQueryTable = [[NSMutableDictionary alloc] init];
+        _groupQueryTable   = [[NSMutableDictionary alloc] init];
     }
     return self;
+}
+
+- (id<DIMMessengerDataSource>)dataSource {
+    id<DIMMessengerDataSource> delegate = [super dataSource];
+    if (!delegate) {
+        delegate = [SCMessageDataSource sharedInstance];
+    }
+    return delegate;
+}
+
+- (id<DIMCipherKeyDelegate>)keyCache {
+    id<DIMCipherKeyDelegate> delegate = [super keyCache];
+    if (!delegate) {
+        delegate = [SCKeyStore sharedInstance];
+    }
+    return delegate;
+}
+
+- (DIMFacebook *)createFacebook {
+    return [DIMFacebook sharedInstance];
 }
 
 - (DIMMessagePacker *)createMessagePacker {

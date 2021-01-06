@@ -97,7 +97,7 @@
 }
 
 - (__kindof id<MKMPrivateKey>)generatePrivateKey {
-    return [self generatePrivateKeyWithAlgorithm:ACAlgorithmECC];
+    return [self generatePrivateKeyWithAlgorithm:MKMAlgorithmECC];
 }
 
 - (__kindof id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm {
@@ -139,7 +139,7 @@
         [profile setAvatar:url];
     }
     if (![_key conformsToProtocol:@protocol(MKMDecryptKey)]) {
-        MKMPrivateKey *sKey = [self generatePrivateKeyWithAlgorithm:ACAlgorithmRSA];
+        MKMPrivateKey *sKey = [self generatePrivateKeyWithAlgorithm:MKMAlgorithmRSA];
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
         [facebook savePrivateKey:sKey type:DIMPrivateKeyType_Visa user:ID];
         [profile setKey:sKey.publicKey];
