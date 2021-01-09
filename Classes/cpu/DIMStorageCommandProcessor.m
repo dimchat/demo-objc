@@ -109,12 +109,16 @@
 
 @implementation DIMStorageCommand (Contacts)
 
-- (nullable NSArray<NSString *> *)contacts {
-    return [self objectForKey:@"contacts"];
+- (nullable NSArray<id<MKMID>> *)contacts {
+    NSArray *array = [self objectForKey:@"contacts"];
+    if (array) {
+        return [MKMID convert:array];
+    }
+    return nil;
 }
 
-- (void)setContacts:(NSArray<NSString *> *)contacts {
-    [self setObject:contacts forKey:@"contacts"];
+- (void)setContacts:(NSArray<id<MKMID>> *)contacts {
+    [self setObject:[MKMID revert:contacts] forKey:@"contacts"];
 }
 
 @end

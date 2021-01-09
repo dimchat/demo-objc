@@ -115,38 +115,36 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return NO;
 }
 
-- (BOOL)postProfile:(id<MKMDocument>)profile {
+- (BOOL)postProfile:(id<MKMDocument>)doc {
     DIMUser *user = [self.facebook currentUser];
     id<MKMID> ID = user.ID;
-    if (![profile.ID isEqual:ID]) {
-        NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
+    if (![doc.ID isEqual:ID]) {
+        NSAssert(false, @"document ID not match: %@, %@", ID, doc.ID);
         return NO;
     }
     
     id<MKMMeta> meta = user.meta;
-    if (![profile verify:meta.key]){
+    if (![doc verify:meta.key]){
         return NO;
     }
     
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
-                                                     profile:profile];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
     return [self sendCommand:cmd];
 }
 
-- (BOOL)broadcastProfile:(id<MKMDocument>)profile {
+- (BOOL)broadcastProfile:(id<MKMDocument>)doc {
     DIMUser *user = [self.facebook currentUser];
     id<MKMID> ID = user.ID;
-    if (![profile.ID isEqual:ID]) {
-        NSAssert(false, @"profile ID not match: %@, %@", ID, profile.ID);
+    if (![doc.ID isEqual:ID]) {
+        NSAssert(false, @"document ID not match: %@, %@", ID, doc.ID);
         return NO;
     }
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
-                                                     profile:profile];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
     NSArray<id<MKMID>> *contacts = user.contacts;
     BOOL OK = YES;
-    for (id<MKMID>contact in contacts) {
+    for (id<MKMID> contact in contacts) {
         if (!MKMIDIsUser(contact)) {
-            NSLog(@"%@ is not a user, do not broadcaset profile to it", contact);
+            NSLog(@"%@ is not a user, do not broadcaset document to it", contact);
             continue;
         }
         if (![self sendContent:cmd receiver:contact]) {

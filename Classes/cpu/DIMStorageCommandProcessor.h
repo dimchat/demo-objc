@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMStorageCommand (Contacts)
 
-@property (strong, nonatomic, nullable) NSArray<NSString *> *contacts;
+@property (strong, nonatomic, nullable) NSArray<id<MKMID>> *contacts;
 
 @end
 

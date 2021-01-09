@@ -158,12 +158,12 @@
     return profile;
 }
 
-- (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)profile {
+- (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)doc {
     DIMCommand *cmd;
-    if (profile) {
-        NSAssert([ID isEqual:profile.ID], @"profile ID not match: %@, %@", ID, profile);
-        NSAssert([profile isValid], @"profile not valid: %@", profile);
-        cmd = [[DIMDocumentCommand alloc] initWithID:ID meta:meta profile:profile];
+    if (doc) {
+        NSAssert([ID isEqual:doc.ID], @"document ID not match: %@, %@", ID, doc);
+        NSAssert([doc isValid], @"document not valid: %@", doc);
+        cmd = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     } else {
         NSAssert([meta matchID:ID], @"meta not match ID: %@, %@", ID, meta);
         cmd = [[DIMMetaCommand alloc] initWithID:ID meta:meta];

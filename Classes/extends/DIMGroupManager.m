@@ -105,15 +105,11 @@
         @throw [NSException exceptionWithName:@"GroupError" reason:@"not ready" userInfo:info];
     }
     NSAssert(meta, @"failed to get meta for group: %@", self.group);
-    id<MKMDocument> profile = [facebook documentForID:self.group
-                                                type:MKMDocument_Bulletin];
-    if ([[profile propertyKeys] count] == 0) {
-        cmd = [[DIMMetaCommand alloc] initWithID:self.group
-                                            meta:meta];
+    id<MKMDocument> doc = [facebook documentForID:self.group type:MKMDocument_Bulletin];
+    if ([[doc propertyKeys] count] == 0) {
+        cmd = [[DIMMetaCommand alloc] initWithID:self.group meta:meta];
     } else {
-        cmd = [[DIMDocumentCommand alloc] initWithID:self.group
-                                                meta:meta
-                                             profile:profile];
+        cmd = [[DIMDocumentCommand alloc] initWithID:self.group meta:meta document:doc];
     }
     [self _sendGroupCommand:cmd to:newMembers];
     

@@ -82,7 +82,7 @@
     if (profile) {
         // copy profile from config to local storage
         if (![profile objectForKey:@"ID"]) {
-            [profile setObject:ID forKey:@"ID"];
+            [profile setObject:[ID string] forKey:@"ID"];
         }
         profile = MKMDocumentFromDictionary(profile);
         [[DIMFacebook sharedInstance] saveDocument:profile];
@@ -143,7 +143,7 @@
     }
     // check all member(s)
     NSArray<id<MKMID>> *members = [self members];
-    for (id<MKMID>item in members) {
+    for (id<MKMID> item in members) {
         if ([item isEqual:ID]) {
             return YES;
         }

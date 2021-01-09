@@ -211,13 +211,11 @@
     return group;
 }
 
-- (BOOL)_broadcastGroup:(id<MKMID>)ID meta:(nullable id<MKMMeta>)meta profile:(id<MKMDocument>)profile {
+- (BOOL)_broadcastGroup:(id<MKMID>)ID meta:(nullable id<MKMMeta>)meta profile:(id<MKMDocument>)doc {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // create 'profile' command
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID
-                                                        meta:meta
-                                                     profile:profile];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     // 1. share to station
     [messenger sendCommand:cmd];
     // 2. send to group assistants
@@ -245,7 +243,7 @@
     
     // 2. check expel
     NSMutableArray<id<MKMID>> *outMembers = [[NSMutableArray alloc] initWithCapacity:members.count];
-    for (id<MKMID>item in members) {
+    for (id<MKMID> item in members) {
         if ([list containsObject:item]) {
             continue;
         }
@@ -266,7 +264,7 @@
     
     // 3. check invite
     NSMutableArray<id<MKMID>> *newMembers = [[NSMutableArray alloc] initWithCapacity:list.count];
-    for (id<MKMID>item in list) {
+    for (id<MKMID> item in list) {
         if ([members containsObject:item]) {
             continue;
         }

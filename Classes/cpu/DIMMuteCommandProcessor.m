@@ -53,7 +53,7 @@
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
     [manager unmuteAllConversationForUser:user.ID];
     
-    id<MKMID>conversationID;
+    id<MKMID> conversationID;
     for (NSString *item in muteList){
         conversationID = MKMIDFromString(item);
         [manager muteConversation:conversationID forUser:user.ID];

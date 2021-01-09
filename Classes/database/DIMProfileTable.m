@@ -109,7 +109,13 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type {
     id<MKMDocument> profile = [_caches objectForKey:ID];
-    if (!profile) {
+    if (profile) {
+        // check empty profile
+        NSString *data = [profile objectForKey:@"data"];
+        if (data.length == 0) {
+            profile = nil;
+        }
+    } else {
         // first access, try to load from local storage
         profile = [self _loadProfileForID:ID];
         if (profile) {
@@ -117,8 +123,7 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
             [self _cacheProfile:profile];
         } else {
             // place an empty profile for cache
-            profile = MKMDocumentNew(ID, type);
-            [_caches setObject:profile forKey:ID];
+            [_caches setObject:MKMDocumentNew(ID, type) forKey:ID];
         }
     }
     return profile;

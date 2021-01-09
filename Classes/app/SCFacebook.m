@@ -112,7 +112,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
         _allUsers = [[NSMutableArray alloc] init];
         NSArray<id<MKMID>> *list = [_database allUsers];
         DIMUser *user;
-        for (id<MKMID>item in list) {
+        for (id<MKMID> item in list) {
             user = [self userWithID:item];
             NSAssert(user, @"failed to get local user: %@", item);
             [_allUsers addObject:user];
@@ -129,7 +129,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
     NSArray<id<MKMID>> *list = [_database allUsers];
     NSMutableArray *mArray = [[NSMutableArray alloc] initWithCapacity:(list.count + 1)];
     [mArray addObject:user.ID];
-    for (id<MKMID>item in list) {
+    for (id<MKMID> item in list) {
         if ([mArray containsObject:item]) {
             continue;
         }
@@ -211,7 +211,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
     if ([self isEmptyDocument:profile]) {
         // try fron immortals
         if (ID.type == MKMNetwork_Main) {
-            id<MKMDocument>tai = [_immortals documentForID:ID type:type];
+            id<MKMDocument> tai = [_immortals documentForID:ID type:type];
             if (tai) {
                 [_database saveDocument:tai];
                 return tai;

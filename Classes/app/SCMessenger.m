@@ -153,7 +153,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     
     DIMCommand *cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     BOOL checking = NO;
-    for (id<MKMID>item in members) {
+    for (id<MKMID> item in members) {
         if ([self sendContent:cmd receiver:item]) {
             checking = YES;
         }

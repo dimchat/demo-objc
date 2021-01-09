@@ -53,7 +53,7 @@
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
     [manager unblockAllConversationForUser:user.ID];
     
-    id<MKMID>conversationID;
+    id<MKMID> conversationID;
     for (NSString *item in muteList){
         conversationID = MKMIDFromString(item);
         [manager blockConversation:conversationID forUser:user.ID];

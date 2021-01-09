@@ -100,7 +100,7 @@
         // if assistants exist, query them
         NSArray<id<MKMID>> *assistants = [self.facebook assistantsOfGroup:group];
         NSMutableArray<id<MKMID>> *mArray = [[NSMutableArray alloc] initWithCapacity:(assistants.count+1)];
-        for (id<MKMID>item in assistants) {
+        for (id<MKMID> item in assistants) {
             [mArray addObject:item];
         }
         // if owner found, query it
