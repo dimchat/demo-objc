@@ -39,22 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DIMSocialNetworkDatabase;
-@class MKMImmortals;
-
-@interface SCFacebook : DIMFacebook {
-    
-    // user db
-    DIMSocialNetworkDatabase *_database;
-    
-    // ANS
-    id<DIMAddressNameService> _ans;
-
-    // immortal accounts
-    MKMImmortals *_immortals;
-    
-    NSMutableArray<DIMUser *> *_allUsers;
-}
+@interface SCFacebook : DIMFacebook
 
 + (instancetype)sharedInstance;
 

@@ -153,11 +153,6 @@
 - (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMUser *user = self.currentUser;
-    // post current profile to station
-    id<MKMDocument> profile = [user documentWithType:MKMDocument_Visa];
-    if (profile) {
-        [messenger postProfile:profile];
-    }
     // post contacts(encrypted) to station
     NSArray<id<MKMID>> *contacts = user.contacts;
     if (contacts) {

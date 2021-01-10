@@ -41,13 +41,11 @@
 
 #import "DIMMetaTable.h"
 
-typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
-
 @interface DIMMetaTable () {
 
-    CacheTableM *_caches;
+    NSMutableDictionary<id<MKMID>, id<MKMMeta>> *_caches;
     
-    id<MKMMeta>_emptyMeta;
+    id<MKMMeta> _empty;
 }
 
 @end
@@ -56,9 +54,9 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
 
 - (instancetype)init {
     if (self = [super init]) {
-        _caches = [[CacheTableM alloc] init];
+        _caches = [[NSMutableDictionary alloc] init];
         
-        _emptyMeta = [[MKMMeta alloc] initWithDictionary:@{}];
+        _empty = [[MKMMeta alloc] initWithDictionary:@{}];
     }
     return self;
 }
@@ -70,52 +68,33 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
  * @return "Documents/.mkm/{address}/meta.plist"
  */
 - (NSString *)_filePathWithID:(id<MKMID>)ID {
-    return [self _filePathWithAddress:ID.address];
-}
-- (NSString *)_filePathWithAddress:(id<MKMAddress>)address {
     NSString *dir = self.documentDirectory;
     dir = [dir stringByAppendingPathComponent:@".mkm"];
-    dir = [dir stringByAppendingPathComponent:address.string];
+    dir = [dir stringByAppendingPathComponent:[ID.address string]];
     return [dir stringByAppendingPathComponent:@"meta.plist"];
 }
 
-- (BOOL)_cacheMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    if (![meta matchID:ID]) {
-        NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
-        return NO;
-    }
-    [_caches setObject:meta forKey:ID];
-    return YES;
-}
-
-- (nullable id<MKMMeta>)_loadMetaForID:(id<MKMID>)ID {
-    NSString *path = [self _filePathWithID:ID];
-    NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
-    if (!dict) {
-        NSLog(@"meta not found: %@", path);
-        return nil;
-    }
-    NSLog(@"meta from: %@", path);
-    return MKMMetaFromDictionary(dict);
-}
-
 - (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
+    // 1. try from memory cache
     id<MKMMeta> meta = [_caches objectForKey:ID];
-    if (meta) {
-        if (meta == _emptyMeta) {
-            NSLog(@"meta not found: %@", ID);
-            return nil;
+    if (!meta) {
+        // 2. try from local storage
+        NSString *path = [self _filePathWithID:ID];
+        NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
+        if (dict) {
+            NSLog(@"meta from: %@", path);
+            meta = MKMMetaFromDictionary(dict);
         }
-    } else {
-        // first access, try to load from local storage
-        meta = [self _loadMetaForID:ID];
-        if (meta) {
-            // no need to check meta again
-            [_caches setObject:meta forKey:ID];
-        } else {
-            // place an empty meta for cache
-            [_caches setObject:_emptyMeta forKey:ID];
+        if (!meta) {
+            // 2.1. place an empty meta for cache
+            meta = _empty;
         }
+        // 3. store into memory cache
+        [_caches setObject:meta forKey:ID];
+    }
+    if (meta == _empty) {
+        NSLog(@"meta not found: %@", ID);
+        return nil;
     }
     return meta;
 }
@@ -125,28 +104,22 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMMeta>> CacheTableM;
         NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
         return NO;
     }
-    if (![self _cacheMeta:meta forID:ID]) {
-        NSAssert(false, @"failed to cache meta for ID: %@, %@", ID, meta);
-        return NO;
-    }
-    NSString *path = [self _filePathWithID:ID];
-    if ([self fileExistsAtPath:path]) {
-        NSLog(@"meta already exists: %@", path);
+    // 0. check duplicate record
+    id<MKMMeta> old = [self metaForID:ID];
+    if (old) {
+        // meta won't change, no need to update
         return YES;
     }
-    NSLog(@"saving meta into: %@", path);
-    BOOL result = [self dictionary:meta.dictionary writeToBinaryFile:path];
-    
-    if (result) {
-        NSDictionary *info = @{
-            @"ID": ID,
-            @"meta": meta,
-        };
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc postNotificationName:kNotificationName_MetaSaved object:nil userInfo:info];
+    // 1. save into local storage
+    NSString *path = [self _filePathWithID:ID];
+    if (![self dictionary:meta.dictionary writeToBinaryFile:path]) {
+        return NO;
     }
+    NSLog(@"meta saved: %@ -> %@", ID, path);
     
-    return result;
+    // 2. store into memory cache
+    [_caches setObject:meta forKey:ID];
+    return YES;
 }
 
 @end

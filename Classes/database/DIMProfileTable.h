@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type;
 
-- (BOOL)saveDocument:(id<MKMDocument>)profile;
+- (BOOL)saveDocument:(id<MKMDocument>)doc;
 
 @end
 

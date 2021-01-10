@@ -17,7 +17,7 @@ extern NSString * const kNotificationName_MessageRemoved;
 extern NSString * const kNotificationName_MessageWithdrawed;
 extern NSString * const kNotificationName_MessageCleaned;
 extern NSString * const kNotificationName_MetaSaved;
-extern NSString * const kNotificationName_ProfileUpdated;
+extern NSString * const kNotificationName_DocumentUpdated;
 extern NSString * const kNotificationName_ContactsUpdated;
 extern NSString * const kNotificationName_GroupMembersUpdated;
 

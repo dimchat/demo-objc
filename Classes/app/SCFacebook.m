@@ -88,6 +88,27 @@
 
 @end
 
+#pragma mark -
+
+#define PROFILE_EXPIRES  1800  // document expires (30 minutes)
+#define PROFILE_EXPIRES_KEY @"expires"
+
+@interface SCFacebook () {
+    
+    // user db
+    DIMSocialNetworkDatabase *_database;
+    
+    // ANS
+    id<DIMAddressNameService> _ans;
+
+    // immortal accounts
+    MKMImmortals *_immortals;
+    
+    NSMutableArray<DIMUser *> *_allUsers;
+}
+
+@end
+
 @implementation SCFacebook
 
 SingletonImplementations(SCFacebook, sharedInstance)
@@ -168,7 +189,16 @@ SingletonImplementations(SCFacebook, sharedInstance)
 #pragma mark Storage
 
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    return [_database saveMeta:meta forID:ID];
+    if (![_database saveMeta:meta forID:ID]) {
+        return NO;
+    }
+    NSDictionary *info = @{
+        @"ID": [ID string],
+        @"meta": [meta dictionary],
+    };
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:kNotificationName_MetaSaved object:self userInfo:info];
+    return YES;
 }
 
 - (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
@@ -178,73 +208,68 @@ SingletonImplementations(SCFacebook, sharedInstance)
     }
     // try from database
     id<MKMMeta> meta = [_database metaForID:ID];
-    if (meta) {
-        // is empty?
-        if (meta.key) {
-            return meta;
+    if (!meta) {
+        if (ID.type == MKMNetwork_Main) {
+            // try from immortals
+            meta = [_immortals metaForID:ID];
+            if (meta) {
+                [_database saveMeta:meta forID:ID];
+            }
         }
     }
-    // try from immortals
-    if (ID.type == MKMNetwork_Main) {
-        meta = [_immortals metaForID:ID];
-        if (meta) {
-            return meta;
-        }
+    if (!meta) {
+        // query from DIM network
+        DIMMessenger *messenger = [DIMMessenger sharedInstance];
+        [messenger queryMetaForID:ID];
     }
-    // query from DIM network
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    [messenger queryMetaForID:ID];
-    return nil;
+    return meta;
 }
 
-- (BOOL)saveDocument:(id<MKMDocument>)profile {
-    return [_database saveDocument:profile];
+- (BOOL)saveDocument:(id<MKMDocument>)doc {
+    [doc removeObjectForKey:PROFILE_EXPIRES_KEY];
+    if (![_database saveDocument:doc]) {
+        return NO;
+    }
+    NSDictionary *info = [doc dictionary];
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:kNotificationName_DocumentUpdated object:self userInfo:info];
+    return YES;
 }
-
-#define PROFILE_EXPIRES  3600  // profile expires (1 hour)
-#define PROFILE_EXPIRES_KEY @"expires"
 
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type {
     // try from database
-    id<MKMDocument> profile = [_database documentForID:ID type:type];
-    if ([self isEmptyDocument:profile]) {
-        // try fron immortals
+    id<MKMDocument> doc = [_database documentForID:ID type:type];
+    if (!doc) {
         if (ID.type == MKMNetwork_Main) {
-            id<MKMDocument> tai = [_immortals documentForID:ID type:type];
-            if (tai) {
-                [_database saveDocument:tai];
-                return tai;
+            // try fron immortals
+            doc = [_immortals documentForID:ID type:type];
+            if (doc) {
+                [_database saveDocument:doc];
             }
         }
     }
-    if ([self isEmptyDocument:profile] || [self isExpiredDocument:profile]) {
-        // update EXPIRES value
-        NSDate *now = [[NSDate alloc] init];
-        NSTimeInterval timestamp = [now timeIntervalSince1970];
-        [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+    if (!doc || [self isExpiredDocument:doc]) {
+        if (doc) {
+            // update EXPIRES value
+            NSDate *now = [[NSDate alloc] init];
+            NSTimeInterval timestamp = [now timeIntervalSince1970];
+            [doc setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+        }
         // query from DIM network
         DIMMessenger *messenger = [DIMMessenger sharedInstance];
-        [messenger queryProfileForID:ID];
+        [messenger queryDocumentForID:ID];
     }
-    return profile;
+    return doc;
 }
 
-- (BOOL)isSignedDocument:(id<MKMDocument>)profile {
-    if ([self isEmptyDocument:profile]) {
-        return NO;
-    }
-    NSString *base64 = [profile objectForKey:@"signature"];
-    return base64.length > 0;
-}
-
-- (BOOL)isExpiredDocument:(id<MKMDocument>)profile {
+- (BOOL)isExpiredDocument:(id<MKMDocument>)doc {
     NSDate *now = [[NSDate alloc] init];
     NSTimeInterval timestamp = [now timeIntervalSince1970];
-    NSNumber *expires = [profile objectForKey:PROFILE_EXPIRES_KEY];
+    NSNumber *expires = [doc objectForKey:PROFILE_EXPIRES_KEY];
     if (!expires) {
         // set expired time
-        [profile setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
+        [doc setObject:@(timestamp + PROFILE_EXPIRES) forKey:PROFILE_EXPIRES_KEY];
         return NO;
     }
     return timestamp > [expires doubleValue];

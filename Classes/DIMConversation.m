@@ -95,7 +95,7 @@
     return @"Conversation";
 }
 
-- (nullable __kindof id<MKMDocument>)profile {
+- (nullable __kindof id<MKMDocument>)document {
     return [_entity documentWithType:@"*"];
 }
 

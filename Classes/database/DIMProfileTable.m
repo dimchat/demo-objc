@@ -43,11 +43,11 @@
 #import "DIMClientConstants.h"
 #import "DIMProfileTable.h"
 
-typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
-
 @interface DIMProfileTable () {
     
-    CacheTableM *_caches;
+    NSMutableDictionary<id<MKMID>, id<MKMDocument>> *_caches;
+    
+    id<MKMDocument> _empty;
 }
 
 @end
@@ -56,7 +56,9 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
 
 - (instancetype)init {
     if (self = [super init]) {
-        _caches = [[CacheTableM alloc] init];
+        _caches = [[NSMutableDictionary alloc] init];
+        
+        _empty = [[MKMDocument alloc] initWithID:MKMAnyone() type:MKMDocument_Profile];
     }
     return self;
 }
@@ -74,77 +76,51 @@ typedef NSMutableDictionary<id<MKMID>, id<MKMDocument>> CacheTableM;
     return [dir stringByAppendingPathComponent:@"profile.plist"];
 }
 
-- (BOOL)_cacheProfile:(id<MKMDocument>)profile {
-    if (![profile isValid]) {
-        //NSAssert(false, @"profile not valid: %@", profile);
-        return NO;
-    }
-    [_caches setObject:profile forKey:profile.ID];
-    return YES;
-}
-
-- (nullable __kindof id<MKMDocument>)_loadProfileForID:(id<MKMID>)ID {
-    NSString *path = [self _filePathWithID:ID];
-    NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
-    if (!dict) {
-        NSLog(@"profile not found: %@", path);
-        return nil;
-    }
-    NSLog(@"profile from: %@", path);
-    NSString *type = [MKMDocument type:dict];
-    if (!type) {
-        if (MKMIDIsGroup(ID)) {
-            type = MKMDocument_Bulletin;
-        } else if (MKMIDIsUser(ID)) {
-            type = MKMDocument_Visa;
-        } else {
-            type = MKMDocument_Profile;
-        }
-    }
-    NSData *data = MKMUTF8Encode([dict objectForKey:@"data"]);
-    NSData *signature = MKMBase64Decode([dict objectForKey:@"signature"]);
-    return MKMDocumentCreate(ID, type, data, signature);
-}
-
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type {
-    id<MKMDocument> profile = [_caches objectForKey:ID];
-    if (profile) {
-        // check empty profile
-        NSString *data = [profile objectForKey:@"data"];
-        if (data.length == 0) {
-            profile = nil;
+    // 1. try from memory cache
+    id<MKMDocument> doc = [_caches objectForKey:ID];
+    if (!doc) {
+        // 2. try from database
+        NSString *path = [self _filePathWithID:ID];
+        NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
+        if (dict) {
+            NSLog(@"document from: %@", path);
+            NSData *data = MKMUTF8Encode([dict objectForKey:@"data"]);
+            NSData *signature = MKMBase64Decode([dict objectForKey:@"signature"]);
+            doc = MKMDocumentCreate(ID, type, data, signature);
         }
-    } else {
-        // first access, try to load from local storage
-        profile = [self _loadProfileForID:ID];
-        if (profile) {
-            // verify and cache it
-            [self _cacheProfile:profile];
-        } else {
-            // place an empty profile for cache
-            [_caches setObject:MKMDocumentNew(ID, type) forKey:ID];
+        if (!doc) {
+            // 2.1. place an empty meta for cache
+            doc = _empty;
         }
+        // 3. store into memory cache
+        [_caches setObject:doc forKey:ID];
     }
-    return profile;
+    if (doc == _empty) {
+        NSLog(@"document not found: %@", ID);
+        return nil;
+    }
+    return doc;
 }
 
-- (BOOL)saveDocument:(id<MKMDocument>)profile {
-    if (![self _cacheProfile:profile]) {
+- (BOOL)saveDocument:(id<MKMDocument>)doc {
+    if (!doc.isValid) {
+        NSLog(@"document not valid: %@", doc);
         return NO;
     }
-    id<MKMID> ID = profile.ID;
+    id<MKMID> ID = doc.ID;
+    
+    // 1. save into database
     NSString *path = [self _filePathWithID:ID];
-    NSLog(@"saving profile into: %@", path);
-    BOOL result = [self dictionary:profile.dictionary writeToBinaryFile:path];
-    
-    if (result) {
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc postNotificationName:kNotificationName_ProfileUpdated object:nil
-                        userInfo:profile.dictionary];
+    if (![self dictionary:doc.dictionary writeToBinaryFile:path]) {
+        NO;
     }
-    
-    return result;
+    NSLog(@"document saved: %@ -> %@", ID, path);
+
+    // 2. store into memory cache
+    [_caches setObject:doc forKey:ID];
+    return YES;
 }
 
 @end

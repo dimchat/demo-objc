@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type forID:(id<MKMID>)ID;
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID;
-- (BOOL)saveDocument:(id<MKMDocument>)profile;
+- (BOOL)saveDocument:(id<MKMDocument>)doc;
 
 - (BOOL)saveContacts:(NSArray *)contacts user:(id<MKMID>)user;
 - (BOOL)saveMembers:(NSArray *)members group:(id<MKMID>)group;

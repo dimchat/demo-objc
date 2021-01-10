@@ -70,7 +70,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc addObserver:self selector:@selector(onEntityUpdated:) name:kNotificationName_MetaSaved object:nil];
-        [nc addObserver:self selector:@selector(onEntityUpdated:) name:kNotificationName_ProfileUpdated object:nil];
+        [nc addObserver:self selector:@selector(onEntityUpdated:) name:kNotificationName_DocumentUpdated object:nil];
     }
     return self;
 }
@@ -135,8 +135,8 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         return YES;
     }
     if ([content isKindOfClass:[DIMMetaCommand class]]) {
-        // meta & profile command will be checked and saved by CPUs
-        // no need to save meta & profile command here
+        // meta & document command will be checked and saved by CPUs
+        // no need to save meta & document command here
         return YES;
     }
     if ([content isKindOfClass:[DIMMuteCommand class]] ||

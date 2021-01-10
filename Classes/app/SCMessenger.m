@@ -52,6 +52,18 @@
 
 #import "SCMessenger.h"
 
+@interface SCMessenger () {
+    
+    DIMStation *_server;
+    
+    // query tables
+    NSMutableDictionary<id<MKMID>, NSDate *> *_metaQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_docQueryTable;
+    NSMutableDictionary<id<MKMID>, NSDate *> *_groupQueryTable;
+}
+
+@end
+
 @implementation SCMessenger
 
 SingletonImplementations(SCMessenger, sharedInstance)
@@ -60,9 +72,9 @@ SingletonImplementations(SCMessenger, sharedInstance)
     if (self = [super init]) {
         
         // query tables
-        _metaQueryTable    = [[NSMutableDictionary alloc] init];
-        _profileQueryTable = [[NSMutableDictionary alloc] init];
-        _groupQueryTable   = [[NSMutableDictionary alloc] init];
+        _metaQueryTable  = [[NSMutableDictionary alloc] init];
+        _docQueryTable   = [[NSMutableDictionary alloc] init];
+        _groupQueryTable = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -124,15 +136,15 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryProfileForID:(id<MKMID>)ID {
+- (BOOL)queryDocumentForID:(id<MKMID>)ID {
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
-    NSDate *lastTime = [_profileQueryTable objectForKey:ID];
+    NSDate *lastTime = [_docQueryTable objectForKey:ID];
     if ([now timeIntervalSince1970] - [lastTime timeIntervalSince1970] < QUERY_INTERVAL) {
         return NO;
     }
-    [_profileQueryTable setObject:now forKey:ID];
-    NSLog(@"querying profile of %@ fron network...", ID);
+    [_docQueryTable setObject:now forKey:ID];
+    NSLog(@"querying entity document of %@ fron network...", ID);
 
     DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID];
     return [self sendCommand:cmd];

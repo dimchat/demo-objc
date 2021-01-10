@@ -69,7 +69,7 @@
     
     if(result){
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc postNotificationName:kNotificationName_MessageCleaned object:nil
+        [nc postNotificationName:kNotificationName_MessageCleaned object:self
                         userInfo:@{@"ID": chatBox}];
     }
     
@@ -89,7 +89,7 @@
     
     if(result){
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc postNotificationName:DIMConversationUpdatedNotification object:nil
+        [nc postNotificationName:DIMConversationUpdatedNotification object:self
                         userInfo:@{@"ID": chatBox}];
     }
     
@@ -120,10 +120,10 @@
     if (OK) {
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         
-        [nc postNotificationName:DIMConversationUpdatedNotification object:nil
+        [nc postNotificationName:DIMConversationUpdatedNotification object:self
                         userInfo:@{@"ID": chatBox}];
         
-        [nc postNotificationName:DIMMessageInsertedNotifiation object:nil
+        [nc postNotificationName:DIMMessageInsertedNotifiation object:self
                         userInfo:@{@"Conversation": chatBox, @"Message": iMsg}];
     }
     

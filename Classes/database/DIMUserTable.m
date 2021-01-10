@@ -160,7 +160,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     
     if(result){
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc postNotificationName:kNotificationName_ContactsUpdated object:nil
+        [nc postNotificationName:kNotificationName_ContactsUpdated object:self
                         userInfo:@{@"ID":user}];
     }
     

@@ -75,12 +75,12 @@ extern NSString * const kNotificationName_SendMessageFailed;
 - (BOOL)queryMetaForID:(id<MKMID>)ID;
 
 /**
- *  Interface for client to query profile from station
+ *  Interface for client to query document from station
  *
  * @param ID - entity ID
  * @return YES on success
  */
-- (BOOL)queryProfileForID:(id<MKMID>)ID;
+- (BOOL)queryDocumentForID:(id<MKMID>)ID;
 
 /**
  *  Query group member list from any member
@@ -93,20 +93,21 @@ extern NSString * const kNotificationName_SendMessageFailed;
 - (BOOL)queryGroupForID:(id<MKMID>)group fromMembers:(NSArray<id<MKMID>> *)members;
 
 /**
- *  Post profile to station
+ *  Post document & meta to station
  *
- * @param profile - user profile
+ * @param doc - entity document
+ * @param meta - enntity meta
  * @return YES on success
  */
-- (BOOL)postProfile:(id<MKMDocument>)profile;
+- (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(nullable id<MKMMeta>)meta;
 
 /**
- *  Broadcast profile to all contacts
+ *  Broadcast visa to all contacts
  *
- * @param profile - user profile
+ * @param visa - user visa document
  * @return YES on success
  */
-- (BOOL)broadcastProfile:(id<MKMDocument>)profile;
+- (BOOL)broadcastVisa:(id<MKMVisa>)visa;
 
 /**
  *  Encrypt and post contacts list to station

@@ -89,8 +89,8 @@
     return [_metaTable saveMeta:meta forID:ID];
 }
 
-- (BOOL)saveDocument:(id<MKMDocument>)profile {
-    return [_profileTable saveDocument:profile];
+- (BOOL)saveDocument:(id<MKMDocument>)doc {
+    return [_profileTable saveDocument:doc];
 }
 
 - (nullable NSArray<id<MKMID>> *)allUsers {

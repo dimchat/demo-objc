@@ -159,8 +159,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     
     // first handshake?
     if (cmd.state == DIMHandshake_Start) {
-        rMsg.meta = [_currentUser meta];
-        rMsg.visa = [_currentUser documentWithType:MKMDocument_Visa];
+        rMsg.meta = _currentUser.meta;
+        rMsg.visa = _currentUser.visa;
     }
     
     // send out directly

@@ -53,7 +53,7 @@ typedef UInt8 DIMConversationType;
 @property (readonly, strong, nonatomic) id<MKMID> ID;
 @property (readonly, strong, nonatomic) NSString *name;
 @property (readonly, strong, nonatomic) NSString *title;
-@property (readonly, strong, nonatomic, nullable) __kindof id<MKMDocument> profile;
+@property (readonly, strong, nonatomic, nullable) __kindof id<MKMDocument> document;
 
 @property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;

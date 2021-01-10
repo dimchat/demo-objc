@@ -39,15 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SCMessenger : DIMMessenger {
-    
-    DIMStation *_server;
-    
-    // query tables
-    NSMutableDictionary<id<MKMID>, NSDate *> *_metaQueryTable;
-    NSMutableDictionary<id<MKMID>, NSDate *> *_profileQueryTable;
-    NSMutableDictionary<id<MKMID>, NSDate *> *_groupQueryTable;
-}
+@interface SCMessenger : DIMMessenger
 
 + (instancetype)sharedInstance;
 

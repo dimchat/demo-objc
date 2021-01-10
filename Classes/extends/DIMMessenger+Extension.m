@@ -100,7 +100,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return NO;
 }
 
-- (BOOL)queryProfileForID:(id<MKMID>)ID {
+- (BOOL)queryDocumentForID:(id<MKMID>)ID {
     NSAssert(false, @"implement me!");
     return NO;
 }
@@ -115,31 +115,20 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return NO;
 }
 
-- (BOOL)postProfile:(id<MKMDocument>)doc {
-    DIMUser *user = [self.facebook currentUser];
-    id<MKMID> ID = user.ID;
-    if (![doc.ID isEqual:ID]) {
-        NSAssert(false, @"document ID not match: %@, %@", ID, doc.ID);
-        return NO;
-    }
-    
-    id<MKMMeta> meta = user.meta;
-    if (![doc verify:meta.key]){
-        return NO;
-    }
-    
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+- (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(nullable id<MKMMeta>)meta {
+    [doc removeObjectForKey:@"expires"];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
     return [self sendCommand:cmd];
 }
 
-- (BOOL)broadcastProfile:(id<MKMDocument>)doc {
+- (BOOL)broadcastVisa:(id<MKMVisa>)visa {
     DIMUser *user = [self.facebook currentUser];
     id<MKMID> ID = user.ID;
-    if (![doc.ID isEqual:ID]) {
-        NSAssert(false, @"document ID not match: %@, %@", ID, doc.ID);
+    if (![visa.ID isEqual:ID]) {
+        NSAssert(false, @"visa ID not match: %@, %@", ID, visa.ID);
         return NO;
     }
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:doc];
+    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
     NSArray<id<MKMID>> *contacts = user.contacts;
     BOOL OK = YES;
     for (id<MKMID> contact in contacts) {
