@@ -110,17 +110,12 @@
         return NO;
     }
     id<MKMID> ID = doc.ID;
-    
-    // 1. save into database
-    NSString *path = [self _filePathWithID:ID];
-    if (![self dictionary:doc.dictionary writeToBinaryFile:path]) {
-        NO;
-    }
-    NSLog(@"document saved: %@ -> %@", ID, path);
-
-    // 2. store into memory cache
+    // 1. store into memory cache
     [_caches setObject:doc forKey:ID];
-    return YES;
+    // 2. save into database
+    NSString *path = [self _filePathWithID:ID];
+    NSLog(@"saving document into: %@ -> %@", ID, path);
+    return [self dictionary:doc.dictionary writeToBinaryFile:path];
 }
 
 @end

@@ -133,29 +133,29 @@
 
 - (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
     NSAssert(_key, @"private key not set yet");
-    id<MKMVisa> profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
-    [profile setName:name];
+    id<MKMVisa> doc = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
+    [doc setName:name];
     if (url) {
-        [profile setAvatar:url];
+        [doc setAvatar:url];
     }
     if (![_key conformsToProtocol:@protocol(MKMDecryptKey)]) {
         MKMPrivateKey *sKey = [self generatePrivateKeyWithAlgorithm:MKMAlgorithmRSA];
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
         [facebook savePrivateKey:sKey type:DIMPrivateKeyType_Visa user:ID];
-        [profile setKey:sKey.publicKey];
+        [doc setKey:sKey.publicKey];
     }
-    [profile sign:_key];
-    return profile;
+    [doc sign:_key];
+    return doc;
 }
 
 - (__kindof id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info {
     NSAssert(_key, @"private key not set yet");
-    id<MKMVisa> profile = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
+    id<MKMDocument> doc = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
     for (NSString *name in info) {
-        [profile setProperty:[info objectForKey:name] forKey:name];
+        [doc setProperty:[info objectForKey:name] forKey:name];
     }
-    [profile sign:_key];
-    return profile;
+    [doc sign:_key];
+    return doc;
 }
 
 - (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)doc {

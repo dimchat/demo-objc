@@ -110,16 +110,12 @@
         // meta won't change, no need to update
         return YES;
     }
-    // 1. save into local storage
-    NSString *path = [self _filePathWithID:ID];
-    if (![self dictionary:meta.dictionary writeToBinaryFile:path]) {
-        return NO;
-    }
-    NSLog(@"meta saved: %@ -> %@", ID, path);
-    
-    // 2. store into memory cache
+    // 1. store into memory cache
     [_caches setObject:meta forKey:ID];
-    return YES;
+    // 2. save into local storage
+    NSString *path = [self _filePathWithID:ID];
+    NSLog(@"saving meta into: %@ -> %@", ID, path);
+    return [self dictionary:meta.dictionary writeToBinaryFile:path];
 }
 
 @end
