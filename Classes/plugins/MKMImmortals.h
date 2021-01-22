@@ -1,8 +1,8 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2018 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
@@ -28,24 +28,32 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMAddressNameTable.h
-//  DIMClient
+//  MKMImmortals.h
+//  MingKeMing
 //
-//  Created by Albert Moky on 2019/9/13.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2018/11/11.
+//  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMStorage.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMAddressNameTable : DIMStorage
+// Immortal Hulk (195-183-9394)
+#define MKM_IMMORTAL_HULK_ID @"hulk@4YeVEN3aUnvC1DNUufCq1bs9zoBSJTzVEj"
+// Monkey King (184-083-9527)
+#define MKM_MONKEY_KING_ID   @"moki@4WDfe3zZ4T7opFSi3iDAKiuTnUHjxmXekk"
 
-- (BOOL)saveRecord:(id<MKMID>)ID forName:(NSString *)name;
+/**
+ *  Create two immortal accounts for test:
+ *
+ *      1. Immortal Hulk
+ *      2. Monkey King
+ */
+@interface MKMImmortals : NSObject <DIMEntityDataSource,
+                                    DIMUserDataSource>
 
-- (id<MKMID>)recordForName:(NSString *)name;
-
-- (NSArray<NSString *> *)namesWithRecord:(NSString *)ID;
+- (nullable DIMUser *)userWithID:(id<MKMID>)ID;
 
 @end
 

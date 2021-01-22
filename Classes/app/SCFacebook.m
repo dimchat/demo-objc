@@ -37,6 +37,8 @@
 
 #import "NSObject+Singleton.h"
 
+#import "MKMImmortals.h"
+
 #import "DIMClientConstants.h"
 #import "DIMSocialNetworkDatabase.h"
 
