@@ -123,6 +123,12 @@
 		E9D71E9925BB21A500773ED1 /* MingKeMing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71E9825BB21A500773ED1 /* MingKeMing.framework */; };
 		E9D71F0C25BB29A100773ED1 /* MKMImmortals.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D71F0A25BB29A100773ED1 /* MKMImmortals.m */; };
 		E9D71F0D25BB29A100773ED1 /* MKMImmortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D71F0B25BB29A100773ED1 /* MKMImmortals.h */; };
+		E9D71F3625BB2DBF00773ED1 /* hulk_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0325BB298900773ED1 /* hulk_secret.js */; };
+		E9D71F3825BB2DC200773ED1 /* moki_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0425BB298900773ED1 /* moki_secret.js */; };
+		E9D71F3A25BB2DC400773ED1 /* hulk_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0525BB298900773ED1 /* hulk_meta.js */; };
+		E9D71F3C25BB2DC700773ED1 /* hulk_profile.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0625BB298900773ED1 /* hulk_profile.js */; };
+		E9D71F3E25BB2DC900773ED1 /* moki_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0725BB298900773ED1 /* moki_meta.js */; };
+		E9D71F4025BB2DCC00773ED1 /* moki_profile.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0825BB298900773ED1 /* moki_profile.js */; };
 		E9DD00E22391982000F5FBDD /* DIMHandshakeCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD00E02391982000F5FBDD /* DIMHandshakeCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DD00E12391982000F5FBDD /* DIMHandshakeCommandProcessor.m */; };
 		E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8248322475AFD00A029F1 /* NSObject+Extension.h */; };
@@ -863,6 +869,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9D71F4025BB2DCC00773ED1 /* moki_profile.js in Resources */,
+				E9D71F3A25BB2DC400773ED1 /* hulk_meta.js in Resources */,
+				E9D71F3825BB2DC200773ED1 /* moki_secret.js in Resources */,
+				E9D71F3C25BB2DC700773ED1 /* hulk_profile.js in Resources */,
+				E9D71F3625BB2DBF00773ED1 /* hulk_secret.js in Resources */,
+				E9D71F3E25BB2DC900773ED1 /* moki_meta.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
