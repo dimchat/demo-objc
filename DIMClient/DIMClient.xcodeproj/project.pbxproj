@@ -78,7 +78,6 @@
 		E9705CD5239521A200289441 /* DIMMuteCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9705CD3239521A200289441 /* DIMMuteCommandProcessor.m */; };
 		E978168A2223E7F200BCE3AD /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816802223E7F200BCE3AD /* DIMClient.framework */; };
 		E978168F2223E7F200BCE3AD /* DIMClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E978168E2223E7F200BCE3AD /* DIMClientTests.m */; };
-		E97816CC2223E97E00BCE3AD /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816AF2223E8C100BCE3AD /* MarsGate.framework */; };
 		E97816D02223EAFC00BCE3AD /* DIMClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816CF2223EAFC00BCE3AD /* DIMClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816D12223EB4700BCE3AD /* DIMTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = E97816D22223EB4700BCE3AD /* DIMTerminal.m */; };
@@ -88,7 +87,6 @@
 		E97926BC22284D59005ED1F0 /* DIMServer.m in Sources */ = {isa = PBXBuildFile; fileRef = E97926BA22284D59005ED1F0 /* DIMServer.m */; };
 		E97C332423ACC66400C47BBF /* DIMRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = E97C332223ACC66400C47BBF /* DIMRegister.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97C332523ACC66400C47BBF /* DIMRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = E97C332323ACC66400C47BBF /* DIMRegister.m */; };
-		E988C94923F2FAD700BA5D66 /* DIMSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B7023BC9A2000A14FD8 /* DIMSDK.framework */; };
 		E989F651244DC012009AA4B6 /* DIMDefaultProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E989F64C244DC012009AA4B6 /* DIMDefaultProcessor.m */; };
 		E989F652244DC012009AA4B6 /* DIMDefaultProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E989F650244DC012009AA4B6 /* DIMDefaultProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E989F656244DCE7D009AA4B6 /* DIMCommand+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E989F654244DCE7D009AA4B6 /* DIMCommand+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -106,7 +104,6 @@
 		E99B200425866AD2001A05F1 /* SCKeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B200225866AD2001A05F1 /* SCKeyStore.m */; };
 		E9A4A58F23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9A4A58A23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A4A58E23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m */; };
-		E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
 		E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AFAAEB223116AC001F95C6 /* DIMServerState.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AFAAEE223116AC001F95C6 /* DIMServerState.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AFAAEC223116AC001F95C6 /* DIMServerState.m */; };
 		E9B2FCBD230477E700E153EE /* DIMEntity+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9B2FCB8230477E700E153EE /* DIMEntity+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -115,6 +112,14 @@
 		E9BBBE4C223FA6D400E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */; };
 		E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA104234EA1EB00EC507C /* DIMPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9CEA107234EA1EB00EC507C /* DIMPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA105234EA1EB00EC507C /* DIMPassword.m */; };
+		E9D71D5525BAE48F00773ED1 /* DIMSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B7023BC9A2000A14FD8 /* DIMSDK.framework */; };
+		E9D71D5625BAE48F00773ED1 /* DIMSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B7023BC9A2000A14FD8 /* DIMSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E9D71D5825BAE49100773ED1 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; };
+		E9D71D5925BAE49100773ED1 /* FiniteStateMachine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9AFAAD422310A93001F95C6 /* FiniteStateMachine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E9D71D5A25BAE49300773ED1 /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816AF2223E8C100BCE3AD /* MarsGate.framework */; };
+		E9D71D5B25BAE49300773ED1 /* MarsGate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E97816AF2223E8C100BCE3AD /* MarsGate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E9D71E3B25BAE60700773ED1 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71E3A25BAE60700773ED1 /* DIMCore.framework */; };
+		E9D71E3F25BAE61700773ED1 /* DaoKeDao.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71E3E25BAE61700773ED1 /* DaoKeDao.framework */; };
 		E9DD00E22391982000F5FBDD /* DIMHandshakeCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DD00E02391982000F5FBDD /* DIMHandshakeCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DD00E12391982000F5FBDD /* DIMHandshakeCommandProcessor.m */; };
 		E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8248322475AFD00A029F1 /* NSObject+Extension.h */; };
@@ -193,6 +198,22 @@
 			remoteInfo = FiniteStateMachine;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E9D71D5725BAE48F00773ED1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E9D71D5625BAE48F00773ED1 /* DIMSDK.framework in Embed Frameworks */,
+				E9D71D5925BAE49100773ED1 /* FiniteStateMachine.framework in Embed Frameworks */,
+				E9D71D5B25BAE49300773ED1 /* MarsGate.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		520ECCAF235D5CAE00822B97 /* DIMClientConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMClientConstants.h; sourceTree = "<group>"; };
@@ -306,6 +327,8 @@
 		E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
 		E9CEA104234EA1EB00EC507C /* DIMPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMPassword.h; sourceTree = "<group>"; };
 		E9CEA105234EA1EB00EC507C /* DIMPassword.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMPassword.m; sourceTree = "<group>"; };
+		E9D71E3A25BAE60700773ED1 /* DIMCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DIMCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9D71E3E25BAE61700773ED1 /* DaoKeDao.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DaoKeDao.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9DD00E02391982000F5FBDD /* DIMHandshakeCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMHandshakeCommandProcessor.h; sourceTree = "<group>"; };
 		E9DD00E12391982000F5FBDD /* DIMHandshakeCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommandProcessor.m; sourceTree = "<group>"; };
 		E9E8248322475AFD00A029F1 /* NSObject+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
@@ -317,9 +340,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E988C94923F2FAD700BA5D66 /* DIMSDK.framework in Frameworks */,
-				E9AFAADA22310AFB001F95C6 /* FiniteStateMachine.framework in Frameworks */,
-				E97816CC2223E97E00BCE3AD /* MarsGate.framework in Frameworks */,
+				E9D71E3B25BAE60700773ED1 /* DIMCore.framework in Frameworks */,
+				E9D71D5525BAE48F00773ED1 /* DIMSDK.framework in Frameworks */,
+				E9D71D5825BAE49100773ED1 /* FiniteStateMachine.framework in Frameworks */,
+				E9D71D5A25BAE49300773ED1 /* MarsGate.framework in Frameworks */,
+				E9D71E3F25BAE61700773ED1 /* DaoKeDao.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,6 +515,8 @@
 		E97816C62223E97100BCE3AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E9D71E3E25BAE61700773ED1 /* DaoKeDao.framework */,
+				E9D71E3A25BAE60700773ED1 /* DIMCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -664,6 +691,7 @@
 				E978167C2223E7F200BCE3AD /* Sources */,
 				E978167D2223E7F200BCE3AD /* Frameworks */,
 				E978167E2223E7F200BCE3AD /* Resources */,
+				E9D71D5725BAE48F00773ED1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -701,7 +729,7 @@
 		E97816772223E7F200BCE3AD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1230;
 				ORGANIZATIONNAME = "DIM Group";
 				TargetAttributes = {
 					E978167F2223E7F200BCE3AD = {
@@ -926,6 +954,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -952,7 +981,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -988,6 +1017,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -1008,7 +1038,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1024,7 +1054,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1032,7 +1062,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1051,7 +1081,7 @@
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = JUVC7SZJE7;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1059,7 +1089,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -104,6 +104,7 @@
     // immortal accounts
     MKMImmortals *_immortals;
     
+    // local userss
     NSMutableArray<DIMUser *> *_allUsers;
 }
 
@@ -124,6 +125,9 @@ SingletonImplementations(SCFacebook, sharedInstance)
 
         // immortal accounts
         _immortals = [[MKMImmortals alloc] init];
+        
+        // local userss
+        _allUsers = nil;
     }
     return self;
 }
