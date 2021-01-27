@@ -232,6 +232,10 @@ SingletonImplementations(SCFacebook, sharedInstance)
 }
 
 - (BOOL)saveDocument:(id<MKMDocument>)doc {
+    id<MKMMeta> meta = [self metaForID:doc.ID];
+    if (!meta || ![doc verify:meta.key]) {
+        return NO;
+    }
     [doc removeObjectForKey:PROFILE_EXPIRES_KEY];
     if (![_database saveDocument:doc]) {
         return NO;
