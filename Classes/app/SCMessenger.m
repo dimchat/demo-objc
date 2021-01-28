@@ -119,8 +119,8 @@ SingletonImplementations(SCMessenger, sharedInstance)
 
 - (BOOL)queryMetaForID:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
-        // broadcast ID has not meta
-        return YES;
+        // broadcast ID has no meta
+        return NO;
     }
     
     // check for duplicated querying
@@ -137,6 +137,11 @@ SingletonImplementations(SCMessenger, sharedInstance)
 }
 
 - (BOOL)queryDocumentForID:(id<MKMID>)ID {
+    if (MKMIDIsBroadcast(ID)) {
+        // broadcast ID has no document
+        return NO;
+    }
+    
     // check for duplicated querying
     NSDate *now = [[NSDate alloc] init];
     NSDate *lastTime = [_docQueryTable objectForKey:ID];

@@ -209,7 +209,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
 
 - (nullable id<MKMMeta>)metaForID:(id<MKMID>)ID {
     if (MKMIDIsBroadcast(ID)) {
-        // broadcast ID has not meta
+        // broadcast ID has no meta
         return nil;
     }
     // try from database
@@ -248,6 +248,10 @@ SingletonImplementations(SCFacebook, sharedInstance)
 
 - (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
                                               type:(nullable NSString *)type {
+    if (MKMIDIsBroadcast(ID)) {
+        // broadcast ID has no document
+        return nil;
+    }
     // try from database
     id<MKMDocument> doc = [_database documentForID:ID type:type];
     if (!doc) {
