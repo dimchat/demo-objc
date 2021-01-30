@@ -42,6 +42,45 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol DIMStationDelegate <NSObject>
+
+/**
+ *  Received a new data package from the station
+ *
+ * @param server - current station
+ * @param data - data package received
+ */
+- (void)station:(DIMStation *)server onReceivePackage:(NSData *)data;
+
+@optional
+
+/**
+ *  Send data package to station success
+ *
+ * @param server - current station
+ * @param data - data package sent
+ */
+- (void)station:(DIMStation *)server didSendPackage:(NSData *)data;
+
+/**
+ *  Failed to send data package to station
+ *
+ * @param server - current station
+ * @param data - data package to send
+ * @param error - error information
+ */
+- (void)station:(DIMStation *)server sendPackage:(NSData *)data didFailWithError:(NSError *)error;
+
+/**
+ *  Callback for handshake accepted
+ *
+ * @param server - current station
+ * @param session - new session key
+ */
+- (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session;
+
+@end
+
 extern NSString * const kNotificationName_ServerStateChanged;
 
 @interface DIMServer : DIMStation <DIMMessengerDelegate, SGStarDelegate, FSMDelegate> {
@@ -54,6 +93,8 @@ extern NSString * const kNotificationName_ServerStateChanged;
 @property (strong, nonatomic, nullable) NSString *sessionKey;
 
 @property (readonly, strong, nonatomic) id<SGStar> star;
+
+@property (weak, nonatomic) id<DIMStationDelegate> delegate;
 
 - (void)handshakeWithSession:(nullable NSString *)session;
 - (void)handshakeAccepted:(BOOL)success;

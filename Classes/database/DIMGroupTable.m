@@ -94,7 +94,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     }
     // ensure that founder is at the front
     if (members.count > 1) {
-        id<MKMMeta>gMeta = DIMMetaForID(group);
+        id<MKMMeta> gMeta = DIMMetaForID(group);
         id<MKMVerifyKey> PK;
         for (NSUInteger index = 0; index < members.count; ++index) {
             ID = [members objectAtIndex:index];

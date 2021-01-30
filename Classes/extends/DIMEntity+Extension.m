@@ -110,7 +110,7 @@
 }
 
 - (BOOL)isFounder:(id<MKMID>)ID {
-    id<MKMID>founder = [self founder];
+    id<MKMID> founder = [self founder];
     if (founder) {
         return [founder isEqual:ID];
     } else {

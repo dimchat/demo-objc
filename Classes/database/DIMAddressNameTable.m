@@ -94,11 +94,11 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
     static NSString *moky = @"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ";
     static NSString *robot = @"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq";
     
-    id<MKMID>founder = MKMIDFromString(moky);
-    id<MKMID>assistant = MKMIDFromString(robot);
+    id<MKMID> founder = MKMIDFromString(moky);
+    id<MKMID> assistant = MKMIDFromString(robot);
     
-    id<MKMID>anyone = MKMAnyone();
-    id<MKMID>everyone = MKMEveryone();
+    id<MKMID> anyone = MKMAnyone();
+    id<MKMID> everyone = MKMEveryone();
     
     // Reserved names
     [caches setObject:founder forKey:@"founder"];
@@ -137,7 +137,7 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
     }
     // get keys with the same value
     NSMutableArray<NSString *> *keys = [[NSMutableArray alloc] init];
-    id<MKMID>value;
+    id<MKMID> value;
     for (NSString *name in allKeys) {
         value = [dict objectForKey:name];
         if ([value isEqual:ID]) {

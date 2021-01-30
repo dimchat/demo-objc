@@ -35,11 +35,9 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import "DIMServer.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class DIMServer;
 
 @interface DIMTerminal : NSObject <DIMStationDelegate> {
     

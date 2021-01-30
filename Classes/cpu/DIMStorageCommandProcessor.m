@@ -58,7 +58,7 @@
     // decrypt key
     key = [user decrypt:key];
     NSDictionary *dict = MKMJSONDecode(key);
-    id<MKMSymmetricKey>password = MKMSymmetricKeyFromDictionary(dict);
+    id<MKMSymmetricKey> password = MKMSymmetricKeyFromDictionary(dict);
     // decrypt data
     data = [password decrypt:data];
     NSArray *contacts = MKMJSONDecode(data);

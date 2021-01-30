@@ -107,10 +107,19 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         _fsm.server = self;
         _fsm.delegate = self;
         _star = nil;
-        
+        _delegate = nil;
+
         //[[DIMFacebook sharedInstance] cacheUser:self];
     }
     return self;
+}
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    DIMServer *server = [super copyWithZone:zone];
+    if (server) {
+        server.delegate = _delegate;
+    }
+    return server;
 }
 
 - (void)setCurrentUser:(DIMUser *)newUser {

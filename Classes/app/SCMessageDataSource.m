@@ -158,10 +158,10 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
     
     if ([content isKindOfClass:[DIMInviteCommand class]]) {
         // send keys again
-        id<MKMID>me = iMsg.envelope.receiver;
+        id<MKMID> me = iMsg.envelope.receiver;
         id<MKMID> group = content.group;
         SCKeyStore *keyStore = [SCKeyStore sharedInstance];
-        id<MKMSymmetricKey>key = [keyStore cipherKeyFrom:me to:group generate:NO];
+        id<MKMSymmetricKey> key = [keyStore cipherKeyFrom:me to:group generate:NO];
         [key removeObjectForKey:@"reused"];
         NSLog(@"key (%@ => %@): %@", me, group, key);
     }

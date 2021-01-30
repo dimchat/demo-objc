@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readwrite, nonatomic) MKMNetworkType network; // user type (Main: 0x08)
 
-@property (strong, nonatomic, nullable) id<MKMPrivateKey>key; // user private key
+@property (strong, nonatomic, nullable) id<MKMPrivateKey> key; // user private key
 
 /**
  *  Generate user account

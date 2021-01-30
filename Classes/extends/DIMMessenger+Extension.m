@@ -84,7 +84,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 - (BOOL)broadcastContent:(id<DKDContent>)content {
     NSAssert(self.currentServer, @"station not connected yet");
     // broadcast IDs
-    id<MKMID>everyone = MKMIDFromString(@"everyone@everywhere");
+    id<MKMID> everyone = MKMEveryone();
     [content setGroup:everyone];
     return [self sendContent:content receiver:everyone];
 }
@@ -147,7 +147,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     DIMUser *user = [self.facebook currentUser];
     NSAssert([contacts count] > 0, @"contacts cannot be empty");
     // generate password
-    id<MKMSymmetricKey>password = MKMSymmetricKeyWithAlgorithm(MKMAlgorithmAES);
+    id<MKMSymmetricKey> password = MKMSymmetricKeyWithAlgorithm(MKMAlgorithmAES);
     // encrypt contacts
     NSData *data = MKMJSONEncode(contacts);
     data = [password encrypt:data];

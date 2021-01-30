@@ -151,7 +151,7 @@
     NSAssert([members count] > 0, @"failed to get members of group: %@", self.group);
     
     // 0. check members list
-    for (id<MKMID>ass in assistants) {
+    for (id<MKMID> ass in assistants) {
         if ([outMembers containsObject:ass]) {
             NSAssert(false, @"Cannot expel group assistant: %@", ass);
             return false;
@@ -188,7 +188,7 @@
     NSAssert([members count] > 0, @"failed to get members of group: %@", self.group);
     
     // 0. check members list
-    for (id<MKMID>ass in assistants) {
+    for (id<MKMID> ass in assistants) {
         if ([ass isEqual:me]) {
             NSAssert(false, @"Group assistant cannot quit: %@", ass);
             return false;

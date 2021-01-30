@@ -197,15 +197,15 @@
 
 
 - (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group {
-    id<MKMID>founder = [_groupTable founderOfGroup:group];
+    id<MKMID> founder = [_groupTable founderOfGroup:group];
     if (founder) {
         return founder;
     }
     // check each member's public key with group meta
-    id<MKMMeta>gMeta = [self metaForID:group];
+    id<MKMMeta> gMeta = [self metaForID:group];
     NSArray<id<MKMID>> *members = [self membersOfGroup:group];
     id<MKMMeta> meta;
-    for (id<MKMID>member in members) {
+    for (id<MKMID> member in members) {
         // if the user's public key matches with the group's meta,
         // it means this meta was generate by the user's private key
         meta = [self metaForID:member];

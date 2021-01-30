@@ -187,7 +187,7 @@ SingletonImplementations(SCKeyStore, sharedInstance)
 
 #pragma mark - DIMCipherKeyDelegate
 
-// TODO: override to check whether key expired for sending message
+// NOTICE: override to check whether key expired for sending message
 - (nullable id<MKMSymmetricKey>)cipherKeyFrom:(id<MKMID>)sender
                                            to:(id<MKMID>)receiver
                                      generate:(BOOL)create {

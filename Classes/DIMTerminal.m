@@ -174,7 +174,7 @@
                                       name:(NSString *)name
                                    members:(NSArray<id<MKMID>> *)list {
     DIMUser *user = self.currentUser;
-    id<MKMID>founder = user.ID;
+    id<MKMID> founder = user.ID;
 
     // 0. make sure the founder is in the front
     NSUInteger index = [list indexOfObject:founder];
@@ -215,7 +215,7 @@
     [messenger sendCommand:cmd];
     // 2. send to group assistants
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:ID];
-    for (id<MKMID>ass in assistants) {
+    for (id<MKMID> ass in assistants) {
         [messenger sendContent:cmd receiver:ass];
     }
     return YES;

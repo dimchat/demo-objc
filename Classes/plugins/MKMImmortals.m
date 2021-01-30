@@ -261,7 +261,7 @@
 }
 
 - (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
-    id<MKMPrivateKey>key = [_privateTable objectForKey:user];
+    id<MKMPrivateKey> key = [_privateTable objectForKey:user];
     if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
         return @[(id<MKMDecryptKey>)key];
     }
