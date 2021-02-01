@@ -57,10 +57,10 @@
     id<MKMID> sender = rMsg.envelope.sender;
     id<MKMID> group = rMsg.envelope.group;
     if (group) {
-        key = [self.keyCache cipherKeyFrom:sender to:group generate:NO];
+        key = [self.messenger cipherKeyFrom:sender to:group generate:NO];
     } else {
         id<MKMID> receiver = rMsg.envelope.receiver;
-        key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
+        key = [self.messenger cipherKeyFrom:sender to:receiver generate:NO];
     }
     // get key data
     NSData *data = key.data;
@@ -107,7 +107,7 @@
     if (MKMIDIsGroup(receiver)) {
         // reuse group message keys
         id<MKMID> sender = iMsg.sender;
-        id<MKMSymmetricKey> key = [self.keyCache cipherKeyFrom:sender to:receiver generate:NO];
+        id<MKMSymmetricKey> key = [self.messenger cipherKeyFrom:sender to:receiver generate:NO];
         [key setObject:@(YES) forKey:@"reused"];
     }
     // TODO: reuse personal message key?
