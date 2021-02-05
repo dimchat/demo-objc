@@ -70,7 +70,7 @@
     //
     [DIMMessageProcessor registerAllProcessors];
     
-    DIMContentProcessorRegisterClass(DKDContentType_Unknown, DIMDefaultContentProcessor);
+    DIMContentProcessorRegisterClass(0, DIMDefaultContentProcessor);
     
     DIMCommandProcessorRegisterClass(DIMCommand_Receipt, DIMReceiptCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMCommand_Mute, DIMMuteCommandProcessor);
