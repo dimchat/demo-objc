@@ -114,7 +114,7 @@
     return [self generateMetaWithType:MKMMetaDefaultVersion seed:name];
 }
 
-- (__kindof id<MKMMeta>)generateMetaWithType:(MKMMetaType)type seed:(nullable NSString *)name {
+- (__kindof id<MKMMeta>)generateMetaWithType:(UInt8)type seed:(nullable NSString *)name {
     NSAssert(_key, @"private key not set yet");
     return MKMMetaGenerate(type, _key, name);
 }
@@ -123,7 +123,7 @@
     return [self generateIDWithMeta:meta network:_network];
 }
 
-- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(MKMNetworkType)type {
+- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(UInt8)type {
     return [meta generateID:type terminal:nil];
 }
 

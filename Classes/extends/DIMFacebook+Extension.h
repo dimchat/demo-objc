@@ -83,6 +83,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)group:(id<MKMID>)group containsMember:(id<MKMID>)member;
 - (BOOL)group:(id<MKMID>)group containsAssistant:(id<MKMID>)assistant;
 
+- (NSString *)name:(id<MKMID>)ID;
+
 @end
 
 NS_ASSUME_NONNULL_END

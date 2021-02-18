@@ -35,22 +35,16 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "MKMAnonymous.h"
 #import "DIMFacebook+Extension.h"
+
 #import "DIMEntity+Extension.h"
 
 @implementation DIMEntity (Name)
 
 - (NSString *)name {
-    id<MKMDocument> doc = [self documentWithType:@"*"];
-    NSString *name = [doc name];
-    if (name.length > 0) {
-        return name;
-    }
-    name = [self.ID name];
-    if (name.length > 0) {
-        return name;
-    }
-    return [self.ID string];
+    DIMFacebook *facebook = [self dataSource];
+    return [facebook name:self.ID];
 }
 
 @end

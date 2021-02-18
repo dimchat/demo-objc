@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMRegister : NSObject
 
-@property (readwrite, nonatomic) MKMNetworkType network; // user type (Main: 0x08)
+@property (readwrite, nonatomic) UInt8 network; // user type (Main: 0x08)
 
 @property (strong, nonatomic, nullable) id<MKMPrivateKey> key; // user private key
 
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return user/group ID
  */
 - (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta;
-- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(MKMNetworkType)type;
+- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(UInt8)type;
 
 /**
  *  Step 4. create profile with ID and sign with private key

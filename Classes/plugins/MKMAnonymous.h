@@ -2,12 +2,12 @@
 //
 //  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2018 by Moky <albert.moky@gmail.com>
+//                               Written in 2021 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2018 Albert Moky
+// Copyright (c) 2021 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,32 +28,24 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  MKMImmortals.h
-//  MingKeMing
+//  MKMAnonymous.h
+//  DIMClient
 //
-//  Created by Albert Moky on 2018/11/11.
-//  Copyright © 2018 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2021/2/18.
+//  Copyright © 2021 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <MingKeMing/MingKeMing.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Immortal Hulk (195-183-9394)
-#define MKM_IMMORTAL_HULK_ID @"hulk@4YeVEN3aUnvC1DNUufCq1bs9zoBSJTzVEj"
-// Monkey King (184-083-9527)
-#define MKM_MONKEY_KING_ID   @"moki@4WDfe3zZ4T7opFSi3iDAKiuTnUHjxmXekk"
+@interface MKMAnonymous : NSObject
 
-/**
- *  Create two immortal accounts for test:
- *
- *      1. Immortal Hulk
- *      2. Monkey King
- */
-@interface MKMImmortals : NSObject <DIMEntityDataSource,
-                                    DIMUserDataSource>
++ (NSString *)name:(id<MKMID>)ID;
 
-- (nullable DIMUser *)userWithID:(id<MKMID>)ID;
++ (UInt32)number:(id<MKMAddress>)address;
+
++ (NSString *)numberString:(id<MKMAddress>)address;
 
 @end
 

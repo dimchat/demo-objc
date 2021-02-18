@@ -35,6 +35,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "MKMAnonymous.h"
 #import "SCFacebook.h"
 
 #import "DIMFacebook+Extension.h"
@@ -158,6 +159,17 @@
 - (BOOL)group:(id<MKMID>)group containsAssistant:(id<MKMID>)assistant {
     NSArray<id<MKMID>> *assistants = [self assistantsOfGroup:group];
     return [assistants containsObject:assistant];
+}
+
+- (NSString *)name:(id<MKMID>)ID {
+    // get name from document
+    id<MKMDocument> doc = [self documentForID:ID type:@"*"];
+    NSString *str = [doc name];
+    if (str.length > 0) {
+        return str;
+    }
+    // get name from ID
+    return [MKMAnonymous name:ID];
 }
 
 @end

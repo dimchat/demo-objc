@@ -28,6 +28,8 @@
 		E90E1EDB232AA5A90012B23E /* DIMAddressNameTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E90E1ED9232AA5A80012B23E /* DIMAddressNameTable.m */; };
 		E915CDC52439C95600B98FE3 /* DIMGroupManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E915CDC32439C95600B98FE3 /* DIMGroupManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E915CDC62439C95600B98FE3 /* DIMGroupManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E915CDC42439C95600B98FE3 /* DIMGroupManager.m */; };
+		E919861625DE2B35003A890F /* MKMAnonymous.h in Headers */ = {isa = PBXBuildFile; fileRef = E919861425DE2B35003A890F /* MKMAnonymous.h */; };
+		E919861725DE2B35003A890F /* MKMAnonymous.m in Sources */ = {isa = PBXBuildFile; fileRef = E919861525DE2B35003A890F /* MKMAnonymous.m */; };
 		E91FE1672588C5D000B45E68 /* NSObject+Compare.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE1652588C5D000B45E68 /* NSObject+Compare.h */; };
 		E91FE1682588C5D000B45E68 /* NSObject+Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE1662588C5D000B45E68 /* NSObject+Singleton.h */; };
 		E91FE16B2588C5F700B45E68 /* NSDictionary+Binary.h in Headers */ = {isa = PBXBuildFile; fileRef = E91FE1692588C5F600B45E68 /* NSDictionary+Binary.h */; };
@@ -246,6 +248,8 @@
 		E90E1ED9232AA5A80012B23E /* DIMAddressNameTable.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMAddressNameTable.m; sourceTree = "<group>"; };
 		E915CDC32439C95600B98FE3 /* DIMGroupManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMGroupManager.h; sourceTree = "<group>"; };
 		E915CDC42439C95600B98FE3 /* DIMGroupManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMGroupManager.m; sourceTree = "<group>"; };
+		E919861425DE2B35003A890F /* MKMAnonymous.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MKMAnonymous.h; sourceTree = "<group>"; };
+		E919861525DE2B35003A890F /* MKMAnonymous.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MKMAnonymous.m; sourceTree = "<group>"; };
 		E91FE1652588C5D000B45E68 /* NSObject+Compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Compare.h"; sourceTree = "<group>"; };
 		E91FE1662588C5D000B45E68 /* NSObject+Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Singleton.h"; sourceTree = "<group>"; };
 		E91FE1692588C5F600B45E68 /* NSDictionary+Binary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+Binary.h"; sourceTree = "<group>"; };
@@ -630,8 +634,10 @@
 		E9D71F0925BB29A100773ED1 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
-				E9D71F0A25BB29A100773ED1 /* MKMImmortals.m */,
 				E9D71F0B25BB29A100773ED1 /* MKMImmortals.h */,
+				E9D71F0A25BB29A100773ED1 /* MKMImmortals.m */,
+				E919861425DE2B35003A890F /* MKMAnonymous.h */,
+				E919861525DE2B35003A890F /* MKMAnonymous.m */,
 			);
 			path = plugins;
 			sourceTree = "<group>";
@@ -682,6 +688,7 @@
 				52DBA30C2340372C0000C2B4 /* FMResultSet.h in Headers */,
 				E953814F258E4E5C0016F2F4 /* SCMessagePacker.h in Headers */,
 				E96D14B52322455E00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */,
+				E919861625DE2B35003A890F /* MKMAnonymous.h in Headers */,
 				E915CDC52439C95600B98FE3 /* DIMGroupManager.h in Headers */,
 				E90E1EDA232AA5A90012B23E /* DIMAddressNameTable.h in Headers */,
 				E96D14EF232277EC00B5EA59 /* DIMMessageTable.h in Headers */,
@@ -917,6 +924,7 @@
 				E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */,
 				E90E1EDB232AA5A90012B23E /* DIMAddressNameTable.m in Sources */,
 				E9705CD5239521A200289441 /* DIMMuteCommandProcessor.m in Sources */,
+				E919861725DE2B35003A890F /* MKMAnonymous.m in Sources */,
 				E97C332523ACC66400C47BBF /* DIMRegister.m in Sources */,
 				52DBA3082340372C0000C2B4 /* LocalDatabaseManager.m in Sources */,
 				E9CEA107234EA1EB00EC507C /* DIMPassword.m in Sources */,
@@ -1111,7 +1119,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1138,7 +1146,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = YES;
+				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
