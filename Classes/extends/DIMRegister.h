@@ -100,8 +100,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name - user/group name
  * @return user/group profile
  */
-- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name;
-- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
+- (__kindof id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name;
+- (__kindof id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
 - (__kindof id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info;
 
 /**

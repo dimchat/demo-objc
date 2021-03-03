@@ -57,7 +57,7 @@
     // 3. generate ID
     id<MKMID> ID = [self generateIDWithMeta:meta];
     // 4. generate profile
-    id<MKMDocument> profile = [self createProfileWithID:ID name:nickname avatar:url];
+    id<MKMDocument> profile = [self createUserProfileWithID:ID name:nickname avatar:url];
     // 5. save private key, meta & profile in local storage
     //    don't forget to upload them onto the DIM station
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
@@ -85,7 +85,7 @@
     // 3. generate ID
     id<MKMID> group = [self generateIDWithMeta:meta network:MKMNetwork_Polylogue];
     // 4. generate profile
-    id<MKMDocument> profile = [self createProfileWithID:group name:name];
+    id<MKMDocument> profile = [self createGroupProfileWithID:group name:name];
     // 5. save meta & profile in local storage
     //    don't forget to upload them onto the DIM station
     [facebook saveMeta:meta forID:group];
@@ -127,13 +127,19 @@
     return [meta generateID:type terminal:nil];
 }
 
-- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name {
-    return [self createProfileWithID:ID name:name avatar:nil];
+- (__kindof id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name {
+    NSAssert(_key, @"private key not set yet");
+    NSAssert(MKMIDIsGroup(ID), @"group ID error: %@", ID);
+    id<MKMBulletin> doc = MKMDocumentNew(ID, MKMDocument_Bulletin);
+    [doc setName:name];
+    [doc sign:_key];
+    return doc;
 }
 
-- (__kindof id<MKMDocument>)createProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
+- (__kindof id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
     NSAssert(_key, @"private key not set yet");
-    id<MKMVisa> doc = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
+    NSAssert(MKMIDIsUser(ID), @"user ID error: %@", ID);
+    id<MKMVisa> doc = MKMDocumentNew(ID, MKMDocument_Visa);
     [doc setName:name];
     if (url) {
         [doc setAvatar:url];
