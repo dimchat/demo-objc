@@ -141,7 +141,7 @@
 
 - (nullable NSData *)_signProfile:(id<MKMDocument>)profile {
     id<MKMID> ID = profile.ID;
-    id<MKMSignKey> key = [self privateKeyForSignature:ID];
+    id<MKMSignKey> key = [self privateKeyForVisaSignature:ID];
     NSAssert(key, @"failed to get private key for signature: %@", ID);
     return [profile sign:key];
 }

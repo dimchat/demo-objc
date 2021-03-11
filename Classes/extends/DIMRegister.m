@@ -79,7 +79,7 @@
                           founder:(id<MKMID>)founder {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // 1. get private key
-    _key = (id<MKMPrivateKey>)[facebook privateKeyForSignature:founder];
+    _key = (id<MKMPrivateKey>)[facebook privateKeyForVisaSignature:founder];
     // 2. generate meta
     id<MKMMeta> meta = [self generateGroupMetaWithSeed:seed];
     // 3. generate ID
