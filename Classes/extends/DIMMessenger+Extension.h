@@ -131,21 +131,6 @@ extern NSString * const kNotificationName_SendMessageFailed;
  */
 - (BOOL)queryMuteList;
 
-/**
- *  Query online users
- *
- * @return YES on success
- */
-- (BOOL)queryOnlineUsers;
-
-/**
- *  Search users with keywords
- *
- * @param keywords - words splited by space
- * @return YES on success
- */
-- (BOOL)searchUsersWithKeywords:(NSString *)keywords;
-
 @end
 
 NS_ASSUME_NONNULL_END

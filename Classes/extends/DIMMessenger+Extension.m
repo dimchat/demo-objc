@@ -179,14 +179,4 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendCommand:cmd];
 }
 
-- (BOOL)queryOnlineUsers {
-    DIMCommand *cmd = [[DIMSearchCommand alloc] initWithKeywords:DIMCommand_OnlineUsers];
-    return [self sendCommand:cmd];
-}
-
-- (BOOL)searchUsersWithKeywords:(NSString *)keywords {
-    DIMCommand *cmd = [[DIMSearchCommand alloc] initWithKeywords:keywords];
-    return [self sendCommand:cmd];
-}
-
 @end
