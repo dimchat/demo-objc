@@ -116,8 +116,9 @@
 }
 
 - (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
+    id<DKDInstantMessage> iMsg = nil;
     @try {
-        return [super decryptMessage:sMsg];
+        iMsg = [super decryptMessage:sMsg];
     } @catch (NSException *exception) {
         // check exception thrown by DKD: chat.dim.dkd.EncryptedMessage.decrypt()
         if ([exception.reason isEqualToString:@"failed to decrypt key in msg"]) {
@@ -134,6 +135,7 @@
     } @finally {
         //
     }
+    return iMsg;
 }
 
 @end
