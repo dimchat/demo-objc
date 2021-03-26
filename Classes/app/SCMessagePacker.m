@@ -115,4 +115,25 @@
     return sMsg;
 }
 
+- (nullable id<DKDInstantMessage>)decryptMessage:(id<DKDSecureMessage>)sMsg {
+    @try {
+        return [super decryptMessage:sMsg];
+    } @catch (NSException *exception) {
+        // check exception thrown by DKD: chat.dim.dkd.EncryptedMessage.decrypt()
+        if ([exception.reason isEqualToString:@"failed to decrypt key in msg"]) {
+            // visa.key not updated?
+            DIMUser *user = [self.facebook currentUser];
+            id<MKMVisa> visa = user.visa;
+            NSAssert([visa isValid], @"user visa not found: %@", user);
+            id<DIMCommand> cmd = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];
+            [self.messenger sendContent:cmd sender:user.ID receiver:sMsg.sender callback:NULL priority:1];
+        } else {
+            // FIXME: message error?
+            @throw exception;
+        }
+    } @finally {
+        //
+    }
+}
+
 @end
