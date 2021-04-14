@@ -152,9 +152,14 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         self.sessionKey = session;
     }
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    DIMFacebook *facebook = [DIMFacebook sharedInstance];
     
     DIMHandshakeCommand *cmd;
     cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
+    
+    if (![facebook publicKeyForEncryption:self.ID]) {
+        cmd.group = MKMEveryone();
+    }
     NSLog(@"handshake command: %@", cmd);
     
     id<DKDEnvelope> env = DKDEnvelopeCreate(_currentUser.ID, self.ID, nil);
