@@ -142,11 +142,55 @@
 
 #pragma mark DIMStationDelegate
 
+static NSData *sn_start = nil;
+static NSData *sn_end = nil;
+
+static inline NSData *fetch_sn(NSData *data) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sn_start = MKMUTF8Encode(@"Mars SN:");
+        sn_end = MKMUTF8Encode(@"\n");
+    });
+    
+    NSData *sn = nil;
+    NSRange range = NSMakeRange(0, sn_start.length);
+    if (data.length > sn_start.length && [[data subdataWithRange:range] isEqualToData:sn_start]) {
+        range = NSMakeRange(0, data.length);
+        range = [data rangeOfData:sn_end options:0 range:range];
+        if (range.location > sn_start.length) {
+            range = NSMakeRange(0, range.location + range.length);
+            sn = [data subdataWithRange:range];
+        }
+    }
+    return sn;
+}
+
+static inline NSData *merge_data(NSData *data1, NSData *data2) {
+    NSUInteger len1 = data1.length;
+    NSUInteger len2 = data2.length;
+    if (len1 == 0) {
+        return data2;
+    } else if (len2 == 0) {
+        return data1;
+    }
+    NSMutableData *mData = [[NSMutableData alloc] initWithLength:(len1 + len2)];
+    [mData appendData:data1];
+    [mData appendData:data2];
+    return mData;
+}
+
 - (void)station:(DIMStation *)server onReceivePackage:(NSData *)data {
+    NSData *head = fetch_sn(data);
+    if (head.length > 0) {
+        NSRange range = NSMakeRange(head.length, data.length - head.length);
+        data = [data subdataWithRange:range];
+    }
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     NSData *response = [messenger processData:data];
-    if ([response length] > 0) {
-        [_currentStation.star send:response];
+    if (head.length > 0 || response.length > 0) {
+        // NOTICE: sending 'SN' back to the server for confirming
+        //         that the client have received the pushing message
+        [_currentStation.star send:merge_data(head, response)];
     }
 }
 
