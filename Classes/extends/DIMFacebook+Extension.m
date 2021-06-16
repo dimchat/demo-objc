@@ -140,8 +140,7 @@
 }
 
 - (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
-    id<MKMBulletin> doc = DIMDocumentForID(group, MKMDocument_Bulletin);
-    NSArray<id<MKMID>> *assistants = [doc assistants];
+    NSArray<id<MKMID>> *assistants = [super assistantsOfGroup:group];
     if (assistants.count == 0) {
         id<MKMID> ass = MKMIDFromString(@"assistant");
         if (ass) {

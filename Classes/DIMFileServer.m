@@ -197,16 +197,22 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     return _session;
 }
 
+#define C_BOUNDARY              "BU1kUJ19yLYPqv5xoT3sbKYbHwjUu1JU7roix"
+#define C_CONTENT_TYPE          "multipart/form-data; boundary=" C_BOUNDARY
+#define C_BOUNDARY_BEGIN        "--" C_BOUNDARY "\r\n"                      \
+                "Content-Disposition: form-data; name=%@; filename=%@\r\n"  \
+                "Content-Type: application/octet-stream\r\n\r\n"
+#define C_BOUNDARY_END          "\r\n--" C_BOUNDARY "--"
+
+#define CONTENT_TYPE   [NSString stringWithCString:(C_CONTENT_TYPE) encoding:NSUTF8StringEncoding]
+#define BOUNDARY_BEGIN [NSString stringWithCString:(C_BOUNDARY_BEGIN) encoding:NSUTF8StringEncoding]
+#define BOUNDARY_END   [NSString stringWithCString:(C_BOUNDARY_END) encoding:NSUTF8StringEncoding]
+
 - (NSData *)buildHTTPBodyWithFilename:(NSString *)name
                               varName:(NSString *)var
                                  data:(NSData *)data {
-    
-    NSMutableString *begin = [[NSMutableString alloc] init];
-    [begin appendString:@"--4Tcjm5mp8BNiQN5YnxAAAnexqnbb3MrWjK\r\n"];
-    [begin appendFormat:@"Content-Disposition: form-data; name=%@; filename=%@\r\n", var, name];
-    [begin appendString:@"Content-Type: application/octet-stream\r\n\r\n"];
-    
-    NSString *end = @"\r\n--4Tcjm5mp8BNiQN5YnxAAAnexqnbb3MrWjK--";
+    NSString *begin = [NSString stringWithFormat:BOUNDARY_BEGIN, var, name];    
+    NSString *end = BOUNDARY_END;
     
     NSUInteger len = begin.length + data.length + end.length;
     NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:len];
@@ -226,7 +232,7 @@ SingletonImplementations(DIMFileServer, sharedInstance)
     
     // URL request
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
-    [request setValue:@"multipart/form-data; boundary=4Tcjm5mp8BNiQN5YnxAAAnexqnbb3MrWjK" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:CONTENT_TYPE forHTTPHeaderField:@"Content-Type"];
     request.HTTPMethod = @"POST";
     
     // HTTP body

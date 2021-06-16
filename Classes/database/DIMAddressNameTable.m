@@ -92,10 +92,8 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
     
     // Constant IDs
     static NSString *moky = @"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ";
-    static NSString *robot = @"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq";
     
     id<MKMID> founder = MKMIDFromString(moky);
-    id<MKMID> assistant = MKMIDFromString(robot);
     
     id<MKMID> anyone = MKMAnyone();
     id<MKMID> everyone = MKMEveryone();
@@ -103,7 +101,6 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
     // Reserved names
     [caches setObject:founder forKey:@"founder"];
     [caches setObject:anyone forKey:@"owner"];
-    [caches setObject:assistant forKey:@"assistant"]; // group assistant (robot)
     
     [caches setObject:anyone forKey:@"anyone"];
     [caches setObject:everyone forKey:@"everyone"];
