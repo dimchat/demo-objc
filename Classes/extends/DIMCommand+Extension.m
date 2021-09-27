@@ -207,9 +207,9 @@ NSString *DIMContent_BuildText(id<DKDContent> content) {
     } else if ([content isKindOfClass:[DIMWebpageContent class]]) {
         DIMWebpageContent *page = (DIMWebpageContent *)content;
         NSString *text = page.title;
-        if (text.length == 0) {
+        if ([text length] == 0) {
             text = page.desc;
-            if (text.length == 0) {
+            if ([text length] == 0) {
                 text = [page.URL absoluteString];
             }
         }
@@ -220,7 +220,7 @@ NSString *DIMContent_BuildText(id<DKDContent> content) {
         text = [NSString stringWithFormat:format, content.type];
     }
     
-    if (text) {
+    if ([text length] > 0) {
         [content setObject:text forKey:@"text"];
     }
     return text;
@@ -230,9 +230,9 @@ NSString *DIMContent_BuildText(id<DKDContent> content) {
 
 @implementation DKDContent (Extension)
 
-- (nullable NSString *)messageText {
+- (nullable NSString *)messageWithSender:(id<MKMID>)sender {
     NSString *text = [self objectForKey:@"text"];
-    if (text) {
+    if ([text length] > 0) {
         return text;
     }
     return DIMContent_BuildText(self);
@@ -244,7 +244,7 @@ NSString *DIMContent_BuildText(id<DKDContent> content) {
 
 - (nullable NSString *)messageWithSender:(id<MKMID>)sender {
     NSString *text = [self objectForKey:@"text"];
-    if (text) {
+    if ([text length] > 0) {
         return text;
     }
     return DIMCommand_BuildText(self, sender);
