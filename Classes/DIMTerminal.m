@@ -173,24 +173,58 @@ static inline NSData *merge_data(NSData *data1, NSData *data2) {
     } else if (len2 == 0) {
         return data1;
     }
-    NSMutableData *mData = [[NSMutableData alloc] initWithLength:(len1 + len2)];
+    NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:(len1 + len2)];
     [mData appendData:data1];
     [mData appendData:data2];
     return mData;
 }
 
+static inline NSArray<NSData *> *split_lines(NSData *data) {
+    NSMutableArray *mArray = [[NSMutableArray alloc] init];
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        unsigned char *buffer = (unsigned char *)bytes;
+        NSUInteger pos1 = byteRange.location, pos2;
+        while (pos1 < byteRange.length) {
+            pos2 = pos1;
+            while (pos2 < byteRange.length) {
+                if (buffer[pos2] == '\n') {
+                    break;
+                } else {
+                    ++pos2;
+                }
+            }
+            if (pos2 > pos1) {
+                [mArray addObject:[data subdataWithRange:NSMakeRange(pos1, pos2 - pos1)]];
+            }
+            pos1 = pos2 + 1;  // skip '\n'
+        }
+    }];
+    return mArray;;
+}
+
 - (void)station:(DIMStation *)server onReceivePackage:(NSData *)data {
+    // 0. fetch SN from data head
     NSData *head = fetch_sn(data);
     if (head.length > 0) {
         NSRange range = NSMakeRange(head.length, data.length - head.length);
         data = [data subdataWithRange:range];
     }
-    NSMutableData *mData = [[NSMutableData alloc] init];
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    NSArray<NSData *> *responses = [messenger processData:data];
-    for (NSData *res in responses) {
-        [mData appendData:res];
-        [mData appendData:MKMUTF8Encode(@"\n")];
+    NSMutableData *mData = [[NSMutableData alloc] init];
+    NSData *SEPARATOR = MKMUTF8Encode(@"\n");
+    // 1. split data when multi packages received one time
+    // TODO: here defined data buffer contains JSON object in one line,
+    //       if '\n' found, means this buffer contains multi packages.
+    NSArray<NSData *> *packages = split_lines(data);
+    NSArray<NSData *> *responses;
+    // 2. process package data one by one
+    for (NSData *pack in packages) {
+        responses = [messenger processData:pack];
+        // combine responses
+        for (NSData *res in responses) {
+            [mData appendData:res];
+            [mData appendData:SEPARATOR];
+        }
     }
     if ([mData length] > 0) {
         // drop last '\n'
@@ -198,7 +232,7 @@ static inline NSData *merge_data(NSData *data1, NSData *data2) {
     } else {
         data = nil;
     }
-    if (head.length > 0 || [mData length] > 0) {
+    if (head.length > 0 || [data length] > 0) {
         // NOTICE: sending 'SN' back to the server for confirming
         //         that the client have received the pushing message
         [_currentStation.star send:merge_data(head, data)];
