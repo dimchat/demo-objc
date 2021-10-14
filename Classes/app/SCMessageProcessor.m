@@ -48,7 +48,7 @@
     return self;
 }
 
-- (DIMFacebook *)facebook {
+- (__kindof DIMFacebook *)facebook {
     return [self.messenger facebook];
 }
 

@@ -112,6 +112,8 @@
 		E9B2FCBE230477E700E153EE /* DIMEntity+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9B2FCBC230477E700E153EE /* DIMEntity+Extension.m */; };
 		E9BBBE4B223FA6D400E6ACDA /* NSDate+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */; };
 		E9BBBE4C223FA6D400E6ACDA /* NSDate+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */; };
+		E9BC660827183024002F3FB9 /* SCMessageTransmitter.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BC660627183024002F3FB9 /* SCMessageTransmitter.h */; };
+		E9BC660927183024002F3FB9 /* SCMessageTransmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BC660727183024002F3FB9 /* SCMessageTransmitter.m */; };
 		E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA104234EA1EB00EC507C /* DIMPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9CEA107234EA1EB00EC507C /* DIMPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA105234EA1EB00EC507C /* DIMPassword.m */; };
 		E9D71D5525BAE48F00773ED1 /* DIMSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9798B7023BC9A2000A14FD8 /* DIMSDK.framework */; };
@@ -328,6 +330,8 @@
 		E9B2FCBC230477E700E153EE /* DIMEntity+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMEntity+Extension.m"; sourceTree = "<group>"; };
 		E9BBBE49223FA6D400E6ACDA /* NSDate+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSDate+Extension.h"; sourceTree = "<group>"; };
 		E9BBBE4A223FA6D400E6ACDA /* NSDate+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Extension.m"; sourceTree = "<group>"; };
+		E9BC660627183024002F3FB9 /* SCMessageTransmitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCMessageTransmitter.h; sourceTree = "<group>"; };
+		E9BC660727183024002F3FB9 /* SCMessageTransmitter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessageTransmitter.m; sourceTree = "<group>"; };
 		E9CEA104234EA1EB00EC507C /* DIMPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMPassword.h; sourceTree = "<group>"; };
 		E9CEA105234EA1EB00EC507C /* DIMPassword.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMPassword.m; sourceTree = "<group>"; };
 		E9D71E3A25BAE60700773ED1 /* DIMCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DIMCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -598,6 +602,8 @@
 				E953814E258E4E5C0016F2F4 /* SCMessagePacker.m */,
 				E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */,
 				E99B1FED25852D8F001A05F1 /* SCMessageProcessor.m */,
+				E9BC660627183024002F3FB9 /* SCMessageTransmitter.h */,
+				E9BC660727183024002F3FB9 /* SCMessageTransmitter.m */,
 				E921FC73259359BB001ACA11 /* SCMessageDataSource.h */,
 				E921FC74259359BB001ACA11 /* SCMessageDataSource.m */,
 				E99B1FF025852DA4001A05F1 /* SCMessenger.h */,
@@ -662,6 +668,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E959658823919E0600DAA870 /* DIMSearchCommand.h in Headers */,
+				E9BC660827183024002F3FB9 /* SCMessageTransmitter.h in Headers */,
 				E94901332392696300107C06 /* DIMStorageCommandProcessor.h in Headers */,
 				E921FC75259359BB001ACA11 /* SCMessageDataSource.h in Headers */,
 				E989F65A244EED17009AA4B6 /* DIMLoginCommandProcessor.h in Headers */,
@@ -892,6 +899,7 @@
 				E96D14BE2322493300B5EA59 /* DIMStorage.m in Sources */,
 				E989F657244DCE7D009AA4B6 /* DIMCommand+Extension.m in Sources */,
 				52DBA30F2340372C0000C2B4 /* FMDatabase.m in Sources */,
+				E9BC660927183024002F3FB9 /* SCMessageTransmitter.m in Sources */,
 				E94901342392696300107C06 /* DIMStorageCommandProcessor.m in Sources */,
 				E96D14BA232247F600B5EA59 /* DIMMetaTable.m in Sources */,
 				E99B1FEB25852B92001A05F1 /* SCFacebook.m in Sources */,

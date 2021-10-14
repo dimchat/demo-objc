@@ -133,4 +133,16 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 @end
 
+@interface DIMMessenger (Storage)
+
+//
+//  Interfaces for Message Storage
+//
+
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
+
+- (BOOL)suspendMessage:(id<DKDMessage>)msg;
+
+@end
+
 NS_ASSUME_NONNULL_END

@@ -49,6 +49,7 @@
 #import "SCKeyStore.h"
 #import "SCMessagePacker.h"
 #import "SCMessageProcessor.h"
+#import "SCMessageTransmitter.h"
 
 #import "SCMessenger.h"
 
@@ -79,12 +80,8 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return self;
 }
 
-- (id<DIMMessengerDataSource>)dataSource {
-    id<DIMMessengerDataSource> delegate = [super dataSource];
-    if (!delegate) {
-        delegate = [SCMessageDataSource sharedInstance];
-    }
-    return delegate;
+- (SCMessageDataSource *)dataSource {
+    return [SCMessageDataSource sharedInstance];
 }
 
 - (id<DIMCipherKeyDelegate>)keyCache {
@@ -105,6 +102,10 @@ SingletonImplementations(SCMessenger, sharedInstance)
 
 - (DIMMessageProcessor *)createMessageProcessor {
     return [[SCMessageProcessor alloc] initWithMessenger:self];
+}
+
+- (DIMMessageTransmitter *)createMessageTransmitter {
+    return [[SCMessageTransmitter alloc] initWithMessenger:self];
 }
 
 - (DIMStation *)currentServer {
@@ -180,14 +181,43 @@ SingletonImplementations(SCMessenger, sharedInstance)
 
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
                 serializeKey:(id<MKMSymmetricKey>)password {
-    if ([password objectForKey:@"reused"]) {
+    id reused = [password objectForKey:@"reused"];
+    if (reused) {
         id<MKMID> receiver = iMsg.receiver;
         if (MKMIDIsGroup(receiver)) {
             // reuse key for grouped message
             return nil;
         }
+        // remove before serialize key
+        [password removeObjectForKey:@"reused"];
     }
-    return [super message:iMsg serializeKey:password];
+    NSData *data = [super message:iMsg serializeKey:password];
+    if (reused) {
+        // put it back
+        [password setObject:reused forKey:@"reused"];
+    }
+    return data;
+}
+
+- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
+                  encryptKey:(NSData *)data
+                 forReceiver:(id<MKMID>)receiver {
+    id<MKMEncryptKey> key = [self.facebook publicKeyForEncryption:receiver];
+    if (!key) {
+        // save this message in a queue waiting receiver's meta response
+        [self suspendMessage:iMsg];
+        //NSAssert(false, @"failed to get encrypt key for receiver: %@", receiver);
+        return nil;
+    }
+    return [super message:iMsg encryptKey:data forReceiver:receiver];
+}
+
+- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
+    return [self.dataSource saveMessage:iMsg];
+}
+
+- (BOOL)suspendMessage:(id<DKDMessage>)msg {
+    return [self.dataSource suspendMessage:msg];
 }
 
 @end

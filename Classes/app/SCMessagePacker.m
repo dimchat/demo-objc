@@ -35,6 +35,8 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
+#import "DIMMessenger+Extension.h"
+
 #import "SCMessagePacker.h"
 
 @implementation SCMessagePacker
@@ -98,12 +100,55 @@
     return [super deserializeMessage:data];
 }
 
+- (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
+    id<MKMID> sender = rMsg.sender;
+    // [Meta Protocol]
+    id<MKMMeta> meta = rMsg.meta;
+    if (!meta) {
+        // get from local storage
+        meta = [self.facebook metaForID:sender];
+    } else if (![meta matchID:sender]) {
+        meta = nil;
+    }
+    if (!meta) {
+        // NOTICE: the application will query meta automatically
+        // save this message in a queue waiting sender's meta response
+        [self.messenger suspendMessage:rMsg];
+        return nil;
+    }
+    
+    // make sure meta exists before verifying message
+    return [super verifyMessage:rMsg];
+}
+
 #pragma mark Reuse message key
 
+- (BOOL)isWaiting:(id<MKMID>)ID {
+    if (MKMIDIsGroup(ID)) {
+        // checking group meta
+        return [self.facebook metaForID:ID] == nil;
+    } else {
+        // checking visa key
+        return [self.facebook publicKeyForEncryption:ID] == nil;
+    }
+}
+
 - (nullable id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
+    id<MKMID> receiver = iMsg.receiver;
+    id<MKMID> group = iMsg.group;
+    if (!MKMIDIsBroadcast(receiver) && !MKMIDIsBroadcast(group)) {
+        // this message is not a broadcast message
+        if ([self isWaiting:receiver] || (group && [self isWaiting:group])) {
+            // NOTICE: the application will query visa automatically
+            // save this message in a queue waiting sender's visa response
+            [self.messenger suspendMessage:iMsg];
+            return nil;
+        }
+    }
+    
+    // make sure visa.key exists before encrypting message
     id<DKDSecureMessage> sMsg = [super encryptMessage:iMsg];
     
-    id<MKMID> receiver = iMsg.receiver;
     if (MKMIDIsGroup(receiver)) {
         // reuse group message keys
         id<MKMID> sender = iMsg.sender;

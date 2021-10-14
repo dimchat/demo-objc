@@ -2,12 +2,12 @@
 //
 //  SeChat : Secure/secret Chat Application
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2021 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2021 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,37 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  SCMessageDataSource.h
+//  SCMessageTransmitter.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2020/12/23.
-//  Copyright © 2020 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2021/10/14.
+//  Copyright © 2021 DIM Group. All rights reserved.
 //
 
 #import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SCMessageDataSource : NSObject
-
-/**
- * Save the message into local storage
- *
- * @param iMsg - instant message
- * @return true on success
- */
-- (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg;
-
-/**
- *  Suspend message for the contact's meta
- *
- * @param msg - message received from network / instant message to be sent
- * @return NO on error
- */
-- (BOOL)suspendMessage:(id<DKDMessage>)msg;
-
-
-+ (instancetype)sharedInstance;
+@interface SCMessageTransmitter : DIMMessageTransmitter
 
 @end
 
