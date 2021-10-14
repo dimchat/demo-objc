@@ -39,6 +39,7 @@
 #import "DIMReportCommand.h"
 
 #import "DIMDefaultProcessor.h"
+#import "DIMFileContentProcessor.h"
 
 #import "DIMReceiptCommandProcessor.h"
 #import "DIMMuteCommandProcessor.h"
@@ -72,6 +73,12 @@
     
     DIMContentProcessorRegisterClass(0, DIMDefaultContentProcessor);
     
+    DIMFileContentProcessor *fileProcessor = [[DIMFileContentProcessor alloc] init];
+    DIMContentProcessorRegister(DKDContentType_File, fileProcessor);
+    DIMContentProcessorRegister(DKDContentType_Image, fileProcessor);
+    DIMContentProcessorRegister(DKDContentType_Audio, fileProcessor);
+    DIMContentProcessorRegister(DKDContentType_Video, fileProcessor);
+
     DIMCommandProcessorRegisterClass(DIMCommand_Receipt, DIMReceiptCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMCommand_Mute, DIMMuteCommandProcessor);
     DIMCommandProcessorRegisterClass(DIMCommand_Block, DIMBlockCommandProcessor);

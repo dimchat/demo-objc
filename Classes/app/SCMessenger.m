@@ -37,6 +37,7 @@
 
 #import "NSObject+Singleton.h"
 
+#import "DIMFileContentProcessor.h"
 #import "DIMSearchCommand.h"
 
 #import "SCMessageDataSource.h"
@@ -177,6 +178,48 @@ SingletonImplementations(SCMessenger, sharedInstance)
         }
     }
     return checking;
+}
+
+#pragma mark FPU
+
+- (DIMFileContentProcessor *)fileContentProcessor {
+    DIMFileContentProcessor *fpu = [DIMContentProcessor getProcessorForType:DKDContentType_File];
+    NSAssert([fpu isKindOfClass:[DIMFileContentProcessor class]],
+             @"failed to get file content processor");
+    fpu.messenger = self;
+    return fpu;
+}
+
+#pragma mark DKDInstantMessageDelegate
+
+- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
+            serializeContent:(id<DKDContent>)content
+                     withKey:(id<MKMSymmetricKey>)password {
+    // check attachment for File/Image/Audio/Video message content
+    if ([content isKindOfClass:[DIMFileContent class]]) {
+        DIMFileContentProcessor *fpu = [self fileContentProcessor];
+        [fpu uploadFileContent:(id<DIMFileContent>)content
+                           key:password
+                       message:iMsg];
+    }
+    return [super message:iMsg serializeContent:content withKey:password];
+}
+
+#pragma mark DKDSecureMessageDelegate
+
+- (nullable id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
+              deserializeContent:(NSData *)data
+                         withKey:(id<MKMSymmetricKey>)password {
+    id<DKDContent> content = [super message:sMsg deserializeContent:data withKey:password];
+    NSAssert(content, @"failed to deserialize message content: %@", sMsg);
+    // check attachment for File/Image/Audio/Video message content
+    if ([content isKindOfClass:[DIMFileContent class]]) {
+        DIMFileContentProcessor *fpu = [self fileContentProcessor];
+        [fpu downloadFileContent:(id<DIMFileContent>)content
+                             key:password
+                         message:sMsg];
+    }
+    return content;
 }
 
 - (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
