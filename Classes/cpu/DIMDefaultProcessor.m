@@ -44,8 +44,8 @@
 //
 //  Main
 //
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSString *text = nil;
     
     // File: Image, Audio, Video
@@ -73,9 +73,7 @@
         text = @"Web page received";
     } else {
         text = [NSString stringWithFormat:@"Content (type: %d) not support yet!", content.type];
-        id<DKDContent> res = [[DIMTextContent alloc] initWithText:text];
-        res.group = content.group;
-        return res;
+        return [self respondText:text withGroup:content.group];
     }
     
     if (content.group) {
@@ -86,7 +84,7 @@
     // response
     DIMReceiptCommand *res = [[DIMReceiptCommand alloc] initWithMessage:text];
     res.envelope = rMsg.envelope;
-    return res;
+    return [self respondContent:res];
 }
 
 @end

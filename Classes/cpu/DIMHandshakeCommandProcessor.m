@@ -43,29 +43,29 @@
 
 @implementation DIMHandshakeCommandProcessor
 
-- (nullable id<DKDContent>)_success {
+- (NSArray<id<DKDContent>> *)success {
     DIMServer *server = (DIMServer *)[self.messenger currentServer];
     [server handshakeAccepted:YES];
     return nil;
 }
 
-- (nullable id<DKDContent>)_ask:(NSString *)sessionKey {
+- (NSArray<id<DKDContent>> *)ask:(NSString *)sessionKey {
     DIMServer *server = (DIMServer *)[self.messenger currentServer];
     [server handshakeWithSession:sessionKey];
     return nil;
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
     DIMHandshakeCommand *cmd = (DIMHandshakeCommand *)content;
     NSString *message = cmd.message;
     if ([message isEqualToString:@"DIM!"]) {
         // S -> C
-        return [self _success];
+        return [self success];
     } else if ([message isEqualToString:@"DIM?"]) {
         // S -> C
-        return [self _ask:cmd.sessionKey];
+        return [self ask:cmd.sessionKey];
     } else {
         // C -> S: Hello world!
         NSAssert(false, @"handshake command error: %@", cmd);

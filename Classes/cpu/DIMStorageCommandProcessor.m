@@ -41,7 +41,7 @@
 
 @implementation DIMStorageCommandProcessor
 
-- (nullable id<DKDContent>)_saveContacts:(NSArray *)contacts forUser:(DIMUser *)user {
+- (NSArray<id<DKDContent>> *)saveContacts:(NSArray *)contacts forUser:(DIMUser *)user {
     DIMFacebook *facebook = self.facebook;
     id<MKMID> ID;
     for (NSString *item in contacts) {
@@ -54,7 +54,7 @@
     return nil;
 }
 
-- (nullable id<DKDContent>)_decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(DIMUser *)user {
+- (NSArray<id<DKDContent>> *)decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(DIMUser *)user {
     // decrypt key
     key = [user decrypt:key];
     NSDictionary *dict = MKMJSONDecode(key);
@@ -63,10 +63,10 @@
     data = [password decrypt:data];
     NSArray *contacts = MKMJSONDecode(data);
     NSAssert(contacts, @"failed to decrypt contacts");
-    return [self _saveContacts:contacts forUser:user];
+    return [self saveContacts:contacts forUser:user];
 }
 
-- (nullable id<DKDContent>)_processContactsCommand:(DIMStorageCommand *)cmd sender:(id<MKMID>)sender {
+- (NSArray<id<DKDContent>> *)processContactsCommand:(DIMStorageCommand *)cmd sender:(id<MKMID>)sender {
     DIMUser *user = [self.facebook currentUser];
     if (![user.ID isEqual:cmd.ID]) {
         NSAssert(false, @"current user %@ not match %@ contacts not saved", user, cmd.ID);
@@ -75,13 +75,13 @@
     
     NSArray *contacts = cmd.contacts;
     if ([contacts count] > 0) {
-        return [self _saveContacts:contacts forUser:user];
+        return [self saveContacts:contacts forUser:user];
     }
     
     NSData *data = cmd.data;
     NSData *key = cmd.key;
     if (data && key) {
-        return [self _decryptContactsData:data withKey:key forUser:user];
+        return [self decryptContactsData:data withKey:key forUser:user];
     }
     
     // NOTICE: the client will post contacts to a statioin initiatively,
@@ -90,13 +90,13 @@
     return nil;
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMStorageCommand class]], @"storage command error: %@", content);
     DIMStorageCommand *cmd = (DIMStorageCommand *)content;
     NSString *title = cmd.title;
     if ([title isEqualToString:DIMCommand_Contacts]) {
-        return [self _processContactsCommand:cmd sender:rMsg.sender];
+        return [self processContactsCommand:cmd sender:rMsg.sender];
     }
     NSAssert(false, @"Storage command (title: %@) not support yet!", title);
     // respond nothing (DON'T respond storage command directly)

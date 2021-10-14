@@ -44,7 +44,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 @implementation DIMSearchCommandProcessor
 
-- (void)_parse:(DIMSearchCommand *)cmd {
+- (void)parse:(DIMSearchCommand *)cmd {
     NSDictionary *result = cmd.results;
     if ([result count] == 0) {
         return;
@@ -65,13 +65,13 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMSearchCommand class]], @"search command error: %@", content);
     DIMSearchCommand *cmd = (DIMSearchCommand *)content;
     NSString *command = cmd.command;
     
-    [self _parse:cmd];
+    [self parse:cmd];
     
     NSString *notificationName;
     if ([command isEqualToString:DIMCommand_Search]) {

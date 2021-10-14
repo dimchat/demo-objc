@@ -41,8 +41,8 @@
 
 @implementation DIMBlockCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMBlockCommand class]], @"block command error: %@", content);
     DIMBlockCommand *cmd = (DIMBlockCommand *)content;
     DIMFacebook *facebook = self.facebook;

@@ -39,8 +39,8 @@
 
 @implementation DIMLoginCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMLoginCommand class]], @"login error: %@", content);
     DIMLoginCommand *cmd = (DIMLoginCommand *)content;
     

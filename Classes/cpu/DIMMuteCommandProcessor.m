@@ -41,8 +41,8 @@
 
 @implementation DIMMuteCommandProcessor
 
-- (nullable id<DKDContent>)executeCommand:(DIMCommand *)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMMuteCommand class]], @"mute command error: %@", content);
     DIMMuteCommand *cmd = (DIMMuteCommand *)content;
     DIMFacebook *facebook = self.facebook;

@@ -114,46 +114,47 @@
 
 #pragma mark Process
 
-- (nullable id<DKDContent>)processContent:(id<DKDContent>)content
-                              withMessage:(id<DKDReliableMessage>)rMsg {
+- (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
+                                       withMessage:(id<DKDReliableMessage>)rMsg {
+    NSArray<id<DKDInstantMessage>> *responses = [super processInstant:iMsg withMessage:rMsg];
+    if (![self.messenger saveMessage:iMsg]) {
+        // error
+        return nil;
+    }
+    return responses;
+}
+
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+                                withMessage:(id<DKDReliableMessage>)rMsg {
+    DIMMessenger *messenger = [self messenger];
+    
     id<MKMID> sender = rMsg.sender;
     if ([self isWaitingGroup:content sender:sender]) {
         // save this message in a queue to wait group meta response
         [rMsg setObject:rMsg.group forKey:@"waiting"];
-        [self.messenger suspendMessage:rMsg];
+        [messenger suspendMessage:rMsg];
         return nil;
     }
     
-    id<DKDContent> res;
+    NSArray<id<DKDContent>> *responses = nil;
     @try {
-        res = [super processContent:content withMessage:rMsg];
+        responses = [super processContent:content withMessage:rMsg];
     } @catch (NSException *e) {
         if ([e.name isEqualToString:@"GroupError"]) {
             NSAssert([e.reason isEqualToString:@"not ready"], @"error: %@", e);
             id<MKMID> group = [e.userInfo objectForKey:@"group"];
             if (group) {
                 [rMsg setObject:group forKey:@"waiting"];
-                [self.messenger suspendMessage:rMsg];
+                [messenger suspendMessage:rMsg];
             }
         }
-    } @finally {
-        //
     }
-    if (!res) {
+    if ([responses count] == 0) {
         // respond nothing
         return nil;
-    }
-    if ([res isKindOfClass:[DIMHandshakeCommand class]]) {
+    } else if ([[responses objectAtIndex:0] isKindOfClass:[DIMHandshakeCommand class]]) {
         // urgent command
-        return res;
-    }
-    
-    if ([res isKindOfClass:[DIMReceiptCommand class]]) {
-        if (MKMNetwork_IsStation(sender.type)) {
-            // no need to respond receipt to station
-            return nil;
-        }
-        NSLog(@"receipt to sender: %@", sender);
+        return responses;
     }
     
     // check receiver
@@ -161,11 +162,34 @@
     DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
-    // pack message
-    id<DKDEnvelope> env = DKDEnvelopeCreate(user.ID, sender, nil);
-    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, res);
-    // normal response
-    [self.messenger sendInstantMessage:iMsg callback:NULL priority:1];
+    id<DKDEnvelope> env;
+    id<DKDInstantMessage> iMsg;
+    
+    // check responses
+    for (id<DKDContent> res in responses) {
+        if (!res) {
+            // should not happen
+            continue;
+        } else if ([res isKindOfClass:[DIMReceiptCommand class]]) {
+            if (MKMNetwork_IsStation(sender.type)) {
+                // no need to respond receipt to station
+                return nil;
+            }
+            NSLog(@"receipt to sender: %@", sender);
+        } else if ([res isKindOfClass:[DIMTextContent class]]) {
+            if (MKMNetwork_IsStation(sender.type)) {
+                // no need to respond text message to station
+                return nil;
+            }
+            NSLog(@"text to sender: %@", sender);
+        }
+        // pack message
+        env = DKDEnvelopeCreate(user.ID, sender, nil);
+        iMsg = DKDInstantMessageCreate(env, res);
+        // normal response
+        [messenger sendInstantMessage:iMsg callback:NULL priority:1];
+    }
+    
     // DON'T respond to station directly
     return nil;
 }
