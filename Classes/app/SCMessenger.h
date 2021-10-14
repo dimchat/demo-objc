@@ -39,7 +39,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol DIMMessengerDelegate;
+
 @interface SCMessenger : DIMMessenger
+
+@property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 
 + (instancetype)sharedInstance;
 

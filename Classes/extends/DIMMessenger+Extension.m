@@ -59,6 +59,21 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     NSAssert(false, @"implement me!");
 }
 
+- (DIMMessagePacker *)createMessagePacker {
+    NSAssert(false, @"implement me!");
+    return nil;
+}
+
+- (DIMMessageProcessor *)createMessageProcessor {
+    NSAssert(false, @"implement me!");
+    return nil;
+}
+
+- (DIMMessageTransmitter *)createMessageTransmitter {
+    NSAssert(false, @"implement me!");
+    return nil;
+}
+
 - (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver {
     DKDContent *cont = (DKDContent *)content;
     DIMMessengerCallback callback = ^(id<DKDReliableMessage> rMsg, NSError *error) {
@@ -177,6 +192,28 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 - (BOOL)queryMuteList{
     DIMCommand *cmd = [[DIMMuteCommand alloc] initWithList:nil];
     return [self sendCommand:cmd];
+}
+
+@end
+
+@implementation DIMMessenger (Station)
+
+@dynamic delegate;
+
+- (BOOL)sendPackageData:(NSData *)data
+      completionHandler:(nullable DIMMessengerCompletionHandler)handler
+               priority:(NSInteger)prior {
+    return [self.delegate sendPackageData:data
+                        completionHandler:handler
+                                 priority:prior];
+}
+
+- (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg {
+    return [self.delegate uploadData:CT forMessage:iMsg];
+}
+
+- (nullable NSData *)downloadData:(NSURL *)url forMessage:(id<DKDInstantMessage>)iMsg {
+    return [self.delegate downloadData:url forMessage:iMsg];
 }
 
 @end

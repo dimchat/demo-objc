@@ -55,7 +55,11 @@
 #import "SCMessenger.h"
 
 @interface SCMessenger () {
-    
+
+    DIMMessagePacker *_messagePacker;
+    DIMMessageProcessor *_messageProcessor;
+    DIMMessageTransmitter *_messageTransmitter;
+
     DIMStation *_server;
     
     // query tables
@@ -73,6 +77,10 @@ SingletonImplementations(SCMessenger, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         
+        _messagePacker = nil;
+        _messageProcessor = nil;
+        _messageTransmitter = nil;
+
         // query tables
         _metaQueryTable  = [[NSMutableDictionary alloc] init];
         _docQueryTable   = [[NSMutableDictionary alloc] init];
@@ -97,14 +105,80 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return [DIMFacebook sharedInstance];
 }
 
+#pragma mark Message Packer
+
+- (id<DIMPacker>)packer {
+    id<DIMPacker> delegate = [super packer];
+    if (!delegate) {
+        delegate = [self messagePacker];
+        [super setPacker:delegate];
+    }
+    return delegate;
+}
+- (void)setPacker:(id<DIMPacker>)packer {
+    [super setPacker:packer];
+    if ([packer isKindOfClass:[DIMMessagePacker class]]) {
+        _messagePacker = (DIMMessagePacker *)packer;
+    }
+}
+- (DIMMessagePacker *)messagePacker {
+    if (!_messagePacker) {
+        _messagePacker = [self createMessagePacker];
+    }
+    return _messagePacker;
+}
 - (DIMMessagePacker *)createMessagePacker {
     return [[SCMessagePacker alloc] initWithMessenger:self];
 }
 
+#pragma mark Message Processor
+
+- (id<DIMProcessor>)processor {
+    id<DIMProcessor> delegate = [super processor];
+    if (!delegate) {
+        delegate = [self messageProcessor];
+        [super setProcessor:delegate];
+    }
+    return delegate;
+}
+- (void)setProcessor:(id<DIMProcessor>)processor {
+    [super setProcessor:processor];
+    if ([processor isKindOfClass:[DIMMessageProcessor class]]) {
+        _messageProcessor = (DIMMessageProcessor *)processor;
+    }
+}
+- (DIMMessageProcessor *)messageProcessor {
+    if (!_messageProcessor) {
+        _messageProcessor = [self createMessageProcessor];
+    }
+    return _messageProcessor;
+}
 - (DIMMessageProcessor *)createMessageProcessor {
     return [[SCMessageProcessor alloc] initWithMessenger:self];
 }
 
+#pragma mark Message Transmitter
+
+- (id<DIMTransmitter>)transmitter {
+    id<DIMTransmitter> delegate = [super transmitter];
+    if (!delegate) {
+        delegate = [self messageTransmitter];
+        [super setTransmitter:delegate];
+    }
+    return delegate;
+}
+- (void)setTransmitter:(id<DIMTransmitter>)transmitter {
+    [super setTransmitter:transmitter];
+    if ([transmitter isKindOfClass:[DIMMessageTransmitter class]]) {
+        _messageTransmitter = (DIMMessageTransmitter *)transmitter;
+    }
+}
+- (DIMMessageTransmitter *)messageTransmitter {
+    if (!_messageTransmitter) {
+        _messageTransmitter = [self createMessageTransmitter];
+    }
+    return _messageTransmitter;
+}
 - (DIMMessageTransmitter *)createMessageTransmitter {
     return [[SCMessageTransmitter alloc] initWithMessenger:self];
 }

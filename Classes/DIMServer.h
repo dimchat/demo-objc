@@ -38,6 +38,7 @@
 #import <DIMSDK/DIMSDK.h>
 #import <MarsGate/StarGate.h>
 
+#import <DIMClient/DIMMessenger+Extension.h>
 #import <DIMClient/DIMServerState.h>
 
 NS_ASSUME_NONNULL_BEGIN

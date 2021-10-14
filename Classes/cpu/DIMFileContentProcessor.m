@@ -35,6 +35,8 @@
 //  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
+#import "DIMMessenger+Extension.h"
+
 #import "DIMFileContentProcessor.h"
 
 @implementation DIMFileContentProcessor
