@@ -179,6 +179,14 @@ static inline NSData *merge_data(NSData *data1, NSData *data2) {
     return mData;
 }
 
+static inline bool starts_with(NSData *data, unsigned char b) {
+    if ([data length] == 0) {
+        return false;
+    }
+    unsigned char *buffer = (unsigned char *)[data bytes];
+    return buffer[0] == b;
+}
+
 static inline NSArray<NSData *> *split_lines(NSData *data) {
     NSMutableArray *mArray = [[NSMutableArray alloc] init];
     [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
@@ -213,9 +221,18 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     NSMutableData *mData = [[NSMutableData alloc] init];
     NSData *SEPARATOR = MKMUTF8Encode(@"\n");
     // 1. split data when multi packages received one time
-    // TODO: here defined data buffer contains JSON object in one line,
-    //       if '\n' found, means this buffer contains multi packages.
-    NSArray<NSData *> *packages = split_lines(data);
+    NSArray<NSData *> *packages;
+    if ([data length] == 0) {
+        packages = @[];
+    } else if (starts_with(data, '{')) {
+        // JSON format
+        //     the data buffer may contain multi messages (separated by '\n'),
+        //     so we should split them here.
+        packages = split_lines(data);
+    } else {
+        // FIXME: other format?
+        packages = @[data];
+    }
     NSArray<NSData *> *responses;
     // 2. process package data one by one
     for (NSData *pack in packages) {
