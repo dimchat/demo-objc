@@ -185,12 +185,23 @@ static inline NSData *merge_data(NSData *data1, NSData *data2) {
         NSRange range = NSMakeRange(head.length, data.length - head.length);
         data = [data subdataWithRange:range];
     }
+    NSMutableData *mData = [[NSMutableData alloc] init];
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    NSData *response = [messenger processData:data];
-    if (head.length > 0 || response.length > 0) {
+    NSArray<NSData *> *responses = [messenger processData:data];
+    for (NSData *res in responses) {
+        [mData appendData:res];
+        [mData appendData:MKMUTF8Encode(@"\n")];
+    }
+    if ([mData length] > 0) {
+        // drop last '\n'
+        data = [mData subdataWithRange:NSMakeRange(0, [mData length] - 1)];
+    } else {
+        data = nil;
+    }
+    if (head.length > 0 || [mData length] > 0) {
         // NOTICE: sending 'SN' back to the server for confirming
         //         that the client have received the pushing message
-        [_currentStation.star send:merge_data(head, response)];
+        [_currentStation.star send:merge_data(head, data)];
     }
 }
 

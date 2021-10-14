@@ -97,13 +97,15 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         [incomingMessages removeObjectForKey:ID];
         
         // process them now
-        id<DKDReliableMessage> res;
+        NSArray<id<DKDReliableMessage>> *responses;
         for (id<DKDReliableMessage> item in incomings) {
-            res = [messenger processMessage:item];
-            if (!res) {
+            responses = [messenger processMessage:item];
+            if ([responses count] == 0) {
                 continue;
             }
-            [messenger sendReliableMessage:res callback:NULL priority:1];
+            for (id<DKDReliableMessage> res in responses) {
+                [messenger sendReliableMessage:res callback:NULL priority:1];
+            }
         }
     }
     
