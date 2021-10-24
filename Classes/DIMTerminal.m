@@ -217,9 +217,6 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
         NSRange range = NSMakeRange(head.length, data.length - head.length);
         data = [data subdataWithRange:range];
     }
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    NSMutableData *mData = [[NSMutableData alloc] init];
-    NSData *SEPARATOR = MKMUTF8Encode(@"\n");
     // 1. split data when multi packages received one time
     NSArray<NSData *> *packages;
     if ([data length] == 0) {
@@ -233,8 +230,11 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
         // FIXME: other format?
         packages = @[data];
     }
-    NSArray<NSData *> *responses;
     // 2. process package data one by one
+    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    NSData *SEPARATOR = MKMUTF8Encode(@"\n");
+    NSMutableData *mData = [[NSMutableData alloc] init];
+    NSArray<NSData *> *responses;
     for (NSData *pack in packages) {
         responses = [messenger processData:pack];
         // combine responses

@@ -117,6 +117,12 @@
 - (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
                                        withMessage:(id<DKDReliableMessage>)rMsg {
     NSArray<id<DKDInstantMessage>> *responses = [super processInstant:iMsg withMessage:rMsg];
+    // FIXME: no need to decrypt twice here actually
+    id<DKDContent> content = iMsg.content;
+    if ([content isKindOfClass:[DIMForwardContent class]]) {
+        rMsg = [(DIMForwardContent *)content forwardMessage];
+        iMsg = [self.messenger decryptMessage:rMsg];
+    }
     if (![self.messenger saveMessage:iMsg]) {
         // error
         return nil;
