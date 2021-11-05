@@ -47,6 +47,38 @@ NSString *kDIMServerState_Running     = @"running";
 NSString *kDIMServerState_Error       = @"error";
 NSString *kDIMServerState_Stopped     = @"stopped";
 
+@interface DIMServerState () {
+    
+    NSDate *_enterTime;
+}
+
+@end
+
+@implementation DIMServerState
+
+- (instancetype)initWithName:(NSString *)name {
+    if (self = [super initWithName:name]) {
+        _enterTime = nil;
+    }
+    return self;
+}
+
+- (nullable NSDate *)enterTime {
+    return _enterTime;
+}
+
+- (void)onEnter:(FSMMachine *)machine {
+    [super onEnter:machine];
+    _enterTime = [[NSDate alloc] init];
+}
+
+- (void)onExit:(FSMMachine *)machine {
+    _enterTime = nil;
+    [super onExit:machine];
+}
+
+@end
+
 @implementation DIMServerStateMachine
 
 /* designated initializer */
@@ -90,11 +122,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
             return NO;
         }
         SGStarStatus status = server.star.status;
-        if (status == SGStarStatus_Connecting ||
-            status == SGStarStatus_Connected) {
-            return YES;
-        }
-        return NO;
+        return status == SGStarStatus_Connecting || status == SGStarStatus_Connected;
     };
     name = kDIMServerState_Connecting;
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
@@ -116,10 +144,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
         SGStarStatus status = server.star.status;
-        if (status == SGStarStatus_Connected) {
-            return YES;
-        }
-        return NO;
+        return status == SGStarStatus_Connected;
     };
     name = kDIMServerState_Connected;
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
@@ -129,10 +154,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
         SGStarStatus status = server.star.status;
-        if (status == SGStarStatus_Error) {
-            return YES;
-        }
-        return NO;
+        return status == SGStarStatus_Error;
     };
     name = kDIMServerState_Error;
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
@@ -163,6 +185,16 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
     [state addTransition:trans];
     
+    // target state: Error
+    block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
+        DIMServer *server = [(DIMServerStateMachine *)machine server];
+        SGStarStatus status = server.star.status;
+        return status == SGStarStatus_Error;
+    };
+    name = kDIMServerState_Error;
+    trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
+    [state addTransition:trans];
+    
     return state;
 }
 
@@ -189,17 +221,34 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
     [state addTransition:trans];
     
+    // target state: Connected
+    block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
+        DIMServerState *state = [(DIMServerStateMachine *)machine currentState];
+        NSDate *enterTime = state.enterTime;
+        if (!enterTime) {
+            // not enter yet
+            return NO;
+        }
+        NSTimeInterval expired = [enterTime timeIntervalSince1970] + 30;
+        NSTimeInterval now = [[[NSDate alloc] init] timeIntervalSince1970];
+        if (now < expired) {
+            // not expired yet
+            return NO;
+        }
+        // handshake expired, return to 'connect' to do it again
+        DIMServer *server = [(DIMServerStateMachine *)machine server];
+        SGStarStatus status = server.star.status;
+        return status == SGStarStatus_Connected;
+    };
+    name = kDIMServerState_Error;
+    trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
+    [state addTransition:trans];
+
     // target state: Error
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
         SGStarStatus status = server.star.status;
-        if (status != SGStarStatus_Connected) {
-            return YES;
-        }
-        
-        // TODO: timeout, switch to ErrorState
-        
-        return NO;
+        return status == SGStarStatus_Error;
     };
     name = kDIMServerState_Error;
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
@@ -217,19 +266,6 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     FSMBlockTransition *trans;
     FSMBlock block;
     
-    // target state: Error
-    block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
-        DIMServer *server = [(DIMServerStateMachine *)machine server];
-        SGStarStatus status = server.star.status;
-        if (status != SGStarStatus_Connected) {
-            return YES;
-        }
-        return NO;
-    };
-    name = kDIMServerState_Error;
-    trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
-    [state addTransition:trans];
-    
     // target state: Default
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         NSString *sess = [(DIMServerStateMachine *)machine session];
@@ -240,6 +276,16 @@ NSString *kDIMServerState_Stopped     = @"stopped";
         return NO;
     };
     name = kDIMServerState_Default;
+    trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
+    [state addTransition:trans];
+    
+    // target state: Error
+    block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
+        DIMServer *server = [(DIMServerStateMachine *)machine server];
+        SGStarStatus status = server.star.status;
+        return status == SGStarStatus_Error;
+    };
+    name = kDIMServerState_Error;
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];
     [state addTransition:trans];
     
@@ -259,10 +305,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
     block = ^BOOL(FSMMachine *machine, FSMTransition *transition) {
         DIMServer *server = [(DIMServerStateMachine *)machine server];
         SGStarStatus status = server.star.status;
-        if (status != SGStarStatus_Error) {
-            return YES;
-        }
-        return NO;
+        return status != SGStarStatus_Error;
     };
     name = kDIMServerState_Default;
     trans = [[FSMBlockTransition alloc] initWithTargetStateName:name block:block];

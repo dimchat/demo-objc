@@ -47,6 +47,12 @@ extern NSString *kDIMServerState_Running;     // user login
 extern NSString *kDIMServerState_Error;       // failed to connect
 extern NSString *kDIMServerState_Stopped;     // disconnected
 
+@interface DIMServerState : FSMState
+
+@property (readonly, strong, nonatomic, nullable) NSDate *enterTime;
+
+@end
+
 @class DIMServer;
 
 @interface DIMServerStateMachine : FSMMachine
