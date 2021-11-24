@@ -140,7 +140,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         // FIXME: sometimes the connection state will be reset
         //NSAssert(false, @"server state error: %@", _fsm.currentState.name);
         NSLog(@"server state error: %@", _fsm.currentState.name);
-        return ;
+        //return ;
     }
     if (_star.status != SGStarStatus_Connected) {
         // FIXME: sometimes the connection will be lost while handshaking

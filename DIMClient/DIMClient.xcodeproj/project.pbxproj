@@ -96,6 +96,8 @@
 		E989F65A244EED17009AA4B6 /* DIMLoginCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E989F658244EED17009AA4B6 /* DIMLoginCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E989F65B244EED17009AA4B6 /* DIMLoginCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E989F659244EED17009AA4B6 /* DIMLoginCommandProcessor.m */; };
 		E98E1C982584CF0D00F1FD55 /* dimMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = E98E1C972584CF0D00F1FD55 /* dimMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E99278E8274ABBF1000BBACF /* SCProcessorFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E99278E6274ABBF1000BBACF /* SCProcessorFactory.h */; };
+		E99278E9274ABBF1000BBACF /* SCProcessorFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E99278E7274ABBF1000BBACF /* SCProcessorFactory.m */; };
 		E99B1FEA25852B92001A05F1 /* SCFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B1FE825852B92001A05F1 /* SCFacebook.h */; };
 		E99B1FEB25852B92001A05F1 /* SCFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E99B1FE925852B92001A05F1 /* SCFacebook.m */; };
 		E99B1FEE25852D8F001A05F1 /* SCMessageProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */; };
@@ -316,6 +318,8 @@
 		E989F658244EED17009AA4B6 /* DIMLoginCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommandProcessor.h; sourceTree = "<group>"; };
 		E989F659244EED17009AA4B6 /* DIMLoginCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMLoginCommandProcessor.m; sourceTree = "<group>"; };
 		E98E1C972584CF0D00F1FD55 /* dimMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dimMacros.h; sourceTree = "<group>"; };
+		E99278E6274ABBF1000BBACF /* SCProcessorFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCProcessorFactory.h; sourceTree = "<group>"; };
+		E99278E7274ABBF1000BBACF /* SCProcessorFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCProcessorFactory.m; sourceTree = "<group>"; };
 		E99B1FE825852B92001A05F1 /* SCFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCFacebook.h; sourceTree = "<group>"; };
 		E99B1FE925852B92001A05F1 /* SCFacebook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCFacebook.m; sourceTree = "<group>"; };
 		E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCMessageProcessor.h; sourceTree = "<group>"; };
@@ -602,6 +606,8 @@
 				E99B1FE925852B92001A05F1 /* SCFacebook.m */,
 				E99B200125866AD2001A05F1 /* SCKeyStore.h */,
 				E99B200225866AD2001A05F1 /* SCKeyStore.m */,
+				E99278E6274ABBF1000BBACF /* SCProcessorFactory.h */,
+				E99278E7274ABBF1000BBACF /* SCProcessorFactory.m */,
 				E953814D258E4E5C0016F2F4 /* SCMessagePacker.h */,
 				E953814E258E4E5C0016F2F4 /* SCMessagePacker.m */,
 				E99B1FEC25852D8F001A05F1 /* SCMessageProcessor.h */,
@@ -683,6 +689,7 @@
 				E959658023919D7200DAA870 /* DIMSearchCommandProcessor.h in Headers */,
 				E9A4A58F23B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.h in Headers */,
 				E9DD00E22391982000F5FBDD /* DIMHandshakeCommandProcessor.h in Headers */,
+				E99278E8274ABBF1000BBACF /* SCProcessorFactory.h in Headers */,
 				E959652E239125CA00DAA870 /* DIMFacebook+Extension.h in Headers */,
 				E921FC6D2593429B001ACA11 /* DIMMessageProcessor+Extension.h in Headers */,
 				E959656323916BB600DAA870 /* DIMMessenger+Extension.h in Headers */,
@@ -922,6 +929,7 @@
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
 				E99B200425866AD2001A05F1 /* SCKeyStore.m in Sources */,
 				52DBA3132340372C0000C2B4 /* FMDatabasePool.m in Sources */,
+				E99278E9274ABBF1000BBACF /* SCProcessorFactory.m in Sources */,
 				E915CDC62439C95600B98FE3 /* DIMGroupManager.m in Sources */,
 				E921FC6325931F07001ACA11 /* DIMReportCommand.m in Sources */,
 				E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */,

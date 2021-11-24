@@ -110,7 +110,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
 //
 - (FSMState *)defaultState {
     NSString *name = kDIMServerState_Default;
-    FSMState *state = [[FSMState alloc] initWithName:name capacity:1];
+    FSMState *state = [[DIMServerState alloc] initWithName:name capacity:1];
     FSMBlockTransition *trans;
     FSMBlock block;
     
@@ -136,7 +136,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
 //
 - (FSMState *)connectingState {
     NSString *name = kDIMServerState_Connecting;
-    FSMState *state = [[FSMState alloc] initWithName:name capacity:1];
+    FSMState *state = [[DIMServerState alloc] initWithName:name capacity:1];
     FSMBlockTransition *trans;
     FSMBlock block;
     
@@ -168,7 +168,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
 //
 - (FSMState *)connectedState {
     NSString *name = kDIMServerState_Connected;
-    FSMState *state = [[FSMState alloc] initWithName:name capacity:1];
+    FSMState *state = [[DIMServerState alloc] initWithName:name capacity:1];
     FSMBlockTransition *trans;
     FSMBlock block;
     
@@ -203,7 +203,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
 //
 - (FSMState *)handshakingState {
     NSString *name = kDIMServerState_Handshaking;
-    FSMState *state = [[FSMState alloc] initWithName:name capacity:1];
+    FSMState *state = [[DIMServerState alloc] initWithName:name capacity:1];
     FSMBlockTransition *trans;
     FSMBlock block;
     
@@ -262,7 +262,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
 //
 - (FSMState *)runningState {
     NSString *name = kDIMServerState_Running;
-    FSMState *state = [[FSMState alloc] initWithName:name capacity:1];
+    FSMState *state = [[DIMServerState alloc] initWithName:name capacity:1];
     FSMBlockTransition *trans;
     FSMBlock block;
     
@@ -297,7 +297,7 @@ NSString *kDIMServerState_Stopped     = @"stopped";
 //
 - (FSMState *)errorState {
     NSString *name = kDIMServerState_Error;
-    FSMState *state = [[FSMState alloc] initWithName:name capacity:1];
+    FSMState *state = [[DIMServerState alloc] initWithName:name capacity:1];
     FSMBlockTransition *trans;
     FSMBlock block;
     

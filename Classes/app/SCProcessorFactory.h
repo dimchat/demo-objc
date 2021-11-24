@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  SeChat : Secure/secret Chat Application
 //
-//                               Written in 2020 by Moky <albert.moky@gmail.com>
+//                               Written in 2021 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2020 Albert Moky
+// Copyright (c) 2021 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,43 +28,19 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMMessageProcessor+Extension.m
+//  SCProcessorFactory.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2020/12/23.
-//  Copyright © 2020 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2021/11/22.
+//  Copyright © 2021 DIM Group. All rights reserved.
 //
 
-#import "DIMSearchCommand.h"
-#import "DIMReportCommand.h"
+#import <DIMSDK/DIMSDK.h>
 
-#import "DIMDefaultProcessor.h"
-#import "DIMFileContentProcessor.h"
+NS_ASSUME_NONNULL_BEGIN
 
-#import "DIMReceiptCommandProcessor.h"
-#import "DIMMuteCommandProcessor.h"
-#import "DIMBlockCommandProcessor.h"
-#import "DIMHandshakeCommandProcessor.h"
-#import "DIMLoginCommandProcessor.h"
-#import "DIMStorageCommandProcessor.h"
-#import "DIMSearchCommandProcessor.h"
-
-#import "DIMMessageProcessor+Extension.h"
-
-@implementation DIMMessageProcessor (Plugins)
-
-+ (void)loadPlugins {
-    //
-    //  load content/command factories
-    //
-    [DIMMessageProcessor registerAllFactories];
-    
-    DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
-    
-    DIMCommandFactoryRegisterClass(DIMCommand_Report, DIMReportCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Online, DIMReportCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Offline, DIMReportCommand);
-}
+@interface SCProcessorFactory : DIMProcessorFactory
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -38,6 +38,8 @@
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 
+#import "SCProcessorFactory.h"
+
 #import "SCMessageProcessor.h"
 
 @implementation SCMessageProcessor
@@ -50,6 +52,10 @@
 
 - (__kindof DIMFacebook *)facebook {
     return [self.messenger facebook];
+}
+
+- (DIMProcessorFactory *)createProcessorFactory {
+    return [[SCProcessorFactory alloc] initWithMessenger:self.messenger];
 }
 
 - (BOOL)isEmptyGroup:(id<MKMID>)group {
