@@ -112,13 +112,13 @@
 - (nullable NSArray<id<MKMID>> *)contacts {
     NSArray *array = [self objectForKey:@"contacts"];
     if (array) {
-        return [MKMID convert:array];
+        return MKMIDConvert(array);
     }
     return nil;
 }
 
 - (void)setContacts:(NSArray<id<MKMID>> *)contacts {
-    [self setObject:[MKMID revert:contacts] forKey:@"contacts"];
+    [self setObject:MKMIDRevert(contacts) forKey:@"contacts"];
 }
 
 @end

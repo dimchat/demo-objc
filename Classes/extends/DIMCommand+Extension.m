@@ -60,7 +60,7 @@ static inline NSString *readable_name(id<MKMID> ID) {
 
 NSString *DIMInviteGroupCommand_BuildText(DIMInviteCommand *cmd, id<MKMID> commander) {
     // get 'added' list
-    NSArray<id<MKMID>> *addeds = [MKMID convert:[cmd objectForKey:@"added"]];
+    NSArray<id<MKMID>> *addeds = MKMIDConvert([cmd objectForKey:@"added"]);
     // build message
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:addeds.count];
     for (id<MKMID> item in addeds) {
@@ -75,7 +75,7 @@ NSString *DIMInviteGroupCommand_BuildText(DIMInviteCommand *cmd, id<MKMID> comma
 
 NSString *DIMExpelGroupCommand_BuildText(DIMExpelCommand *cmd, id<MKMID> commander) {
     // get 'removed' list
-    NSArray<id<MKMID>> *removeds = [MKMID convert:[cmd objectForKey:@"removed"]];
+    NSArray<id<MKMID>> *removeds = MKMIDConvert([cmd objectForKey:@"removed"]);
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:removeds.count];
     for (id<MKMID> item in removeds) {
         [mArr addObject:readable_name(item)];
@@ -99,7 +99,7 @@ NSString *DIMResetGroupCommand_BuildText(DIMResetGroupCommand *cmd, id<MKMID> co
     NSString *text = [NSString stringWithFormat:format, readable_name(commander)];
     
     // get 'added' list
-    NSArray<id<MKMID>> *addeds = [MKMID convert:[cmd objectForKey:@"added"]];
+    NSArray<id<MKMID>> *addeds = MKMIDConvert([cmd objectForKey:@"added"]);
     if (addeds.count > 0) {
         NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:addeds.count];
         for (id<MKMID> item in addeds) {
@@ -110,7 +110,7 @@ NSString *DIMResetGroupCommand_BuildText(DIMResetGroupCommand *cmd, id<MKMID> co
     }
     
     // get 'removed' list
-    NSArray<id<MKMID>> *removeds = [MKMID convert:[cmd objectForKey:@"removed"]];
+    NSArray<id<MKMID>> *removeds = MKMIDConvert([cmd objectForKey:@"removed"]);
     if (removeds.count > 0) {
         NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:removeds.count];
         for (id<MKMID> item in removeds) {

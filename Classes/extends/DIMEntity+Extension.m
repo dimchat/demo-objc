@@ -111,7 +111,7 @@
         id<MKMMeta> meta = [self meta];
         id<MKMVerifyKey> PK = [DIMMetaForID(ID) key];
         //NSAssert(PK, @"failed to get meta for ID: %@", ID);
-        return [meta matchPublicKey:PK];
+        return MKMMetaMatchKey(PK, meta);
     }
 }
 

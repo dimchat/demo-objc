@@ -149,7 +149,7 @@
 #pragma mark Cache
 
 - (BOOL)cacheMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    NSAssert([meta matchID:ID], @"meta not match: %@, %@", ID, meta);
+    NSAssert(MKMMetaMatchID(ID, meta), @"meta not match: %@, %@", ID, meta);
     [_metaTable setObject:meta forKey:ID];
     return YES;
 }

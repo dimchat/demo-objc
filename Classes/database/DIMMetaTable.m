@@ -100,7 +100,7 @@
 }
 
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
-    if (![meta matchID:ID]) {
+    if (!MKMMetaMatchID(ID, meta)) {
         NSAssert(false, @"meta not match ID: %@, %@", ID, meta);
         return NO;
     }

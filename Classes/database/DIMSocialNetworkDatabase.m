@@ -209,7 +209,7 @@
         // if the user's public key matches with the group's meta,
         // it means this meta was generate by the user's private key
         meta = [self metaForID:member];
-        if ([gMeta matchPublicKey:meta.key]) {
+        if (MKMMetaMatchKey(meta.key, gMeta)) {
             return member;
         }
     }

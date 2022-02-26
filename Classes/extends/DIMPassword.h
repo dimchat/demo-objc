@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMPassword : MKMDictionary<MKMSymmetricKey>
+@interface DIMPassword : NSObject
 
 + (id<MKMSymmetricKey>)generateWithString:(NSString *)pwd;
 

@@ -127,7 +127,7 @@ SingletonImplementations(SCKeyStore, sharedInstance)
         NSDictionary *keyTable = [keyMap objectForKey:from];
         for (NSString *to in keyTable) {
             id<MKMID> receiver = MKMIDFromString(to);
-            NSDictionary *keyDict = [keyTable objectForKey:to];
+            id keyDict = [keyTable objectForKey:to];
             newKey = MKMSymmetricKeyFromDictionary(keyDict);
             NSAssert(newKey, @"key error(%@ -> %@): %@", from, to, keyDict);
             // check whether exists an old key
@@ -192,12 +192,12 @@ SingletonImplementations(SCKeyStore, sharedInstance)
                                            to:(id<MKMID>)receiver
                                      generate:(BOOL)create {
     if (MKMIDIsBroadcast(receiver)) {
-        return MKMSymmetricKeyWithAlgorithm(@"PLAIN");
+        return MKMSymmetricKeyGenerate(@"PLAIN");
     }
     // get key from cache
     id<MKMSymmetricKey> key = [self _cipherKeyFrom:sender to:receiver];
     if (!key && create) {
-        key = MKMSymmetricKeyWithAlgorithm(MKMAlgorithmAES);
+        key = MKMSymmetricKeyGenerate(MKMAlgorithmAES);
         if (key) {
             [self _cacheCipherKey:key from:sender to:receiver];
         }

@@ -162,7 +162,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     DIMUser *user = [self.facebook currentUser];
     NSAssert([contacts count] > 0, @"contacts cannot be empty");
     // generate password
-    id<MKMSymmetricKey> password = MKMSymmetricKeyWithAlgorithm(MKMAlgorithmAES);
+    id<MKMSymmetricKey> password = MKMSymmetricKeyGenerate(MKMAlgorithmAES);
     // encrypt contacts
     NSData *data = MKMJSONEncode(contacts);
     data = [password encrypt:data];

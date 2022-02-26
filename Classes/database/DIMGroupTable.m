@@ -99,7 +99,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
         for (NSUInteger index = 0; index < members.count; ++index) {
             ID = [members objectAtIndex:index];
             PK = [DIMMetaForID(ID) key];
-            if ([gMeta matchPublicKey:PK]) {
+            if (MKMMetaMatchKey(PK, gMeta)) {
                 if (index > 0) {
                     // move to front
                     [members removeObjectAtIndex:index];

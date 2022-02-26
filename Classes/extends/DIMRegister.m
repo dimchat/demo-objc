@@ -101,7 +101,7 @@
 }
 
 - (__kindof id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm {
-    return MKMPrivateKeyWithAlgorithm(algorithm);
+    return MKMPrivateKeyGenerate(algorithm);
 }
 
 - (__kindof id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name {
@@ -124,7 +124,7 @@
 }
 
 - (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(UInt8)type {
-    return [meta generateID:type terminal:nil];
+    return MKMIDGenerate(meta, type, nil);
 }
 
 - (__kindof id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name {
@@ -171,7 +171,7 @@
         NSAssert([doc isValid], @"document not valid: %@", doc);
         cmd = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     } else {
-        NSAssert([meta matchID:ID], @"meta not match ID: %@, %@", ID, meta);
+        NSAssert(MKMMetaMatchID(ID, meta), @"meta not match ID: %@, %@", ID, meta);
         cmd = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
     }
     DIMMessenger *messenger = [DIMMessenger sharedInstance];

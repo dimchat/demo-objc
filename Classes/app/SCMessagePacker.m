@@ -107,7 +107,7 @@
     if (!meta) {
         // get from local storage
         meta = [self.facebook metaForID:sender];
-    } else if (![meta matchID:sender]) {
+    } else if (!MKMMetaMatchID(sender, meta)) {
         meta = nil;
     }
     if (!meta) {
