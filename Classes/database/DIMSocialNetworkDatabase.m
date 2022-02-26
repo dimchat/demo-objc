@@ -82,7 +82,7 @@
 - (BOOL)savePrivateKey:(id<MKMPrivateKey>)key type:(NSString *)type forID:(id<MKMID>)ID {
     // support multi private keys
     NSString *label = [NSString stringWithFormat:@"%@:%@", type, ID.address];
-    return [(MKMPrivateKey *)key saveKeyWithIdentifier:label];
+    return MKMPrivateKeySave(label, key);
 }
 
 - (BOOL)saveMeta:(id<MKMMeta>)meta forID:(id<MKMID>)ID {
@@ -160,19 +160,19 @@
     NSMutableArray *mArray = [[NSMutableArray alloc] init];
     // get private key paired with visa.key
     NSString *label = [NSString stringWithFormat:@"visa:%@", user.address];
-    id<MKMPrivateKey> key = [MKMPrivateKey loadKeyWithIdentifier:label];
+    id<MKMPrivateKey> key = MKMPrivateKeyLoad(label);
     if (key) {
         [mArray addObject:key];
     }
     // get private key paired with meta.key
     label = [NSString stringWithFormat:@"meta:%@", user.address];
-    key = [MKMPrivateKey loadKeyWithIdentifier:label];
+    key = MKMPrivateKeyLoad(label);
     if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
         [mArray addObject:key];
     }
     // get private key paired with meta.key
     label = [NSString stringWithFormat:@"%@", user.address];
-    key = [MKMPrivateKey loadKeyWithIdentifier:label];
+    key = MKMPrivateKeyLoad(label);
     if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
         [mArray addObject:key];
     }
@@ -187,10 +187,10 @@
 - (id<MKMSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
     // get private key paired with meta.key
     NSString *label = [NSString stringWithFormat:@"meta:%@", user.address];
-    id<MKMPrivateKey> key = [MKMPrivateKey loadKeyWithIdentifier:label];
+    id<MKMPrivateKey> key = MKMPrivateKeyLoad(label);
     if (!key) {
         label = [NSString stringWithFormat:@"%@", user.address];
-        key = [MKMPrivateKey loadKeyWithIdentifier:label];
+        key = MKMPrivateKeyLoad(label);
     }
     return key;
 }

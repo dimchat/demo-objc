@@ -145,7 +145,7 @@
         [doc setAvatar:url];
     }
     if (![_key conformsToProtocol:@protocol(MKMDecryptKey)]) {
-        MKMPrivateKey *sKey = [self generatePrivateKeyWithAlgorithm:MKMAlgorithmRSA];
+        id<MKMPrivateKey> sKey = [self generatePrivateKeyWithAlgorithm:MKMAlgorithmRSA];
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
         [facebook savePrivateKey:sKey type:DIMPrivateKeyType_Visa user:ID];
         [doc setKey:sKey.publicKey];
