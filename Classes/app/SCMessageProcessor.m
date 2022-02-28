@@ -45,7 +45,7 @@
 @implementation SCMessageProcessor
 
 - (DIMProcessorFactory *)createProcessorFactory {
-    return [[SCProcessorFactory alloc] initWithMessenger:self.messenger];
+    return [[SCProcessorFactory alloc] initWithFacebook:self.facebook messenger:self.messenger];
 }
 
 - (BOOL)isEmptyGroup:(id<MKMID>)group {

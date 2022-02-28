@@ -53,20 +53,25 @@
 
 #import "SCProcessorFactory.h"
 
+#define CREATE_CPU(clazz)                                                      \
+            [[clazz alloc] initWithFacebook:self.facebook                      \
+                                  messenger:self.messenger]                    \
+                                                   /* EOF 'CREATE_CPU(clazz)' */
+
 @implementation SCProcessorFactory
 
 - (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type {
     // file
     if (type == DKDContentType_File) {
-        return [[DIMFileContentProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMFileContentProcessor);
     } else if (type == DKDContentType_Image || type == DKDContentType_Audio || type == DKDContentType_Video) {
         // TODO: shared the same processor with 'FILE'?
-        return [[DIMFileContentProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMFileContentProcessor);
     }
     DIMContentProcessor *cpu = [super createProcessorWithType:type];
     if (!cpu) {
         // unknown
-        return [[DIMDefaultContentProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMDefaultContentProcessor);
     }
     return cpu;
 }
@@ -74,37 +79,37 @@
 - (DIMCommandProcessor *)createProcessorWithType:(DKDContentType)type command:(NSString *)name {
     // receipt
     if ([name isEqualToString:DIMCommand_Receipt]) {
-        return [[DIMReceiptCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMReceiptCommandProcessor);
     }
     // mute
     if ([name isEqualToString:DIMCommand_Mute]) {
-        return [[DIMMuteCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMMuteCommandProcessor);
     }
     // block
     if ([name isEqualToString:DIMCommand_Block]) {
-        return [[DIMBlockCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMBlockCommandProcessor);
     }
     // handshake
     if ([name isEqualToString:DIMCommand_Handshake]) {
-        return [[DIMHandshakeCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMHandshakeCommandProcessor);
     }
     // login
     if ([name isEqualToString:DIMCommand_Login]) {
-        return [[DIMLoginCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMLoginCommandProcessor);
     }
     // storage
     if ([name isEqualToString:DIMCommand_Storage]) {
-        return [[DIMStorageCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMStorageCommandProcessor);
     } else if ([name isEqualToString:@"contacts"] || [name isEqualToString:@"private_key"]) {
         // TODO: shared the same processor with 'storage'?
-        return [[DIMStorageCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMStorageCommandProcessor);
     }
     // search
     if ([name isEqualToString:DIMCommand_Search]) {
-        return [[DIMSearchCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMSearchCommandProcessor);
     } else if ([name isEqualToString:DIMCommand_OnlineUsers]) {
         // TODO: shared the same processor with 'search'?
-        return [[DIMSearchCommandProcessor alloc] initWithMessenger:self.messenger];
+        return CREATE_CPU(DIMSearchCommandProcessor);
     }
     // others
     return [super createProcessorWithType:type command:name];
