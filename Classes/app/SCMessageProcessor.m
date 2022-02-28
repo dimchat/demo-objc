@@ -44,16 +44,6 @@
 
 @implementation SCMessageProcessor
 
-- (instancetype)initWithMessenger:(DIMMessenger *)transceiver {
-    if (self = [super initWithMessenger:transceiver]) {
-    }
-    return self;
-}
-
-- (__kindof DIMFacebook *)facebook {
-    return [self.messenger facebook];
-}
-
 - (DIMProcessorFactory *)createProcessorFactory {
     return [[SCProcessorFactory alloc] initWithMessenger:self.messenger];
 }
@@ -152,7 +142,7 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    DIMMessenger *messenger = [self messenger];
+    DIMMessenger *messenger = self.messenger;
     
     id<MKMID> sender = rMsg.sender;
     if ([self isWaitingGroup:content sender:sender]) {

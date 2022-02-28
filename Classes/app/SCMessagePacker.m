@@ -43,7 +43,7 @@
 
 - (void)attachKeyDigest:(id<DKDReliableMessage>)rMsg {
     if (rMsg.delegate == nil) {
-        rMsg.delegate = self.transceiver;
+        rMsg.delegate = self.messenger;
     }
     if ([rMsg encryptedKey]) {
         // 'key' exists

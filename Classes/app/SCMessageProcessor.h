@@ -41,8 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SCMessageProcessor : DIMMessageProcessor
 
-@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
-
 @end
 
 NS_ASSUME_NONNULL_END

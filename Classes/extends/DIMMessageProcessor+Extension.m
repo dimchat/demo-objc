@@ -55,9 +55,9 @@
 
 + (void)loadPlugins {
     //
-    //  load content/command factories
+    //  Register common factories
     //
-    DIMRegisterAllFactories();
+    [self registerAllFactories];
     
     DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);

@@ -128,7 +128,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return _messagePacker;
 }
 - (DIMMessagePacker *)createMessagePacker {
-    return [[SCMessagePacker alloc] initWithMessenger:self];
+    return [[SCMessagePacker alloc] initWithFacebook:self.facebook messenger:self];
 }
 
 #pragma mark Message Processor
@@ -154,7 +154,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return _messageProcessor;
 }
 - (DIMMessageProcessor *)createMessageProcessor {
-    return [[SCMessageProcessor alloc] initWithMessenger:self];
+    return [[SCMessageProcessor alloc] initWithFacebook:self.facebook messenger:self];
 }
 
 #pragma mark Message Transmitter
