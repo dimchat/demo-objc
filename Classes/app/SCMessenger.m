@@ -58,7 +58,7 @@
 
     DIMMessagePacker *_messagePacker;
     DIMMessageProcessor *_messageProcessor;
-    DIMMessageTransmitter *_messageTransmitter;
+    id<DIMTransmitter> _messageTransmitter;
 
     DIMStation *_server;
     
@@ -101,7 +101,11 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return delegate;
 }
 
-- (DIMFacebook *)createFacebook {
+- (id<DIMEntityDelegate>)barrack {
+    return [DIMFacebook sharedInstance];
+}
+
+- (DIMFacebook *)facebook {
     return [DIMFacebook sharedInstance];
 }
 
@@ -169,18 +173,18 @@ SingletonImplementations(SCMessenger, sharedInstance)
 }
 - (void)setTransmitter:(id<DIMTransmitter>)transmitter {
     [super setTransmitter:transmitter];
-    if ([transmitter isKindOfClass:[DIMMessageTransmitter class]]) {
-        _messageTransmitter = (DIMMessageTransmitter *)transmitter;
+    if ([transmitter isKindOfClass:[SCMessageTransmitter class]]) {
+        _messageTransmitter = (id<DIMTransmitter>)transmitter;
     }
 }
-- (DIMMessageTransmitter *)messageTransmitter {
+- (id<DIMTransmitter>)messageTransmitter {
     if (!_messageTransmitter) {
         _messageTransmitter = [self createMessageTransmitter];
     }
     return _messageTransmitter;
 }
-- (DIMMessageTransmitter *)createMessageTransmitter {
-    return [[SCMessageTransmitter alloc] initWithMessenger:self];
+- (id<DIMTransmitter>)createMessageTransmitter {
+    return [[SCMessageTransmitter alloc] initWithFacebook:self.facebook messenger:self];
 }
 
 - (DIMStation *)currentServer {

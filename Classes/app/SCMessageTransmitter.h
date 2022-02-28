@@ -39,7 +39,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SCMessageTransmitter : DIMMessageTransmitter
+@interface SCMessageTransmitter : NSObject <DIMTransmitter>
+
+@property (readonly, weak, nonatomic) __kindof DIMMessenger *messenger;
+@property (readonly, weak, nonatomic) __kindof DIMFacebook *facebook;
+
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -50,6 +50,11 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [SCMessenger sharedInstance];
 }
 
+- (DIMFacebook *)facebook {
+    NSAssert(false, @"implement me!");
+    return nil;
+}
+
 - (DIMStation *)currentServer {
     NSAssert(false, @"implement me!");
     return nil;
@@ -69,7 +74,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return nil;
 }
 
-- (DIMMessageTransmitter *)createMessageTransmitter {
+- (id<DIMTransmitter>)createMessageTransmitter {
     NSAssert(false, @"implement me!");
     return nil;
 }

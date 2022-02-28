@@ -104,11 +104,13 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @interface DIMMessenger (Extension)
 
+@property (readonly, strong, nonatomic) __kindof DIMFacebook *facebook;
+
 @property (strong, nonatomic) DIMStation *currentServer;
 
 - (DIMMessagePacker *)createMessagePacker;
 - (DIMMessageProcessor *)createMessageProcessor;
-- (DIMMessageTransmitter *)createMessageTransmitter;
+- (id<DIMTransmitter>)createMessageTransmitter;
 
 + (instancetype)sharedInstance;
 

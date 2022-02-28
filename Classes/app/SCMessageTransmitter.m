@@ -39,7 +39,48 @@
 
 #import "SCMessageTransmitter.h"
 
+@interface SCMessageTransmitter ()
+
+@property (weak, nonatomic) DIMMessenger *messenger;
+@property (weak, nonatomic) DIMFacebook *facebook;
+
+@end
+
 @implementation SCMessageTransmitter
+
+- (instancetype)init {
+    NSAssert(false, @"don't call me!");
+    DIMFacebook *barrack = nil;
+    DIMMessenger *transceiver = nil;
+    return [self initWithFacebook:barrack messenger:transceiver];
+}
+
+/* designated initializer */
+- (instancetype)initWithFacebook:(DIMFacebook *)barrack
+                       messenger:(DIMMessenger *)transceiver {
+    if (self = [super init]) {
+        self.facebook = barrack;
+        self.messenger = transceiver;
+    }
+    return self;
+}
+
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           callback:(nullable DIMMessengerCallback)fn
+           priority:(NSInteger)prior {
+    // Application Layer should make sure user is already login before it send message to server.
+    // Application layer should put message into queue so that it will send automatically after user login
+    if (!from) {
+        DIMUser *user = [self.facebook currentUser];
+        NSAssert(user, @"current user not set");
+        from = user.ID;
+    }
+    id<DKDEnvelope> env = DKDEnvelopeCreate(from, to, nil);
+    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
+    return [self.messenger sendInstantMessage:iMsg callback:fn priority:prior];
+}
 
 - (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
     // Send message (secured + certified) to target station
