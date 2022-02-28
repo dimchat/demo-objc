@@ -35,14 +35,13 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMStorage.h"
+#import <DIMClient/DIMStorage.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMProfileTable : DIMStorage
 
-- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
-                                              type:(nullable NSString *)type;
+- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type;
 
 - (BOOL)saveDocument:(id<MKMDocument>)doc;
 

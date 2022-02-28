@@ -76,8 +76,7 @@
     return [dir stringByAppendingPathComponent:@"profile.plist"];
 }
 
-- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
-                                              type:(nullable NSString *)type {
+- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type {
     // 1. try from memory cache
     id<MKMDocument> doc = [_caches objectForKey:ID];
     if (!doc) {
@@ -86,9 +85,9 @@
         NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
         if (dict) {
             NSLog(@"document from: %@", path);
-            NSData *data = MKMUTF8Encode([dict objectForKey:@"data"]);
-            NSData *signature = MKMBase64Decode([dict objectForKey:@"signature"]);
-            doc = MKMDocumentCreate(ID, type, data, signature);
+            NSString *data = [dict objectForKey:@"data"];
+            NSString *signature = [dict objectForKey:@"signature"];
+            doc = MKMDocumentCreate(type, ID, data, signature);
         }
         if (!doc) {
             // 2.1. place an empty meta for cache

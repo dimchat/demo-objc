@@ -96,25 +96,25 @@
     return [facebook groupWithID:group];
 }
 
-- (__kindof id<MKMPrivateKey>)generatePrivateKey {
+- (id<MKMPrivateKey>)generatePrivateKey {
     return [self generatePrivateKeyWithAlgorithm:MKMAlgorithmECC];
 }
 
-- (__kindof id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm {
+- (id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm {
     return MKMPrivateKeyGenerate(algorithm);
 }
 
-- (__kindof id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name {
+- (id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name {
     // meta type "ETH" has no seed
     name = nil;
     return [self generateMetaWithType:MKMMetaVersion_ETH seed:name];
 }
 
-- (__kindof id<MKMMeta>)generateGroupMetaWithSeed:(NSString *)name {
+- (id<MKMMeta>)generateGroupMetaWithSeed:(NSString *)name {
     return [self generateMetaWithType:MKMMetaDefaultVersion seed:name];
 }
 
-- (__kindof id<MKMMeta>)generateMetaWithType:(UInt8)type seed:(nullable NSString *)name {
+- (id<MKMMeta>)generateMetaWithType:(UInt8)type seed:(nullable NSString *)name {
     NSAssert(_key, @"private key not set yet");
     return MKMMetaGenerate(type, _key, name);
 }
@@ -127,19 +127,19 @@
     return MKMIDGenerate(meta, type, nil);
 }
 
-- (__kindof id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name {
+- (id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name {
     NSAssert(_key, @"private key not set yet");
     NSAssert(MKMIDIsGroup(ID), @"group ID error: %@", ID);
-    id<MKMBulletin> doc = MKMDocumentNew(ID, MKMDocument_Bulletin);
+    id<MKMBulletin> doc = MKMDocumentNew(MKMDocument_Bulletin, ID);
     [doc setName:name];
     [doc sign:_key];
     return doc;
 }
 
-- (__kindof id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
+- (id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
     NSAssert(_key, @"private key not set yet");
     NSAssert(MKMIDIsUser(ID), @"user ID error: %@", ID);
-    id<MKMVisa> doc = MKMDocumentNew(ID, MKMDocument_Visa);
+    id<MKMVisa> doc = MKMDocumentNew(MKMDocument_Visa, ID);
     [doc setName:name];
     if (url) {
         [doc setAvatar:url];
@@ -154,9 +154,14 @@
     return doc;
 }
 
-- (__kindof id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info {
+- (id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info {
     NSAssert(_key, @"private key not set yet");
-    id<MKMDocument> doc = MKMDocumentNew(ID, MKMIDIsUser(ID) ? MKMDocument_Visa : MKMDocument_Bulletin);
+    id<MKMDocument> doc;
+    if (MKMIDIsUser(ID)) {
+        doc = MKMDocumentNew(MKMDocument_Visa, ID);
+    } else {
+        doc = MKMDocumentNew(MKMDocument_Bulletin, ID);
+    }
     for (NSString *name in info) {
         [doc setProperty:[info objectForKey:name] forKey:name];
     }

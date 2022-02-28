@@ -81,8 +81,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name - "username" or "group-name"
  * @return meta
  */
-- (__kindof id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name;
-- (__kindof id<MKMMeta>)generateGroupMetaWithSeed:(NSString *)name;
+- (id<MKMMeta>)generateUserMetaWithSeed:(nullable NSString *)name;
+- (id<MKMMeta>)generateGroupMetaWithSeed:(NSString *)name;
 
 /**
  *  Step 3. generate ID with meta (and network type)

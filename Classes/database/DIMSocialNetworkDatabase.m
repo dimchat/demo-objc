@@ -137,8 +137,7 @@
     return [_metaTable metaForID:ID];
 }
 
-- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
-                                              type:(nullable NSString *)type {
+- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type {
     return [_profileTable documentForID:ID type:type];
 }
 

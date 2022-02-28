@@ -76,6 +76,8 @@
 		E96D14F723227DD200B5EA59 /* DIMConversationDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14F523227DD200B5EA59 /* DIMConversationDatabase.m */; };
 		E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D15022322AECF00B5EA59 /* DIMUserTable.m */; };
 		E96D15052322AECF00B5EA59 /* DIMUserTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D15032322AECF00B5EA59 /* DIMUserTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E96DBE8527CBA523005799F9 /* FiniteStateMachine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97280852684791600DD7BDD /* FiniteStateMachine.framework */; };
+		E96DBE8627CBA523005799F9 /* FiniteStateMachine.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E97280852684791600DD7BDD /* FiniteStateMachine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E9705CD4239521A200289441 /* DIMMuteCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9705CD2239521A200289441 /* DIMMuteCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9705CD5239521A200289441 /* DIMMuteCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9705CD3239521A200289441 /* DIMMuteCommandProcessor.m */; };
 		E978168A2223E7F200BCE3AD /* DIMClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816802223E7F200BCE3AD /* DIMClient.framework */; };
@@ -215,6 +217,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				E9D71D5625BAE48F00773ED1 /* DIMSDK.framework in Embed Frameworks */,
+				E96DBE8627CBA523005799F9 /* FiniteStateMachine.framework in Embed Frameworks */,
 				E9D71D5B25BAE49300773ED1 /* MarsGate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -365,6 +368,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9D71E3B25BAE60700773ED1 /* DIMCore.framework in Frameworks */,
+				E96DBE8527CBA523005799F9 /* FiniteStateMachine.framework in Frameworks */,
 				E9D71D5525BAE48F00773ED1 /* DIMSDK.framework in Frameworks */,
 				E9D71E9925BB21A500773ED1 /* MingKeMing.framework in Frameworks */,
 				E9D71D5A25BAE49300773ED1 /* MarsGate.framework in Frameworks */,

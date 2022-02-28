@@ -57,7 +57,7 @@
     //
     //  load content/command factories
     //
-    [DIMMessageProcessor registerAllFactories];
+    DIMRegisterAllFactories();
     
     DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
