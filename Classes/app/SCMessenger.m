@@ -56,9 +56,9 @@
 
 @interface SCMessenger () {
 
-    DIMMessagePacker *_messagePacker;
-    DIMMessageProcessor *_messageProcessor;
-    id<DIMTransmitter> _messageTransmitter;
+    DIMMessagePacker *_packer;
+    DIMMessageProcessor *_processor;
+    id<DIMTransmitter> _transmitter;
 
     DIMStation *_server;
     
@@ -77,9 +77,9 @@ SingletonImplementations(SCMessenger, sharedInstance)
 - (instancetype)init {
     if (self = [super init]) {
         
-        _messagePacker = nil;
-        _messageProcessor = nil;
-        _messageTransmitter = nil;
+        _packer = nil;
+        _processor = nil;
+        _transmitter = nil;
 
         // query tables
         _metaQueryTable  = [[NSMutableDictionary alloc] init];
@@ -89,16 +89,8 @@ SingletonImplementations(SCMessenger, sharedInstance)
     return self;
 }
 
-- (SCMessageDataSource *)dataSource {
-    return [SCMessageDataSource sharedInstance];
-}
-
 - (id<DIMCipherKeyDelegate>)keyCache {
-    id<DIMCipherKeyDelegate> delegate = [super keyCache];
-    if (!delegate) {
-        delegate = [SCKeyStore sharedInstance];
-    }
-    return delegate;
+    return [SCKeyStore sharedInstance];
 }
 
 - (id<DIMEntityDelegate>)barrack {
@@ -112,78 +104,36 @@ SingletonImplementations(SCMessenger, sharedInstance)
 #pragma mark Message Packer
 
 - (id<DIMPacker>)packer {
-    id<DIMPacker> delegate = [super packer];
-    if (!delegate) {
-        delegate = [self messagePacker];
-        [super setPacker:delegate];
+    if (!_packer) {
+        _packer = [self createPacker];
     }
-    return delegate;
+    return _packer;
 }
-- (void)setPacker:(id<DIMPacker>)packer {
-    [super setPacker:packer];
-    if ([packer isKindOfClass:[DIMMessagePacker class]]) {
-        _messagePacker = (DIMMessagePacker *)packer;
-    }
-}
-- (DIMMessagePacker *)messagePacker {
-    if (!_messagePacker) {
-        _messagePacker = [self createMessagePacker];
-    }
-    return _messagePacker;
-}
-- (DIMMessagePacker *)createMessagePacker {
+- (id<DIMPacker>)createPacker {
     return [[SCMessagePacker alloc] initWithFacebook:self.facebook messenger:self];
 }
 
 #pragma mark Message Processor
 
 - (id<DIMProcessor>)processor {
-    id<DIMProcessor> delegate = [super processor];
-    if (!delegate) {
-        delegate = [self messageProcessor];
-        [super setProcessor:delegate];
+    if (!_processor) {
+        _processor = [self createProcessor];
     }
-    return delegate;
+    return _processor;
 }
-- (void)setProcessor:(id<DIMProcessor>)processor {
-    [super setProcessor:processor];
-    if ([processor isKindOfClass:[DIMMessageProcessor class]]) {
-        _messageProcessor = (DIMMessageProcessor *)processor;
-    }
-}
-- (DIMMessageProcessor *)messageProcessor {
-    if (!_messageProcessor) {
-        _messageProcessor = [self createMessageProcessor];
-    }
-    return _messageProcessor;
-}
-- (DIMMessageProcessor *)createMessageProcessor {
+- (id<DIMProcessor>)createProcessor {
     return [[SCMessageProcessor alloc] initWithFacebook:self.facebook messenger:self];
 }
 
 #pragma mark Message Transmitter
 
 - (id<DIMTransmitter>)transmitter {
-    id<DIMTransmitter> delegate = [super transmitter];
-    if (!delegate) {
-        delegate = [self messageTransmitter];
-        [super setTransmitter:delegate];
+    if (!_transmitter) {
+        _transmitter = [self createTransmitter];
     }
-    return delegate;
+    return _transmitter;
 }
-- (void)setTransmitter:(id<DIMTransmitter>)transmitter {
-    [super setTransmitter:transmitter];
-    if ([transmitter isKindOfClass:[SCMessageTransmitter class]]) {
-        _messageTransmitter = (id<DIMTransmitter>)transmitter;
-    }
-}
-- (id<DIMTransmitter>)messageTransmitter {
-    if (!_messageTransmitter) {
-        _messageTransmitter = [self createMessageTransmitter];
-    }
-    return _messageTransmitter;
-}
-- (id<DIMTransmitter>)createMessageTransmitter {
+- (id<DIMTransmitter>)createTransmitter {
     return [[SCMessageTransmitter alloc] initWithFacebook:self.facebook messenger:self];
 }
 
@@ -333,11 +283,13 @@ SingletonImplementations(SCMessenger, sharedInstance)
 }
 
 - (BOOL)saveMessage:(id<DKDInstantMessage>)iMsg {
-    return [self.dataSource saveMessage:iMsg];
+    SCMessageDataSource *dataSource = [SCMessageDataSource sharedInstance];
+    return [dataSource saveMessage:iMsg];
 }
 
 - (BOOL)suspendMessage:(id<DKDMessage>)msg {
-    return [self.dataSource suspendMessage:msg];
+    SCMessageDataSource *dataSource = [SCMessageDataSource sharedInstance];
+    return [dataSource suspendMessage:msg];
 }
 
 @end

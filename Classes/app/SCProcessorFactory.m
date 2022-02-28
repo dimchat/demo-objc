@@ -76,7 +76,8 @@
     return cpu;
 }
 
-- (DIMCommandProcessor *)createProcessorWithType:(DKDContentType)type command:(NSString *)name {
+- (DIMCommandProcessor *)createProcessorWithName:(NSString *)name
+                                            type:(DKDContentType)type {
     // receipt
     if ([name isEqualToString:DIMCommand_Receipt]) {
         return CREATE_CPU(DIMReceiptCommandProcessor);
@@ -112,7 +113,7 @@
         return CREATE_CPU(DIMSearchCommandProcessor);
     }
     // others
-    return [super createProcessorWithType:type command:name];
+    return [super createProcessorWithName:name type:type];
 }
 
 @end

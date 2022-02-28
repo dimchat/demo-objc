@@ -108,10 +108,6 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 
 @property (strong, nonatomic) DIMStation *currentServer;
 
-- (DIMMessagePacker *)createMessagePacker;
-- (DIMMessageProcessor *)createMessageProcessor;
-- (id<DIMTransmitter>)createMessageTransmitter;
-
 + (instancetype)sharedInstance;
 
 - (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver;

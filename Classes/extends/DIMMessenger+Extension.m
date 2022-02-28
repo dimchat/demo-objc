@@ -64,21 +64,6 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     NSAssert(false, @"implement me!");
 }
 
-- (DIMMessagePacker *)createMessagePacker {
-    NSAssert(false, @"implement me!");
-    return nil;
-}
-
-- (DIMMessageProcessor *)createMessageProcessor {
-    NSAssert(false, @"implement me!");
-    return nil;
-}
-
-- (id<DIMTransmitter>)createMessageTransmitter {
-    NSAssert(false, @"implement me!");
-    return nil;
-}
-
 - (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver {
     DKDContent *cont = (DKDContent *)content;
     DIMMessengerCallback callback = ^(id<DKDReliableMessage> rMsg, NSError *error) {
