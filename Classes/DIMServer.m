@@ -51,9 +51,11 @@
 @interface PackageHandler : NSObject
 
 @property (strong, nonatomic) NSData *data;
-@property (nonatomic) DIMMessengerCompletionHandler handler;
 
-- (instancetype)initWithData:(NSData *)data handler:(DIMMessengerCompletionHandler)handler;
+- (instancetype)initWithData:(NSData *)data;
+
+- (void)onSuccess;
+- (void)onFailed:(NSError *)error;
 
 + (id<NSCopying>)keyWithData:(NSData *)data;
 
@@ -61,13 +63,19 @@
 
 @implementation PackageHandler
 
-- (instancetype)initWithData:(NSData *)data
-                     handler:(DIMMessengerCompletionHandler)handler {
+- (instancetype)initWithData:(NSData *)data {
     if (self = [self init]) {
         _data = data;
-        _handler = handler;
     }
     return self;
+}
+
+- (void)onSuccess {
+    // TODO: callback after data sent
+}
+
+- (void)onFailed:(NSError *)error {
+    // TODO: callback after failed to send data
 }
 
 + (id<NSCopying>)keyWithData:(NSData *)data {
@@ -206,8 +214,8 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     NSLog(@"carry out %lu waiting task(s)...", waitingList.count);
     for (PackageHandler *wrapper in waitingList) {
         if ([_fsm.currentState.name isEqualToString:kDIMServerState_Running]) {
-            [self sendPackageData:wrapper.data completionHandler:wrapper.handler priority:1];
             [_waitingList removeObject:wrapper];
+            [self sendPackageData:wrapper.data priority:1];
         } else {
             NSLog(@"connection lost again, waiting task(s) interrupted");
             break;
@@ -275,12 +283,9 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
 }
 
 - (void)star:(id<SGStar>)star onFinishSend:(NSData *)requestData withError:(NSError *)error {
-    DIMMessengerCompletionHandler handler = NULL;
-    
     id key = [PackageHandler keyWithData:requestData];
     PackageHandler *wrapper = [_sendingTable objectForKey:key];
     if (wrapper) {
-        handler = wrapper.handler;
         // FIXME: why different requests have a same SHA256(data) key?
         NSAssert([wrapper.data isEqual:requestData], @"data not match, error: %@", error);
         //requestData = wrapper.data;
@@ -300,34 +305,32 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
         NSLog(@"send data package failed: %@", error);
     }
     
-    if (handler) {
-        // tell the handler to do the resending job
-        handler(error);
+    // tell the handler to do the resending job
+    if (error == nil) {
+        [wrapper onSuccess];
+    } else {
+        [wrapper onFailed:error];
     }
 }
 
 #pragma mark DIMMessengerDelegate
 
-- (BOOL)sendPackageData:(NSData *)data
-      completionHandler:(nullable DIMMessengerCompletionHandler)handler
-               priority:(NSInteger)prior {
+- (BOOL)sendPackageData:(NSData *)data priority:(NSInteger)prior {
     NSLog(@"sending data len: %ld", data.length);
     NSAssert(_star, @"star not found");
     
     PackageHandler *wrapper;
-    wrapper = [[PackageHandler alloc] initWithData:data handler:handler];
+    wrapper = [[PackageHandler alloc] initWithData:data];
     
     if (![_fsm.currentState.name isEqualToString:kDIMServerState_Running]) {
         NSLog(@"current server's state: %@, puth the request data to waiting queue", _fsm.currentState.name);
         [_waitingList addObject:wrapper];
         return YES;
     }
-    
-    if (handler) {
-        id key = [PackageHandler keyWithData:data];
-        [_sendingTable setObject:wrapper forKey:key];
-    }
-    
+
+    id key = [PackageHandler keyWithData:data];
+    [_sendingTable setObject:wrapper forKey:key];
+
     return [_star send:data] == 0;
 }
 

@@ -172,7 +172,7 @@
             id<MKMVisa> visa = user.visa;
             NSAssert([visa isValid], @"user visa not found: %@", user);
             id<DIMCommand> cmd = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];
-            [self.messenger sendContent:cmd sender:user.ID receiver:sMsg.sender callback:NULL priority:1];
+            [self.messenger sendContent:cmd sender:user.ID receiver:sMsg.sender priority:1];
         } else {
             // FIXME: message error?
             @throw exception;

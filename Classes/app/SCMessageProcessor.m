@@ -203,7 +203,7 @@
         env = DKDEnvelopeCreate(user.ID, sender, nil);
         iMsg = DKDInstantMessageCreate(env, res);
         // normal response
-        [messenger sendInstantMessage:iMsg callback:NULL priority:1];
+        [messenger sendInstantMessage:iMsg priority:1];
     }
     
     // DON'T respond to station directly

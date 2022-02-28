@@ -104,7 +104,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
                 continue;
             }
             for (id<DKDReliableMessage> res in responses) {
-                [messenger sendReliableMessage:res callback:NULL priority:1];
+                [messenger sendReliableMessage:res priority:1];
             }
         }
     }
@@ -117,7 +117,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         
         // send them out
         for (id<DKDInstantMessage> item in outgoing) {
-            [messenger sendInstantMessage:item callback:NULL priority:1];
+            [messenger sendInstantMessage:item priority:1];
         }
     }
 }

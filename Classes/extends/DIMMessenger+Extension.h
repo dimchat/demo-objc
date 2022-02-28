@@ -42,25 +42,16 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const kNotificationName_MessageSent;
 extern NSString * const kNotificationName_SendMessageFailed;
 
-/**
- *  Handler to call after sending package complete
- *  executed by application
- */
-typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
-
 @protocol DIMMessengerDelegate <NSObject>
 
 /**
  *  Send out a data package onto network
  *
  *  @param data - package`
- *  @param handler - completion handler
  *  @param prior - task priority
  *  @return NO on data/delegate error
  */
-- (BOOL)sendPackageData:(NSData *)data
-      completionHandler:(nullable DIMMessengerCompletionHandler)handler
-               priority:(NSInteger)prior;
+- (BOOL)sendPackageData:(NSData *)data priority:(NSInteger)prior;
 
 /**
  *  Upload encrypted data to CDN
@@ -92,9 +83,7 @@ typedef void (^DIMMessengerCompletionHandler)(NSError * _Nullable error);
 //  Interfaces for Station
 //
 
-- (BOOL)sendPackageData:(NSData *)data
-      completionHandler:(nullable DIMMessengerCompletionHandler)handler
-               priority:(NSInteger)prior;
+- (BOOL)sendPackageData:(NSData *)data priority:(NSInteger)prior;
 
 - (nullable NSURL *)uploadData:(NSData *)CT forMessage:(id<DKDInstantMessage>)iMsg;
 

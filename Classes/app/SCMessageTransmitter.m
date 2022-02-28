@@ -68,7 +68,6 @@
 - (BOOL)sendContent:(id<DKDContent>)content
              sender:(nullable id<MKMID>)from
            receiver:(id<MKMID>)to
-           callback:(nullable DIMMessengerCallback)fn
            priority:(NSInteger)prior {
     // Application Layer should make sure user is already login before it send message to server.
     // Application layer should put message into queue so that it will send automatically after user login
@@ -79,10 +78,10 @@
     }
     id<DKDEnvelope> env = DKDEnvelopeCreate(from, to, nil);
     id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
-    return [self.messenger sendInstantMessage:iMsg callback:fn priority:prior];
+    return [self.messenger sendInstantMessage:iMsg priority:prior];
 }
 
-- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg priority:(NSInteger)prior {
     // Send message (secured + certified) to target station
     id<DKDSecureMessage> sMsg = [self.messenger encryptMessage:iMsg];
     if (!sMsg) {
@@ -99,7 +98,7 @@
         return NO;
     }
     
-    BOOL OK = [self sendReliableMessage:rMsg callback:fn priority:prior];
+    BOOL OK = [self sendReliableMessage:rMsg priority:prior];
     // sending status
     if (OK) {
         DKDContent *content = iMsg.content;
@@ -116,15 +115,9 @@
     return OK;
 }
 
-- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg callback:(nullable DIMMessengerCallback)fn priority:(NSInteger)prior {
-    DIMMessengerCompletionHandler handler;
-    if (fn) {
-        handler = ^(NSError * _Nullable error) {
-            fn(rMsg, error);
-        };
-    }
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg priority:(NSInteger)prior {
     NSData *data = [self.messenger serializeMessage:rMsg];
-    return [self.messenger sendPackageData:data completionHandler:handler priority:prior];
+    return [self.messenger sendPackageData:data priority:prior];
 }
 
 @end
