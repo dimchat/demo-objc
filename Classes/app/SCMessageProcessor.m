@@ -38,6 +38,7 @@
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 
+#import "SCMessenger.h"
 #import "SCProcessorFactory.h"
 
 #import "SCMessageProcessor.h"
@@ -142,7 +143,7 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    DIMMessenger *messenger = self.messenger;
+    SCMessenger *messenger = self.messenger;
     
     id<MKMID> sender = rMsg.sender;
     if ([self isWaitingGroup:content sender:sender]) {
@@ -178,9 +179,6 @@
     DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
-    id<DKDEnvelope> env;
-    id<DKDInstantMessage> iMsg;
-    
     // check responses
     for (id<DKDContent> res in responses) {
         if (!res) {
@@ -199,11 +197,8 @@
             }
             NSLog(@"text to sender: %@", sender);
         }
-        // pack message
-        env = DKDEnvelopeCreate(user.ID, sender, nil);
-        iMsg = DKDInstantMessageCreate(env, res);
-        // normal response
-        [messenger sendInstantMessage:iMsg priority:1];
+        // pack & send
+        [messenger sendContent:res sender:user.ID receiver:sender priority:1];
     }
     
     // DON'T respond to station directly

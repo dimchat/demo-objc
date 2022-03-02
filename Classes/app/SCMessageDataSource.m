@@ -47,7 +47,7 @@
 #import "DIMAmanuensis.h"
 
 #import "SCKeyStore.h"
-
+#import "SCMessenger.h"
 #import "SCMessageDataSource.h"
 
 @interface SCMessageDataSource () {
@@ -88,7 +88,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
             return;
         }
     }
-    DIMMessenger *messenger = [DIMMessenger sharedInstance];
+    SCMessenger *messenger = (SCMessenger *)[DIMMessenger sharedInstance];
     
     // processing incoming messages
     NSMutableArray<id<DKDReliableMessage>> *incomings = [incomingMessages objectForKey:ID];

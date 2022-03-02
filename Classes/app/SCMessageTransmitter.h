@@ -36,6 +36,7 @@
 //
 
 #import <DIMSDK/DIMSDK.h>
+#import "DIMMessenger+Extension.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

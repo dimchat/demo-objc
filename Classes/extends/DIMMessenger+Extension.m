@@ -68,6 +68,30 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendContent:content sender:nil receiver:receiver priority:1];
 }
 
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           priority:(NSInteger)prior {
+    return [self.transmitter sendContent:content sender:from receiver:to priority:prior];
+}
+
+/**
+ *  Send instant message (encrypt and sign) onto DIM network
+ *
+ * @param iMsg - instant message
+ * @param prior - task priority
+ * @return NO on data/delegate error
+ */
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  priority:(NSInteger)prior {
+    return [self.transmitter sendInstantMessage:iMsg priority:prior];
+}
+
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   priority:(NSInteger)prior {
+    return [self.transmitter sendReliableMessage:rMsg priority:prior];
+}
+
 - (BOOL)broadcastContent:(id<DKDContent>)content {
     NSAssert(self.currentServer, @"station not connected yet");
     // broadcast IDs
@@ -171,6 +195,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 @implementation DIMMessenger (Station)
 
 @dynamic delegate;
+@dynamic transmitter;
 
 - (BOOL)sendPackageData:(NSData *)data priority:(NSInteger)prior {
     return [self.delegate sendPackageData:data priority:prior];

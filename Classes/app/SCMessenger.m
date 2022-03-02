@@ -56,8 +56,8 @@
 
 @interface SCMessenger () {
 
-    DIMMessagePacker *_packer;
-    DIMMessageProcessor *_processor;
+    id<DIMPacker> _packer;
+    id<DIMProcessor> _processor;
     id<DIMTransmitter> _transmitter;
 
     DIMStation *_server;
@@ -206,6 +206,23 @@ SingletonImplementations(SCMessenger, sharedInstance)
         }
     }
     return checking;
+}
+
+#pragma mark DIMTransmitter
+
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           priority:(NSInteger)prior {
+    return [self.transmitter sendContent:content sender:from receiver:to priority:prior];
+}
+
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg priority:(NSInteger)prior {
+    return [self.transmitter sendInstantMessage:iMsg priority:prior];
+}
+
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg priority:(NSInteger)prior {
+    return [self.transmitter sendReliableMessage:rMsg priority:prior];
 }
 
 #pragma mark FPU

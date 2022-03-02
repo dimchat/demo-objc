@@ -36,12 +36,13 @@
 //
 
 #import <DIMSDK/DIMSDK.h>
+#import "DIMMessenger+Extension.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol DIMMessengerDelegate;
 
-@interface SCMessenger : DIMMessenger
+@interface SCMessenger : DIMMessenger <DIMTransmitter>
 
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 

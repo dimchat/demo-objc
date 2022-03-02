@@ -42,6 +42,41 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString * const kNotificationName_MessageSent;
 extern NSString * const kNotificationName_SendMessageFailed;
 
+/*
+ *  Message Transmitter
+ *  ~~~~~~~~~~~~~~~~~~~
+ */
+@protocol DIMTransmitter <NSObject>
+
+/**
+ *  Send message content to receiver
+ *
+ * @param content - message content
+ * @param from - sender ID
+ * @param to - receiver ID
+ * @param prior - task priority
+ * @return true on success
+ */
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           priority:(NSInteger)prior;
+
+/**
+ *  Send instant message (encrypt and sign) onto DIM network
+ *
+ * @param iMsg - instant message
+ * @param prior - task priority
+ * @return NO on data/delegate error
+ */
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  priority:(NSInteger)prior;
+
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   priority:(NSInteger)prior;
+
+@end
+
 @protocol DIMMessengerDelegate <NSObject>
 
 /**
@@ -79,6 +114,11 @@ extern NSString * const kNotificationName_SendMessageFailed;
 
 @property (weak, nonatomic) id<DIMMessengerDelegate> delegate;
 
+/**
+ *  Delegate for transmitting message
+ */
+@property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
+
 //
 //  Interfaces for Station
 //
@@ -100,6 +140,33 @@ extern NSString * const kNotificationName_SendMessageFailed;
 + (instancetype)sharedInstance;
 
 - (BOOL)sendContent:(id<DKDContent>)content receiver:(id<MKMID>)receiver;
+
+/**
+ *  Send message content to receiver
+ *
+ * @param content - message content
+ * @param from - sender ID
+ * @param to - receiver ID
+ * @param prior - task priority
+ * @return true on success
+ */
+- (BOOL)sendContent:(id<DKDContent>)content
+             sender:(nullable id<MKMID>)from
+           receiver:(id<MKMID>)to
+           priority:(NSInteger)prior;
+
+/**
+ *  Send instant message (encrypt and sign) onto DIM network
+ *
+ * @param iMsg - instant message
+ * @param prior - task priority
+ * @return NO on data/delegate error
+ */
+- (BOOL)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                  priority:(NSInteger)prior;
+
+- (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
+                   priority:(NSInteger)prior;
 
 /**
  *  broadcast message content to everyone@everywhere
