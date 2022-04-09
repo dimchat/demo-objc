@@ -39,7 +39,7 @@
 
 @implementation DIMLoginCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMLoginCommand class]], @"login error: %@", content);
     DIMLoginCommand *cmd = (DIMLoginCommand *)content;

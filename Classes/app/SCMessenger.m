@@ -228,7 +228,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
 #pragma mark FPU
 
 - (DIMFileContentProcessor *)fileContentProcessor {
-    DIMContentProcessor *fpu = [self.processor processorForType:DKDContentType_File];
+    id<DIMContentProcessor> fpu = [self.processor processorForType:DKDContentType_File];
     NSAssert([fpu isKindOfClass:[DIMFileContentProcessor class]],
              @"failed to get file content processor");
     return (DIMFileContentProcessor *)fpu;

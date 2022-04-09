@@ -57,7 +57,7 @@
 - (NSArray<id<DKDContent>> *)decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(DIMUser *)user {
     // decrypt key
     key = [user decrypt:key];
-    NSDictionary *dict = MKMJSONDecode(key);
+    id dict = MKMJSONDecode(key);
     id<MKMSymmetricKey> password = MKMSymmetricKeyFromDictionary(dict);
     // decrypt data
     data = [password decrypt:data];
@@ -90,7 +90,7 @@
     return nil;
 }
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMStorageCommand class]], @"storage command error: %@", content);
     DIMStorageCommand *cmd = (DIMStorageCommand *)content;

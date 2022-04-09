@@ -58,9 +58,9 @@
                                   messenger:self.messenger]                    \
                                                    /* EOF 'CREATE_CPU(clazz)' */
 
-@implementation SCProcessorFactory
+@implementation SCProcessorCreator
 
-- (DIMContentProcessor *)createProcessorWithType:(DKDContentType)type {
+- (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
     // file
     if (type == DKDContentType_File) {
         return CREATE_CPU(DIMFileContentProcessor);
@@ -68,7 +68,7 @@
         // TODO: shared the same processor with 'FILE'?
         return CREATE_CPU(DIMFileContentProcessor);
     }
-    DIMContentProcessor *cpu = [super createProcessorWithType:type];
+    DIMContentProcessor *cpu = [super createContentProcessor:type];
     if (!cpu) {
         // unknown
         return CREATE_CPU(DIMDefaultContentProcessor);
@@ -76,8 +76,7 @@
     return cpu;
 }
 
-- (DIMCommandProcessor *)createProcessorWithName:(NSString *)name
-                                            type:(DKDContentType)type {
+- (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)type {
     // receipt
     if ([name isEqualToString:DIMCommand_Receipt]) {
         return CREATE_CPU(DIMReceiptCommandProcessor);
@@ -113,7 +112,7 @@
         return CREATE_CPU(DIMSearchCommandProcessor);
     }
     // others
-    return [super createProcessorWithName:name type:type];
+    return [super createCommandProcessor:name type:type];;
 }
 
 @end

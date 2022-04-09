@@ -52,8 +52,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     DIMFacebook *facebook = self.facebook;
     id<MKMID> ID;
     id<MKMMeta> meta;
-    NSString *key;
-    NSDictionary *value;
+    id key;
+    id value;
     for (key in result) {
         value = [result objectForKey:key];
         ID = MKMIDFromString(key);
@@ -65,7 +65,7 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     }
 }
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMSearchCommand class]], @"search command error: %@", content);
     DIMSearchCommand *cmd = (DIMSearchCommand *)content;

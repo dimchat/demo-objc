@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SCProcessorFactory : DIMProcessorFactory
+@interface SCProcessorCreator : DIMContentProcessorCreator
 
 @end
 

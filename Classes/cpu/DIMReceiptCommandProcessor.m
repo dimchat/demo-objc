@@ -39,7 +39,7 @@
 
 @implementation DIMReceiptCommandProcessor
 
-- (NSArray<id<DKDContent>> *)executeCommand:(DIMCommand *)content
+- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMReceiptCommand class]], @"receipt error: %@", content);
     // no need to respond receipt command
