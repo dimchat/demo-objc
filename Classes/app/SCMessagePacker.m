@@ -39,6 +39,61 @@
 
 #import "SCMessagePacker.h"
 
+static inline void fix_profile(id<DKDContent> content) {
+    if ([content isKindOfClass:[DIMDocumentCommand class]]) {
+        // compatible for document command
+        id doc = [content objectForKey:@"document"];
+        if (doc) {
+            // (v2.0)
+            //    "ID"       : "{ID}",
+            //    "document" : {
+            //        "ID"        : "{ID}",
+            //        "data"      : "{JsON}",
+            //        "signature" : "{BASE64}"
+            //    }
+            return;
+        }
+        id profile = [content objectForKey:@"profile"];
+        if (profile) {
+            [content removeObjectForKey:@"profile"];
+            // 1.* => 2.0
+            if ([profile isKindOfClass:[NSString class]]) {
+                // compatible with v1.0
+                //    "ID"        : "{ID}",
+                //    "profile"   : "{JsON}",
+                //    "signature" : "{BASE64}"
+                doc = @{
+                    @"ID": [content objectForKey:@"ID"],
+                    @"data": profile,
+                    @"signature": [content objectForKey:@"signature"]
+                };
+                [content setObject:doc forKey:@"document"];
+            } else {
+                // compatible with v1.1
+                //    "ID"       : "{ID}",
+                //    "profile"  : {
+                //        "ID"        : "{ID}",
+                //        "data"      : "{JsON}",
+                //        "signature" : "{BASE64}"
+                //    }
+                [content setObject:profile forKey:@"document"];
+            }
+        }
+    }
+}
+
+static inline void fix_visa(id<DKDReliableMessage> rMsg) {
+    id profile = [rMsg objectForKey:@"profile"];
+    if (profile) {
+        [rMsg removeObjectForKey:@"profile"];
+        // 1.* => 2.0
+        id visa = [rMsg objectForKey:@"visa"];
+        if (!visa) {
+            [rMsg setObject:profile forKey:@"visa"];
+        }
+    }
+}
+
 @implementation SCMessagePacker
 
 - (void)attachKeyDigest:(id<DKDReliableMessage>)rMsg {
@@ -97,7 +152,9 @@
     if ([data length] < 2) {
         return nil;
     }
-    return [super deserializeMessage:data];
+    id<DKDReliableMessage> rMsg = [super deserializeMessage:data];
+    fix_visa(rMsg);
+    return rMsg;
 }
 
 - (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
@@ -180,6 +237,7 @@
     } @finally {
         //
     }
+    fix_profile(iMsg.content);
     return iMsg;
 }
 
