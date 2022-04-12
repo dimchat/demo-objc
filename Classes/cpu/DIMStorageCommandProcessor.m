@@ -57,11 +57,11 @@
 - (NSArray<id<DKDContent>> *)decryptContactsData:(NSData *)data withKey:(NSData *)key forUser:(DIMUser *)user {
     // decrypt key
     key = [user decrypt:key];
-    id dict = MKMJSONDecode(key);
+    id dict = MKMJSONDecode(MKMUTF8Decode(key));
     id<MKMSymmetricKey> password = MKMSymmetricKeyFromDictionary(dict);
     // decrypt data
     data = [password decrypt:data];
-    NSArray *contacts = MKMJSONDecode(data);
+    NSArray *contacts = MKMJSONDecode(MKMUTF8Decode(data));
     NSAssert(contacts, @"failed to decrypt contacts");
     return [self saveContacts:contacts forUser:user];
 }

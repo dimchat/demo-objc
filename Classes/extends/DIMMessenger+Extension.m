@@ -160,10 +160,10 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     // generate password
     id<MKMSymmetricKey> password = MKMSymmetricKeyGenerate(MKMAlgorithmAES);
     // encrypt contacts
-    NSData *data = MKMJSONEncode(contacts);
+    NSData *data = MKMUTF8Encode(MKMJSONEncode(contacts));
     data = [password encrypt:data];
     // encrypt key
-    NSData *key = MKMJSONEncode(password);
+    NSData *key = MKMUTF8Encode(MKMJSONEncode(password));
     key = [user encrypt:key];
     // pack 'contacts' command
     DIMStorageCommand *cmd;

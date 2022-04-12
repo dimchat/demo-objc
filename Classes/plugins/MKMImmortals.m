@@ -94,17 +94,17 @@
     }
     NSData *data = [NSData dataWithContentsOfFile:path];
     NSAssert(data.length > 0, @"failed to load JSON file: %@", path);
-    return MKMJSONDecode(data);
+    return MKMJSONDecode(MKMUTF8Decode(data));
 }
 
 - (nullable id<MKMMeta>)_loadMeta:(NSString *)filename {
-    NSDictionary *dict = [self _loadJSONFile:filename];
+    id dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load meta file: %@", filename);
     return MKMMetaFromDictionary(dict);
 }
 
 - (nullable id<MKMPrivateKey>)_loadPrivateKey:(NSString *)filename {
-    NSDictionary *dict = [self _loadJSONFile:filename];
+    id dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load secret file: %@", filename);
     return MKMPrivateKeyFromDictionary(dict);
 }
@@ -193,8 +193,7 @@
     return [_metaTable objectForKey:ID];
 }
 
-- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
-                                              type:(nullable NSString *)type {
+- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type {
     return [_profileTable objectForKey:ID];
 }
 

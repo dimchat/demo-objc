@@ -87,7 +87,7 @@
             NSLog(@"document from: %@", path);
             NSString *data = [dict objectForKey:@"data"];
             NSString *signature = [dict objectForKey:@"signature"];
-            doc = MKMDocumentCreate(type, ID, data, signature);
+            doc = MKMDocumentCreate(type, ID, data, MKMBase58Decode(signature));
         }
         if (!doc) {
             // 2.1. place an empty meta for cache
