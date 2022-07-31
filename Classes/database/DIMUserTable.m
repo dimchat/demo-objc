@@ -99,7 +99,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     // save into storage
     NSString *path = [self _usersFilePath];
     NSLog(@"saving %ld user(s): %@", list.count, path);
-    return [self array:list writeToFile:path];
+    return [self array:MKMIDRevert(list) writeToFile:path];
 }
 
 /**
