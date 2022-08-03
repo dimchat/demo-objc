@@ -76,7 +76,14 @@
     if (profile) {
         // copy profile from config to local storage
         if (![profile objectForKey:@"ID"]) {
-            [profile setObject:[ID string] forKey:@"ID"];
+            NSMutableDictionary *mDict;
+            if ([profile isKindOfClass:[NSMutableDictionary class]]) {
+                mDict = (NSMutableDictionary *) profile;
+            } else {
+                mDict = [profile mutableCopy];
+                profile = mDict;
+            }
+            [mDict setObject:ID forKey:@"ID"];
         }
         profile = MKMDocumentFromDictionary(profile);
         [[DIMFacebook sharedInstance] saveDocument:profile];
