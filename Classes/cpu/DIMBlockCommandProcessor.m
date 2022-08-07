@@ -44,10 +44,10 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMBlockCommand class]], @"block command error: %@", content);
-    DIMBlockCommand *cmd = (DIMBlockCommand *)content;
+    DIMBlockCommand *command = (DIMBlockCommand *)content;
     DIMFacebook *facebook = self.facebook;
     
-    NSArray *muteList = cmd.list;
+    NSArray *muteList = command.list;
     DIMUser *user = [facebook currentUser];
     
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];

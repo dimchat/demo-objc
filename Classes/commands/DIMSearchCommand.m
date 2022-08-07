@@ -40,14 +40,14 @@
 @implementation DIMSearchCommand
 
 - (instancetype)initWithKeywords:(NSString *)string {
-    NSString *command;
+    NSString *cmd;
     if ([string isEqualToString:DIMCommand_OnlineUsers]) {
-        command = DIMCommand_OnlineUsers;
+        cmd = DIMCommand_OnlineUsers;
         string = nil;
     } else {
-        command = DIMCommand_Search;
+        cmd = DIMCommand_Search;
     }
-    if (self = [self initWithCommand:command]) {
+    if (self = [self initWithCommandName:cmd]) {
         if (string) {
             [self setObject:string forKey:@"keywords"];
         }

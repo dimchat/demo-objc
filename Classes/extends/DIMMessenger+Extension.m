@@ -100,10 +100,10 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendContent:content receiver:everyone];
 }
 
-- (BOOL)sendCommand:(DIMCommand *)cmd {
+- (BOOL)sendCommand:(DIMCommand *)command {
     DIMStation *server = [self currentServer];
     NSAssert(server, @"server not connected yet");
-    return [self sendContent:cmd receiver:server.ID];
+    return [self sendContent:command receiver:server.ID];
 }
 
 - (BOOL)queryMetaForID:(id<MKMID>)ID {
@@ -128,8 +128,8 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 - (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(nullable id<MKMMeta>)meta {
     [doc removeObjectForKey:@"expires"];
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
-    return [self sendCommand:cmd];
+    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
+    return [self sendCommand:command];
 }
 
 - (BOOL)broadcastVisa:(id<MKMVisa>)visa {
@@ -139,7 +139,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"visa ID not match: %@, %@", ID, visa.ID);
         return NO;
     }
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
+    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
     NSArray<id<MKMID>> *contacts = user.contacts;
     BOOL OK = YES;
     for (id<MKMID> contact in contacts) {
@@ -147,7 +147,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
             NSLog(@"%@ is not a user, do not broadcaset document to it", contact);
             continue;
         }
-        if (![self sendContent:cmd receiver:contact]) {
+        if (![self sendContent:command receiver:contact]) {
             OK = NO;
         }
     }
@@ -166,28 +166,28 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     NSData *key = MKMUTF8Encode(MKMJSONEncode(password));
     key = [user encrypt:key];
     // pack 'contacts' command
-    DIMStorageCommand *cmd;
-    cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
-    cmd.ID = user.ID;
-    cmd.data = data;
-    cmd.key = key;
+    DIMStorageCommand *command;
+    command = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
+    command.ID = user.ID;
+    command.data = data;
+    command.key = key;
     // send to station
-    return [self sendCommand:cmd];
+    return [self sendCommand:command];
 }
 
 - (BOOL)queryContacts{
     DIMUser *user = [self.facebook currentUser];
     // pack 'contacts' command
-    DIMStorageCommand *cmd;
-    cmd = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
-    cmd.ID = user.ID;
+    DIMStorageCommand *command;
+    command = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
+    command.ID = user.ID;
     // send to station
-    return [self sendCommand:cmd];
+    return [self sendCommand:command];
 }
 
 - (BOOL)queryMuteList{
-    DIMCommand *cmd = [[DIMMuteCommand alloc] initWithList:nil];
-    return [self sendCommand:cmd];
+    DIMCommand *command = [[DIMMuteCommand alloc] initWithList:nil];
+    return [self sendCommand:command];
 }
 
 @end

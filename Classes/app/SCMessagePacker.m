@@ -228,8 +228,8 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
             DIMUser *user = [self.facebook currentUser];
             id<MKMVisa> visa = user.visa;
             NSAssert([visa isValid], @"user visa not found: %@", user);
-            id<DIMCommand> cmd = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];
-            [self.messenger sendContent:cmd sender:user.ID receiver:sMsg.sender priority:1];
+            id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];
+            [self.messenger sendContent:command sender:user.ID receiver:sMsg.sender priority:1];
         } else {
             // FIXME: message error?
             @throw exception;

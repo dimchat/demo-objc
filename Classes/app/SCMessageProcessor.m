@@ -118,7 +118,7 @@
     // unwrap secret message circularly
     id<DKDContent> content = iMsg.content;
     while ([content isKindOfClass:[DIMForwardContent class]]) {
-        rMsg = [(DIMForwardContent *)content forwardMessage];
+        rMsg = [(DIMForwardContent *)content forward];
         sMsg = [messenger verifyMessage:rMsg];
         if (!sMsg) {
             // signature not matched

@@ -40,7 +40,7 @@
 @implementation DIMReportCommand
 
 - (instancetype)initWithTitle:(NSString *)title {
-    if (self = [super initWithCommand:DIMCommand_Report]) {
+    if (self = [super initWithCommandName:DIMCommand_Report]) {
         self.title = title;
     }
     return self;

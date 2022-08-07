@@ -58,9 +58,9 @@ static inline NSString *readable_name(id<MKMID> ID) {
 
 #pragma mark Group Commands
 
-NSString *DIMInviteGroupCommand_BuildText(DIMInviteCommand *cmd, id<MKMID> commander) {
+NSString *DIMInviteGroupCommand_BuildText(DIMInviteCommand *command, id<MKMID> commander) {
     // get 'added' list
-    NSArray<id<MKMID>> *addeds = MKMIDConvert([cmd objectForKey:@"added"]);
+    NSArray<id<MKMID>> *addeds = MKMIDConvert([command objectForKey:@"added"]);
     // build message
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:addeds.count];
     for (id<MKMID> item in addeds) {
@@ -69,13 +69,13 @@ NSString *DIMInviteGroupCommand_BuildText(DIMInviteCommand *cmd, id<MKMID> comma
     NSString *str = [mArr componentsJoinedByString:@", "];
     NSString *format = NSLocalizedString(@"%@ has invited member(s): %@.", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(commander), str];
-    [cmd setObject:text forKey:@"text"];
+    [command setObject:text forKey:@"text"];
     return text;
 }
 
-NSString *DIMExpelGroupCommand_BuildText(DIMExpelCommand *cmd, id<MKMID> commander) {
+NSString *DIMExpelGroupCommand_BuildText(DIMExpelCommand *command, id<MKMID> commander) {
     // get 'removed' list
-    NSArray<id<MKMID>> *removeds = MKMIDConvert([cmd objectForKey:@"removed"]);
+    NSArray<id<MKMID>> *removeds = MKMIDConvert([command objectForKey:@"removed"]);
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:removeds.count];
     for (id<MKMID> item in removeds) {
         [mArr addObject:readable_name(item)];
@@ -83,23 +83,23 @@ NSString *DIMExpelGroupCommand_BuildText(DIMExpelCommand *cmd, id<MKMID> command
     NSString *str = [mArr componentsJoinedByString:@", "];
     NSString *format = NSLocalizedString(@"%@ has removed member(s): %@.", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(commander), str];
-    [cmd setObject:text forKey:@"text"];
+    [command setObject:text forKey:@"text"];
     return text;
 }
 
-NSString *DIMQuitGroupCommand_BuildText(DIMQuitCommand *cmd, id<MKMID> commander) {
+NSString *DIMQuitGroupCommand_BuildText(DIMQuitCommand *command, id<MKMID> commander) {
     NSString *format = NSLocalizedString(@"%@ has quitted group chat.", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(commander)];
-    [cmd setObject:text forKey:@"text"];
+    [command setObject:text forKey:@"text"];
     return text;
 }
 
-NSString *DIMResetGroupCommand_BuildText(DIMResetGroupCommand *cmd, id<MKMID> commander) {
+NSString *DIMResetGroupCommand_BuildText(DIMResetGroupCommand *command, id<MKMID> commander) {
     NSString *format = NSLocalizedString(@"%@ has updated group members", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(commander)];
     
     // get 'added' list
-    NSArray<id<MKMID>> *addeds = MKMIDConvert([cmd objectForKey:@"added"]);
+    NSArray<id<MKMID>> *addeds = MKMIDConvert([command objectForKey:@"added"]);
     if (addeds.count > 0) {
         NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:addeds.count];
         for (id<MKMID> item in addeds) {
@@ -110,7 +110,7 @@ NSString *DIMResetGroupCommand_BuildText(DIMResetGroupCommand *cmd, id<MKMID> co
     }
     
     // get 'removed' list
-    NSArray<id<MKMID>> *removeds = MKMIDConvert([cmd objectForKey:@"removed"]);
+    NSArray<id<MKMID>> *removeds = MKMIDConvert([command objectForKey:@"removed"]);
     if (removeds.count > 0) {
         NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:removeds.count];
         for (id<MKMID> item in removeds) {
@@ -120,60 +120,60 @@ NSString *DIMResetGroupCommand_BuildText(DIMResetGroupCommand *cmd, id<MKMID> co
         text = [text stringByAppendingFormat:@"; %@ %@", NSLocalizedString(@"removed", nil), str];
     }
     
-    [cmd setObject:text forKey:@"text"];
+    [command setObject:text forKey:@"text"];
     return text;
 }
 
-NSString *DIMQueryGroupCommand_BuildText(DIMQueryGroupCommand *cmd, id<MKMID> commander) {
+NSString *DIMQueryGroupCommand_BuildText(DIMQueryGroupCommand *command, id<MKMID> commander) {
     NSString *format = NSLocalizedString(@"%@ was querying group info, responding...", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(commander)];
-    [cmd setObject:text forKey:@"text"];
+    [command setObject:text forKey:@"text"];
     return text;
 }
 
-NSString *DIMGroupCommand_BuildText(DIMGroupCommand *cmd, id<MKMID> commander) {
-    if ([cmd isKindOfClass:[DIMInviteCommand class]]) {
-        return DIMInviteGroupCommand_BuildText((DIMInviteCommand *)cmd, commander);
+NSString *DIMGroupCommand_BuildText(DIMGroupCommand *command, id<MKMID> commander) {
+    if ([command isKindOfClass:[DIMInviteCommand class]]) {
+        return DIMInviteGroupCommand_BuildText((DIMInviteCommand *)command, commander);
     }
-    if ([cmd isKindOfClass:[DIMExpelCommand class]]) {
-        return DIMExpelGroupCommand_BuildText((DIMExpelCommand *)cmd, commander);
+    if ([command isKindOfClass:[DIMExpelCommand class]]) {
+        return DIMExpelGroupCommand_BuildText((DIMExpelCommand *)command, commander);
     }
-    if ([cmd isKindOfClass:[DIMQuitCommand class]]) {
-        return DIMQuitGroupCommand_BuildText((DIMQuitCommand *)cmd, commander);
+    if ([command isKindOfClass:[DIMQuitCommand class]]) {
+        return DIMQuitGroupCommand_BuildText((DIMQuitCommand *)command, commander);
     }
-    if ([cmd isKindOfClass:[DIMResetGroupCommand class]]) {
-        return DIMResetGroupCommand_BuildText((DIMResetGroupCommand *)cmd, commander);
+    if ([command isKindOfClass:[DIMResetGroupCommand class]]) {
+        return DIMResetGroupCommand_BuildText((DIMResetGroupCommand *)command, commander);
     }
-    if ([cmd isKindOfClass:[DIMQueryGroupCommand class]]) {
-        return DIMQueryGroupCommand_BuildText((DIMQueryGroupCommand *)cmd, commander);
+    if ([command isKindOfClass:[DIMQueryGroupCommand class]]) {
+        return DIMQueryGroupCommand_BuildText((DIMQueryGroupCommand *)command, commander);
     }
-    assert(!cmd);
+    assert(!command);
     return nil;
 }
 
 #pragma mark System Commands
 
-NSString *DIMLoginCommand_BuildText(DIMLoginCommand *cmd, id<MKMID> commander) {
-    id<MKMID> ID = cmd.ID;
-    NSDictionary *station = cmd.stationInfo;
+NSString *DIMLoginCommand_BuildText(DIMLoginCommand *command, id<MKMID> commander) {
+    id<MKMID> ID = command.ID;
+    NSDictionary *station = command.stationInfo;
     NSString *format = NSLocalizedString(@"%@ login: %@", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(ID), station];
-    [cmd setObject:text forKey:@"text"];
+    [command setObject:text forKey:@"text"];
     return text;
 }
 
-NSString *DIMCommand_BuildText(DIMCommand *cmd, id<MKMID> commander) {
-    if ([cmd isKindOfClass:[DIMGroupCommand class]]) {
-        return DIMGroupCommand_BuildText((DIMGroupCommand *)cmd, commander);
+NSString *DIMCommand_BuildText(DIMCommand *command, id<MKMID> commander) {
+    if ([command isKindOfClass:[DIMGroupCommand class]]) {
+        return DIMGroupCommand_BuildText((DIMGroupCommand *)command, commander);
     }
-    if ([cmd isKindOfClass:[DIMHistoryCommand class]]) {
+    if ([command isKindOfClass:[DIMHistoryCommand class]]) {
         // TODO: process history command
     }
-    if ([cmd isKindOfClass:[DIMLoginCommand class]]) {
-        return DIMLoginCommand_BuildText((DIMLoginCommand *)cmd, commander);
+    if ([command isKindOfClass:[DIMLoginCommand class]]) {
+        return DIMLoginCommand_BuildText((DIMLoginCommand *)command, commander);
     }
     NSString *format = NSLocalizedString(@"Current version doesn't support this command: %@", nil);
-    return [NSString stringWithFormat:format, [cmd command]];
+    return [NSString stringWithFormat:format, [command cmd]];
 }
 
 NSString *DIMContent_BuildText(id<DKDContent> content) {

@@ -183,7 +183,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
     
     if([content isKindOfClass:[DIMCommand class]]){
         DIMCommand *command = (DIMCommand *)content;
-        if([command.command isEqualToString:@"broadcast"]){
+        if([command.cmd isEqualToString:@"broadcast"]){
             NSLog(@"It is a broadcast command, skip : %@", content);
             return YES;
         }

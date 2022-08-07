@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      type : 0x88,
  *      sn   : 123,
  *
- *      command  : "search",        // or "users"
+ *      cmd      : "search",        // or "users"
  *
  *      keywords : "keywords",      // keyword string
  *      users    : ["ID"],          // user ID list

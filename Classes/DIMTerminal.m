@@ -207,7 +207,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
             pos1 = pos2 + 1;  // skip '\n'
         }
     }];
-    return mArray;;
+    return mArray;
 }
 
 - (void)station:(DIMStation *)server onReceivePackage:(NSData *)data {
@@ -316,13 +316,13 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // create 'profile' command
-    DIMCommand *cmd = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
+    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     // 1. share to station
-    [messenger sendCommand:cmd];
+    [messenger sendCommand:command];
     // 2. send to group assistants
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:ID];
     for (id<MKMID> ass in assistants) {
-        [messenger sendContent:cmd receiver:ass];
+        [messenger sendContent:command receiver:ass];
     }
     return YES;
 }
@@ -404,13 +404,13 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    DIMCommand *cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
+    DIMCommand *command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
     if (offlineTime) {
-        [cmd setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
+        [command setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
     }
-    [messenger sendCommand:cmd];
+    [messenger sendCommand:command];
     
-    NSLog(@"[REPORT] user online: %@, %@", user, cmd);
+    NSLog(@"[REPORT] user online: %@, %@", user, command);
 }
 
 - (void)reportOffline {
@@ -424,11 +424,11 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    DIMCommand *cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
-    offlineTime = [cmd time];
-    [messenger sendCommand:cmd];
+    DIMCommand *command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
+    offlineTime = [command time];
+    [messenger sendCommand:command];
     
-    NSLog(@"[REPORT] user offline: %@, %@", user, cmd);
+    NSLog(@"[REPORT] user offline: %@, %@", user, command);
 }
 
 @end

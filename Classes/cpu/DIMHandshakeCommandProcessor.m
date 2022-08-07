@@ -58,17 +58,17 @@
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
-    DIMHandshakeCommand *cmd = (DIMHandshakeCommand *)content;
-    NSString *message = cmd.message;
+    DIMHandshakeCommand *command = (DIMHandshakeCommand *)content;
+    NSString *message = command.message;
     if ([message isEqualToString:@"DIM!"]) {
         // S -> C
         return [self success];
     } else if ([message isEqualToString:@"DIM?"]) {
         // S -> C
-        return [self ask:cmd.sessionKey];
+        return [self ask:command.sessionKey];
     } else {
         // C -> S: Hello world!
-        NSAssert(false, @"handshake command error: %@", cmd);
+        NSAssert(false, @"handshake command error: %@", command);
         return nil;
     }
 }

@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      type : 0x88,
  *      sn   : 123,
  *
- *      command  : "report",
+ *      cmd      : "report",
  *      title    : "online",      // or "offline"
  *      //---- extra info
  *      time     : 1234567890,    // timestamp?
