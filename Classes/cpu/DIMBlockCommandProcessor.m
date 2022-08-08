@@ -35,6 +35,8 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
+#import "DIMBlockCommand.h"
+
 #import "LocalDatabaseManager.h"
 
 #import "DIMBlockCommandProcessor.h"

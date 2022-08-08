@@ -35,6 +35,9 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
+#import "DIMHandshakeCommand.h"
+#import "DIMReceiptCommand.h"
+
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 

@@ -43,6 +43,7 @@
 #import "DIMMessenger+Extension.h"
 #import "DIMEntity+Extension.h"
 
+#import "DIMLoginCommand.h"
 #import "DIMReportCommand.h"
 
 #import "DIMRegister.h"

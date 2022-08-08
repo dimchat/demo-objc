@@ -69,6 +69,7 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/dimMacros.h>
 
 // Extensions
+#import <DIMClient/DKDInstantMessage+Extension.h>
 #import <DIMClient/DIMEntity+Extension.h>
 #import <DIMClient/DIMFacebook+Extension.h>
 #import <DIMClient/DIMMessageProcessor+Extension.h>
@@ -79,6 +80,12 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMGroupManager.h>
 
 // Command
+#import <DIMClient/DIMReceiptCommand.h>
+#import <DIMClient/DIMHandshakeCommand.h>
+#import <DIMClient/DIMLoginCommand.h>
+#import <DIMClient/DIMBlockCommand.h>
+#import <DIMClient/DIMMuteCommand.h>
+#import <DIMClient/DIMStorageCommand.h>
 #import <DIMClient/DIMSearchCommand.h>
 #import <DIMClient/DIMReportCommand.h>
 

@@ -9,6 +9,8 @@
 #import <sqlite3.h>
 #import <DIMSDK/DIMSDK.h>
 
+#import "DKDInstantMessage+Extension.h"
+
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 

@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMHandshakeCommand.h"
+
 #import "DIMServer.h"
 
 #import "DIMMessenger+Extension.h"

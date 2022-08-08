@@ -1,6 +1,6 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  DIMP : Decentralized Instant Messaging Protocol
 //
 //                               Written in 2019 by Moky <albert.moky@gmail.com>
 //
@@ -28,60 +28,52 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal.h
-//  DIMClient
+//  DIMHandshakeCommand.h
+//  DIMCore
 //
-//  Created by Albert Moky on 2019/2/25.
+//  Created by Albert Moky on 2019/1/28.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMServer.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
-    
-    DIMServer *_currentStation;
-    NSString *_session;
-    
-    NSMutableArray<DIMUser *> *_users;
-}
+#define DIMCommand_Handshake @"handshake"
 
-/**
- *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
+typedef NS_ENUM(UInt8, DIMHandshakeState) {
+    DIMHandshake_Init,
+    DIMHandshake_Start,   // C -> S, without session key(or session expired)
+    DIMHandshake_Again,   // S -> C, with new session key
+    DIMHandshake_Restart, // C -> S, with new session key
+    DIMHandshake_Success, // S -> C, handshake accepted
+};
+
+/*
+ *  Command message: {
+ *      type : 0x88,
+ *      sn   : 123,
+ *
+ *      cmd     : "handshake",    // command name
+ *      message : "Hello world!",
+ *      session : "{SESSION_KEY}" // session key
+ *  }
  */
-@property (readonly, nonatomic, nullable) NSString *userAgent;
+@protocol DIMHandshakeCommand <DIMCommand>
 
-@property (readonly, nonatomic) NSString *language;
+@property (readonly, strong, nonatomic) NSString *message;
+@property (readonly, strong, nonatomic, nullable) NSString *sessionKey;
 
-#pragma mark - User(s)
-
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
-
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
-
-- (BOOL)login:(DIMUser *)user;
+@property (readonly, nonatomic) DIMHandshakeState state;
 
 @end
 
-@interface DIMTerminal (GroupManage)
+@interface DIMHandshakeCommand : DIMCommand <DIMHandshakeCommand>
 
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
+- (instancetype)initWithMessage:(NSString *)message
+                     sessionKey:(nullable NSString *)session;
 
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
-
-@end
-
-@interface DIMTerminal (Report)
-
-- (void)reportOnline;
-- (void)reportOffline;
+- (instancetype)initWithSessionKey:(nullable NSString *)session;
 
 @end
 

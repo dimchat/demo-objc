@@ -35,6 +35,7 @@
 //  Copyright © 2021 DIM Group. All rights reserved.
 //
 
+#import "DKDInstantMessage+Extension.h"
 #import "DIMMessenger+Extension.h"
 
 #import "SCMessageTransmitter.h"

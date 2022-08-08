@@ -35,6 +35,11 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
+#import "DIMHandshakeCommand.h"
+#import "DIMLoginCommand.h"
+#import "DIMReceiptCommand.h"
+#import "DIMMuteCommand.h"
+#import "DIMBlockCommand.h"
 #import "DIMSearchCommand.h"
 #import "DIMReportCommand.h"
 
@@ -59,6 +64,21 @@
     //
     [self registerAllFactories];
     
+    //
+    //  Register command factories
+    //
+    DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Login, DIMLoginCommand);
+    
+    DIMCommandFactoryRegisterClass(DIMCommand_Mute, DIMMuteCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Block, DIMBlockCommand);
+    
+    // storage (contacts, private_key)
+    DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
+    DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
+
     DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
     DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
     

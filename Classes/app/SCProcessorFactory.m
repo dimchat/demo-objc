@@ -35,6 +35,11 @@
 //  Copyright © 2021 DIM Group. All rights reserved.
 //
 
+#import "DIMHandshakeCommand.h"
+#import "DIMLoginCommand.h"
+#import "DIMReceiptCommand.h"
+#import "DIMMuteCommand.h"
+#import "DIMBlockCommand.h"
 #import "DIMSearchCommand.h"
 #import "DIMReportCommand.h"
 
@@ -112,7 +117,7 @@
         return CREATE_CPU(DIMSearchCommandProcessor);
     }
     // others
-    return [super createCommandProcessor:name type:type];;
+    return [super createCommandProcessor:name type:type];
 }
 
 @end

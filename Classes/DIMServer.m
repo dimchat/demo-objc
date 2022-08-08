@@ -39,6 +39,9 @@
 #import <MarsGate/MarsGate.h>
 
 #import "NSObject+Extension.h"
+
+#import "DIMHandshakeCommand.h"
+
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 

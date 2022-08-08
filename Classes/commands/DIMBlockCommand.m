@@ -28,61 +28,37 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal.h
+//  DIMBlockCommand.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/25.
+//  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMServer.h>
+#import "DIMBlockCommand.h"
 
-NS_ASSUME_NONNULL_BEGIN
+@implementation DIMBlockCommand
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
-    
-    DIMServer *_currentStation;
-    NSString *_session;
-    
-    NSMutableArray<DIMUser *> *_users;
+- (instancetype)initWithList:(nullable NSArray<id<MKMID>> *)blockList {
+    if (self = [self initWithCommandName:DIMCommand_Block]) {
+        // block-list
+        if (blockList) {
+            [self setList:blockList];
+        }
+    }
+    return self;
 }
 
-/**
- *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
- */
-@property (readonly, nonatomic, nullable) NSString *userAgent;
+- (nullable NSArray<id<MKMID>> *)list {
+    return MKMIDConvert([self objectForKey:@"list"]);
+}
 
-@property (readonly, nonatomic) NSString *language;
-
-#pragma mark - User(s)
-
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
-
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
-
-- (BOOL)login:(DIMUser *)user;
+- (void)setList:(NSArray<id<MKMID>> *)list {
+    if (list) {
+        [self setObject:MKMIDRevert(list) forKey:@"list"];
+    } else {
+        [self removeObjectForKey:@"list"];
+    }
+}
 
 @end
-
-@interface DIMTerminal (GroupManage)
-
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
-
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
-
-@end
-
-@interface DIMTerminal (Report)
-
-- (void)reportOnline;
-- (void)reportOffline;
-
-@end
-
-NS_ASSUME_NONNULL_END

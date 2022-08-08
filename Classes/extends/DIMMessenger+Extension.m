@@ -35,6 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMMuteCommand.h"
+#import "DIMStorageCommand.h"
 #import "DIMSearchCommand.h"
 
 #import "SCMessenger.h"

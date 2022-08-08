@@ -28,60 +28,47 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal.h
+//  DKDInstantMessage+Extension.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/25.
+//  Created by Albert Moky on 2019/10/21.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMServer.h>
+#import <DaoKeDao/DaoKeDao.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
+typedef NS_ENUM(UInt8, DIMMessageState) {
+    DIMMessageState_Init = 0,
+    DIMMessageState_Normal = DIMMessageState_Init,
     
-    DIMServer *_currentStation;
-    NSString *_session;
+    DIMMessageState_Waiting,
+    DIMMessageState_Sending,   // sending to station
+    DIMMessageState_Accepted,  // station accepted, delivering
     
-    NSMutableArray<DIMUser *> *_users;
-}
+    DIMMessageState_Delivering = DIMMessageState_Accepted,
+    DIMMessageState_Delivered, // delivered to receiver (station said)
+    DIMMessageState_Arrived,   // the receiver's client feedback
+    DIMMessageState_Read,      // the receiver's client feedback
+    
+    DIMMessageState_Error = -1, // failed to send
+};
 
-/**
- *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
- */
-@property (readonly, nonatomic, nullable) NSString *userAgent;
+@interface DKDContent (State)
 
-@property (readonly, nonatomic) NSString *language;
-
-#pragma mark - User(s)
-
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
-
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
-
-- (BOOL)login:(DIMUser *)user;
+@property (nonatomic) DIMMessageState state;
+@property (strong , nonatomic, nullable) NSString *error;
 
 @end
 
-@interface DIMTerminal (GroupManage)
+#pragma mark -
 
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
+@class DIMReceiptCommand;
 
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
+@interface DKDInstantMessage (Extension)
 
-@end
-
-@interface DIMTerminal (Report)
-
-- (void)reportOnline;
-- (void)reportOffline;
+- (BOOL)matchReceipt:(DIMReceiptCommand *)command;
 
 @end
 

@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMReceiptCommand.h"
+
 #import "DIMReceiptCommandProcessor.h"
 
 @implementation DIMReceiptCommandProcessor

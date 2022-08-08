@@ -28,60 +28,70 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal.h
-//  DIMClient
+//  DIMStorageCommand.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2019/2/25.
-//  Copyright © 2019 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2019/12/2.
+//  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMClient/DIMServer.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
-    
-    DIMServer *_currentStation;
-    NSString *_session;
-    
-    NSMutableArray<DIMUser *> *_users;
-}
+#define DIMCommand_Storage    @"storage"
+#define DIMCommand_Contacts   @"contacts"
+#define DIMCommand_PrivateKey @"private_key"
 
-/**
- *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
+/*
+ *  Command message: {
+ *      type : 0x88,
+ *      sn   : 123,
+ *
+ *      cmd     : "storage",
+ *      title   : "key name",  // "contacts", "private_key", ...
+ *
+ *      data    : "...",       // base64_encode(symmetric)
+ *      key     : "...",       // base64_encode(asymmetric)
+ *
+ *      // -- extra info
+ *      //...
+ *  }
  */
-@property (readonly, nonatomic, nullable) NSString *userAgent;
+@protocol DIMStorageCommand <DIMCommand>
 
-@property (readonly, nonatomic) NSString *language;
+@property (readonly, strong, nonatomic) NSString *title;
 
-#pragma mark - User(s)
+//
+//  user ID
+//
+@property (strong, nonatomic, nullable) id<MKMID> ID;
 
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
+//
+//  Encrypted data
+//      encrypted by a random password before upload
+//
+@property (strong, nonatomic, nullable) NSData *data;
 
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
-
-- (BOOL)login:(DIMUser *)user;
-
-@end
-
-@interface DIMTerminal (GroupManage)
-
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
-
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
+//
+//  Symmetric key
+//      password to decrypt data
+//      encrypted by user's public key before upload.
+//      this should be empty when the storage data is "private_key".
+//
+@property (strong, nonatomic, nullable) NSData *key;
 
 @end
 
-@interface DIMTerminal (Report)
+@interface DIMStorageCommand : DIMCommand <DIMStorageCommand>
 
-- (void)reportOnline;
-- (void)reportOffline;
+- (instancetype)initWithTitle:(NSString *)title;
+
+#pragma mark Decryption
+
+- (nullable NSData *)decryptWithSymmetricKey:(id<MKMDecryptKey>)PW;
+
+- (nullable NSData *)decryptWithPrivateKey:(id<MKMDecryptKey>)SK;
 
 @end
 

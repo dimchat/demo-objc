@@ -28,61 +28,69 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMTerminal.h
+//  DKDInstantMessage+Extension.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2019/2/25.
+//  Created by Albert Moky on 2019/10/21.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMServer.h>
+#import "DIMReceiptCommand.h"
 
-NS_ASSUME_NONNULL_BEGIN
+#import "DKDInstantMessage+Extension.h"
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
-    
-    DIMServer *_currentStation;
-    NSString *_session;
-    
-    NSMutableArray<DIMUser *> *_users;
+@implementation DKDContent (State)
+
+- (DIMMessageState)state {
+    NSNumber *number = [self objectForKey:@"state"];
+    return [number unsignedIntegerValue];
 }
 
-/**
- *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
- */
-@property (readonly, nonatomic, nullable) NSString *userAgent;
+- (void)setState:(DIMMessageState)state {
+    [self setObject:@(state) forKey:@"state"];
+}
 
-@property (readonly, nonatomic) NSString *language;
+- (NSString *)error {
+    return [self objectForKey:@"error"];
+}
 
-#pragma mark - User(s)
-
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
-
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
-
-- (BOOL)login:(DIMUser *)user;
-
-@end
-
-@interface DIMTerminal (GroupManage)
-
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
-
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
+- (void)setError:(NSString *)error {
+    if (error) {
+        [self setObject:error forKey:@"error"];
+    } else {
+        [self removeObjectForKey:@"error"];
+    }
+}
 
 @end
 
-@interface DIMTerminal (Report)
+@implementation DKDInstantMessage (Extension)
 
-- (void)reportOnline;
-- (void)reportOffline;
+- (BOOL)matchReceipt:(DIMReceiptCommand *)command {
+    
+    id<DKDContent> content = self.content;
+    
+    // check signature
+    NSString *sig1 = [command objectForKey:@"signature"];
+    NSString *sig2 = [self objectForKey:@"signature"];
+    if (sig1.length >= 8 && sig2.length >= 8) {
+        // if contains signature, check it
+        sig1 = [sig1 substringToIndex:8];
+        sig2 = [sig2 substringToIndex:8];
+        return [sig1 isEqualToString:sig2];
+    }
+    
+    // check envelope
+    id<DKDEnvelope> env1 = command.envelope;
+    id<DKDEnvelope> env2 = self.envelope;
+    if (env1) {
+        // if contains envelope, check it
+        return [env1 isEqual:env2];
+    }
+    
+    // check serial number
+    // (only the original message's receiver can know this number)
+    return command.serialNumber == content.serialNumber;
+}
 
 @end
-
-NS_ASSUME_NONNULL_END

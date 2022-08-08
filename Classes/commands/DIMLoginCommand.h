@@ -1,6 +1,6 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  DIMP : Decentralized Instant Messaging Protocol
 //
 //                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
@@ -28,29 +28,68 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMLoginCommandProcessor.m
-//  DIMClient
+//  DIMLoginCommand.h
+//  DIMSDK
 //
-//  Created by Albert Moky on 2020/4/21.
-//  Copyright © 2020 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/4/14.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import "DIMLoginCommand.h"
+#import <DIMSDK/DIMSDK.h>
 
-#import "DIMLoginCommandProcessor.h"
+NS_ASSUME_NONNULL_BEGIN
 
-@implementation DIMLoginCommandProcessor
+#define DIMCommand_Login     @"login"
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content isKindOfClass:[DIMLoginCommand class]], @"login error: %@", content);
-    DIMLoginCommand *command = (DIMLoginCommand *)content;
-    
-    NSLog(@"[%@] %@ login: %@", command.time, command.ID, command.stationInfo);
-    // TODO: update contact's login status
-    
-    // no need to respond login command
-    return nil;
-}
+/*
+ *  Command message: {
+ *      type : 0x88,
+ *      sn   : 123,
+ *
+ *      cmd      : "login",
+ *      time     : 0,
+ *      //---- client info ----
+ *      ID       : "{UserID}",
+ *      device   : "DeviceID",  // (optional)
+ *      agent    : "UserAgent", // (optional)
+ *      //---- server info ----
+ *      station  : {
+ *          ID   : "{StationID}",
+ *          host : "{IP}",
+ *          port : 9394
+ *      },
+ *      provider : {
+ *          ID   : "{SP_ID}"
+ *      }
+ *  }
+ */
+@protocol DIMLoginCommand <DIMCommand>
+
+#pragma mark Client Info
+
+// User ID
+@property (readonly, strong, nonatomic) id<MKMID> ID;
+// Device ID
+@property (strong, nonatomic, nullable) NSString *device;
+// User-Agent
+@property (strong, nonatomic, nullable) NSString *agent;
+
+#pragma mark Server Info
+
+// station
+@property (strong, nonatomic) NSDictionary *stationInfo;
+// SP
+@property (strong, nonatomic, nullable) NSDictionary *providerInfo;
 
 @end
+
+@interface DIMLoginCommand : DIMCommand <DIMLoginCommand>
+
+- (instancetype)initWithID:(id<MKMID>)ID;
+
+- (void)copyStationInfo:(DIMStation *)station;
+- (void)copyProviderInfo:(DIMServiceProvider *)provider;
+
+@end
+
+NS_ASSUME_NONNULL_END

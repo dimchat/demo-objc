@@ -38,6 +38,10 @@
 #import <DIMSDK/DIMSDK.h>
 
 #import "NSObject+Singleton.h"
+
+#import "DIMReceiptCommand.h"
+
+#import "DKDInstantMessage+Extension.h"
 #import "DIMFacebook+Extension.h"
 
 #import "DIMConversation.h"

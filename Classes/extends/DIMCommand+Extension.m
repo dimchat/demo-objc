@@ -35,6 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMLoginCommand.h"
+
 #import "DIMFacebook+Extension.h"
 
 #import "DIMCommand+Extension.h"

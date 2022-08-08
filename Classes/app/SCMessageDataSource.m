@@ -42,6 +42,12 @@
 
 #import "DIMClientConstants.h"
 
+#import "DIMHandshakeCommand.h"
+#import "DIMLoginCommand.h"
+#import "DIMReceiptCommand.h"
+#import "DIMMuteCommand.h"
+#import "DIMBlockCommand.h"
+#import "DIMStorageCommand.h"
 #import "DIMSearchCommand.h"
 
 #import "DIMAmanuensis.h"

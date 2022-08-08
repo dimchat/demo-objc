@@ -35,6 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import "DIMMuteCommand.h"
+
 #import "LocalDatabaseManager.h"
 
 #import "DIMMuteCommandProcessor.h"
