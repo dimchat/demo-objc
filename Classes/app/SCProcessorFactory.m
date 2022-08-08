@@ -73,12 +73,11 @@
         // TODO: shared the same processor with 'FILE'?
         return CREATE_CPU(DIMFileContentProcessor);
     }
-    DIMContentProcessor *cpu = [super createContentProcessor:type];
-    if (!cpu) {
-        // unknown
+    // default
+    if (type == 0) {
         return CREATE_CPU(DIMDefaultContentProcessor);
     }
-    return cpu;
+    return [super createContentProcessor:type];
 }
 
 - (id<DIMContentProcessor>)createCommandProcessor:(NSString *)name type:(DKDContentType)type {
