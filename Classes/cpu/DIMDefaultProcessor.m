@@ -68,7 +68,7 @@
         // Text
         NSAssert([content objectForKey:@"text"], @"Text content error: %@", content);
         text = @"Text message received";
-    } else if ([content isKindOfClass:[DIMWebpageContent class]]) {
+    } else if ([content isKindOfClass:[DIMPageContent class]]) {
         // Web Page
         NSAssert([content objectForKey:@"URL"], @"Web content error: %@", content);
         text = @"Web page received";

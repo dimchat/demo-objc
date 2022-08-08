@@ -206,8 +206,8 @@ NSString *DIMContent_BuildText(id<DKDContent> content) {
             NSString *format = NSLocalizedString(@"[File:%@]", nil);
             text = [NSString stringWithFormat:format, filename];
         }
-    } else if ([content isKindOfClass:[DIMWebpageContent class]]) {
-        DIMWebpageContent *page = (DIMWebpageContent *)content;
+    } else if ([content isKindOfClass:[DIMPageContent class]]) {
+        DIMPageContent *page = (DIMPageContent *)content;
         NSString *text = page.title;
         if ([text length] == 0) {
             text = page.desc;
