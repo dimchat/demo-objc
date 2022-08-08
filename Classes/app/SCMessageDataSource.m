@@ -164,7 +164,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         return YES;
     }
     
-    if ([content isKindOfClass:[DIMInviteCommand class]]) {
+    if ([content conformsToProtocol:@protocol(DIMInviteGroupCommand)]) {
         // send keys again
         id<MKMID> me = iMsg.envelope.receiver;
         id<MKMID> group = content.group;
@@ -187,8 +187,8 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         return YES;
     }
     
-    if([content isKindOfClass:[DIMCommand class]]){
-        DIMCommand *command = (DIMCommand *)content;
+    if([content conformsToProtocol:@protocol(DIMCommand)]){
+        id<DIMCommand> command = (id<DIMCommand>)content;
         if([command.cmd isEqualToString:@"broadcast"]){
             NSLog(@"It is a broadcast command, skip : %@", content);
             return YES;

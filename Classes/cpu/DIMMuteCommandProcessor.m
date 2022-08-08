@@ -50,7 +50,7 @@
     DIMFacebook *facebook = self.facebook;
     
     NSArray *muteList = command.list;
-    DIMUser *user = [facebook currentUser];
+    id<DIMUser> user = [facebook currentUser];
     
     LocalDatabaseManager *manager = [LocalDatabaseManager sharedInstance];
     [manager unmuteAllConversationForUser:user.ID];

@@ -79,15 +79,15 @@
 
 #pragma mark - User(s)
 
-- (NSArray<DIMUser *> *)users {
+- (NSArray<id<DIMUser>> *)users {
     return [_users mutableCopy];
 }
 
-- (DIMUser *)currentUser {
+- (id<DIMUser>)currentUser {
     return _currentStation.currentUser;
 }
 
-- (void)setCurrentUser:(DIMUser *)user {
+- (void)setCurrentUser:(id<DIMUser>)user {
     _currentStation.currentUser = user;
     if (user && ![_users containsObject:user]) {
         // insert the user to the first
@@ -101,7 +101,7 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (void)addUser:(DIMUser *)user {
+- (void)addUser:(id<DIMUser>)user {
     if (user && ![_users containsObject:user]) {
         [_users addObject:user];
     }
@@ -111,7 +111,7 @@
     }
 }
 
-- (void)removeUser:(DIMUser *)user {
+- (void)removeUser:(id<DIMUser>)user {
     if ([_users containsObject:user]) {
         [_users removeObject:user];
     }
@@ -121,7 +121,7 @@
     }
 }
 
-- (BOOL)login:(DIMUser *)user {
+- (BOOL)login:(id<DIMUser>)user {
     if (!user || [self.currentUser isEqual:user]) {
         NSLog(@"user not change");
         return NO;
@@ -259,7 +259,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 
 - (void)station:(DIMStation *)server onHandshakeAccepted:(NSString *)session {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    DIMUser *user = self.currentUser;
+    id<DIMUser> user = self.currentUser;
     // post contacts(encrypted) to station
     NSArray<id<MKMID>> *contacts = user.contacts;
     if (contacts) {
@@ -277,10 +277,10 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 
 @implementation DIMTerminal (GroupManage)
 
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list {
-    DIMUser *user = self.currentUser;
+- (nullable id<DIMGroup>)createGroupWithSeed:(NSString *)seed
+                                        name:(NSString *)name
+                                     members:(NSArray<id<MKMID>> *)list {
+    id<DIMUser> user = self.currentUser;
     id<MKMID> founder = user.ID;
 
     // 0. make sure the founder is in the front
@@ -300,7 +300,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     
     // 1. create profile
     DIMRegister *reg = [[DIMRegister alloc] init];
-    DIMGroup *group = [reg createGroupWithSeed:seed name:name founder:founder];
+    id<DIMGroup> group = [reg createGroupWithSeed:seed name:name founder:founder];
     
     // 2. send out group info
     id<MKMBulletin> profile = [group documentWithType:MKMDocument_Bulletin];
@@ -317,7 +317,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // create 'profile' command
-    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
+    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     // 1. share to station
     [messenger sendCommand:command];
     // 2. send to group assistants
@@ -335,7 +335,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     id<MKMID> owner = [facebook ownerOfGroup:group];
     NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
-    DIMUser *user = self.currentUser;
+    id<DIMUser> user = self.currentUser;
 
     // 1. update profile
     if (profile) {
@@ -395,7 +395,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 static NSDate *offlineTime = nil;
 
 - (void)reportOnline {
-    DIMUser *user = [self currentUser];
+    id<DIMUser> user = [self currentUser];
     if (!user) {
         return;
     }
@@ -405,7 +405,7 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    DIMCommand *command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
+    id<DIMCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
     if (offlineTime) {
         [command setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
     }
@@ -415,7 +415,7 @@ static NSDate *offlineTime = nil;
 }
 
 - (void)reportOffline {
-    DIMUser *user = [self currentUser];
+    id<DIMUser> user = [self currentUser];
     if (!user) {
         return;
     }
@@ -425,7 +425,7 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    DIMCommand *command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
+    id<DIMCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
     offlineTime = [command time];
     [messenger sendCommand:command];
     

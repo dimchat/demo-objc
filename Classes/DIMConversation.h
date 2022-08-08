@@ -58,7 +58,7 @@ typedef UInt8 DIMConversationType;
 @property (weak, nonatomic) id<DIMConversationDataSource> dataSource;
 @property (weak, nonatomic) id<DIMConversationDelegate> delegate;
 
-- (instancetype)initWithEntity:(DIMEntity *)entity
+- (instancetype)initWithEntity:(id<DIMEntity>)entity
 NS_DESIGNATED_INITIALIZER;
 
 #pragma mark - Read

@@ -103,7 +103,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     if (!chatBox) {
         // create directly if we can find the entity
         // get entity with ID
-        DIMEntity *entity = nil;
+        id<DIMEntity> entity = nil;
         if (MKMIDIsUser(ID)) {
             entity = DIMUserWithID(ID);
         } else if (MKMIDIsGroup(ID)) {
@@ -170,7 +170,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     } else {
         // personal chat, get chat box with contact ID
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
-        DIMUser *user = [facebook currentUser];
+        id<DIMUser> user = [facebook currentUser];
         if ([sender isEqual:user.ID]) {
             chatBox = [self conversationWithID:receiver];
         } else {

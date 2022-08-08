@@ -107,7 +107,7 @@
     MKMImmortals *_immortals;
     
     // local userss
-    NSMutableArray<DIMUser *> *_allUsers;
+    NSMutableArray<id<DIMUser>> *_allUsers;
 }
 
 @end
@@ -134,11 +134,11 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return self;
 }
 
-- (nullable NSArray<DIMUser *> *)localUsers {
+- (nullable NSArray<id<DIMUser>> *)localUsers {
     if (!_allUsers) {
         _allUsers = [[NSMutableArray alloc] init];
         NSArray<id<MKMID>> *list = [_database allUsers];
-        DIMUser *user;
+        id<DIMUser> user;
         for (id<MKMID> item in list) {
             user = [self userWithID:item];
             NSAssert(user, @"failed to get local user: %@", item);
@@ -148,7 +148,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return _allUsers;
 }
 
-- (void)setCurrentUser:(DIMUser *)user {
+- (void)setCurrentUser:(id<DIMUser>)user {
     if (!user) {
         NSAssert(false, @"current user cannot be empty");
         return;
@@ -178,14 +178,14 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return [self metaForID:ID] == nil;
 }
 
-- (nullable DIMUser *)createUser:(id<MKMID>)ID {
+- (nullable id<DIMUser>)createUser:(id<MKMID>)ID {
     if ([self isWaitingMeta:ID]) {
         return nil;
     }
     return [super createUser:ID];
 }
 
-- (nullable DIMGroup *)createGroup:(id<MKMID>)ID {
+- (nullable id<DIMGroup>)createGroup:(id<MKMID>)ID {
     if ([self isWaitingMeta:ID]) {
         return nil;
     }
@@ -245,8 +245,7 @@ SingletonImplementations(SCFacebook, sharedInstance)
     return YES;
 }
 
-- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID
-                                              type:(nullable NSString *)type {
+- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type {
     if (MKMIDIsBroadcast(ID)) {
         // broadcast ID has no document
         return nil;

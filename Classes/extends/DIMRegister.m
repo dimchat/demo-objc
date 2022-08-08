@@ -49,7 +49,7 @@
     return self;
 }
 
-- (DIMUser *)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url {
+- (id<DIMUser>)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url {
     // 1. generate private key
     _key = [self generatePrivateKey];
     // 2. generate meta
@@ -68,15 +68,15 @@
     return [facebook userWithID:ID];
 }
 
-- (DIMGroup *)createGroupWithName:(NSString *)name founder:(id<MKMID>)founder {
+- (id<DIMGroup>)createGroupWithName:(NSString *)name founder:(id<MKMID>)founder {
     uint32_t seed = arc4random();
     NSString *string = [NSString stringWithFormat:@"Group-%u", seed];
     return [self createGroupWithSeed:string name:name founder:founder];
 }
 
-- (DIMGroup *)createGroupWithSeed:(NSString *)seed
-                             name:(NSString *)name
-                          founder:(id<MKMID>)founder {
+- (id<DIMGroup>)createGroupWithSeed:(NSString *)seed
+                               name:(NSString *)name
+                            founder:(id<MKMID>)founder {
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // 1. get private key
     _key = (id<MKMPrivateKey>)[facebook privateKeyForVisaSignature:founder];
@@ -170,7 +170,7 @@
 }
 
 - (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)doc {
-    DIMCommand *command;
+    id<DIMCommand> command;
     if (doc) {
         NSAssert([ID isEqual:doc.ID], @"document ID not match: %@, %@", ID, doc);
         NSAssert([doc isValid], @"document not valid: %@", doc);

@@ -40,7 +40,7 @@
 #import "SCMessagePacker.h"
 
 static inline void fix_profile(id<DKDContent> content) {
-    if ([content isKindOfClass:[DIMDocumentCommand class]]) {
+    if ([content conformsToProtocol:@protocol(DIMDocumentCommand)]) {
         // compatible for document command
         id doc = [content objectForKey:@"document"];
         if (doc) {
@@ -225,7 +225,7 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
         // check exception thrown by DKD: chat.dim.dkd.EncryptedMessage.decrypt()
         if ([exception.reason isEqualToString:@"failed to decrypt key in msg"]) {
             // visa.key not updated?
-            DIMUser *user = [self.facebook currentUser];
+            id<DIMUser> user = [self.facebook currentUser];
             id<MKMVisa> visa = user.visa;
             NSAssert([visa isValid], @"user visa not found: %@", user);
             id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];

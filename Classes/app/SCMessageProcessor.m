@@ -80,8 +80,8 @@
     if ([self isEmptyGroup:group]) {
         // NOTICE: if the group info not found, and this is not an 'invite' command
         //         query group info from the sender
-        if ([content isKindOfClass:[DIMInviteCommand class]] ||
-            [content isKindOfClass:[DIMResetGroupCommand class]]) {
+        if ([content conformsToProtocol:@protocol(DIMInviteGroupCommand)] ||
+            [content conformsToProtocol:@protocol(DIMResetGroupCommand)]) {
             // FIXME: can we trust this stranger?
             //        may be we should keep this members list temporary,
             //        and send 'query' to the owner immediately.
@@ -117,27 +117,10 @@
 - (NSArray<id<DKDInstantMessage>> *)processInstant:(id<DKDInstantMessage>)iMsg
                                        withMessage:(id<DKDReliableMessage>)rMsg {
     DIMMessenger *messenger = self.messenger;
-    id<DKDSecureMessage> sMsg;
-    // unwrap secret message circularly
-    id<DKDContent> content = iMsg.content;
-    while ([content isKindOfClass:[DIMForwardContent class]]) {
-        rMsg = [(DIMForwardContent *)content forward];
-        sMsg = [messenger verifyMessage:rMsg];
-        if (!sMsg) {
-            // signature not matched
-            return nil;
-        }
-        iMsg = [messenger decryptMessage:sMsg];
-        if (!iMsg) {
-            // not for you?
-            return nil;
-        }
-        content = iMsg.content;
-    }
     // call super to process
     NSArray<id<DKDInstantMessage>> *responses = [super processInstant:iMsg withMessage:rMsg];
     // save instant/secret message
-    if (![self.messenger saveMessage:iMsg]) {
+    if (![messenger saveMessage:iMsg]) {
         // error
         return nil;
     }
@@ -179,7 +162,7 @@
     
     // check receiver
     id<MKMID> receiver = rMsg.envelope.receiver;
-    DIMUser *user = [self.facebook selectLocalUserWithID:receiver];
+    id<DIMUser> user = [self.facebook selectLocalUserWithID:receiver];
     NSAssert(user, @"receiver error: %@", receiver);
     
     // check responses

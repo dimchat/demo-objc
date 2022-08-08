@@ -133,7 +133,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     return server;
 }
 
-- (void)setCurrentUser:(DIMUser *)newUser {
+- (void)setCurrentUser:(id<DIMUser>)newUser {
     if (![_currentUser isEqual:newUser]) {
         _currentUser = newUser;
         

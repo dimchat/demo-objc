@@ -81,12 +81,12 @@
 
 #pragma mark Group commands
 
-- (BOOL)_sendGroupCommand:(DIMCommand *)command {
+- (BOOL)_sendGroupCommand:(id<DIMCommand>)command {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     return [messenger sendCommand:command];
 }
 
-- (BOOL)_sendGroupCommand:(DIMCommand *)command to:(NSArray<id<MKMID>> *)members {
+- (BOOL)_sendGroupCommand:(id<DIMCommand>)command to:(NSArray<id<MKMID>> *)members {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     BOOL OK = YES;
     for (id<MKMID> receiver in members) {
@@ -114,7 +114,7 @@
         @throw [NSException exceptionWithName:@"GroupError" reason:@"not ready" userInfo:info];
     }
     id<MKMDocument> doc = [facebook documentForID:self.group type:MKMDocument_Bulletin];
-    DIMCommand *command;
+    id<DIMCommand> command;
     if ([[doc propertyKeys] count] == 0) {
         command = [[DIMMetaCommand alloc] initWithID:self.group meta:meta];
     } else {
@@ -130,7 +130,7 @@
         members = [facebook membersOfGroup:self.group];
         [self _sendGroupCommand:command to:members];     // to all members
         // 3. send 'invite' command with all members to all members
-        command = [[DIMInviteCommand alloc] initWithGroup:self.group members:members];
+        command = [[DIMInviteGroupCommand alloc] initWithGroup:self.group members:members];
         [self _sendGroupCommand:command to:assistants];  // to group assistants
         [self _sendGroupCommand:command to:members];     // to all members
     } else {
@@ -140,14 +140,14 @@
         //[self _sendGroupCommand:command to:members];     // to old members
         [self _sendGroupCommand:command to:newMembers];  // to new members
         // 2. send 'invite' command with new members to old members
-        command = [[DIMInviteCommand alloc] initWithGroup:self.group members:newMembers];
+        command = [[DIMInviteGroupCommand alloc] initWithGroup:self.group members:newMembers];
         [self _sendGroupCommand:command to:assistants];  // to group assistants
         [self _sendGroupCommand:command to:members];     // to old members
         // 3. update local storage
         [self addMembers:newMembers];
         members = [facebook membersOfGroup:self.group];
         // 4. send 'invite' command with all members to new members
-        command = [[DIMInviteCommand alloc] initWithGroup:self.group members:members];
+        command = [[DIMInviteGroupCommand alloc] initWithGroup:self.group members:members];
         [self _sendGroupCommand:command to:newMembers];  // to new members
     }
     
@@ -177,7 +177,7 @@
     }
     
     // 1. send 'expel' command to all members
-    DIMCommand *command = [[DIMExpelCommand alloc] initWithGroup:self.group members:outMembers];
+    id<DIMCommand> command = [[DIMExpelGroupCommand alloc] initWithGroup:self.group members:outMembers];
     // 1.1. send to existed members
     [self _sendGroupCommand:command to:members];
     // 1.2. send to assistants
@@ -210,7 +210,7 @@
     }
     
     // 1. send 'quit' command to all members
-    DIMCommand *command = [[DIMQuitCommand alloc] initWithGroup:self.group];
+    id<DIMCommand> command = [[DIMQuitGroupCommand alloc] initWithGroup:self.group];
     // 1.1. send to existed members
     [self _sendGroupCommand:command to:members];
     // 1.2. send to assistants

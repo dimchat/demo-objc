@@ -95,10 +95,12 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     // ensure that founder is at the front
     if (members.count > 1) {
         id<MKMMeta> gMeta = DIMMetaForID(group);
+        id<MKMMeta> uMeta;
         id<MKMVerifyKey> PK;
         for (NSUInteger index = 0; index < members.count; ++index) {
             ID = [members objectAtIndex:index];
-            PK = [DIMMetaForID(ID) key];
+            uMeta = DIMMetaForID(ID);
+            PK = [uMeta key];
             if (MKMMetaMatchKey(PK, gMeta)) {
                 if (index > 0) {
                     // move to front

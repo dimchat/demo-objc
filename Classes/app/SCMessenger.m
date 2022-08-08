@@ -162,7 +162,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     [_metaQueryTable setObject:now forKey:ID];
     NSLog(@"querying meta of %@ fron network...", ID);
 
-    DIMCommand *command = [[DIMMetaCommand alloc] initWithID:ID];
+    id<DIMCommand> command = [[DIMMetaCommand alloc] initWithID:ID];
     return [self sendCommand:command];
 }
 
@@ -181,7 +181,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     [_docQueryTable setObject:now forKey:ID];
     NSLog(@"querying entity document of %@ fron network...", ID);
 
-    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID];
+    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID];
     return [self sendCommand:command];
 }
 
@@ -198,7 +198,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     }
     [_groupQueryTable setObject:now forKey:group];
     
-    DIMCommand *command = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    id<DIMCommand> command = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     BOOL checking = NO;
     for (id<MKMID> item in members) {
         if ([self sendContent:command receiver:item]) {

@@ -49,7 +49,7 @@
 
 - (instancetype)init {
     NSAssert(false, @"DON'T call me");
-    DIMEntity *entity = nil;
+    id<DIMEntity> entity = nil;
     return [self initWithEntity:entity];
 }
 
@@ -95,7 +95,7 @@
     return @"Conversation";
 }
 
-- (nullable __kindof id<MKMDocument>)document {
+- (nullable id<MKMDocument>)document {
     return [_entity documentWithType:@"*"];
 }
 

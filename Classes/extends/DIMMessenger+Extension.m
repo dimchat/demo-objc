@@ -102,7 +102,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendContent:content receiver:everyone];
 }
 
-- (BOOL)sendCommand:(DIMCommand *)command {
+- (BOOL)sendCommand:(id<DIMCommand>)command {
     DIMStation *server = [self currentServer];
     NSAssert(server, @"server not connected yet");
     return [self sendContent:command receiver:server.ID];
@@ -130,18 +130,18 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 - (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(nullable id<MKMMeta>)meta {
     [doc removeObjectForKey:@"expires"];
-    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
+    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
     return [self sendCommand:command];
 }
 
 - (BOOL)broadcastVisa:(id<MKMVisa>)visa {
-    DIMUser *user = [self.facebook currentUser];
+    id<DIMUser> user = [self.facebook currentUser];
     id<MKMID> ID = user.ID;
     if (![visa.ID isEqual:ID]) {
         NSAssert(false, @"visa ID not match: %@, %@", ID, visa.ID);
         return NO;
     }
-    DIMCommand *command = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
+    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
     NSArray<id<MKMID>> *contacts = user.contacts;
     BOOL OK = YES;
     for (id<MKMID> contact in contacts) {
@@ -157,7 +157,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)postContacts:(NSArray<id<MKMID>> *)contacts {
-    DIMUser *user = [self.facebook currentUser];
+    id<DIMUser> user = [self.facebook currentUser];
     NSAssert([contacts count] > 0, @"contacts cannot be empty");
     // generate password
     id<MKMSymmetricKey> password = MKMSymmetricKeyGenerate(MKMAlgorithmAES);
@@ -178,7 +178,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)queryContacts{
-    DIMUser *user = [self.facebook currentUser];
+    id<DIMUser> user = [self.facebook currentUser];
     // pack 'contacts' command
     DIMStorageCommand *command;
     command = [[DIMStorageCommand alloc] initWithTitle:DIMCommand_Contacts];
@@ -188,7 +188,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)queryMuteList{
-    DIMCommand *command = [[DIMMuteCommand alloc] initWithList:nil];
+    id<DIMCommand> command = [[DIMMuteCommand alloc] initWithList:nil];
     return [self sendCommand:command];
 }
 

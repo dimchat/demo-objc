@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
     DIMServer *_currentStation;
     NSString *_session;
     
-    NSMutableArray<DIMUser *> *_users;
+    NSMutableArray<id<DIMUser>> *_users;
 }
 
 /**
@@ -56,21 +56,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - User(s)
 
-@property (readonly, copy, nonatomic) NSArray<DIMUser *> *users;
-@property (strong, nonatomic) DIMUser *currentUser;
+@property (readonly, copy, nonatomic) NSArray<__kindof id<DIMUser>> *users;
+@property (strong, nonatomic) __kindof id<DIMUser> currentUser;
 
-- (void)addUser:(DIMUser *)user;
-- (void)removeUser:(DIMUser *)user;
+- (void)addUser:(id<DIMUser>)user;
+- (void)removeUser:(id<DIMUser>)user;
 
-- (BOOL)login:(DIMUser *)user;
+- (BOOL)login:(id<DIMUser>)user;
 
 @end
 
 @interface DIMTerminal (GroupManage)
 
-- (nullable DIMGroup *)createGroupWithSeed:(NSString *)seed
-                                      name:(NSString *)name
-                                   members:(NSArray<id<MKMID>> *)list;
+- (nullable __kindof id<DIMGroup>)createGroupWithSeed:(NSString *)seed
+                                        name:(NSString *)name
+                                     members:(NSArray<id<MKMID>> *)list;
 
 - (BOOL)updateGroupWithID:(id<MKMID>)ID
                   members:(NSArray<id<MKMID>> *)list

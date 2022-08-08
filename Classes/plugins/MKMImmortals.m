@@ -39,11 +39,11 @@
 
 @interface MKMImmortals () {
     
-    NSMutableDictionary<NSString *, id<MKMID>>         *_idTable;
+    NSMutableDictionary<NSString *, id<MKMID>>        *_idTable;
     NSMutableDictionary<id<MKMID>, id<MKMPrivateKey>> *_privateTable;
     NSMutableDictionary<id<MKMID>, id<MKMMeta>>       *_metaTable;
     NSMutableDictionary<id<MKMID>, id<MKMDocument>>   *_profileTable;
-    NSMutableDictionary<id<MKMID>, DIMUser *>         *_userTable;
+    NSMutableDictionary<id<MKMID>, id<DIMUser>>       *_userTable;
 }
 
 @end
@@ -166,7 +166,7 @@
     return YES;
 }
 
-- (BOOL)cacheUser:(DIMUser *)user {
+- (BOOL)cacheUser:(id<DIMUser>)user {
     if (user.dataSource == nil) {
         user.dataSource = self;
     }
@@ -176,8 +176,8 @@
 
 #pragma mark -
 
-- (nullable DIMUser *)userWithID:(id<MKMID>)ID {
-    DIMUser *user = [_userTable objectForKey:ID];
+- (nullable id<DIMUser>)userWithID:(id<MKMID>)ID {
+    id<DIMUser> user = [_userTable objectForKey:ID];
     if (!user) {
         if ([_idTable objectForKey:[ID string]]) {
             user = [[DIMUser alloc] initWithID:ID];

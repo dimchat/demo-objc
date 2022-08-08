@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MKMImmortals : NSObject <DIMEntityDataSource,
                                     DIMUserDataSource>
 
-- (nullable DIMUser *)userWithID:(id<MKMID>)ID;
+- (nullable __kindof id<DIMUser>)userWithID:(id<MKMID>)ID;
 
 @end
 

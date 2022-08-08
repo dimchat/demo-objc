@@ -73,7 +73,7 @@
     // Application Layer should make sure user is already login before it send message to server.
     // Application layer should put message into queue so that it will send automatically after user login
     if (!from) {
-        DIMUser *user = [self.facebook currentUser];
+        id<DIMUser> user = [self.facebook currentUser];
         NSAssert(user, @"current user not set");
         from = user.ID;
     }

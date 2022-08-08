@@ -116,7 +116,8 @@
         return [founder isEqual:ID];
     } else {
         id<MKMMeta> meta = [self meta];
-        id<MKMVerifyKey> PK = [DIMMetaForID(ID) key];
+        id<MKMMeta> uMeta = DIMMetaForID(ID);
+        id<MKMVerifyKey> PK = [uMeta key];
         //NSAssert(PK, @"failed to get meta for ID: %@", ID);
         return MKMMetaMatchKey(PK, meta);
     }
