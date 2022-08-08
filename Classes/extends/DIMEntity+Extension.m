@@ -49,6 +49,16 @@
 
 @end
 
+@implementation DIMStation (Name)
+
+- (NSString *)name {
+    DIMFacebook *facebook = [self dataSource];
+    NSString *str = [facebook name:self.ID];
+    return [@"[MTA] " stringByAppendingString:str];
+}
+
+@end
+
 @implementation DIMUser (LocalUser)
 
 + (nullable instancetype)userWithConfigFile:(NSString *)config {
