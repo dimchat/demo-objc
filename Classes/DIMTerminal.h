@@ -56,8 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - User(s)
 
-@property (readonly, copy, nonatomic) NSArray<__kindof id<DIMUser>> *users;
-@property (strong, nonatomic) __kindof id<DIMUser> currentUser;
+@property (readonly, copy, nonatomic) NSArray<id<DIMUser>> *users;
+@property (strong, nonatomic) id<DIMUser> currentUser;
 
 - (void)addUser:(id<DIMUser>)user;
 - (void)removeUser:(id<DIMUser>)user;
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMTerminal (GroupManage)
 
-- (nullable __kindof id<DIMGroup>)createGroupWithSeed:(NSString *)seed
+- (nullable id<DIMGroup>)createGroupWithSeed:(NSString *)seed
                                         name:(NSString *)name
                                      members:(NSArray<id<MKMID>> *)list;
 

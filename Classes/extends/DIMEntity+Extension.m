@@ -43,7 +43,7 @@
 @implementation DIMEntity (Name)
 
 - (NSString *)name {
-    DIMFacebook *facebook = [self dataSource];
+    DIMFacebook *facebook = (DIMFacebook *)[self dataSource];
     return [facebook name:self.ID];
 }
 
@@ -52,7 +52,7 @@
 @implementation DIMStation (Name)
 
 - (NSString *)name {
-    DIMFacebook *facebook = [self dataSource];
+    DIMFacebook *facebook = (DIMFacebook *)[self dataSource];
     NSString *str = [facebook name:self.ID];
     return [@"[MTA] " stringByAppendingString:str];
 }
@@ -79,7 +79,7 @@
     id<MKMPrivateKey> SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
     [facebook savePrivateKey:SK type:DIMPrivateKeyType_Meta user:ID];
     
-    DIMUser *user = DIMUserWithID(ID);
+    DIMUser *user = (DIMUser *)DIMUserWithID(ID);
     
     // profile
     id profile = [dict objectForKey:@"profile"];

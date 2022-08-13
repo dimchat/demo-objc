@@ -117,7 +117,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
 /**
  *  Delegate for transmitting message
  */
-@property (weak, nonatomic) __kindof id<DIMTransmitter> transmitter;
+@property (weak, nonatomic) id<DIMTransmitter> transmitter;
 
 //
 //  Interfaces for Station

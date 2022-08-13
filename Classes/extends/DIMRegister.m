@@ -130,7 +130,7 @@
 - (id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name {
     NSAssert(_key, @"private key not set yet");
     NSAssert(MKMIDIsGroup(ID), @"group ID error: %@", ID);
-    id<MKMBulletin> doc = MKMDocumentNew(MKMDocument_Bulletin, ID);
+    id<MKMBulletin> doc = (id<MKMBulletin>)MKMDocumentNew(MKMDocument_Bulletin, ID);
     [doc setName:name];
     [doc sign:_key];
     return doc;
@@ -139,7 +139,7 @@
 - (id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url {
     NSAssert(_key, @"private key not set yet");
     NSAssert(MKMIDIsUser(ID), @"user ID error: %@", ID);
-    id<MKMVisa> doc = MKMDocumentNew(MKMDocument_Visa, ID);
+    id<MKMVisa> doc = (id<MKMVisa>)MKMDocumentNew(MKMDocument_Visa, ID);
     [doc setName:name];
     if (url) {
         [doc setAvatar:url];
@@ -148,7 +148,8 @@
         id<MKMPrivateKey> sKey = [self generatePrivateKeyWithAlgorithm:MKMAlgorithmRSA];
         DIMFacebook *facebook = [DIMFacebook sharedInstance];
         [facebook savePrivateKey:sKey type:DIMPrivateKeyType_Visa user:ID];
-        [doc setKey:sKey.publicKey];
+        id<MKMEncryptKey> pKey = (id<MKMEncryptKey>)[sKey publicKey];
+        [doc setKey:pKey];
     }
     [doc sign:_key];
     return doc;

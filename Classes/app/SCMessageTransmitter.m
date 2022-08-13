@@ -90,10 +90,10 @@
         //NSAssert(false, @"failed to encrypt message: %@", iMsg);
         return NO;
     }
+    DKDContent *content = (DKDContent *)[iMsg content];
     id<DKDReliableMessage> rMsg = [self.messenger signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to sign message: %@", sMsg);
-        DKDContent *content = iMsg.content;
         content.state = DIMMessageState_Error;
         content.error = @"Encryption failed.";
         return NO;
@@ -102,11 +102,9 @@
     BOOL OK = [self sendReliableMessage:rMsg priority:prior];
     // sending status
     if (OK) {
-        DKDContent *content = iMsg.content;
         content.state = DIMMessageState_Sending;
     } else {
         NSLog(@"cannot send message now, put in waiting queue: %@", iMsg);
-        DKDContent *content = iMsg.content;
         content.state = DIMMessageState_Waiting;
     }
     

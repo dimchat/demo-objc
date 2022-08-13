@@ -303,7 +303,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     id<DIMGroup> group = [reg createGroupWithSeed:seed name:name founder:founder];
     
     // 2. send out group info
-    id<MKMBulletin> profile = [group documentWithType:MKMDocument_Bulletin];
+    id<MKMDocument> profile = [group documentWithType:MKMDocument_Bulletin];
     [self _broadcastGroup:group.ID meta:group.meta profile:profile];
     
     // 4. send out 'invite' command

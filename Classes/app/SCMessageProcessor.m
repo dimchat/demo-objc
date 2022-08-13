@@ -129,7 +129,7 @@
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
-    SCMessenger *messenger = self.messenger;
+    SCMessenger *messenger = (SCMessenger *)[self messenger];
     
     id<MKMID> sender = rMsg.sender;
     if ([self isWaitingGroup:content sender:sender]) {

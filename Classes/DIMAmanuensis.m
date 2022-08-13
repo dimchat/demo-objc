@@ -222,7 +222,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     id<DKDInstantMessage> targetMessage;
     targetMessage = [self _conversation:chatBox messageMatchReceipt:receipt];
     if (targetMessage) {
-        DKDContent *targetContent = targetMessage.content;
+        DKDContent *targetContent = (DKDContent *)[targetMessage content];
         if ([sender isEqual:receiver]) {
             // the receiver's client feedback
             if ([receipt.message containsString:@"read"]) {

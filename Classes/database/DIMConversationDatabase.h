@@ -56,8 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param index - start from 0, latest first
  * @return instant message
  */
-- (id<DKDInstantMessage>)conversation:(id<MKMID>)chatBox
-                     messageAtIndex:(NSInteger)index;
+- (id<DKDInstantMessage>)conversation:(id<MKMID>)chatBox messageAtIndex:(NSInteger)index;
 
 @end
 
@@ -69,8 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(id<MKMID>)chatBox
-       insertMessage:(id<DKDInstantMessage>)iMsg;
+- (BOOL)conversation:(id<MKMID>)chatBox insertMessage:(id<DKDInstantMessage>)iMsg;
 
 @optional
 
@@ -80,8 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(id<MKMID>)chatBox
-       removeMessage:(id<DKDInstantMessage>)iMsg;
+- (BOOL)conversation:(id<MKMID>)chatBox removeMessage:(id<DKDInstantMessage>)iMsg;
 
 /**
  *  Try to withdraw the message, maybe won't success
@@ -89,8 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param chatBox - conversation ID
  * @param iMsg - instant message
  */
-- (BOOL)conversation:(id<MKMID>)chatBox
-     withdrawMessage:(id<DKDInstantMessage>)iMsg;
+- (BOOL)conversation:(id<MKMID>)chatBox withdrawMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 

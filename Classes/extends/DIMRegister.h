@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param url - avatar URL
  * @return User object
  */
-- (__kindof id<DIMUser>)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url;
+- (id<DIMUser>)createUserWithName:(NSString *)nickname avatar:(nullable NSString *)url;
 
 /**
  *  Generate group account (Polylogue)
@@ -61,9 +61,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param ID - group founder
  * @return Group object
  */
-- (__kindof id<DIMGroup>)createGroupWithName:(NSString *)name founder:(id<MKMID>)ID;
-- (__kindof id<DIMGroup>)createGroupWithSeed:(NSString *)seed
-                                        name:(NSString *)name founder:(id<MKMID>)ID;
+- (id<DIMGroup>)createGroupWithName:(NSString *)name founder:(id<MKMID>)ID;
+- (id<DIMGroup>)createGroupWithSeed:(NSString *)seed
+                               name:(NSString *)name founder:(id<MKMID>)ID;
 
 #pragma mark -
 
@@ -72,8 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return private key (RSA)
  */
-- (__kindof id<MKMPrivateKey>)generatePrivateKey;
-- (__kindof id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm;
+- (id<MKMPrivateKey>)generatePrivateKey;
+- (id<MKMPrivateKey>)generatePrivateKeyWithAlgorithm:(NSString *)algorithm;
 
 /**
  *  Step 2. generate meta with private key (and meta seed)
@@ -100,9 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
  * @param name - user/group name
  * @return user/group profile
  */
-- (__kindof id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name;
-- (__kindof id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
-- (__kindof id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info;
+- (id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name;
+- (id<MKMDocument>)createUserProfileWithID:(id<MKMID>)ID name:(NSString *)name avatar:(nullable NSString *)url;
+- (id<MKMDocument>)credateProfileWithID:(id<MKMID>)ID properties:(NSDictionary *)info;
 
 /**
  *  Step 5. upload meta & profile for ID

@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMProfileTable : DIMStorage
 
-- (nullable __kindof id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type;
+- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID type:(nullable NSString *)type;
 
 - (BOOL)saveDocument:(id<MKMDocument>)doc;
 
