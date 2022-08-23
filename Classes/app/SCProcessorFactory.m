@@ -44,6 +44,7 @@
 #import "DIMReportCommand.h"
 
 #import "DIMDefaultProcessor.h"
+#import "DIMApplicationContentProcessor.h"
 #import "DIMFileContentProcessor.h"
 
 #import "DIMReceiptCommandProcessor.h"
@@ -66,6 +67,12 @@
 @implementation SCProcessorCreator
 
 - (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
+    // application customized
+    if (type == DKDContentType_Application) {
+        return CREATE_CPU(DIMApplicationContentProcessor);
+    //} else if (type == DKDContentType_Customized) {
+    //    return CREATE_CPU(DIMApplicationContentProcessor);
+    }
     // file
     if (type == DKDContentType_File) {
         return CREATE_CPU(DIMFileContentProcessor);

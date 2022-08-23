@@ -44,6 +44,8 @@
 		E921FC6E2593429B001ACA11 /* DIMMessageProcessor+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E921FC6C2593429B001ACA11 /* DIMMessageProcessor+Extension.m */; };
 		E921FC75259359BB001ACA11 /* SCMessageDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E921FC73259359BB001ACA11 /* SCMessageDataSource.h */; };
 		E921FC76259359BB001ACA11 /* SCMessageDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = E921FC74259359BB001ACA11 /* SCMessageDataSource.m */; };
+		E926FBF728B51B5400A4586F /* DIMApplicationContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E926FBF528B51B5400A4586F /* DIMApplicationContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E926FBF828B51B5400A4586F /* DIMApplicationContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E926FBF628B51B5400A4586F /* DIMApplicationContentProcessor.m */; };
 		E94901332392696300107C06 /* DIMStorageCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E94901312392696300107C06 /* DIMStorageCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E94901342392696300107C06 /* DIMStorageCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E94901322392696300107C06 /* DIMStorageCommandProcessor.m */; };
 		E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */ = {isa = PBXBuildFile; fileRef = E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -277,6 +279,8 @@
 		E921FC6C2593429B001ACA11 /* DIMMessageProcessor+Extension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "DIMMessageProcessor+Extension.m"; sourceTree = "<group>"; };
 		E921FC73259359BB001ACA11 /* SCMessageDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCMessageDataSource.h; sourceTree = "<group>"; };
 		E921FC74259359BB001ACA11 /* SCMessageDataSource.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessageDataSource.m; sourceTree = "<group>"; };
+		E926FBF528B51B5400A4586F /* DIMApplicationContentProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMApplicationContentProcessor.h; sourceTree = "<group>"; };
+		E926FBF628B51B5400A4586F /* DIMApplicationContentProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMApplicationContentProcessor.m; sourceTree = "<group>"; };
 		E94901312392696300107C06 /* DIMStorageCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMStorageCommandProcessor.h; sourceTree = "<group>"; };
 		E94901322392696300107C06 /* DIMStorageCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMStorageCommandProcessor.m; sourceTree = "<group>"; };
 		E94E13E72276EB0E009D5275 /* DIMAmanuensis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMAmanuensis.h; sourceTree = "<group>"; };
@@ -698,6 +702,8 @@
 			children = (
 				E989F650244DC012009AA4B6 /* DIMDefaultProcessor.h */,
 				E989F64C244DC012009AA4B6 /* DIMDefaultProcessor.m */,
+				E926FBF528B51B5400A4586F /* DIMApplicationContentProcessor.h */,
+				E926FBF628B51B5400A4586F /* DIMApplicationContentProcessor.m */,
 				E9BC6610271839A7002F3FB9 /* DIMFileContentProcessor.h */,
 				E9BC660F271839A7002F3FB9 /* DIMFileContentProcessor.m */,
 				E9DD00E02391982000F5FBDD /* DIMHandshakeCommandProcessor.h */,
@@ -749,6 +755,7 @@
 				52DBA30C2340372C0000C2B4 /* FMResultSet.h in Headers */,
 				E953814F258E4E5C0016F2F4 /* SCMessagePacker.h in Headers */,
 				E96D14B52322455E00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */,
+				E926FBF728B51B5400A4586F /* DIMApplicationContentProcessor.h in Headers */,
 				E919861625DE2B35003A890F /* MKMAnonymous.h in Headers */,
 				E915CDC52439C95600B98FE3 /* DIMGroupManager.h in Headers */,
 				E90E1EDA232AA5A90012B23E /* DIMAddressNameTable.h in Headers */,
@@ -969,6 +976,7 @@
 				52DBA30F2340372C0000C2B4 /* FMDatabase.m in Sources */,
 				E9BC660927183024002F3FB9 /* SCMessageTransmitter.m in Sources */,
 				E94901342392696300107C06 /* DIMStorageCommandProcessor.m in Sources */,
+				E926FBF828B51B5400A4586F /* DIMApplicationContentProcessor.m in Sources */,
 				E96D14BA232247F600B5EA59 /* DIMMetaTable.m in Sources */,
 				E99B1FEB25852B92001A05F1 /* SCFacebook.m in Sources */,
 				E99B1FEF25852D8F001A05F1 /* SCMessageProcessor.m in Sources */,
