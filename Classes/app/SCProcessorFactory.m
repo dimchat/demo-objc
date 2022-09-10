@@ -69,9 +69,9 @@
 - (id<DIMContentProcessor>)createContentProcessor:(DKDContentType)type {
     // application customized
     if (type == DKDContentType_Application) {
-        return CREATE_CPU(DIMApplicationContentProcessor);
+        return CREATE_CPU(DIMAppContentProcessor);
     //} else if (type == DKDContentType_Customized) {
-    //    return CREATE_CPU(DIMApplicationContentProcessor);
+    //    return CREATE_CPU(DIMAppContentProcessor);
     }
     // file
     if (type == DKDContentType_File) {

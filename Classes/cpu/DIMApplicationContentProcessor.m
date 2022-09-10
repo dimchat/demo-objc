@@ -37,7 +37,7 @@
 
 #import "DIMApplicationContentProcessor.h"
 
-@interface DIMApplicationContentProcessor () {
+@interface DIMAppContentProcessor () {
     
     // module(s) for customized contents
     id<DIMCustomizedContentHandler> _driftBottle;
@@ -45,7 +45,7 @@
 
 @end
 
-@implementation DIMApplicationContentProcessor
+@implementation DIMAppContentProcessor
 
 /* designated initializer */
 - (instancetype)initWithFacebook:(DIMFacebook *)barrack
@@ -86,9 +86,16 @@
 
 @end
 
+id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSString *act) {
+    return [[DIMCustomizedContent alloc] initWithType:DKDContentType_Application
+                                          application:app
+                                               module:mod
+                                               action:act];
+}
+
 #pragma mark - Application Customized Content Handler
 
-@implementation DIMBaseCustomizedContentHandler
+@implementation DIMAppContentHandler
 
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid

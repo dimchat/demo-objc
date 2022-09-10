@@ -39,13 +39,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMApplicationContentProcessor : DIMCustomizedContentProcessor
+@interface DIMAppContentProcessor : DIMCustomizedContentProcessor
 
 @end
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSString *act);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
+
 #pragma mark - Application Customized Content Handler
 
-@interface DIMBaseCustomizedContentHandler : DIMTwinsHelper <DIMCustomizedContentHandler>
+@interface DIMAppContentHandler : DIMTwinsHelper <DIMCustomizedContentHandler>
 
 - (NSArray<id<DKDContent>> *)respondText:(NSString *)text withGroup:(nullable id<MKMID>)group;
 
@@ -57,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  Handler for customized content
  */
-@interface DIMDriftBottleHandler : DIMBaseCustomizedContentHandler
+@interface DIMDriftBottleHandler : DIMAppContentHandler
 
 @end
 

@@ -59,13 +59,13 @@ static inline UInt32 eth_number(NSString *address) {
 }
 
 static inline NSString *name_from_type(UInt8 network) {
-    if (network == MKMNetwork_Robot) {
-        return @"Robot";
+    if (MKMNetwork_IsBot(network)) {
+        return @"Bot";
     }
-    if (network == MKMNetwork_Station) {
+    if (MKMNetwork_IsStation(network)) {
         return @"Station";
     }
-    if (network == MKMNetwork_Provider) {
+    if (MKMNetwork_IsProvider(network)) {
         return @"SP";
     }
     if (MKMNetwork_IsUser(network)) {
@@ -101,7 +101,7 @@ static inline NSString *name_from_type(UInt8 network) {
 
 + (NSString *)numberString:(id<MKMAddress>)address {
     UInt32 number = [self number:address];
-    NSMutableString *string = [[NSMutableString alloc] initWithFormat:@"%010u", number];;
+    NSMutableString *string = [[NSMutableString alloc] initWithFormat:@"%010u", number];
     if ([string length] == 10) {
         [string insertString:@"-" atIndex:6];
         [string insertString:@"-" atIndex:3];
