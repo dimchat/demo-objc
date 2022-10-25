@@ -58,7 +58,7 @@ static inline UInt32 eth_number(NSString *address) {
     return user_number(data);
 }
 
-static inline NSString *name_from_type(UInt8 network) {
+static inline NSString *name_from_type(MKMEntityType network) {
     if (MKMNetwork_IsBot(network)) {
         return @"Bot";
     }
@@ -68,10 +68,10 @@ static inline NSString *name_from_type(UInt8 network) {
     if (MKMNetwork_IsProvider(network)) {
         return @"SP";
     }
-    if (MKMNetwork_IsUser(network)) {
+    if (MKMEntity_IsUser(network)) {
         return @"User";
     }
-    if (MKMNetwork_IsGroup(network)) {
+    if (MKMEntity_IsGroup(network)) {
         return @"Group";
     }
     return @"Unknown";

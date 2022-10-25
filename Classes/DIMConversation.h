@@ -40,9 +40,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(UInt8, DIMConversationID) {
-    DIMConversationUnknown  = 0x00,
-    DIMConversationPersonal = MKMNetwork_Main,  // 0000 1000
-    DIMConversationGroup    = MKMNetwork_Group, // 0001 0000
+    DIMConversationUnknown  = 0xFF,
+    DIMConversationPersonal = MKMEntityType_User,  // 0000 0000
+    DIMConversationGroup    = MKMEntityType_Group, // 0000 0001
 };
 typedef UInt8 DIMConversationType;
 

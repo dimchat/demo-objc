@@ -44,7 +44,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        _network = MKMNetwork_Main;
+        _type = MKMEntityType_User; //MKMNetwork_Main;
     }
     return self;
 }
@@ -83,7 +83,7 @@
     // 2. generate meta
     id<MKMMeta> meta = [self generateGroupMetaWithSeed:seed];
     // 3. generate ID
-    id<MKMID> group = [self generateIDWithMeta:meta network:MKMNetwork_Polylogue];
+    id<MKMID> group = [self generateIDWithMeta:meta type:MKMNetwork_Polylogue];
     // 4. generate profile
     id<MKMDocument> profile = [self createGroupProfileWithID:group name:name];
     // 5. save meta & profile in local storage
@@ -114,17 +114,17 @@
     return [self generateMetaWithType:MKMMetaDefaultVersion seed:name];
 }
 
-- (id<MKMMeta>)generateMetaWithType:(UInt8)type seed:(nullable NSString *)name {
+- (id<MKMMeta>)generateMetaWithType:(MKMMetaType)version seed:(nullable NSString *)name {
     NSAssert(_key, @"private key not set yet");
-    return MKMMetaGenerate(type, _key, name);
+    return MKMMetaGenerate(version, _key, name);
 }
 
 - (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta {
-    return [self generateIDWithMeta:meta network:_network];
+    return [self generateIDWithMeta:meta type:_type];
 }
 
-- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta network:(UInt8)type {
-    return MKMIDGenerate(meta, type, nil);
+- (id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta type:(MKMEntityType)network {
+    return MKMIDGenerate(meta, network, nil);
 }
 
 - (id<MKMDocument>)createGroupProfileWithID:(id<MKMID>)ID name:(NSString *)name {
