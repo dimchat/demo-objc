@@ -123,18 +123,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
         return nil;
     }
     NSLog(@"contacts from %@", path);
-    NSMutableArray<id<MKMID>> *contacts;
-    id<MKMID> ID;
-    contacts = [[NSMutableArray alloc] initWithCapacity:array.count];
-    for (NSString *item in array) {
-        ID = MKMIDFromString(item);
-        if (!ID) {
-            NSAssert(false, @"contact ID invalid: %@", item);
-            continue;
-        }
-        [contacts addObject:ID];
-    }
-    return contacts;
+    return MKMIDConvert(array);
 }
 
 - (nullable NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
@@ -156,7 +145,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     
     NSString *path = [self _filePathWithID:user];
     NSLog(@"saving contacts into: %@", path);
-    BOOL result = [self array:contacts writeToFile:path];
+    BOOL result = [self array:MKMIDRevert(contacts) writeToFile:path];
     
     if(result){
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
