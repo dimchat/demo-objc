@@ -97,6 +97,14 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #import <DIMClient/DIMSearchCommandProcessor.h>
 #import <DIMClient/DIMMuteCommandProcessor.h>
 #import <DIMClient/DIMStorageCommandProcessor.h>
+#import <DIMClient/DIMHistoryProcessor.h>
+// GPUs
+#import <DIMClient/DIMGroupCommandProcessor.h>
+#import <DIMClient/DIMInviteCommandProcessor.h>
+#import <DIMClient/DIMExpelCommandProcessor.h>
+#import <DIMClient/DIMQuitCommandProcessor.h>
+#import <DIMClient/DIMResetCommandProcessor.h>
+#import <DIMClient/DIMQueryCommandProcessor.h>
 
 // Database
 #import <DIMClient/DIMClientConstants.h>

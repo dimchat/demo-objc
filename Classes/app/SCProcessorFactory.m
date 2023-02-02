@@ -57,6 +57,13 @@
 #import "DIMStorageCommandProcessor.h"
 #import "DIMSearchCommandProcessor.h"
 
+#import "DIMGroupCommandProcessor.h"
+#import "DIMInviteCommandProcessor.h"
+#import "DIMExpelCommandProcessor.h"
+#import "DIMQuitCommandProcessor.h"
+#import "DIMQueryCommandProcessor.h"
+#import "DIMResetCommandProcessor.h"
+
 #import "SCProcessorFactory.h"
 
 #define CREATE_CPU(clazz)                                                      \
@@ -72,6 +79,9 @@
         return CREATE_CPU(DIMAppContentProcessor);
     //} else if (type == DKDContentType_Customized) {
     //    return CREATE_CPU(DIMAppContentProcessor);
+    }
+    if (type == DKDContentType_History) {
+        return CREATE_CPU(DIMHistoryCommandProcessor);
     }
     // file
     if (type == DKDContentType_File) {
@@ -121,6 +131,20 @@
     } else if ([name isEqualToString:DIMCommand_OnlineUsers]) {
         // TODO: shared the same processor with 'search'?
         return CREATE_CPU(DIMSearchCommandProcessor);
+    }
+    // group commands
+    if ([name isEqualToString:@"group"]) {
+        return CREATE_CPU(DIMGroupCommandProcessor);
+    } else if ([name isEqualToString:DIMGroupCommand_Invite]) {
+        return CREATE_CPU(DIMInviteGroupCommandProcessor);
+    } else if ([name isEqualToString:DIMGroupCommand_Expel]) {
+        return CREATE_CPU(DIMExpelGroupCommandProcessor);
+    } else if ([name isEqualToString:DIMGroupCommand_Quit]) {
+        return CREATE_CPU(DIMQuitGroupCommandProcessor);
+    } else if ([name isEqualToString:DIMGroupCommand_Query]) {
+        return CREATE_CPU(DIMQueryGroupCommandProcessor);
+    } else if ([name isEqualToString:DIMGroupCommand_Reset]) {
+        return CREATE_CPU(DIMResetGroupCommandProcessor);
     }
     // others
     return [super createCommandProcessor:name type:type];

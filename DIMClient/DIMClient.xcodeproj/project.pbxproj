@@ -76,6 +76,20 @@
 		E95D4A2F28A1796500523488 /* DIMMuteCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = E95D4A2328A1796500523488 /* DIMMuteCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E95D4A3B28A17BA500523488 /* DKDInstantMessage+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E95D4A3928A17BA500523488 /* DKDInstantMessage+Extension.m */; };
 		E95D4A3C28A17BA500523488 /* DKDInstantMessage+Extension.h in Headers */ = {isa = PBXBuildFile; fileRef = E95D4A3A28A17BA500523488 /* DKDInstantMessage+Extension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A13B298C0FE800AC76F1 /* DIMGroupCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A137298C0FE800AC76F1 /* DIMGroupCommandProcessor.m */; };
+		E964A13C298C0FE800AC76F1 /* DIMGroupCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A138298C0FE800AC76F1 /* DIMGroupCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A13D298C0FE800AC76F1 /* DIMHistoryProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A139298C0FE800AC76F1 /* DIMHistoryProcessor.m */; };
+		E964A13E298C0FE800AC76F1 /* DIMHistoryProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A13A298C0FE800AC76F1 /* DIMHistoryProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A14A298C101200AC76F1 /* DIMQuitCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A140298C101100AC76F1 /* DIMQuitCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A14B298C101200AC76F1 /* DIMResetCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A141298C101100AC76F1 /* DIMResetCommandProcessor.m */; };
+		E964A14C298C101200AC76F1 /* DIMQueryCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A142298C101100AC76F1 /* DIMQueryCommandProcessor.m */; };
+		E964A14D298C101200AC76F1 /* DIMExpelCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A143298C101100AC76F1 /* DIMExpelCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A14E298C101200AC76F1 /* DIMInviteCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A144298C101100AC76F1 /* DIMInviteCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A14F298C101200AC76F1 /* DIMResetCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A145298C101100AC76F1 /* DIMResetCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A150298C101200AC76F1 /* DIMQuitCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A146298C101100AC76F1 /* DIMQuitCommandProcessor.m */; };
+		E964A151298C101200AC76F1 /* DIMQueryCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E964A147298C101100AC76F1 /* DIMQueryCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E964A152298C101200AC76F1 /* DIMInviteCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A148298C101100AC76F1 /* DIMInviteCommandProcessor.m */; };
+		E964A153298C101200AC76F1 /* DIMExpelCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E964A149298C101100AC76F1 /* DIMExpelCommandProcessor.m */; };
 		E96D14B52322455E00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14B32322455E00B5EA59 /* DIMSocialNetworkDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E96D14B62322455E00B5EA59 /* DIMSocialNetworkDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = E96D14B42322455E00B5EA59 /* DIMSocialNetworkDatabase.m */; };
 		E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */ = {isa = PBXBuildFile; fileRef = E96D14B7232247F600B5EA59 /* DIMMetaTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -308,6 +322,20 @@
 		E95D4A2328A1796500523488 /* DIMMuteCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMMuteCommand.h; sourceTree = "<group>"; };
 		E95D4A3928A17BA500523488 /* DKDInstantMessage+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DKDInstantMessage+Extension.m"; sourceTree = "<group>"; };
 		E95D4A3A28A17BA500523488 /* DKDInstantMessage+Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DKDInstantMessage+Extension.h"; sourceTree = "<group>"; };
+		E964A137298C0FE800AC76F1 /* DIMGroupCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMGroupCommandProcessor.m; sourceTree = "<group>"; };
+		E964A138298C0FE800AC76F1 /* DIMGroupCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMGroupCommandProcessor.h; sourceTree = "<group>"; };
+		E964A139298C0FE800AC76F1 /* DIMHistoryProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHistoryProcessor.m; sourceTree = "<group>"; };
+		E964A13A298C0FE800AC76F1 /* DIMHistoryProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMHistoryProcessor.h; sourceTree = "<group>"; };
+		E964A140298C101100AC76F1 /* DIMQuitCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMQuitCommandProcessor.h; sourceTree = "<group>"; };
+		E964A141298C101100AC76F1 /* DIMResetCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMResetCommandProcessor.m; sourceTree = "<group>"; };
+		E964A142298C101100AC76F1 /* DIMQueryCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMQueryCommandProcessor.m; sourceTree = "<group>"; };
+		E964A143298C101100AC76F1 /* DIMExpelCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMExpelCommandProcessor.h; sourceTree = "<group>"; };
+		E964A144298C101100AC76F1 /* DIMInviteCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMInviteCommandProcessor.h; sourceTree = "<group>"; };
+		E964A145298C101100AC76F1 /* DIMResetCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMResetCommandProcessor.h; sourceTree = "<group>"; };
+		E964A146298C101100AC76F1 /* DIMQuitCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMQuitCommandProcessor.m; sourceTree = "<group>"; };
+		E964A147298C101100AC76F1 /* DIMQueryCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMQueryCommandProcessor.h; sourceTree = "<group>"; };
+		E964A148298C101100AC76F1 /* DIMInviteCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMInviteCommandProcessor.m; sourceTree = "<group>"; };
+		E964A149298C101100AC76F1 /* DIMExpelCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMExpelCommandProcessor.m; sourceTree = "<group>"; };
 		E96D14B32322455E00B5EA59 /* DIMSocialNetworkDatabase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMSocialNetworkDatabase.h; sourceTree = "<group>"; };
 		E96D14B42322455E00B5EA59 /* DIMSocialNetworkDatabase.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMSocialNetworkDatabase.m; sourceTree = "<group>"; };
 		E96D14B7232247F600B5EA59 /* DIMMetaTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMMetaTable.h; sourceTree = "<group>"; };
@@ -472,6 +500,23 @@
 				E921FC6125931F07001ACA11 /* DIMReportCommand.m */,
 			);
 			path = commands;
+			sourceTree = "<group>";
+		};
+		E964A13F298C101100AC76F1 /* group */ = {
+			isa = PBXGroup;
+			children = (
+				E964A144298C101100AC76F1 /* DIMInviteCommandProcessor.h */,
+				E964A148298C101100AC76F1 /* DIMInviteCommandProcessor.m */,
+				E964A143298C101100AC76F1 /* DIMExpelCommandProcessor.h */,
+				E964A149298C101100AC76F1 /* DIMExpelCommandProcessor.m */,
+				E964A140298C101100AC76F1 /* DIMQuitCommandProcessor.h */,
+				E964A146298C101100AC76F1 /* DIMQuitCommandProcessor.m */,
+				E964A147298C101100AC76F1 /* DIMQueryCommandProcessor.h */,
+				E964A142298C101100AC76F1 /* DIMQueryCommandProcessor.m */,
+				E964A145298C101100AC76F1 /* DIMResetCommandProcessor.h */,
+				E964A141298C101100AC76F1 /* DIMResetCommandProcessor.m */,
+			);
+			path = group;
 			sourceTree = "<group>";
 		};
 		E96D14AF232244D600B5EA59 /* database */ = {
@@ -691,6 +736,11 @@
 		E9DD00DF2391982000F5FBDD /* cpu */ = {
 			isa = PBXGroup;
 			children = (
+				E964A13A298C0FE800AC76F1 /* DIMHistoryProcessor.h */,
+				E964A139298C0FE800AC76F1 /* DIMHistoryProcessor.m */,
+				E964A138298C0FE800AC76F1 /* DIMGroupCommandProcessor.h */,
+				E964A137298C0FE800AC76F1 /* DIMGroupCommandProcessor.m */,
+				E964A13F298C101100AC76F1 /* group */,
 				E989F650244DC012009AA4B6 /* DIMDefaultProcessor.h */,
 				E989F64C244DC012009AA4B6 /* DIMDefaultProcessor.m */,
 				E926FBF528B51B5400A4586F /* DIMApplicationContentProcessor.h */,
@@ -730,6 +780,7 @@
 				E94901332392696300107C06 /* DIMStorageCommandProcessor.h in Headers */,
 				E921FC75259359BB001ACA11 /* SCMessageDataSource.h in Headers */,
 				E989F65A244EED17009AA4B6 /* DIMLoginCommandProcessor.h in Headers */,
+				E964A13E298C0FE800AC76F1 /* DIMHistoryProcessor.h in Headers */,
 				E9705CD4239521A200289441 /* DIMMuteCommandProcessor.h in Headers */,
 				E959658023919D7200DAA870 /* DIMSearchCommandProcessor.h in Headers */,
 				E95D4A2D28A1796500523488 /* DIMStorageCommand.h in Headers */,
@@ -740,9 +791,11 @@
 				E921FC6D2593429B001ACA11 /* DIMMessageProcessor+Extension.h in Headers */,
 				E95D4A3C28A17BA500523488 /* DKDInstantMessage+Extension.h in Headers */,
 				E95D4A2C28A1796500523488 /* DIMLoginCommand.h in Headers */,
+				E964A13C298C0FE800AC76F1 /* DIMGroupCommandProcessor.h in Headers */,
 				E959656323916BB600DAA870 /* DIMMessenger+Extension.h in Headers */,
 				E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */,
 				E96D14F623227DD200B5EA59 /* DIMConversationDatabase.h in Headers */,
+				E964A14A298C101200AC76F1 /* DIMQuitCommandProcessor.h in Headers */,
 				52DBA30C2340372C0000C2B4 /* FMResultSet.h in Headers */,
 				E953814F258E4E5C0016F2F4 /* SCMessagePacker.h in Headers */,
 				E96D14B52322455E00B5EA59 /* DIMSocialNetworkDatabase.h in Headers */,
@@ -758,7 +811,9 @@
 				520ECCB1235D5CAE00822B97 /* DIMClientConstants.h in Headers */,
 				52DBA3092340372C0000C2B4 /* LocalDatabaseManager.h in Headers */,
 				E91FE16F2588CABE00B45E68 /* NSDate+Timestamp.h in Headers */,
+				E964A14D298C101200AC76F1 /* DIMExpelCommandProcessor.h in Headers */,
 				E921FC692593250A001ACA11 /* DIMBlockCommandProcessor.h in Headers */,
+				E964A14E298C101200AC76F1 /* DIMInviteCommandProcessor.h in Headers */,
 				E99B1FEE25852D8F001A05F1 /* SCMessageProcessor.h in Headers */,
 				E989F656244DCE7D009AA4B6 /* DIMCommand+Extension.h in Headers */,
 				E96D14B9232247F600B5EA59 /* DIMMetaTable.h in Headers */,
@@ -776,11 +831,13 @@
 				E9AFAAED223116AC001F95C6 /* DIMServerState.h in Headers */,
 				E91FE1682588C5D000B45E68 /* NSObject+Singleton.h in Headers */,
 				E99B200325866AD2001A05F1 /* SCKeyStore.h in Headers */,
+				E964A151298C101200AC76F1 /* DIMQueryCommandProcessor.h in Headers */,
 				E9E8248522475AFD00A029F1 /* NSObject+Extension.h in Headers */,
 				52DBA30D2340372C0000C2B4 /* FMDatabasePool.h in Headers */,
 				52DBA30A2340372C0000C2B4 /* FMDatabase.h in Headers */,
 				E97926BB22284D59005ED1F0 /* DIMServer.h in Headers */,
 				E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */,
+				E964A14F298C101200AC76F1 /* DIMResetCommandProcessor.h in Headers */,
 				E91FE16B2588C5F700B45E68 /* NSDictionary+Binary.h in Headers */,
 				52DBA3112340372C0000C2B4 /* FMDB.h in Headers */,
 				52DBA3102340372C0000C2B4 /* FMDatabaseQueue.h in Headers */,
@@ -968,24 +1025,30 @@
 				E926FBF828B51B5400A4586F /* DIMApplicationContentProcessor.m in Sources */,
 				E96D14BA232247F600B5EA59 /* DIMMetaTable.m in Sources */,
 				E99B1FEB25852B92001A05F1 /* SCFacebook.m in Sources */,
+				E964A14C298C101200AC76F1 /* DIMQueryCommandProcessor.m in Sources */,
 				E99B1FEF25852D8F001A05F1 /* SCMessageProcessor.m in Sources */,
 				E989F651244DC012009AA4B6 /* DIMDefaultProcessor.m in Sources */,
 				E96D14F723227DD200B5EA59 /* DIMConversationDatabase.m in Sources */,
 				52DBA30B2340372C0000C2B4 /* FMDatabaseQueue.m in Sources */,
 				E921FC6A2593250A001ACA11 /* DIMBlockCommandProcessor.m in Sources */,
 				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
+				E964A153298C101200AC76F1 /* DIMExpelCommandProcessor.m in Sources */,
 				E921FC76259359BB001ACA11 /* SCMessageDataSource.m in Sources */,
 				E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */,
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
 				E99B200425866AD2001A05F1 /* SCKeyStore.m in Sources */,
 				52DBA3132340372C0000C2B4 /* FMDatabasePool.m in Sources */,
+				E964A152298C101200AC76F1 /* DIMInviteCommandProcessor.m in Sources */,
 				E99278E9274ABBF1000BBACF /* SCProcessorFactory.m in Sources */,
 				E915CDC62439C95600B98FE3 /* DIMGroupManager.m in Sources */,
 				E921FC6325931F07001ACA11 /* DIMReportCommand.m in Sources */,
+				E964A14B298C101200AC76F1 /* DIMResetCommandProcessor.m in Sources */,
 				E9DD00E32391982000F5FBDD /* DIMHandshakeCommandProcessor.m in Sources */,
 				E95D4A2E28A1796500523488 /* DIMStorageCommand.m in Sources */,
+				E964A13B298C0FE800AC76F1 /* DIMGroupCommandProcessor.m in Sources */,
 				E90E1EDB232AA5A90012B23E /* DIMAddressNameTable.m in Sources */,
 				E9705CD5239521A200289441 /* DIMMuteCommandProcessor.m in Sources */,
+				E964A150298C101200AC76F1 /* DIMQuitCommandProcessor.m in Sources */,
 				E919861725DE2B35003A890F /* MKMAnonymous.m in Sources */,
 				E97C332523ACC66400C47BBF /* DIMRegister.m in Sources */,
 				E95D4A2A28A1796500523488 /* DIMHandshakeCommand.m in Sources */,
@@ -1014,6 +1077,7 @@
 				E95D4A2928A1796500523488 /* DIMReceiptCommand.m in Sources */,
 				E97907A2225621890024C830 /* DIMFileServer.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
+				E964A13D298C0FE800AC76F1 /* DIMHistoryProcessor.m in Sources */,
 				E97926BC22284D59005ED1F0 /* DIMServer.m in Sources */,
 				E9538150258E4E5C0016F2F4 /* SCMessagePacker.m in Sources */,
 				52DBA3152340372C0000C2B4 /* FolderUtility.m in Sources */,
