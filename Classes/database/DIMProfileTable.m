@@ -58,7 +58,7 @@
     if (self = [super init]) {
         _caches = [[NSMutableDictionary alloc] init];
         
-        _empty = [[MKMDocument alloc] initWithID:MKMAnyone() type:MKMDocument_Profile];
+        _empty = [[DIMDocument alloc] initWithID:MKMAnyone() type:MKMDocument_Profile];
     }
     return self;
 }

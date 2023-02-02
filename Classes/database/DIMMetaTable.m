@@ -56,7 +56,7 @@
     if (self = [super init]) {
         _caches = [[NSMutableDictionary alloc] init];
         
-        _empty = [[MKMMeta alloc] initWithDictionary:@{}];
+        _empty = [[DIMMeta alloc] initWithDictionary:@{}];
     }
     return self;
 }
