@@ -317,7 +317,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // create 'profile' command
-    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
+    id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     // 1. share to station
     [messenger sendCommand:command];
     // 2. send to group assistants
@@ -405,7 +405,7 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    id<DIMCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
+    id<DKDCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
     if (offlineTime) {
         [command setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
     }
@@ -425,7 +425,7 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    id<DIMCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
+    id<DKDCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
     offlineTime = [command time];
     [messenger sendCommand:command];
     

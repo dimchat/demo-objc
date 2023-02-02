@@ -106,7 +106,7 @@
 }
 
 - (nullable id<MKMID>)ID {
-    return MKMIDFromString([self objectForKey:@"ID"]);
+    return MKMIDParse([self objectForKey:@"ID"]);
 }
 
 - (void)setID:(id<MKMID>)ID {
@@ -173,7 +173,7 @@
         key = [SK decrypt:key];
         NSAssert([key length] > 0, @"failed to decrypt key data: %@ with private key: %@", self, SK);
         id dict = MKMJSONDecode(MKMUTF8Decode(key));
-        _password = MKMSymmetricKeyFromDictionary(dict);
+        _password = MKMSymmetricKeyParse(dict);
     }
     return [self decryptWithSymmetricKey:_password];
 }

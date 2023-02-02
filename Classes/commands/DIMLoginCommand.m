@@ -75,7 +75,7 @@
 
 - (id<MKMID>)ID {
     id string = [self objectForKey:@"ID"];
-    return MKMIDFromString(string);
+    return MKMIDParse(string);
 }
 
 - (NSString *)device {

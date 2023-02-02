@@ -113,7 +113,6 @@
 		E989F657244DCE7D009AA4B6 /* DIMCommand+Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = E989F655244DCE7D009AA4B6 /* DIMCommand+Extension.m */; };
 		E989F65A244EED17009AA4B6 /* DIMLoginCommandProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E989F658244EED17009AA4B6 /* DIMLoginCommandProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E989F65B244EED17009AA4B6 /* DIMLoginCommandProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E989F659244EED17009AA4B6 /* DIMLoginCommandProcessor.m */; };
-		E98E1C982584CF0D00F1FD55 /* dimMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = E98E1C972584CF0D00F1FD55 /* dimMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E99278E8274ABBF1000BBACF /* SCProcessorFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = E99278E6274ABBF1000BBACF /* SCProcessorFactory.h */; };
 		E99278E9274ABBF1000BBACF /* SCProcessorFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = E99278E7274ABBF1000BBACF /* SCProcessorFactory.m */; };
 		E99B1FEA25852B92001A05F1 /* SCFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = E99B1FE825852B92001A05F1 /* SCFacebook.h */; };
@@ -352,7 +351,6 @@
 		E989F655244DCE7D009AA4B6 /* DIMCommand+Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DIMCommand+Extension.m"; sourceTree = "<group>"; };
 		E989F658244EED17009AA4B6 /* DIMLoginCommandProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMLoginCommandProcessor.h; sourceTree = "<group>"; };
 		E989F659244EED17009AA4B6 /* DIMLoginCommandProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMLoginCommandProcessor.m; sourceTree = "<group>"; };
-		E98E1C972584CF0D00F1FD55 /* dimMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dimMacros.h; sourceTree = "<group>"; };
 		E99278E6274ABBF1000BBACF /* SCProcessorFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCProcessorFactory.h; sourceTree = "<group>"; };
 		E99278E7274ABBF1000BBACF /* SCProcessorFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCProcessorFactory.m; sourceTree = "<group>"; };
 		E99B1FE825852B92001A05F1 /* SCFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCFacebook.h; sourceTree = "<group>"; };
@@ -579,7 +577,6 @@
 				E97816D22223EB4700BCE3AD /* DIMTerminal.m */,
 				520ECCAF235D5CAE00822B97 /* DIMClientConstants.h */,
 				520ECCB0235D5CAE00822B97 /* DIMClientConstants.m */,
-				E98E1C972584CF0D00F1FD55 /* dimMacros.h */,
 				E97816CF2223EAFC00BCE3AD /* DIMClient.h */,
 			);
 			name = Classes;
@@ -775,7 +772,6 @@
 				E9B2FCBD230477E700E153EE /* DIMEntity+Extension.h in Headers */,
 				E989F652244DC012009AA4B6 /* DIMDefaultProcessor.h in Headers */,
 				E94E13EE2276EB0F009D5275 /* DIMAmanuensis.h in Headers */,
-				E98E1C982584CF0D00F1FD55 /* dimMacros.h in Headers */,
 				E94E13F12276EB0F009D5275 /* DIMConversation.h in Headers */,
 				E97C332423ACC66400C47BBF /* DIMRegister.h in Headers */,
 				E97907A1225621890024C830 /* DIMFileServer.h in Headers */,

@@ -41,11 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMFileContentProcessor : DIMContentProcessor
 
-- (BOOL)uploadFileContent:(id<DIMFileContent>)content
+- (BOOL)uploadFileContent:(id<DKDFileContent>)content
                       key:(id<MKMSymmetricKey>)pwd
                   message:(id<DKDInstantMessage>)iMsg;
 
-- (BOOL)downloadFileContent:(id<DIMFileContent>)content
+- (BOOL)downloadFileContent:(id<DKDFileContent>)content
                         key:(id<MKMSymmetricKey>)pwd
                     message:(id<DKDSecureMessage>)sMsg;
 

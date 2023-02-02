@@ -83,7 +83,7 @@
         NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
         if (dict) {
             NSLog(@"meta from: %@", path);
-            meta = MKMMetaFromDictionary(dict);
+            meta = MKMMetaParse(dict);
         }
         if (!meta) {
             // 2.1. place an empty meta for cache

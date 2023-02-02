@@ -142,7 +142,7 @@
 - (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
     NSArray<id<MKMID>> *assistants = [super assistantsOfGroup:group];
     if (assistants.count == 0) {
-        id<MKMID> ass = MKMIDFromString(@"assistant");
+        id<MKMID> ass = MKMIDParse(@"assistant");
         if (ass) {
             assistants = @[ass];
         }

@@ -60,7 +60,7 @@ static inline NSString *readable_name(id<MKMID> ID) {
 
 #pragma mark Group Commands
 
-NSString *DIMInviteGroupCommand_BuildText(id<DIMInviteGroupCommand> command, id<MKMID> commander) {
+NSString *DIMInviteGroupCommand_BuildText(id<DKDInviteGroupCommand> command, id<MKMID> commander) {
     // get 'added' list
     NSArray<id<MKMID>> *addeds = MKMIDConvert([command objectForKey:@"added"]);
     // build message
@@ -75,7 +75,7 @@ NSString *DIMInviteGroupCommand_BuildText(id<DIMInviteGroupCommand> command, id<
     return text;
 }
 
-NSString *DIMExpelGroupCommand_BuildText(id<DIMExpelGroupCommand> command, id<MKMID> commander) {
+NSString *DIMExpelGroupCommand_BuildText(id<DKDExpelGroupCommand> command, id<MKMID> commander) {
     // get 'removed' list
     NSArray<id<MKMID>> *removeds = MKMIDConvert([command objectForKey:@"removed"]);
     NSMutableArray *mArr = [[NSMutableArray alloc] initWithCapacity:removeds.count];
@@ -89,7 +89,7 @@ NSString *DIMExpelGroupCommand_BuildText(id<DIMExpelGroupCommand> command, id<MK
     return text;
 }
 
-NSString *DIMQuitGroupCommand_BuildText(id<DIMQuitGroupCommand> command, id<MKMID> commander) {
+NSString *DIMQuitGroupCommand_BuildText(id<DKDQuitGroupCommand> command, id<MKMID> commander) {
     NSString *format = NSLocalizedString(@"%@ has quitted group chat.", nil);
     NSString *text = [NSString stringWithFormat:format, readable_name(commander)];
     [command setObject:text forKey:@"text"];
@@ -133,15 +133,15 @@ NSString *DIMQueryGroupCommand_BuildText(DIMQueryGroupCommand *command, id<MKMID
     return text;
 }
 
-NSString *DIMGroupCommand_BuildText(id<DIMGroupCommand> command, id<MKMID> commander) {
-    if ([command conformsToProtocol:@protocol(DIMInviteGroupCommand)]) {
-        return DIMInviteGroupCommand_BuildText((id<DIMInviteGroupCommand>)command, commander);
+NSString *DIMGroupCommand_BuildText(id<DKDGroupCommand> command, id<MKMID> commander) {
+    if ([command conformsToProtocol:@protocol(DKDInviteGroupCommand)]) {
+        return DIMInviteGroupCommand_BuildText((id<DKDInviteGroupCommand>)command, commander);
     }
-    if ([command conformsToProtocol:@protocol(DIMExpelGroupCommand)]) {
-        return DIMExpelGroupCommand_BuildText((id<DIMExpelGroupCommand>)command, commander);
+    if ([command conformsToProtocol:@protocol(DKDExpelGroupCommand)]) {
+        return DIMExpelGroupCommand_BuildText((id<DKDExpelGroupCommand>)command, commander);
     }
-    if ([command conformsToProtocol:@protocol(DIMQuitGroupCommand)]) {
-        return DIMQuitGroupCommand_BuildText((id<DIMQuitGroupCommand>)command, commander);
+    if ([command conformsToProtocol:@protocol(DKDQuitGroupCommand)]) {
+        return DIMQuitGroupCommand_BuildText((id<DKDQuitGroupCommand>)command, commander);
     }
     if ([command isKindOfClass:[DIMResetGroupCommand class]]) {
         return DIMResetGroupCommand_BuildText((DIMResetGroupCommand *)command, commander);
@@ -164,9 +164,9 @@ NSString *DIMLoginCommand_BuildText(DIMLoginCommand *command, id<MKMID> commande
     return text;
 }
 
-NSString *DIMCommand_BuildText(id<DIMCommand> command, id<MKMID> commander) {
+NSString *DIMCommand_BuildText(id<DKDCommand> command, id<MKMID> commander) {
     if ([command isKindOfClass:[DIMGroupCommand class]]) {
-        return DIMGroupCommand_BuildText((id<DIMGroupCommand>)command, commander);
+        return DIMGroupCommand_BuildText((id<DKDGroupCommand>)command, commander);
     }
     if ([command isKindOfClass:[DIMHistoryCommand class]]) {
         // TODO: process history command
@@ -230,7 +230,7 @@ NSString *DIMContent_BuildText(id<DKDContent> content) {
 
 #pragma mark -
 
-@implementation DKDContent (Extension)
+@implementation DIMContent (Extension)
 
 - (nullable NSString *)messageWithSender:(id<MKMID>)sender {
     NSString *text = [self objectForKey:@"text"];

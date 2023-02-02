@@ -84,7 +84,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
 - (void)onEntityUpdated:(NSNotification *)notification {
     id ID = [notification.userInfo objectForKey:@"ID"];
     NSAssert(ID, @"ID not found: %@", notification.userInfo);
-    ID = MKMIDFromString(ID);
+    ID = MKMIDParse(ID);
     
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     if (MKMIDIsUser(ID)) {
@@ -164,7 +164,7 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         return YES;
     }
     
-    if ([content conformsToProtocol:@protocol(DIMInviteGroupCommand)]) {
+    if ([content conformsToProtocol:@protocol(DKDInviteGroupCommand)]) {
         // send keys again
         id<MKMID> me = iMsg.envelope.receiver;
         id<MKMID> group = content.group;
@@ -187,8 +187,8 @@ SingletonImplementations(SCMessageDataSource, sharedInstance)
         return YES;
     }
     
-    if([content conformsToProtocol:@protocol(DIMCommand)]){
-        id<DIMCommand> command = (id<DIMCommand>)content;
+    if([content conformsToProtocol:@protocol(DKDCommand)]){
+        id<DKDCommand> command = (id<DKDCommand>)content;
         if([command.cmd isEqualToString:@"broadcast"]){
             NSLog(@"It is a broadcast command, skip : %@", content);
             return YES;

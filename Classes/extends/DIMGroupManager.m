@@ -81,12 +81,12 @@
 
 #pragma mark Group commands
 
-- (BOOL)_sendGroupCommand:(id<DIMCommand>)command {
+- (BOOL)_sendGroupCommand:(id<DKDCommand>)command {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     return [messenger sendCommand:command];
 }
 
-- (BOOL)_sendGroupCommand:(id<DIMCommand>)command to:(NSArray<id<MKMID>> *)members {
+- (BOOL)_sendGroupCommand:(id<DKDCommand>)command to:(NSArray<id<MKMID>> *)members {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     BOOL OK = YES;
     for (id<MKMID> receiver in members) {
@@ -114,7 +114,7 @@
         @throw [NSException exceptionWithName:@"GroupError" reason:@"not ready" userInfo:info];
     }
     id<MKMDocument> doc = [facebook documentForID:self.group type:MKMDocument_Bulletin];
-    id<DIMCommand> command;
+    id<DKDCommand> command;
     if ([[doc propertyKeys] count] == 0) {
         command = [[DIMMetaCommand alloc] initWithID:self.group meta:meta];
     } else {
@@ -177,7 +177,7 @@
     }
     
     // 1. send 'expel' command to all members
-    id<DIMCommand> command = [[DIMExpelGroupCommand alloc] initWithGroup:self.group members:outMembers];
+    id<DKDCommand> command = [[DIMExpelGroupCommand alloc] initWithGroup:self.group members:outMembers];
     // 1.1. send to existed members
     [self _sendGroupCommand:command to:members];
     // 1.2. send to assistants
@@ -210,7 +210,7 @@
     }
     
     // 1. send 'quit' command to all members
-    id<DIMCommand> command = [[DIMQuitGroupCommand alloc] initWithGroup:self.group];
+    id<DKDCommand> command = [[DIMQuitGroupCommand alloc] initWithGroup:self.group];
     // 1.1. send to existed members
     [self _sendGroupCommand:command to:members];
     // 1.2. send to assistants

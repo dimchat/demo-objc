@@ -69,14 +69,14 @@
         return nil;
     }
     
-    id<MKMID> ID = MKMIDFromString([dict objectForKey:@"ID"]);
-    id<MKMMeta> meta = MKMMetaFromDictionary([dict objectForKey:@"meta"]);
+    id<MKMID> ID = MKMIDParse([dict objectForKey:@"ID"]);
+    id<MKMMeta> meta = MKMMetaParse([dict objectForKey:@"meta"]);
     
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     [facebook saveMeta:meta forID:ID];
     
     // save private key paired to meta.key
-    id<MKMPrivateKey> SK = MKMPrivateKeyFromDictionary([dict objectForKey:@"privateKey"]);
+    id<MKMPrivateKey> SK = MKMPrivateKeyParse([dict objectForKey:@"privateKey"]);
     [facebook savePrivateKey:SK type:DIMPrivateKeyType_Meta user:ID];
     
     DIMUser *user = (DIMUser *)DIMUserWithID(ID);
@@ -95,7 +95,7 @@
             }
             [mDict setObject:ID forKey:@"ID"];
         }
-        profile = MKMDocumentFromDictionary(profile);
+        profile = MKMDocumentParse(profile);
         [[DIMFacebook sharedInstance] saveDocument:profile];
     }
     

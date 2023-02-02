@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DKDContent (Extension)
+@interface DIMContent (Extension)
 
 - (nullable NSString *)messageWithSender:(id<MKMID>)sender;
 

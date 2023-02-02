@@ -86,7 +86,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     NSLog(@"loading users: %@", path);
     NSArray *array = [self arrayWithContentsOfFile:path];
     for (NSString *item in array) {
-        ID = MKMIDFromString(item);
+        ID = MKMIDParse(item);
         [_users addObject:ID];
     }
     

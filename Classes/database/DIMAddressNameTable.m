@@ -86,14 +86,14 @@ typedef NSMutableDictionary<NSString *, id<MKMID>> CacheTableM;
     NSLog(@"loading ANS records from: %@", path);
     NSDictionary *dict = [self dictionaryWithContentsOfFile:path];
     for (NSString *name in dict) {
-        ID = MKMIDFromString([dict objectForKey:name]);
+        ID = MKMIDParse([dict objectForKey:name]);
         [caches setObject:ID forKey:name];
     }
     
     // Constant IDs
     static NSString *moky = @"moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ";
     
-    id<MKMID> founder = MKMIDFromString(moky);
+    id<MKMID> founder = MKMIDParse(moky);
     
     id<MKMID> anyone = MKMAnyone();
     id<MKMID> everyone = MKMEveryone();

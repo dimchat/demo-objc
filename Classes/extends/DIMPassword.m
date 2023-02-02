@@ -64,7 +64,7 @@
                           @"data": MKMBase64Encode(data),
                           @"iv": MKMBase64Encode(iv),
                           };
-    return MKMSymmetricKeyFromDictionary(key);
+    return MKMSymmetricKeyParse(key);
 }
 
 @end

@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern "C" {
 #endif
 
-id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSString *act);
+id<DKDCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSString *act);
 
 #ifdef __cplusplus
 } /* end of extern "C" */

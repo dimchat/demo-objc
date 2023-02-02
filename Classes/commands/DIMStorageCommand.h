@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      //...
  *  }
  */
-@protocol DIMStorageCommand <DIMCommand>
+@protocol DKDStorageCommand <DKDCommand>
 
 @property (readonly, strong, nonatomic) NSString *title;
 
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMStorageCommand : DIMCommand <DIMStorageCommand>
+@interface DIMStorageCommand : DIMCommand <DKDStorageCommand>
 
 - (instancetype)initWithTitle:(NSString *)title;
 

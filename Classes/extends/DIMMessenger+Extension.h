@@ -182,7 +182,7 @@ extern NSString * const kNotificationName_SendMessageFailed;
  * @param command - command content
  * @return YES on success
  */
-- (BOOL)sendCommand:(id<DIMCommand>)command;
+- (BOOL)sendCommand:(id<DKDCommand>)command;
 
 /**
  *  Interface for client to query meta from station

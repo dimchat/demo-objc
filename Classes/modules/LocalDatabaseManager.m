@@ -96,7 +96,7 @@
     while ([s next]) {
         
         NSString *IDString = [s stringForColumnIndex:0];
-        id<MKMID> ID = MKMIDFromString(IDString);
+        id<MKMID> ID = MKMIDParse(IDString);
         [array addObject:ID];
     }
     return array;
@@ -204,7 +204,7 @@
     
     NSTimeInterval sendTime = [msg.envelope.time timeIntervalSince1970];
     
-    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, text, content_text, msg.envelope.sender, msg.envelope.receiver, sendTime, [(DKDContent *)msg.content state]];
+    NSString *sql = [NSString stringWithFormat:@"INSERT INTO messages (conversation_id, sn, type, msg_text, content, sender, receiver, time, status) VALUES ('%@', %lu, %d, '%@', '%@', '%@', '%@', %.3f, %d);", conversationID, msg.content.serialNumber, msg.content.type, text, content_text, msg.envelope.sender, msg.envelope.receiver, sendTime, [(DIMContent *)msg.content state]];
     BOOL success = [self.db executeStatements:sql];
     
     if(success){
@@ -228,7 +228,7 @@
     while ([s next]) {
         
         NSString *IDString = [s stringForColumnIndex:0];
-        id<MKMID> ID = MKMIDFromString(IDString);
+        id<MKMID> ID = MKMIDParse(IDString);
         [array addObject:ID];
     }
     return array;
@@ -259,7 +259,7 @@
             @"status": [NSNumber numberWithInteger:status]
         };
         
-        id<DKDInstantMessage> msg = DKDInstantMessageFromDictionary(messageDict);
+        id<DKDInstantMessage> msg = DKDInstantMessageParse(messageDict);
         if (!msg) {
             NSAssert(false, @"message invalid: %@", messageDict);
             continue;

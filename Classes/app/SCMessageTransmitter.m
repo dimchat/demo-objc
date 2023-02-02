@@ -90,7 +90,7 @@
         //NSAssert(false, @"failed to encrypt message: %@", iMsg);
         return NO;
     }
-    DKDContent *content = (DKDContent *)[iMsg content];
+    DIMContent *content = (DIMContent *)[iMsg content];
     id<DKDReliableMessage> rMsg = [self.messenger signMessage:sMsg];
     if (!rMsg) {
         NSAssert(false, @"failed to sign message: %@", sMsg);

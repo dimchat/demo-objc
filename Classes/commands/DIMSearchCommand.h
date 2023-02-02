@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      results  : {"ID": {meta}, } // user's meta map
  *  }
  */
-@protocol DIMSearchCommand <DIMCommand>
+@protocol DKDSearchCommand <DKDCommand>
 
 @property (readonly, strong, nonatomic, nullable) NSString *keywords;
 @property (readonly, strong, nonatomic, nullable) NSArray *users;
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMSearchCommand : DIMCommand <DIMSearchCommand>
+@interface DIMSearchCommand : DIMCommand <DKDSearchCommand>
 
 - (instancetype)initWithKeywords:(NSString *)string;
 

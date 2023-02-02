@@ -123,12 +123,12 @@ SingletonImplementations(SCKeyStore, sharedInstance)
     BOOL changed = NO;
     id<MKMSymmetricKey> oldKey, newKey;
     for (NSString *from in keyMap) {
-        id<MKMID> sender = MKMIDFromString(from);
+        id<MKMID> sender = MKMIDParse(from);
         NSDictionary *keyTable = [keyMap objectForKey:from];
         for (NSString *to in keyTable) {
-            id<MKMID> receiver = MKMIDFromString(to);
+            id<MKMID> receiver = MKMIDParse(to);
             id keyDict = [keyTable objectForKey:to];
-            newKey = MKMSymmetricKeyFromDictionary(keyDict);
+            newKey = MKMSymmetricKeyParse(keyDict);
             NSAssert(newKey, @"key error(%@ -> %@): %@", from, to, keyDict);
             // check whether exists an old key
             oldKey = [self _cipherKeyFrom:sender to:receiver];

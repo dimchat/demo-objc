@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      signature : "..." // the same signature with the original message
  *  }
  */
-@protocol DIMReceiptCommand <DIMCommand>
+@protocol DKDReceiptCommand <DKDCommand>
 
 @property (readonly, strong, nonatomic) NSString *message;
 
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMReceiptCommand : DIMCommand <DIMReceiptCommand>
+@interface DIMReceiptCommand : DIMCommand <DKDReceiptCommand>
 
 - (instancetype)initWithMessage:(NSString *)message envelope:(id<DKDEnvelope>)env sn:(NSUInteger)num;
 - (instancetype)initWithMessage:(NSString *)message;

@@ -66,8 +66,6 @@ FOUNDATION_EXPORT const unsigned char DIMClientVersionString[];
 #if !defined(__DIM_CLIENT__)
 #define __DIM_CLIENT__ 1
 
-#import <DIMClient/dimMacros.h>
-
 // Extensions
 #import <DIMClient/DKDInstantMessage+Extension.h>
 #import <DIMClient/DIMEntity+Extension.h>

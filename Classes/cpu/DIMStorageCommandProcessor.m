@@ -45,7 +45,7 @@
     DIMFacebook *facebook = self.facebook;
     id<MKMID> ID;
     for (NSString *item in contacts) {
-        ID = MKMIDFromString(item);
+        ID = MKMIDParse(item);
         // request contact/group meta and save to local
         [facebook metaForID:ID];
         [facebook user:user.ID addContact:ID];
@@ -58,7 +58,7 @@
     // decrypt key
     key = [user decrypt:key];
     id dict = MKMJSONDecode(MKMUTF8Decode(key));
-    id<MKMSymmetricKey> password = MKMSymmetricKeyFromDictionary(dict);
+    id<MKMSymmetricKey> password = MKMSymmetricKeyParse(dict);
     // decrypt data
     data = [password decrypt:data];
     NSAssert([data length] > 0, @"failed to decrypt contacts data with key: %@", password);

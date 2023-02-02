@@ -35,7 +35,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DaoKeDao/DaoKeDao.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,7 +55,7 @@ typedef NS_ENUM(UInt8, DIMMessageState) {
     DIMMessageState_Error = -1, // failed to send
 };
 
-@interface DKDContent (State)
+@interface DIMContent (State)
 
 @property (nonatomic) DIMMessageState state;
 @property (strong , nonatomic, nullable) NSString *error;
@@ -66,7 +66,7 @@ typedef NS_ENUM(UInt8, DIMMessageState) {
 
 @class DIMReceiptCommand;
 
-@interface DKDInstantMessage (Extension)
+@interface DIMInstantMessage (Extension)
 
 - (BOOL)matchReceipt:(DIMReceiptCommand *)command;
 

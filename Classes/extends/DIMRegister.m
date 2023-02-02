@@ -171,7 +171,7 @@
 }
 
 - (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)doc {
-    id<DIMCommand> command;
+    id<DKDCommand> command;
     if (doc) {
         NSAssert([ID isEqual:doc.ID], @"document ID not match: %@, %@", ID, doc);
         NSAssert([doc isValid], @"document not valid: %@", doc);

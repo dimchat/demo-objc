@@ -367,9 +367,9 @@ SingletonImplementations(SCFacebook, sharedInstance)
 - (nullable NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
     return @[
         // dev
-        MKMIDFromString(@"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq"),
+        MKMIDParse(@"assistant@2PpB6iscuBjA15oTjAsiswoX9qis5V3c1Dq"),
         // desktop.dim.chat
-        MKMIDFromString(@"assistant@4WBSiDzg9cpZGPqFrQ4bHcq4U5z9QAQLHS"),
+        MKMIDParse(@"assistant@4WBSiDzg9cpZGPqFrQ4bHcq4U5z9QAQLHS"),
     ];
     //return [super assistantsOfGroup:group];
 }

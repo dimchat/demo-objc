@@ -80,8 +80,8 @@
     if ([self isEmptyGroup:group]) {
         // NOTICE: if the group info not found, and this is not an 'invite' command
         //         query group info from the sender
-        if ([content conformsToProtocol:@protocol(DIMInviteGroupCommand)] ||
-            [content conformsToProtocol:@protocol(DIMResetGroupCommand)]) {
+        if ([content conformsToProtocol:@protocol(DKDInviteGroupCommand)] ||
+            [content conformsToProtocol:@protocol(DKDResetGroupCommand)]) {
             // FIXME: can we trust this stranger?
             //        may be we should keep this members list temporary,
             //        and send 'query' to the owner immediately.

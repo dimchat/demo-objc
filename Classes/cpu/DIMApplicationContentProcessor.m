@@ -60,7 +60,7 @@
 
 // override for your application
 - (NSArray<id<DKDContent>> *)filterApplication:(NSString *)app
-                                       content:(id<DIMCustomizedContent>)customized
+                                       content:(id<DKDCustomizedContent>)customized
                                       messasge:(id<DKDReliableMessage>)rMsg {
     if ([app isEqualToString:@"chat.dim.sechat"]) {
         // App ID match
@@ -72,7 +72,7 @@
 
 // override for your module
 - (id<DIMCustomizedContentHandler>)fetchModule:(NSString *)mod
-                                       content:(id<DIMCustomizedContent>)customized
+                                       content:(id<DKDCustomizedContent>)customized
                                       messasge:(id<DKDReliableMessage>)rMsg {
     if ([mod isEqualToString:@"drift_bottle"]) {
         // customized module: "drift_bottle"
@@ -86,7 +86,7 @@
 
 @end
 
-id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSString *act) {
+id<DKDCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSString *act) {
     return [[DIMCustomizedContent alloc] initWithType:DKDContentType_Application
                                           application:app
                                                module:mod
@@ -99,7 +99,7 @@ id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSStr
 
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid
-                                  content:(id<DIMCustomizedContent>)customized
+                                  content:(id<DKDCustomizedContent>)customized
                                   message:(id<DKDReliableMessage>)rMsg {
     NSString *app = [customized application];
     NSString *mod = [customized module];
@@ -127,7 +127,7 @@ id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSStr
 
 - (NSArray<id<DKDContent>> *)handleAction:(NSString *)act
                                    sender:(id<MKMID>)uid
-                                  content:(id<DIMCustomizedContent>)customized
+                                  content:(id<DKDCustomizedContent>)customized
                                   message:(id<DKDReliableMessage>)rMsg {
     NSAssert([act length] > 0, @"action name empty: %@", customized);
     if ([act isEqualToString:@"throw"]) {
@@ -144,14 +144,14 @@ id<DIMCustomizedContent> DIMAppContentCreate(NSString *app, NSString *mod, NSStr
 }
 
 - (NSArray<id<DKDContent>> *)doThrow:(id<MKMID>)sender
-                             content:(id<DIMCustomizedContent>)customized
+                             content:(id<DKDCustomizedContent>)customized
                              message:(id<DKDReliableMessage>)rMsg {
     // TODO: handle customized action with message content
     return nil;
 }
 
 - (NSArray<id<DKDContent>> *)doCatch:(id<MKMID>)sender
-                             content:(id<DIMCustomizedContent>)customized
+                             content:(id<DKDCustomizedContent>)customized
                              message:(id<DKDReliableMessage>)rMsg {
     // TODO: handle customized action with message content
     return nil;

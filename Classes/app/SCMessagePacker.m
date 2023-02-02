@@ -40,7 +40,7 @@
 #import "SCMessagePacker.h"
 
 static inline void fix_profile(id<DKDContent> content) {
-    if ([content conformsToProtocol:@protocol(DIMDocumentCommand)]) {
+    if ([content conformsToProtocol:@protocol(DKDDocumentCommand)]) {
         // compatible for document command
         id doc = [content objectForKey:@"document"];
         if (doc) {
@@ -228,7 +228,7 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
             id<DIMUser> user = [self.facebook currentUser];
             id<MKMVisa> visa = user.visa;
             NSAssert([visa isValid], @"user visa not found: %@", user);
-            id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];
+            id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:user.ID document:visa];
             [self.messenger sendContent:command sender:user.ID receiver:sMsg.sender priority:1];
         } else {
             // FIXME: message error?

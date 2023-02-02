@@ -57,7 +57,7 @@
     
     id<MKMID> conversationID;
     for (NSString *item in muteList){
-        conversationID = MKMIDFromString(item);
+        conversationID = MKMIDParse(item);
         [manager muteConversation:conversationID forUser:user.ID];
     }
     

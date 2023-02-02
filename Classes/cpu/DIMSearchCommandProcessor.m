@@ -56,8 +56,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
     id value;
     for (key in result) {
         value = [result objectForKey:key];
-        ID = MKMIDFromString(key);
-        meta = MKMMetaFromDictionary(value);
+        ID = MKMIDParse(key);
+        meta = MKMMetaParse(value);
         if (!meta) {
             continue;
         }

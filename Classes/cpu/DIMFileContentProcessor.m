@@ -45,7 +45,7 @@
     return [self.messenger delegate];
 }
 
-- (BOOL)uploadFileContent:(id<DIMFileContent>)content
+- (BOOL)uploadFileContent:(id<DKDFileContent>)content
                       key:(id<MKMSymmetricKey>)pwd
                   message:(id<DKDInstantMessage>)iMsg {
     NSData *data = content.fileData;
@@ -68,7 +68,7 @@
     return NO;
 }
 
-- (BOOL)downloadFileContent:(id<DIMFileContent>)content
+- (BOOL)downloadFileContent:(id<DKDFileContent>)content
                         key:(id<MKMSymmetricKey>)pwd
                     message:(id<DKDSecureMessage>)sMsg {
     NSURL *url = content.URL;

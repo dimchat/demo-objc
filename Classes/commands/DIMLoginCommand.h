@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      }
  *  }
  */
-@protocol DIMLoginCommand <DIMCommand>
+@protocol DKDLoginCommand <DKDCommand>
 
 #pragma mark Client Info
 
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMLoginCommand : DIMCommand <DIMLoginCommand>
+@interface DIMLoginCommand : DIMCommand <DKDLoginCommand>
 
 - (instancetype)initWithID:(id<MKMID>)ID;
 

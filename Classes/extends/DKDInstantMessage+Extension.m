@@ -39,7 +39,7 @@
 
 #import "DKDInstantMessage+Extension.h"
 
-@implementation DKDContent (State)
+@implementation DIMContent (State)
 
 - (DIMMessageState)state {
     NSNumber *number = [self objectForKey:@"state"];
@@ -64,7 +64,7 @@
 
 @end
 
-@implementation DKDInstantMessage (Extension)
+@implementation DIMInstantMessage (Extension)
 
 - (BOOL)matchReceipt:(DIMReceiptCommand *)command {
     

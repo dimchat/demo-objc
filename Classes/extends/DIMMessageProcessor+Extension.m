@@ -67,24 +67,24 @@
     //
     //  Register command factories
     //
-    DIMCommandFactoryRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Login, DIMLoginCommand);
+    DIMCommandRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
+    DIMCommandRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
+    DIMCommandRegisterClass(DIMCommand_Login, DIMLoginCommand);
     
-    DIMCommandFactoryRegisterClass(DIMCommand_Mute, DIMMuteCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Block, DIMBlockCommand);
+    DIMCommandRegisterClass(DIMCommand_Mute, DIMMuteCommand);
+    DIMCommandRegisterClass(DIMCommand_Block, DIMBlockCommand);
     
     // storage (contacts, private_key)
-    DIMCommandFactoryRegisterClass(DIMCommand_Storage, DIMStorageCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
+    DIMCommandRegisterClass(DIMCommand_Storage, DIMStorageCommand);
+    DIMCommandRegisterClass(DIMCommand_Contacts, DIMStorageCommand);
+    DIMCommandRegisterClass(DIMCommand_PrivateKey, DIMStorageCommand);
 
-    DIMCommandFactoryRegisterClass(DIMCommand_Search, DIMSearchCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
+    DIMCommandRegisterClass(DIMCommand_Search, DIMSearchCommand);
+    DIMCommandRegisterClass(DIMCommand_OnlineUsers, DIMSearchCommand);
     
-    DIMCommandFactoryRegisterClass(DIMCommand_Report, DIMReportCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Online, DIMReportCommand);
-    DIMCommandFactoryRegisterClass(DIMCommand_Offline, DIMReportCommand);
+    DIMCommandRegisterClass(DIMCommand_Report, DIMReportCommand);
+    DIMCommandRegisterClass(DIMCommand_Online, DIMReportCommand);
+    DIMCommandRegisterClass(DIMCommand_Offline, DIMReportCommand);
 }
 
 @end

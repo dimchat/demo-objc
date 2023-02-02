@@ -162,7 +162,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     [_metaQueryTable setObject:now forKey:ID];
     NSLog(@"querying meta of %@ fron network...", ID);
 
-    id<DIMCommand> command = [[DIMMetaCommand alloc] initWithID:ID];
+    id<DKDCommand> command = [[DIMMetaCommand alloc] initWithID:ID];
     return [self sendCommand:command];
 }
 
@@ -181,7 +181,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     [_docQueryTable setObject:now forKey:ID];
     NSLog(@"querying entity document of %@ fron network...", ID);
 
-    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID];
+    id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:ID];
     return [self sendCommand:command];
 }
 
@@ -198,7 +198,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     }
     [_groupQueryTable setObject:now forKey:group];
     
-    id<DIMCommand> command = [[DIMQueryGroupCommand alloc] initWithGroup:group];
+    id<DKDCommand> command = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     BOOL checking = NO;
     for (id<MKMID> item in members) {
         if ([self sendContent:command receiver:item]) {
@@ -243,7 +243,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     // check attachment for File/Image/Audio/Video message content
     if ([content isKindOfClass:[DIMFileContent class]]) {
         DIMFileContentProcessor *fpu = [self fileContentProcessor];
-        [fpu uploadFileContent:(id<DIMFileContent>)content
+        [fpu uploadFileContent:(id<DKDFileContent>)content
                            key:password
                        message:iMsg];
     }
@@ -260,7 +260,7 @@ SingletonImplementations(SCMessenger, sharedInstance)
     // check attachment for File/Image/Audio/Video message content
     if ([content isKindOfClass:[DIMFileContent class]]) {
         DIMFileContentProcessor *fpu = [self fileContentProcessor];
-        [fpu downloadFileContent:(id<DIMFileContent>)content
+        [fpu downloadFileContent:(id<DKDFileContent>)content
                              key:password
                          message:sMsg];
     }

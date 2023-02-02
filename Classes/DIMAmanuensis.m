@@ -222,7 +222,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     id<DKDInstantMessage> targetMessage;
     targetMessage = [self _conversation:chatBox messageMatchReceipt:receipt];
     if (targetMessage) {
-        DKDContent *targetContent = (DKDContent *)[targetMessage content];
+        DIMContent *targetContent = (DIMContent *)[targetMessage content];
         if ([sender isEqual:receiver]) {
             // the receiver's client feedback
             if ([receipt.message containsString:@"read"]) {
@@ -254,7 +254,7 @@ SingletonImplementations(DIMAmanuensis, sharedInstance)
     NSInteger count = [chatBox numberOfMessage];
     for (NSInteger index = count - 1; index >= 0; --index) {
         iMsg = [chatBox messageAtIndex:index];
-        if ([(DKDInstantMessage *)iMsg matchReceipt:receipt]) {
+        if ([(DIMInstantMessage *)iMsg matchReceipt:receipt]) {
             return iMsg;
         }
     }

@@ -59,7 +59,7 @@ typedef NS_ENUM(UInt8, DIMHandshakeState) {
  *      session : "{SESSION_KEY}" // session key
  *  }
  */
-@protocol DIMHandshakeCommand <DIMCommand>
+@protocol DKDHandshakeCommand <DKDCommand>
 
 @property (readonly, strong, nonatomic) NSString *message;
 @property (readonly, strong, nonatomic, nullable) NSString *sessionKey;
@@ -68,7 +68,7 @@ typedef NS_ENUM(UInt8, DIMHandshakeState) {
 
 @end
 
-@interface DIMHandshakeCommand : DIMCommand <DIMHandshakeCommand>
+@interface DIMHandshakeCommand : DIMCommand <DKDHandshakeCommand>
 
 - (instancetype)initWithMessage:(NSString *)message
                      sessionKey:(nullable NSString *)session;

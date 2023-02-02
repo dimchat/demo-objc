@@ -102,7 +102,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
     return [self sendContent:content receiver:everyone];
 }
 
-- (BOOL)sendCommand:(id<DIMCommand>)command {
+- (BOOL)sendCommand:(id<DKDCommand>)command {
     DIMStation *server = [self currentServer];
     NSAssert(server, @"server not connected yet");
     return [self sendContent:command receiver:server.ID];
@@ -130,7 +130,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 
 - (BOOL)postDocument:(id<MKMDocument>)doc withMeta:(nullable id<MKMMeta>)meta {
     [doc removeObjectForKey:@"expires"];
-    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
+    id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:doc.ID meta:meta document:doc];
     return [self sendCommand:command];
 }
 
@@ -141,7 +141,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
         NSAssert(false, @"visa ID not match: %@, %@", ID, visa.ID);
         return NO;
     }
-    id<DIMCommand> command = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
+    id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:ID document:visa];
     NSArray<id<MKMID>> *contacts = user.contacts;
     BOOL OK = YES;
     for (id<MKMID> contact in contacts) {
@@ -188,7 +188,7 @@ NSString * const kNotificationName_SendMessageFailed = @"SendMessageFailed";
 }
 
 - (BOOL)queryMuteList{
-    id<DIMCommand> command = [[DIMMuteCommand alloc] initWithList:nil];
+    id<DKDCommand> command = [[DIMMuteCommand alloc] initWithList:nil];
     return [self sendCommand:command];
 }
 

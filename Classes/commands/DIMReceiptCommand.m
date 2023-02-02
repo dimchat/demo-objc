@@ -69,7 +69,7 @@
     NSString *sender = [self objectForKey:@"sender"];
     NSString *receiver = [self objectForKey:@"receiver"];
     if (sender && receiver) {
-        return DKDEnvelopeFromDictionary(self.dictionary);
+        return DKDEnvelopeParse(self.dictionary);
     } else {
         return nil;
     }

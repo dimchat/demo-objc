@@ -54,13 +54,13 @@ NS_ASSUME_NONNULL_BEGIN
  *      time     : 1234567890,    // timestamp?
  *  }
  */
-@protocol DIMReportCommand <DIMCommand>
+@protocol DKDReportCommand <DKDCommand>
 
 @property (strong, nonatomic) NSString *title;
 
 @end
 
-@interface DIMReportCommand : DIMCommand <DIMReportCommand>
+@interface DIMReportCommand : DIMCommand <DKDReportCommand>
 
 - (instancetype)initWithTitle:(NSString *)title;
 

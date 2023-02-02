@@ -58,8 +58,8 @@
         _profileTable = [[NSMutableDictionary alloc] initWithCapacity:2];
         _userTable    = [[NSMutableDictionary alloc] initWithCapacity:2];
         
-        [self _loadBuiltInAccount:MKMIDFromString(MKM_IMMORTAL_HULK_ID)];
-        [self _loadBuiltInAccount:MKMIDFromString(MKM_MONKEY_KING_ID)];
+        [self _loadBuiltInAccount:MKMIDParse(MKM_IMMORTAL_HULK_ID)];
+        [self _loadBuiltInAccount:MKMIDParse(MKM_MONKEY_KING_ID)];
     }
     return self;
 }
@@ -100,19 +100,19 @@
 - (nullable id<MKMMeta>)_loadMeta:(NSString *)filename {
     id dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load meta file: %@", filename);
-    return MKMMetaFromDictionary(dict);
+    return MKMMetaParse(dict);
 }
 
 - (nullable id<MKMPrivateKey>)_loadPrivateKey:(NSString *)filename {
     id dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load secret file: %@", filename);
-    return MKMPrivateKeyFromDictionary(dict);
+    return MKMPrivateKeyParse(dict);
 }
 
 - (nullable id<MKMDocument>)_loadProfile:(NSString *)filename {
     NSDictionary *dict = [self _loadJSONFile:filename];
     NSAssert(dict, @"failed to load profile: %@", filename);
-    id<MKMDocument> profile = MKMDocumentFromDictionary(dict);
+    id<MKMDocument> profile = MKMDocumentParse(dict);
     NSAssert(profile, @"profile error: %@", dict);
     // copy 'name'
     NSString *name = [dict objectForKey:@"name"];

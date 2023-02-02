@@ -85,7 +85,7 @@ typedef NSMutableDictionary<id<MKMID>, NSArray *> CacheTableM;
     id<MKMID> ID;
     members = [[NSMutableArray alloc] initWithCapacity:array.count];
     for (NSString *item in array) {
-        ID = MKMIDFromString(item);
+        ID = MKMIDParse(item);
         if (!ID) {
             NSAssert(false, @"members ID invalid: %@", item);
             continue;
