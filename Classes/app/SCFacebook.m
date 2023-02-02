@@ -37,8 +37,6 @@
 
 #import "NSObject+Singleton.h"
 
-#import "MKMImmortals.h"
-
 #import "DIMClientConstants.h"
 #import "DIMSocialNetworkDatabase.h"
 
@@ -102,9 +100,6 @@
     
     // ANS
     id<DIMAddressNameService> _ans;
-
-    // immortal accounts
-    MKMImmortals *_immortals;
     
     // local userss
     NSMutableArray<id<DIMUser>> *_allUsers;
@@ -124,9 +119,6 @@ SingletonImplementations(SCFacebook, sharedInstance)
         
         // ANS
         _ans = [[ANS alloc] initWithDatabase:_database];
-
-        // immortal accounts
-        _immortals = [[MKMImmortals alloc] init];
         
         // local userss
         _allUsers = nil;
@@ -215,15 +207,6 @@ SingletonImplementations(SCFacebook, sharedInstance)
     // try from database
     id<MKMMeta> meta = [_database metaForID:ID];
     if (!meta) {
-        if (ID.type == MKMNetwork_Main) {
-            // try from immortals
-            meta = [_immortals metaForID:ID];
-            if (meta) {
-                [_database saveMeta:meta forID:ID];
-            }
-        }
-    }
-    if (!meta) {
         // query from DIM network
         DIMMessenger *messenger = [DIMMessenger sharedInstance];
         [messenger queryMetaForID:ID];
@@ -252,15 +235,6 @@ SingletonImplementations(SCFacebook, sharedInstance)
     }
     // try from database
     id<MKMDocument> doc = [_database documentForID:ID type:type];
-    if (!doc) {
-        if (ID.type == MKMNetwork_Main) {
-            // try fron immortals
-            doc = [_immortals documentForID:ID type:type];
-            if (doc) {
-                [_database saveDocument:doc];
-            }
-        }
-    }
     if (!doc || [self isExpiredDocument:doc]) {
         if (doc) {
             // update EXPIRES value
@@ -292,38 +266,15 @@ SingletonImplementations(SCFacebook, sharedInstance)
 }
 
 - (NSArray<id<MKMDecryptKey>> *)privateKeysForDecryption:(id<MKMID>)user {
-    NSArray<id<MKMDecryptKey>> *keys = [_database privateKeysForDecryption:user];
-    if ([keys count] == 0) {
-        // try immortals
-        keys = [_immortals privateKeysForDecryption:user];
-        if ([keys count] == 0) {
-            // DIMP v1.0:
-            //     decrypt key and the sign key are the same keys
-            id<MKMSignKey> key = [self privateKeyForSignature:user];
-            if ([key conformsToProtocol:@protocol(MKMDecryptKey)]) {
-                keys = @[(id<MKMDecryptKey>)key];
-            }
-        }
-    }
-    return keys;
+    return [_database privateKeysForDecryption:user];
 }
 
 - (id<MKMSignKey>)privateKeyForSignature:(id<MKMID>)user {
-    id<MKMSignKey> key = [_database privateKeyForSignature:user];
-    if (!key) {
-        // try immortals
-        key = [_immortals privateKeyForSignature:user];
-    }
-    return key;
+    return [_database privateKeyForSignature:user];
 }
 
 - (id<MKMSignKey>)privateKeyForVisaSignature:(id<MKMID>)user {
-    id<MKMSignKey> key = [_database privateKeyForVisaSignature:user];
-    if (!key) {
-        // try immortals
-        key = [_immortals privateKeyForVisaSignature:user];
-    }
-    return key;
+    return [_database privateKeyForVisaSignature:user];
 }
 
 - (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)ID {

@@ -144,8 +144,6 @@
 		E9D71E3B25BAE60700773ED1 /* DIMCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71E3A25BAE60700773ED1 /* DIMCore.framework */; };
 		E9D71E3F25BAE61700773ED1 /* DaoKeDao.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71E3E25BAE61700773ED1 /* DaoKeDao.framework */; };
 		E9D71E9925BB21A500773ED1 /* MingKeMing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D71E9825BB21A500773ED1 /* MingKeMing.framework */; };
-		E9D71F0C25BB29A100773ED1 /* MKMImmortals.m in Sources */ = {isa = PBXBuildFile; fileRef = E9D71F0A25BB29A100773ED1 /* MKMImmortals.m */; };
-		E9D71F0D25BB29A100773ED1 /* MKMImmortals.h in Headers */ = {isa = PBXBuildFile; fileRef = E9D71F0B25BB29A100773ED1 /* MKMImmortals.h */; };
 		E9D71F3625BB2DBF00773ED1 /* hulk_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0325BB298900773ED1 /* hulk_secret.js */; };
 		E9D71F3825BB2DC200773ED1 /* moki_secret.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0425BB298900773ED1 /* moki_secret.js */; };
 		E9D71F3A25BB2DC400773ED1 /* hulk_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0525BB298900773ED1 /* hulk_meta.js */; };
@@ -384,8 +382,6 @@
 		E9D71F0625BB298900773ED1 /* hulk_profile.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = hulk_profile.js; sourceTree = "<group>"; };
 		E9D71F0725BB298900773ED1 /* moki_meta.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = moki_meta.js; sourceTree = "<group>"; };
 		E9D71F0825BB298900773ED1 /* moki_profile.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = moki_profile.js; sourceTree = "<group>"; };
-		E9D71F0A25BB29A100773ED1 /* MKMImmortals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKMImmortals.m; sourceTree = "<group>"; };
-		E9D71F0B25BB29A100773ED1 /* MKMImmortals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKMImmortals.h; sourceTree = "<group>"; };
 		E9DD00E02391982000F5FBDD /* DIMHandshakeCommandProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMHandshakeCommandProcessor.h; sourceTree = "<group>"; };
 		E9DD00E12391982000F5FBDD /* DIMHandshakeCommandProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMHandshakeCommandProcessor.m; sourceTree = "<group>"; };
 		E9E8248322475AFD00A029F1 /* NSObject+Extension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+Extension.h"; sourceTree = "<group>"; };
@@ -686,8 +682,6 @@
 		E9D71F0925BB29A100773ED1 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
-				E9D71F0B25BB29A100773ED1 /* MKMImmortals.h */,
-				E9D71F0A25BB29A100773ED1 /* MKMImmortals.m */,
 				E919861425DE2B35003A890F /* MKMAnonymous.h */,
 				E919861525DE2B35003A890F /* MKMAnonymous.m */,
 			);
@@ -795,7 +789,6 @@
 				E99B1FEA25852B92001A05F1 /* SCFacebook.h in Headers */,
 				E95D4A2428A1796500523488 /* DIMHandshakeCommand.h in Headers */,
 				E97816D02223EAFC00BCE3AD /* DIMClient.h in Headers */,
-				E9D71F0D25BB29A100773ED1 /* MKMImmortals.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,7 +974,6 @@
 				52DBA30B2340372C0000C2B4 /* FMDatabaseQueue.m in Sources */,
 				E921FC6A2593250A001ACA11 /* DIMBlockCommandProcessor.m in Sources */,
 				E96D14C22322523A00B5EA59 /* DIMProfileTable.m in Sources */,
-				E9D71F0C25BB29A100773ED1 /* MKMImmortals.m in Sources */,
 				E921FC76259359BB001ACA11 /* SCMessageDataSource.m in Sources */,
 				E9A4A59023B4FB7A00CC3E06 /* DIMReceiptCommandProcessor.m in Sources */,
 				E96D15042322AECF00B5EA59 /* DIMUserTable.m in Sources */,
