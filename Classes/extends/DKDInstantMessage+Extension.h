@@ -68,7 +68,7 @@ typedef NS_ENUM(UInt8, DIMMessageState) {
 
 @interface DIMInstantMessage (Extension)
 
-- (BOOL)matchReceipt:(DIMReceiptCommand *)command;
+- (BOOL)matchReceipt:(DIMReceiptCommand *)content;
 
 @end
 

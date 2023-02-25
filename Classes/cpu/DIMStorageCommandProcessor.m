@@ -67,27 +67,27 @@
     return [self saveContacts:contacts forUser:user];
 }
 
-- (NSArray<id<DKDContent>> *)processContactsCommand:(DIMStorageCommand *)command sender:(id<MKMID>)sender {
+- (NSArray<id<DKDContent>> *)processContactsCommand:(DIMStorageCommand *)content sender:(id<MKMID>)sender {
     id<DIMUser> user = [self.facebook currentUser];
-    if (![user.ID isEqual:command.ID]) {
-        NSAssert(false, @"current user %@ not match %@ contacts not saved", user, command.ID);
+    if (![user.ID isEqual:content.ID]) {
+        NSAssert(false, @"current user %@ not match %@ contacts not saved", user, content.ID);
         return nil;
     }
     
-    NSArray *contacts = command.contacts;
+    NSArray *contacts = content.contacts;
     if ([contacts count] > 0) {
         return [self saveContacts:contacts forUser:user];
     }
     
-    NSData *data = command.data;
-    NSData *key = command.key;
+    NSData *data = content.data;
+    NSData *key = content.key;
     if (data && key) {
         return [self decryptContactsData:data withKey:key forUser:user];
     }
     
     // NOTICE: the client will post contacts to a statioin initiatively,
     //         cannot be query
-    NSAssert(false, @"contacts command error: %@", command);
+    NSAssert(false, @"contacts command error: %@", content);
     return nil;
 }
 

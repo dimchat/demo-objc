@@ -64,11 +64,11 @@
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    DIMLoginCommand *command = [super copyWithZone:zone];
-    if (command) {
+    DIMLoginCommand *content = [super copyWithZone:zone];
+    if (content) {
         //
     }
-    return command;
+    return content;
 }
 
 #pragma mark Client Info

@@ -171,17 +171,17 @@
 }
 
 - (BOOL)uploadInfoWithID:(id<MKMID>)ID meta:(id<MKMMeta>)meta profile:(nullable id<MKMDocument>)doc {
-    id<DKDCommand> command;
+    id<DKDCommand> content;
     if (doc) {
         NSAssert([ID isEqual:doc.ID], @"document ID not match: %@, %@", ID, doc);
         NSAssert([doc isValid], @"document not valid: %@", doc);
-        command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
+        content = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     } else {
         NSAssert(MKMMetaMatchID(ID, meta), @"meta not match ID: %@, %@", ID, meta);
-        command = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
+        content = [[DIMMetaCommand alloc] initWithID:ID meta:meta];
     }
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
-    return [messenger sendCommand:command];
+    return [messenger sendCommand:content];
 }
 
 @end

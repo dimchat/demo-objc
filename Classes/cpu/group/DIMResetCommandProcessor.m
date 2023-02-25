@@ -43,11 +43,11 @@
     // TODO: send 'query' group command to owner
 }
 
-- (NSArray<id<DKDContent>> *)temporarySave:(id<DKDGroupCommand>)command sender:(id<MKMID>)sender {
+- (NSArray<id<DKDContent>> *)temporarySave:(id<DKDGroupCommand>)content sender:(id<MKMID>)sender {
     DIMFacebook *facebook = self.facebook;
-    id<MKMID> group = command.group;
+    id<MKMID> group = content.group;
     // check whether the owner contained in the new members
-    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:command];
+    NSArray<id<MKMID>> *newMembers = [self membersFromCommand:content];
     if ([newMembers count] == 0) {
         return [self respondText:@"Reset command error." withGroup:group];
     }

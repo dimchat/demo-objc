@@ -165,16 +165,16 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     
-    DIMHandshakeCommand *command;
-    command = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
+    DIMHandshakeCommand *content;
+    content = [[DIMHandshakeCommand alloc] initWithSessionKey:session];
     
     if (![facebook publicKeyForEncryption:self.ID]) {
-        command.group = MKMEveryone();
+        content.group = MKMEveryone();
     }
-    NSLog(@"handshake command: %@", command);
+    NSLog(@"handshake command: %@", content);
     
     id<DKDEnvelope> env = DKDEnvelopeCreate(_currentUser.ID, self.ID, nil);
-    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, command);
+    id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, content);
     id<DKDSecureMessage> sMsg = [messenger encryptMessage:iMsg];
     id<DKDReliableMessage> rMsg = [messenger signMessage:sMsg];
     if (!rMsg) {
@@ -183,7 +183,7 @@ NSString * const kNotificationName_ServerStateChanged = @"ServerStateChanged";
     }
     
     // first handshake?
-    if (command.state == DIMHandshake_Start) {
+    if (content.state == DIMHandshake_Start) {
         rMsg.meta = _currentUser.meta;
         rMsg.visa = _currentUser.visa;
     }

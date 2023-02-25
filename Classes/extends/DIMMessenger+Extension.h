@@ -179,10 +179,10 @@ extern NSString * const kNotificationName_SendMessageFailed;
 /**
  *  pack and send command to station
  *
- * @param command - command content
+ * @param content - command content
  * @return YES on success
  */
-- (BOOL)sendCommand:(id<DKDCommand>)command;
+- (BOOL)sendCommand:(id<DKDCommand>)content;
 
 /**
  *  Interface for client to query meta from station

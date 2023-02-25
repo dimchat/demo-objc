@@ -66,12 +66,10 @@
 
 @implementation DIMInstantMessage (Extension)
 
-- (BOOL)matchReceipt:(DIMReceiptCommand *)command {
-    
-    id<DKDContent> content = self.content;
+- (BOOL)matchReceipt:(DIMReceiptCommand *)content {
     
     // check signature
-    NSString *sig1 = [command objectForKey:@"signature"];
+    NSString *sig1 = [content objectForKey:@"signature"];
     NSString *sig2 = [self objectForKey:@"signature"];
     if (sig1.length >= 8 && sig2.length >= 8) {
         // if contains signature, check it
@@ -81,7 +79,7 @@
     }
     
     // check envelope
-    id<DKDEnvelope> env1 = command.envelope;
+    id<DKDEnvelope> env1 = content.envelope;
     id<DKDEnvelope> env2 = self.envelope;
     if (env1) {
         // if contains envelope, check it
@@ -90,7 +88,7 @@
     
     // check serial number
     // (only the original message's receiver can know this number)
-    return command.serialNumber == content.serialNumber;
+    return content.serialNumber == self.content.serialNumber;
 }
 
 @end

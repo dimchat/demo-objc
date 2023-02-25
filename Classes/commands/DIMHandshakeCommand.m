@@ -94,13 +94,13 @@
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    DIMHandshakeCommand *command = [super copyWithZone:zone];
-    if (command) {
-        command.message = _message;
-        command.sessionKey = _sessionKey;
-        command.state = _state;
+    DIMHandshakeCommand *content = [super copyWithZone:zone];
+    if (content) {
+        content.message = _message;
+        content.sessionKey = _sessionKey;
+        content.state = _state;
     }
-    return command;
+    return content;
 }
 
 - (NSString *)message {

@@ -317,13 +317,13 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     DIMMessenger *messenger = [DIMMessenger sharedInstance];
     DIMFacebook *facebook = [DIMFacebook sharedInstance];
     // create 'profile' command
-    id<DKDCommand> command = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
+    id<DKDCommand> content = [[DIMDocumentCommand alloc] initWithID:ID meta:meta document:doc];
     // 1. share to station
-    [messenger sendCommand:command];
+    [messenger sendCommand:content];
     // 2. send to group assistants
     NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:ID];
     for (id<MKMID> ass in assistants) {
-        [messenger sendContent:command receiver:ass];
+        [messenger sendContent:content receiver:ass];
     }
     return YES;
 }
@@ -405,13 +405,13 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    id<DKDCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
+    id<DKDCommand> content = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
     if (offlineTime) {
-        [command setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
+        [content setObject:NSNumberFromDate(offlineTime) forKey:@"last_time"];
     }
-    [messenger sendCommand:command];
+    [messenger sendCommand:content];
     
-    NSLog(@"[REPORT] user online: %@, %@", user, command);
+    NSLog(@"[REPORT] user online: %@, %@", user, content);
 }
 
 - (void)reportOffline {
@@ -425,11 +425,11 @@ static NSDate *offlineTime = nil;
         return;
     }
     
-    id<DKDCommand> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
-    offlineTime = [command time];
-    [messenger sendCommand:command];
+    id<DKDCommand> content = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
+    offlineTime = [content time];
+    [messenger sendCommand:content];
     
-    NSLog(@"[REPORT] user offline: %@, %@", user, command);
+    NSLog(@"[REPORT] user offline: %@, %@", user, content);
 }
 
 @end

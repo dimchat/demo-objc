@@ -44,8 +44,8 @@ NSString * const kNotificationName_SearchUsersUpdated = @"SearchUsersUpdated";
 
 @implementation DIMSearchCommandProcessor
 
-- (void)parse:(DIMSearchCommand *)command {
-    NSDictionary *result = command.results;
+- (void)parse:(DIMSearchCommand *)content {
+    NSDictionary *result = content.results;
     if ([result count] == 0) {
         return;
     }

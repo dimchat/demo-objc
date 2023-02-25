@@ -39,12 +39,12 @@
 
 @implementation DIMGroupCommandProcessor
 
-- (nullable NSArray<id<MKMID>> *)membersFromCommand:(id<DKDGroupCommand>)command {
-    NSArray<id<MKMID>> *members = [command members];
+- (nullable NSArray<id<MKMID>> *)membersFromCommand:(id<DKDGroupCommand>)content {
+    NSArray<id<MKMID>> *members = [content members];
     if (members.count > 0) {
         return members;
     }
-    id<MKMID> member = [command member];
+    id<MKMID> member = [content member];
     if (member) {
         return @[member];
     }
