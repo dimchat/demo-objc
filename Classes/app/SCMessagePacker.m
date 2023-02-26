@@ -35,66 +35,29 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
+#import "DKDInstantMessage+Extension.h"
 #import "DIMMessenger+Extension.h"
 
 #import "SCMessagePacker.h"
 
-static inline void fix_profile(id<DKDContent> content) {
-    if ([content conformsToProtocol:@protocol(DKDDocumentCommand)]) {
-        // compatible for document command
-        id doc = [content objectForKey:@"document"];
-        if (doc) {
-            // (v2.0)
-            //    "ID"       : "{ID}",
-            //    "document" : {
-            //        "ID"        : "{ID}",
-            //        "data"      : "{JsON}",
-            //        "signature" : "{BASE64}"
-            //    }
-            return;
-        }
-        id profile = [content objectForKey:@"profile"];
-        if (profile) {
-            [content removeObjectForKey:@"profile"];
-            // 1.* => 2.0
-            if ([profile isKindOfClass:[NSString class]]) {
-                // compatible with v1.0
-                //    "ID"        : "{ID}",
-                //    "profile"   : "{JsON}",
-                //    "signature" : "{BASE64}"
-                doc = @{
-                    @"ID": [content objectForKey:@"ID"],
-                    @"data": profile,
-                    @"signature": [content objectForKey:@"signature"]
-                };
-                [content setObject:doc forKey:@"document"];
-            } else {
-                // compatible with v1.1
-                //    "ID"       : "{ID}",
-                //    "profile"  : {
-                //        "ID"        : "{ID}",
-                //        "data"      : "{JsON}",
-                //        "signature" : "{BASE64}"
-                //    }
-                [content setObject:profile forKey:@"document"];
-            }
-        }
-    }
-}
-
-static inline void fix_visa(id<DKDReliableMessage> rMsg) {
-    id profile = [rMsg objectForKey:@"profile"];
-    if (profile) {
-        [rMsg removeObjectForKey:@"profile"];
-        // 1.* => 2.0
-        id visa = [rMsg objectForKey:@"visa"];
-        if (!visa) {
-            [rMsg setObject:profile forKey:@"visa"];
-        }
-    }
-}
-
 @implementation SCMessagePacker
+
+static inline NSString *key_digest(id<MKMSymmetricKey> key) {
+    NSData *data = key.data;
+    if ([data length] < 6) {
+        // plain key?
+        return nil;
+    }
+    // get digest for the last 6 bytes of key.data
+    NSRange range = NSMakeRange([data length] - 6, 6);
+    NSData *part = [data subdataWithRange:range];
+    NSData *digest = MKMSHA256Digest(part);
+    NSString *base64 = MKMBase64Encode(digest);
+    NSCharacterSet *cset = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    base64 = [base64 stringByTrimmingCharactersInSet:cset];
+    NSUInteger pos = base64.length - 8;
+    return [base64 substringFromIndex:pos];
+}
 
 - (void)attachKeyDigest:(id<DKDReliableMessage>)rMsg {
     if (rMsg.delegate == nil) {
@@ -105,6 +68,9 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
         return;
     }
     NSDictionary *keys = [rMsg encryptedKeys];
+    if (!keys) {
+        keys = @{};
+    }
     if ([keys objectForKey:@"digest"]) {
         // key digest already exists
         return;
@@ -119,31 +85,25 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
         id<MKMID> receiver = rMsg.envelope.receiver;
         key = [self.messenger cipherKeyFrom:sender to:receiver generate:NO];
     }
-    // get key data
-    NSData *data = key.data;
-    if ([data length] < 6) {
-        if ([key.algorithm isEqualToString:@"PLAIN"]) {
-            NSLog(@"broadcast message has no key: %@", rMsg);
-            return;
-        }
-        NSAssert(false, @"key data error: %@", key);
+    NSString *digest = key_digest(key);
+    if (!digest) {
+        // broadcast message has no key
         return;
     }
-    // get digest
-    NSRange range = NSMakeRange([data length] - 6, 6);
-    NSData *part = [data subdataWithRange:range];
-    NSData *digest = MKMSHA256Digest(part);
-    NSString *base64 = MKMBase64Encode(digest);
-    // set digest
-    NSMutableDictionary *mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
-    NSUInteger pos = base64.length - 8;
-    [mDict setObject:[base64 substringFromIndex:pos] forKey:@"digest"];
+    NSMutableDictionary *mDict;
+    if ([keys isKindOfClass:[NSMutableDictionary class]]) {
+        mDict = (NSMutableDictionary *)keys;
+    } else {
+        mDict = [[NSMutableDictionary alloc] initWithDictionary:keys];
+    }
+    [mDict setObject:digest forKey:@"digest"];
     [rMsg setObject:mDict forKey:@"keys"];
 }
 
 #pragma mark Serialization
 
 - (nullable NSData *)serializeMessage:(id<DKDReliableMessage>)rMsg {
+    [DIMInstantMessage fixMetaAttachment:rMsg];
     [self attachKeyDigest:rMsg];
     return [super serializeMessage:rMsg];
 }
@@ -153,7 +113,9 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
         return nil;
     }
     id<DKDReliableMessage> rMsg = [super deserializeMessage:data];
-    fix_visa(rMsg);
+    if (rMsg) {
+        [DIMInstantMessage fixMetaAttachment:rMsg];
+    }
     return rMsg;
 }
 
@@ -237,7 +199,6 @@ static inline void fix_visa(id<DKDReliableMessage> rMsg) {
     } @finally {
         //
     }
-    fix_profile(iMsg.content);
     return iMsg;
 }
 

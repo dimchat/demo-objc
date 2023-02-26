@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      type : 0x88,
  *      sn   : 123,
  *
- *      cmd      : "login",
+ *      command  : "login",
  *      time     : 0,
  *      //---- client info ----
  *      ID       : "{UserID}",

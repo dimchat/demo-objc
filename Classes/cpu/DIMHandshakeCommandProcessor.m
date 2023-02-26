@@ -61,11 +61,11 @@
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMHandshakeCommand class]], @"handshake error: %@", content);
     DIMHandshakeCommand *command = (DIMHandshakeCommand *)content;
-    NSString *message = command.message;
-    if ([message isEqualToString:@"DIM!"]) {
+    NSString *title = command.title;
+    if ([title isEqualToString:@"DIM!"]) {
         // S -> C
         return [self success];
-    } else if ([message isEqualToString:@"DIM?"]) {
+    } else if ([title isEqualToString:@"DIM?"]) {
         // S -> C
         return [self ask:command.sessionKey];
     } else {

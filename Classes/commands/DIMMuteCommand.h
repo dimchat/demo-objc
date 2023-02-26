@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  MuteCommand message: {
  *      type : 0x88,
  *
- *      cmd     : "mute",
+ *      command : "mute",
  *      list    : [] // mute-list; if it's None, means querying mute-list from station
  *  }
  */

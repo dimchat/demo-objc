@@ -44,8 +44,8 @@
 #import "DIMAmanuensis.h"
 
 #import "DIMFacebook+Extension.h"
-
 #import "DIMMessenger+Extension.h"
+#import "DKDInstantMessage+Extension.h"
 
 #import "SCKeyStore.h"
 #import "SCMessagePacker.h"
@@ -241,11 +241,13 @@ SingletonImplementations(SCMessenger, sharedInstance)
             serializeContent:(id<DKDContent>)content
                      withKey:(id<MKMSymmetricKey>)password {
     // check attachment for File/Image/Audio/Video message content
-    if ([content isKindOfClass:[DIMFileContent class]]) {
+    if ([content conformsToProtocol:@protocol(DKDFileContent)]) {
         DIMFileContentProcessor *fpu = [self fileContentProcessor];
         [fpu uploadFileContent:(id<DKDFileContent>)content
                            key:password
                        message:iMsg];
+    } else if ([content conformsToProtocol:@protocol(DKDCommand)]) {
+        content = [DIMInstantMessage fixCommand:(id<DKDCommand>)content];
     }
     return [super message:iMsg serializeContent:content withKey:password];
 }
@@ -258,11 +260,13 @@ SingletonImplementations(SCMessenger, sharedInstance)
     id<DKDContent> content = [super message:sMsg deserializeContent:data withKey:password];
     NSAssert(content, @"failed to deserialize message content: %@", sMsg);
     // check attachment for File/Image/Audio/Video message content
-    if ([content isKindOfClass:[DIMFileContent class]]) {
+    if ([content conformsToProtocol:@protocol(DKDFileContent)]) {
         DIMFileContentProcessor *fpu = [self fileContentProcessor];
         [fpu downloadFileContent:(id<DKDFileContent>)content
                              key:password
                          message:sMsg];
+    } else if ([content conformsToProtocol:@protocol(DKDCommand)]) {
+        content = [DIMInstantMessage fixCommand:(id<DKDCommand>)content];
     }
     return content;
 }

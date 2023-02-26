@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      type : 0x88,
  *      sn   : 123,  // the same serial number with the original message
  *
- *      cmd     : "receipt",
+ *      command : "receipt",
  *      message : "...",
  *      // -- extra info
  *      sender    : "...",

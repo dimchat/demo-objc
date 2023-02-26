@@ -94,7 +94,7 @@
         if (!_title) {
             // (compatible with v1.0)
             //  contacts command: {
-            //      cmd     : "contacts",
+            //      command : "contacts",
             //      data    : "...",
             //      key     : "...",
             //  }

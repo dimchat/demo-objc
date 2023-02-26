@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      type : 0x88,
  *      sn   : 123,
  *
- *      cmd     : "storage",
+ *      command : "storage",
  *      title   : "key name",  // "contacts", "private_key", ...
  *
  *      data    : "...",       // base64_encode(symmetric)

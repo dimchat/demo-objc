@@ -39,7 +39,7 @@
 
 @interface DIMHandshakeCommand ()
 
-@property (strong, nonatomic) NSString *message;
+@property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic, nullable) NSString *sessionKey;
 
 @property (nonatomic) DIMHandshakeState state;
@@ -52,7 +52,7 @@
 - (instancetype)initWithDictionary:(NSDictionary *)dict {
     if (self = [super initWithDictionary:dict]) {
         // lazy
-        _message = nil;
+        _title = nil;
         _sessionKey = nil;
         _state = DIMHandshake_Init;
     }
@@ -62,21 +62,21 @@
 /* designated initializer */
 - (instancetype)initWithType:(DKDContentType)type {
     if (self = [super initWithType:type]) {
-        _message = nil;
+        _title = nil;
         _sessionKey = nil;
         _state = DIMHandshake_Init;
     }
     return self;
 }
 
-- (instancetype)initWithMessage:(NSString *)message
-                     sessionKey:(nullable NSString *)session {
+- (instancetype)initWithTitle:(NSString *)title
+                   sessionKey:(nullable NSString *)session {
     if (self = [self initWithCommandName:DIMCommand_Handshake]) {
-        // message
-        if (message) {
-            [self setObject:message forKey:@"message"];
+        // title
+        if (title) {
+            [self setObject:title forKey:@"title"];
         }
-        _message = message;
+        _title = title;
         
         // session key
         if (session) {
@@ -90,24 +90,24 @@
 }
 
 - (instancetype)initWithSessionKey:(nullable NSString *)session {
-    return [self initWithMessage:@"Hello world!" sessionKey:session];
+    return [self initWithTitle:@"Hello world!" sessionKey:session];
 }
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     DIMHandshakeCommand *content = [super copyWithZone:zone];
     if (content) {
-        content.message = _message;
+        content.title = _title;
         content.sessionKey = _sessionKey;
         content.state = _state;
     }
     return content;
 }
 
-- (NSString *)message {
-    if (!_message) {
-        _message = [self objectForKey:@"message"];
+- (NSString *)title {
+    if (!_title) {
+        _title = [self objectForKey:@"title"];
     }
-    return _message;
+    return _title;
 }
 
 - (nullable NSString *)sessionKey {
@@ -121,7 +121,7 @@
     if (_state != DIMHandshake_Init) {
         return _state;
     }
-    NSString *msg = self.message;
+    NSString *msg = self.title;
     if ([msg isEqualToString:@"DIM!"] || [msg isEqualToString:@"OK!"]) {
         _state = DIMHandshake_Success;
     } else if ([msg isEqualToString:@"DIM?"]) {

@@ -64,11 +64,24 @@ typedef NS_ENUM(UInt8, DIMMessageState) {
 
 #pragma mark -
 
-@class DIMReceiptCommand;
+@protocol DKDReceiptCommand;
 
 @interface DIMInstantMessage (Extension)
 
-- (BOOL)matchReceipt:(DIMReceiptCommand *)content;
+- (BOOL)matchReceipt:(id<DKDReceiptCommand>)content;
+
+@end
+
+@interface DIMInstantMessage (Compatible)
+
++ (void)fixMetaAttachment:(id<DKDReliableMessage>)rMsg;
++ (void)fixMetaVersion:(NSMutableDictionary *)meta;
+
++ (id<DKDCommand>)fixCommand:(id<DKDCommand>)content;
++ (id<DKDCommand>)fixCmd:(id<DKDCommand>)content;
+
++ (void)fixReceiptCommand:(id<DKDReceiptCommand>)content;
++ (void)copyReceiptValues:(id<DKDReceiptCommand>)content fromOrigin:(NSDictionary *)origin;
 
 @end
 
