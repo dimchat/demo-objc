@@ -149,6 +149,7 @@
 		E9BC660927183024002F3FB9 /* SCMessageTransmitter.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BC660727183024002F3FB9 /* SCMessageTransmitter.m */; };
 		E9BC6611271839A8002F3FB9 /* DIMFileContentProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = E9BC660F271839A7002F3FB9 /* DIMFileContentProcessor.m */; };
 		E9BC6612271839A8002F3FB9 /* DIMFileContentProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = E9BC6610271839A7002F3FB9 /* DIMFileContentProcessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9C2782C29AF42540010858C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C2782829AF42540010858C /* libc++.tbd */; };
 		E9CEA106234EA1EB00EC507C /* DIMPassword.h in Headers */ = {isa = PBXBuildFile; fileRef = E9CEA104234EA1EB00EC507C /* DIMPassword.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9CEA107234EA1EB00EC507C /* DIMPassword.m in Sources */ = {isa = PBXBuildFile; fileRef = E9CEA105234EA1EB00EC507C /* DIMPassword.m */; };
 		E9D71D5A25BAE49300773ED1 /* MarsGate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E97816AF2223E8C100BCE3AD /* MarsGate.framework */; };
@@ -371,6 +372,7 @@
 		E9BC660727183024002F3FB9 /* SCMessageTransmitter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCMessageTransmitter.m; sourceTree = "<group>"; };
 		E9BC660F271839A7002F3FB9 /* DIMFileContentProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMFileContentProcessor.m; sourceTree = "<group>"; };
 		E9BC6610271839A7002F3FB9 /* DIMFileContentProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMFileContentProcessor.h; sourceTree = "<group>"; };
+		E9C2782829AF42540010858C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		E9CEA104234EA1EB00EC507C /* DIMPassword.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMPassword.h; sourceTree = "<group>"; };
 		E9CEA105234EA1EB00EC507C /* DIMPassword.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMPassword.m; sourceTree = "<group>"; };
 		E9D71F0325BB298900773ED1 /* hulk_secret.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = hulk_secret.js; sourceTree = "<group>"; };
@@ -390,6 +392,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9C2782C29AF42540010858C /* libc++.tbd in Frameworks */,
 				E96DBE8527CBA523005799F9 /* FiniteStateMachine.framework in Frameworks */,
 				E9D71D5A25BAE49300773ED1 /* MarsGate.framework in Frameworks */,
 			);
@@ -600,6 +603,7 @@
 		E97816C62223E97100BCE3AD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E9C2782829AF42540010858C /* libc++.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1175,7 +1179,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = YES;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -1184,6 +1188,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = DIM.DIMClient;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -1202,7 +1207,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = YES;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = DIMClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -1211,6 +1216,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = DIM.DIMClient;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
