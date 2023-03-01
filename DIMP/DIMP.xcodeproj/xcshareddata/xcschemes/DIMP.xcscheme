@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1230"
+   LastUpgradeVersion = "1420"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E978167F2223E7F200BCE3AD"
-               BuildableName = "DIMClient.framework"
-               BlueprintName = "DIMClient"
-               ReferencedContainer = "container:DIMClient.xcodeproj">
+               BuildableName = "DIMP.framework"
+               BlueprintName = "DIMP"
+               ReferencedContainer = "container:DIMP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,26 +27,7 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E978167F2223E7F200BCE3AD"
-            BuildableName = "DIMClient.framework"
-            BlueprintName = "DIMClient"
-            ReferencedContainer = "container:DIMClient.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E97816882223E7F200BCE3AD"
-               BuildableName = "DIMClientTests.xctest"
-               BlueprintName = "DIMClientTests"
-               ReferencedContainer = "container:DIMClient.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -59,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E978167F2223E7F200BCE3AD"
-            BuildableName = "DIMClient.framework"
-            BlueprintName = "DIMClient"
-            ReferencedContainer = "container:DIMClient.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -79,9 +51,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E978167F2223E7F200BCE3AD"
-            BuildableName = "DIMClient.framework"
-            BlueprintName = "DIMClient"
-            ReferencedContainer = "container:DIMClient.xcodeproj">
+            BuildableName = "DIMP.framework"
+            BlueprintName = "DIMP"
+            ReferencedContainer = "container:DIMP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

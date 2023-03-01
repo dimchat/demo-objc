@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  SCProcessorFactory.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2021/11/22.
 //  Copyright © 2021 DIM Group. All rights reserved.

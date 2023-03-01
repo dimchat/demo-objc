@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMSearchCommandProcessor.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.

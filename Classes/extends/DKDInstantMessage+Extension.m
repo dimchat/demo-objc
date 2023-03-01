@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DKDInstantMessage+Extension.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/10/21.
 //  Copyright © 2019 DIM Group. All rights reserved.

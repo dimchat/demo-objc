@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  SCMessageDataSource.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2020/12/23.
 //  Copyright © 2020 DIM Group. All rights reserved.
@@ -40,7 +40,7 @@
 #import "DIMFacebook+Extension.h"
 #import "DIMMessenger+Extension.h"
 
-#import "DIMClientConstants.h"
+#import "DIMPConstants.h"
 
 #import "DIMHandshakeCommand.h"
 #import "DIMLoginCommand.h"

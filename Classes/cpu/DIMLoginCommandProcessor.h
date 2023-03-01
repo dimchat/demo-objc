@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMLoginCommandProcessor.h
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2020/4/21.
 //  Copyright © 2020 DIM Group. All rights reserved.

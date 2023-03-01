@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMServerState.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/3/7.
 //  Copyright © 2019 DIM Group. All rights reserved.

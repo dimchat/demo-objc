@@ -1,12 +1,12 @@
 //
-//  DIMClientConstants.m
-//  DIMClient
+//  DIMPConstants.m
+//  DIMP
 //
 //  Created by John Chen on 2019/10/21.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "DIMClientConstants.h"
+#import "DIMPConstants.h"
 
 NSString * const DIMConversationUpdatedNotification = @"DIMConversationUpdatedNotification";
 NSString * const DIMMessageInsertedNotifiation = @"DIMMessageInsertedNotifiation";

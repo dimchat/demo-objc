@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMEntity+Extension.h
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/8/12.
 //  Copyright © 2019 DIM Group. All rights reserved.

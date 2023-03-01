@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMGroupManager.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2020/4/5.
 //  Copyright © 2020 DIM Group. All rights reserved.

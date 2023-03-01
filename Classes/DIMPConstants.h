@@ -1,6 +1,6 @@
 //
-//  DIMClientConstants.h
-//  DIMClient
+//  DIMPConstants.h
+//  DIMP
 //
 //  Created by John Chen on 2019/10/21.
 //  Copyright © 2019 DIM Group. All rights reserved.

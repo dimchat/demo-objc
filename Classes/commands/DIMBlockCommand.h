@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMBlockCommand.h
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/10/25.
 //  Copyright © 2019 DIM Group. All rights reserved.

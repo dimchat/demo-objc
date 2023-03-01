@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  SCMessageTransmitter.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2021/10/14.
 //  Copyright © 2021 DIM Group. All rights reserved.

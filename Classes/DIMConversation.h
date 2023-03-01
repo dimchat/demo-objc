@@ -35,7 +35,7 @@
 //  Copyright © 2018 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMConversationDatabase.h>
+#import <DIMP/DIMConversationDatabase.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

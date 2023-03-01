@@ -1,6 +1,6 @@
 //
-//  DIMClientTests.m
-//  DIMClientTests
+//  DIMPTests.m
+//  DIMPTests
 //
 //  Created by Albert Moky on 2019/2/25.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface DIMClientTests : XCTestCase
+@interface DIMPTests : XCTestCase
 
 @end
 
-@implementation DIMClientTests
+@implementation DIMPTests
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.

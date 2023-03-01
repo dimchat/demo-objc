@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMApplicationContentProcessor.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2022/8/23.
 //  Copyright © 2022 DIM Group. All rights reserved.

@@ -29,13 +29,13 @@
 // =============================================================================
 //
 //  DIMStorageCommandProcessor.h
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/11/30.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMStorageCommand.h>
+#import <DIMP/DIMStorageCommand.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

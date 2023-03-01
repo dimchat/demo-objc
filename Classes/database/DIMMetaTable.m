@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMMetaTable.m
-//  DIMClient
+//  DIMP
 //
 //  Created by Albert Moky on 2019/9/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -37,7 +37,7 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import "DIMClientConstants.h"
+#import "DIMPConstants.h"
 
 #import "DIMMetaTable.h"
 
