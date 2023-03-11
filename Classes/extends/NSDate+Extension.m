@@ -6,7 +6,7 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import "NSObject+Singleton.h"
+#import <StarTrek/StarTrek.h>
 
 #import "NSDate+Extension.h"
 
@@ -14,7 +14,7 @@
 
 - (NSString *)descriptionWithLocale:(nullable id)locale {
     static NSDateFormatter *dateFormatter = nil;
-    SingletonDispatchOnce(^{
+    OKSingletonDispatchOnce(^{
         dateFormatter = [[NSDateFormatter alloc] init];
         dateFormatter.locale = [NSLocale currentLocale];
         dateFormatter.dateStyle = NSDateFormatterMediumStyle;

@@ -35,17 +35,25 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMServer.h>
+#import <DIMP/DIMClientSession+State.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal : NSObject <DIMStationDelegate> {
-    
-    DIMServer *_currentStation;
-    NSString *_session;
-    
-    NSMutableArray<id<DIMUser>> *_users;
-}
+@interface DIMTerminal : FSMRunner <DIMSessionStateDelegate>
+
+@property(nonatomic, readonly) __kindof id<DIMSessionDBI> database;
+
+@property(nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
+@property(nonatomic, readonly) __kindof DIMClientMessenger *messenger;
+@property(nonatomic, readonly) __kindof DIMClientSession *session;
+
+@property(nonatomic, readonly, nullable) DIMSessionState *state;
+
+- (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack database:(id<DIMSessionDBI>)sdb;
+
+@end
+
+@interface DIMTerminal (Device)
 
 /**
  *  format: "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1"
@@ -54,34 +62,39 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (readonly, nonatomic) NSString *language;
 
-#pragma mark - User(s)
+@end
 
-@property (readonly, copy, nonatomic) NSArray<id<DIMUser>> *users;
-@property (strong, nonatomic) id<DIMUser> currentUser;
+// protected
+@interface DIMTerminal (Creation)
 
-- (void)addUser:(id<DIMUser>)user;
-- (void)removeUser:(id<DIMUser>)user;
+- (id<MKMStation>)createStationWithHost:(NSString *)ip port:(UInt16)port;
 
-- (BOOL)login:(id<DIMUser>)user;
+- (DIMClientSession *)createSessionWithStation:(id<MKMStation>)server;
+
+- (id<DIMPacker>)createPackerWithFacebook:(DIMCommonFacebook *)barrack
+                                messenger:(DIMClientMessenger *)transceiver;
+
+- (id<DIMProcessor>)createProcessorWithFacebook:(DIMCommonFacebook *)barrack
+                                      messenger:(DIMClientMessenger *)transceiver;
+
+- (DIMClientMessenger *)createMessengerWithFacebook:(DIMCommonFacebook *)barrack
+                                            session:(DIMClientSession *)session;
 
 @end
 
-@interface DIMTerminal (GroupManage)
+@interface DIMTerminal (State)
 
-- (nullable id<DIMGroup>)createGroupWithSeed:(NSString *)seed
-                                        name:(NSString *)name
-                                     members:(NSArray<id<MKMID>> *)list;
+- (DIMClientMessenger *)connectToHost:(NSString *)ip port:(UInt16)port;
 
-- (BOOL)updateGroupWithID:(id<MKMID>)ID
-                  members:(NSArray<id<MKMID>> *)list
-                  profile:(nullable id<MKMDocument>)profile;
+- (BOOL)loginWithID:(id<MKMID>)user;
 
-@end
+- (void)keepOnlineForID:(id<MKMID>)user;
 
-@interface DIMTerminal (Report)
+- (void)enterBackground;
 
-- (void)reportOnline;
-- (void)reportOffline;
+- (void)enterForeground;
+
+- (void)start;
 
 @end
 

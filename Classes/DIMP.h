@@ -66,65 +66,83 @@ FOUNDATION_EXPORT const unsigned char DIMPVersionString[];
 #if !defined(__DIM_CLIENT__)
 #define __DIM_CLIENT__ 1
 
-// Extensions
-#import <DIMP/DKDInstantMessage+Extension.h>
-#import <DIMP/DIMEntity+Extension.h>
-#import <DIMP/DIMFacebook+Extension.h>
-#import <DIMP/DIMMessageProcessor+Extension.h>
-#import <DIMP/DIMMessenger+Extension.h>
-#import <DIMP/DIMCommand+Extension.h>
-#import <DIMP/DIMPassword.h>
-#import <DIMP/DIMRegister.h>
-#import <DIMP/DIMGroupManager.h>
+#import <DIMP/NSObject+Compare.h>
+#import <DIMP/NSObject+Threading.h>
+#import <DIMP/NSDate+Extension.h>
+#import <DIMP/NSDictionary+Binary.h>
 
-// Command
-#import <DIMP/DIMReceiptCommand.h>
+//
+//  Common
+//
+
+#import <DIMP/DIMFrequencyChecker.h>
+#import <DIMP/DIMQueryFrequencyChecker.h>
+
+#import <DIMP/DIMAccountDBI.h>
+#import <DIMP/DIMMessageDBI.h>
+#import <DIMP/DIMSessionDBI.h>
+
+#import <DIMP/DIMAnsCommand.h>
 #import <DIMP/DIMHandshakeCommand.h>
 #import <DIMP/DIMLoginCommand.h>
-#import <DIMP/DIMBlockCommand.h>
-#import <DIMP/DIMMuteCommand.h>
-#import <DIMP/DIMStorageCommand.h>
-#import <DIMP/DIMSearchCommand.h>
+#import <DIMP/DIMReceiptCommand.h>
 #import <DIMP/DIMReportCommand.h>
+#import <DIMP/DIMMuteCommand.h>
+#import <DIMP/DIMBlockCommand.h>
 
-// CPU
-#import <DIMP/DIMDefaultProcessor.h>
-#import <DIMP/DIMApplicationContentProcessor.h>
-#import <DIMP/DIMFileContentProcessor.h>
-#import <DIMP/DIMReceiptCommandProcessor.h>
-#import <DIMP/DIMHandshakeCommandProcessor.h>
-#import <DIMP/DIMLoginCommandProcessor.h>
-#import <DIMP/DIMSearchCommandProcessor.h>
-#import <DIMP/DIMMuteCommandProcessor.h>
-#import <DIMP/DIMStorageCommandProcessor.h>
-#import <DIMP/DIMHistoryProcessor.h>
-// GPUs
-#import <DIMP/DIMGroupCommandProcessor.h>
+#import <DIMP/DIMRegister.h>
+#import <DIMP/DIMAddressNameServer.h>
+#import <DIMP/DIMCommonFacebook.h>
+#import <DIMP/DIMSession.h>
+#import <DIMP/DIMCommonMessenger.h>
+
+//
+//  StarGate
+//
+
+#import <DIMP/STCommonGate.h>
+#import <DIMP/STStreamChannel.h>
+#import <DIMP/STStreamHub.h>
+#import <DIMP/STStreamArrival.h>
+#import <DIMP/STStreamDeparture.h>
+#import <DIMP/STStreamDocker.h>
+
+//
+//  Network
+//
+
+#import <DIMP/DIMWrapperQueue.h>
+#import <DIMP/DIMGateKeeper.h>
+#import <DIMP/DIMBaseSession.h>
+#import <DIMP/DIMFileServer.h>
+
+//
+//  Client
+//
+
 #import <DIMP/DIMInviteCommandProcessor.h>
 #import <DIMP/DIMExpelCommandProcessor.h>
 #import <DIMP/DIMQuitCommandProcessor.h>
-#import <DIMP/DIMResetCommandProcessor.h>
 #import <DIMP/DIMQueryCommandProcessor.h>
+#import <DIMP/DIMResetCommandProcessor.h>
 
-// Database
-#import <DIMP/DIMPConstants.h>
-#import <DIMP/DIMStorage.h>
-#import <DIMP/DIMAddressNameTable.h>
-#import <DIMP/DIMMetaTable.h>
-#import <DIMP/DIMProfileTable.h>
-#import <DIMP/DIMUserTable.h>
-#import <DIMP/DIMGroupTable.h>
-#import <DIMP/DIMMessageTable.h>
-#import <DIMP/DIMSocialNetworkDatabase.h>
-#import <DIMP/DIMConversationDatabase.h>
+#import <DIMP/DIMGroupCommandProcessor.h>
+#import <DIMP/DIMHistoryProcessor.h>
+#import <DIMP/DIMCreator.h>
+#import <DIMP/DIMHandshakeCommandProcessor.h>
+#import <DIMP/DIMLoginCommandProcessor.h>
+#import <DIMP/DIMReceiptCommandProcessor.h>
+#import <DIMP/DIMAnsCommandProcessor.h>
 
-#import <DIMP/DIMFileServer.h>
-#import <DIMP/DIMServer.h>
-#import <DIMP/DIMServerState.h>
+#import <DIMP/DIMClientSession.h>
+#import <DIMP/DIMClientSession+State.h>
+#import <DIMP/DIMClientMessagePacker.h>
+#import <DIMP/DIMClientMessageProcessor.h>
+#import <DIMP/DIMClientMessenger.h>
 
-#import <DIMP/DIMConversation.h>
-#import <DIMP/DIMAmanuensis.h>
 
+#import <DIMP/MKMAnonymous.h>
+#import <DIMP/DIMGroupManager.h>
 #import <DIMP/DIMTerminal.h>
 
 #endif /* ! __DIM_CLIENT__ */

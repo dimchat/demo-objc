@@ -27,11 +27,14 @@ Pod::Spec.new do |s|
     # s.frameworks          = 'Security'
     # s.requires_arc        = true
 
-    s.dependency 'DIMSDK', '~> 0.6.2'
-    s.dependency 'DIMCore', '~> 0.6.0'
-    s.dependency 'DaoKeDao', '~> 0.6.2'
-    s.dependency 'MingKeMing', '~> 0.6.1'
+    s.dependency 'DIMSDK', '~> 0.6.3'
+    s.dependency 'DIMCore', '~> 0.6.3'
+    s.dependency 'DaoKeDao', '~> 0.6.3'
+    s.dependency 'MingKeMing', '~> 0.6.3'
 
-    s.dependency 'FiniteStateMachine', '~> 1.0'
-    # s.dependency 'MarsGate'
+    s.dependency 'StarTrek', '~> 0.1.1'
+    s.dependency 'FiniteStateMachine', '~> 2.2.3'
+    s.dependency 'ObjectKey', '~> 0.1.2'
+
+    # s.vendored_frameworks    = 'Frameworks/MarsGate.framework'
 end
