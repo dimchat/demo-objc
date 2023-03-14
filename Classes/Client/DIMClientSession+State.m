@@ -92,6 +92,23 @@
 
 #pragma mark -
 
+static NSArray *s_names = nil;
+
+static inline NSString *get_name(DIMSessionStateOrder order) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        s_names = @[
+            @"DIMSessionStateOrderDefault",
+            @"DIMSessionStateOrderConnecting",
+            @"DIMSessionStateOrderConnected",
+            @"DIMSessionStateOrderHandshaking",
+            @"DIMSessionStateOrderRunning",
+            @"DIMSessionStateOrderError",
+        ];
+    });
+    return [s_names objectAtIndex:order];
+}
+
 @interface DIMSessionState () {
     
     NSTimeInterval _enterTime;
@@ -121,13 +138,13 @@
     return NO;
 }
 
-//- (NSString *)description {
-//    return self.name;
-//}
-//
-//- (NSString *)debugDescription {
-//    return self.name;
-//}
+- (NSString *)description {
+    return get_name([self index]);
+}
+
+- (NSString *)debugDescription {
+    return get_name([self index]);
+}
 
 - (NSTimeInterval)enterTime {
     return _enterTime;
@@ -242,7 +259,7 @@ static inline id<FSMState> create_state(NSUInteger index, NSUInteger capacity) {
 
 static inline BOOL state_expired(DIMSessionState *state, NSTimeInterval now) {
     NSTimeInterval enterTime = [state enterTime];
-    return 0 < enterTime && enterTime < (now + 30);
+    return 0 < enterTime && enterTime < (now - 30);
 }
 
 static inline id<FSMTransition> create_transition(NSUInteger stateIndex,

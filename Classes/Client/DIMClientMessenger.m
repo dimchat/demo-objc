@@ -191,7 +191,8 @@
                 @"message": @"group meta not found",
                 @"group": receiver.string,
             };
-            [iMsg setObject:error forKey:@"error"];
+            [self suspendInstantMessage:iMsg errorInfo:error];
+            //[iMsg setObject:error forKey:@"error"];
             return NO;
         }
         // check group members
@@ -205,7 +206,8 @@
                 @"message": @"members not found",
                 @"group": receiver.string,
             };
-            [iMsg setObject:error forKey:@"error"];
+            [self suspendInstantMessage:iMsg errorInfo:error];
+            //[iMsg setObject:error forKey:@"error"];
             return NO;
         }
         NSMutableArray<id<MKMID>> *waiting = [[NSMutableArray alloc] init];
@@ -226,7 +228,8 @@
                 @"group": receiver.string,
                 @"members": MKMIDRevert(waiting),
             };
-            [iMsg setObject:error forKey:@"error"];
+            [self suspendInstantMessage:iMsg errorInfo:error];
+            //[iMsg setObject:error forKey:@"error"];
             return NO;
         }
         // receiver is OK

@@ -75,6 +75,24 @@ NS_DESIGNATED_INITIALIZER;
 - (BOOL)queryDocumentForID:(id<MKMID>)ID;
 
 /**
+ *  Add income message in a queue for waiting sender's visa
+ *
+ * @param rMsg - incoming message
+ * @param info - error info
+ */
+- (void)suspendReliableMessage:(id<DKDReliableMessage>)rMsg
+                     errorInfo:(NSDictionary<NSString *, id> *)info;
+
+/**
+ *  Add outgo message in a queue for waiting receiver's visa
+ *
+ * @param iMsg - outgo message
+ * @param info - error info
+ */
+- (void)suspendInstantMessage:(id<DKDInstantMessage>)iMsg
+                    errorInfo:(NSDictionary<NSString *, id> *)info;
+
+/**
  *  Check sender before verifying received message
  *
  * @param rMsg - network message

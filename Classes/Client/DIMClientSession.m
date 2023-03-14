@@ -39,7 +39,10 @@
 
 #import "DIMClientSession.h"
 
-@interface DIMClientSession ()
+@interface DIMClientSession () {
+    
+    NSString *_key;
+}
 
 @property(nonatomic, strong) __kindof id<MKMStation> station;
 
@@ -62,6 +65,14 @@
         self.thread = nil;
     }
     return self;
+}
+
+- (NSString *)key {
+    return _key;
+}
+
+- (void)setKey:(nullable NSString *)key {
+    _key = key;
 }
 
 - (void)start {

@@ -65,18 +65,4 @@ NS_DESIGNATED_INITIALIZER;
 
 @end
 
-/**
- *  Client Facebook with Address Name Service
- */
-@interface DIMCommonFacebook (Client)
-
-- (NSString *)nameForID:(id<MKMID>)ID;
-
-+ (__kindof DIMAddressNameServer *)ans;
-+ (void)setANS:(DIMAddressNameServer *)ans;
-
-+ (void)prepare;
-
-@end
-
 NS_ASSUME_NONNULL_END

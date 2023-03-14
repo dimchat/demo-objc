@@ -93,7 +93,7 @@ typedef OKPair<id<DKDInstantMessage>, id<DKDReliableMessage>> DIMTransmitterResu
 @property(nonatomic, readonly) id<NIOSocketAddress> remoteAddress;
 
 // session key
-@property(nonatomic, readonly) NSString *key;
+- (NSString *)key;
 
 /**
  *  Update user ID

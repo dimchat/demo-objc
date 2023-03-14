@@ -37,70 +37,114 @@
 
 #import "DIMReceiptCommand.h"
 
+@interface DIMReceiptCommand ()
+
+// original message info
+@property (strong, nonatomic, nullable) id<DKDEnvelope> envelope;
+
+@end
+
 @implementation DIMReceiptCommand
 
-- (instancetype)initWithMessage:(NSString *)message envelope:(id<DKDEnvelope>)env sn:(NSUInteger)num {
-    if (self = [self initWithCommandName:DIMCommand_Receipt]) {
-        // message
-        if (message) {
-            [self setObject:message forKey:@"message"];
+- (instancetype)initWithText:(nullable NSString *)msg
+                    envelope:(nullable id<DKDEnvelope>)env
+                          sn:(NSUInteger)num
+                   signature:(nullable NSString *)sig {
+    if (self = [super initWithCommandName:DIMCommand_Receipt]) {
+        // text message
+        if (msg) {
+            [self setObject:msg forKey:@"text"];
+        }
+        self.envelope = env;
+        // envelope of the message responding to
+        NSMutableDictionary<NSString *, id> *origin;
+        if (env) {
+            origin = [env dictionary];
+        } else {
+            origin = [[NSMutableDictionary alloc] init];
         }
         // sn of the message responding to
         if (num > 0) {
-            [self setObject:@(num) forKey:@"sn"];
+            [origin setObject:@(num) forKey:@"sn"];
         }
-        // envelope of the message responding to
-        if (env) {
-            [self setEnvelope:env];
+        // signature of the message responding to
+        if (sig) {
+            [origin setObject:sig forKey:@"signature"];
+        }
+        if ([origin count] > 0) {
+            [self setObject:origin forKey:@"origin"];
         }
     }
     return self;
 }
-- (instancetype)initWithMessage:(NSString *)message {
-    id<DKDEnvelope> env = nil;
-    return [self initWithMessage:message envelope:env sn:0];
+
+- (instancetype)initWithText:(NSString *)msg {
+    return [self initWithText:msg envelope:nil sn:0 signature:nil];
 }
 
-- (NSString *)message {
-    return [self objectForKey:@"message"];
+- (instancetype)initWithEnvelope:(id<DKDEnvelope>)env
+                              sn:(NSUInteger)num
+                       signature:(nullable NSString *)sig {
+    return [self initWithText:nil envelope:env sn:num signature:sig];
 }
 
-- (nullable id<DKDEnvelope>)envelope {
-    NSString *sender = [self objectForKey:@"sender"];
-    NSString *receiver = [self objectForKey:@"receiver"];
-    if (sender && receiver) {
-        return DKDEnvelopeParse(self.dictionary);
-    } else {
-        return nil;
-    }
+- (NSString *)text {
+    return [self stringForKey:@"text"];
 }
 
-- (void)setEnvelope:(id<DKDEnvelope>)envelope {
-    if (envelope) {
-        [self setObject:[envelope.sender string] forKey:@"sender"];
-        [self setObject:[envelope.receiver string] forKey:@"receiver"];
-        NSDate *time = envelope.time;
-        if (time) {
-            [self setObject:@([time timeIntervalSince1970]) forKey:@"time"];
+- (NSDictionary<NSString *, id> *)origin {
+    return [self objectForKey:@"origin"];
+}
+
+- (id<DKDEnvelope>)originEnvelope {
+    if (!_envelope) {
+        // origin: { sender: "...", receiver: "...", time: 0 }
+        NSDictionary<NSString *, id> *origin = [self origin];
+        if ([origin objectForKey:@"sender"] != nil) {
+            self.envelope = DKDEnvelopeParse(origin);
         }
-    } else {
-        [self removeObjectForKey:@"sender"];
-        [self removeObjectForKey:@"receiver"];
-        //[self removeObjectForKey:@"time"];
     }
+    return _envelope;
 }
 
-- (NSData *)signature {
-    NSString *CT = [self objectForKey:@"signature"];
-    return MKMBase64Decode(CT);
+- (unsigned long)originSerialNumber {
+    NSDictionary<NSString *, id> *origin = [self origin];
+    NSNumber *sn = [origin objectForKey:@"sn"];
+    return [sn unsignedLongValue];
 }
 
-- (void)setSignature:(NSData *)signature {
-    if (signature) {
-        [self setObject:MKMBase64Encode(signature) forKey:@"signature"];
-    } else {
-        [self removeObjectForKey:@"signature"];
+- (NSString *)originSignature {
+    NSDictionary<NSString *, id> *origin = [self origin];
+    return [origin objectForKey:@"signature"];
+}
+
+- (BOOL)matchMessage:(id<DKDInstantMessage>)iMsg {
+    // check signature
+    NSString *sig1 = [self originSignature];
+    if (sig1) {
+        // if contains signature, check it
+        NSString *sig2 = [iMsg stringForKey:@"signature"];
+        if (sig2) {
+            if ([sig1 length] > 8) {
+                sig1 = [sig1 substringFromIndex:8];
+            }
+            if ([sig2 length] > 8) {
+                sig2 = [sig2 substringFromIndex:8];
+            }
+            return [sig1 isEqualToString:sig2];
+        }
     }
+    // check envelope
+    id<DKDEnvelope> env1 = [self originEnvelope];
+    if (env1) {
+        // if contains envelope, check it
+        return [iMsg.envelope isEqual:env1];
+    }
+    // check serial number
+    // (only the original message's receiver can know this number)
+    unsigned long sn1 = [self originSerialNumber];
+    unsigned long sn2 = [iMsg.content serialNumber];
+    return sn1 == sn2;
 }
 
 @end

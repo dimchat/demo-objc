@@ -109,6 +109,16 @@
     return NO;
 }
 
+- (void)suspendReliableMessage:(id<DKDReliableMessage>)rMsg
+                     errorInfo:(NSDictionary<NSString *, id> *)info {
+    NSAssert(false, @"override me!");
+}
+
+- (void)suspendInstantMessage:(id<DKDInstantMessage>)iMsg
+                    errorInfo:(NSDictionary<NSString *, id> *)info {
+    NSAssert(false, @"override me!");
+}
+
 - (BOOL)checkSenderForMessage:(id<DKDReliableMessage>)rMsg {
     id<MKMID> sender = [rMsg sender];
     NSAssert(MKMIDIsUser(sender), @"sender error: %@", sender);
@@ -130,7 +140,8 @@
             @"message": @"verify key not found",
             @"user": sender.string,
         };
-        [rMsg setObject:error forKey:@"error"];
+        [self suspendReliableMessage:rMsg errorInfo:error];
+        //[rMsg setObject:error forKey:@"error"];
         return NO;
     }
     // sender is OK
@@ -154,7 +165,8 @@
                 @"message": @"encrypt key not found",
                 @"user": receiver.string,
             };
-            [iMsg setObject:error forKey:@"error"];
+            [self suspendInstantMessage:iMsg errorInfo:error];
+            //[iMsg setObject:error forKey:@"error"];
             return NO;
         }
     }

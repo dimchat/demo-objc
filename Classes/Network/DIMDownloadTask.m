@@ -28,28 +28,15 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMClientSession.h
+//  DIMDownloadTask.m
 //  DIMP
 //
-//  Created by Albert Moky on 2023/3/10.
+//  Created by Albert Moky on 2023/3/12.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMBaseSession.h>
+#import "DIMDownloadTask.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface DIMClientSession : DIMSession
-
-@property(nonatomic, readonly) __kindof id<MKMStation> station;
-
-// session key
-- (void)setKey:(nullable NSString *)key;
-
-- (instancetype)initWithDatabase:(id<DIMSessionDBI>)db station:(id<MKMStation>)server;
-
-- (void)start;
+@implementation DIMDownloadTask
 
 @end
-
-NS_ASSUME_NONNULL_END

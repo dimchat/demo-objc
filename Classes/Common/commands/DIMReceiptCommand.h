@@ -44,31 +44,46 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  *  Command message: {
  *      type : 0x88,
- *      sn   : 123,  // the same serial number with the original message
+ *      sn   : 456,
  *
  *      command : "receipt",
- *      message : "...",
- *      // -- extra info
- *      sender    : "...",
- *      receiver  : "...",
- *      time      : 0,
- *      signature : "..." // the same signature with the original message
+ *      text    : "...",  // text message
+ *      origin  : {       // original message envelope
+ *          sender    : "...",
+ *          receiver  : "...",
+ *          time      : 0,
+ *          sn        : 123,
+ *          signature : "..."
+ *      }
  *  }
  */
 @protocol DKDReceiptCommand <DKDCommand>
 
-@property (readonly, strong, nonatomic) NSString *message;
+@property(nonatomic, readonly, nullable) NSString *text;
 
 // original message info
-@property (strong, nonatomic, nullable) id<DKDEnvelope> envelope;
-@property (strong, nonatomic, nullable) NSData *signature;
+@property(nonatomic, readonly, nullable) NSDictionary<NSString *, id> *origin;
+
+@property(nonatomic, readonly, nullable) id<DKDEnvelope> originEnvelope;
+@property(nonatomic, readonly) unsigned long originSerialNumber;
+@property(nonatomic, readonly, nullable) NSString *originSignature;
+
+- (BOOL)matchMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 
 @interface DIMReceiptCommand : DIMCommand <DKDReceiptCommand>
 
-- (instancetype)initWithMessage:(NSString *)message envelope:(id<DKDEnvelope>)env sn:(NSUInteger)num;
-- (instancetype)initWithMessage:(NSString *)message;
+- (instancetype)initWithEnvelope:(id<DKDEnvelope>)env
+                              sn:(NSUInteger)num
+                       signature:(nullable NSString *)sig;
+
+- (instancetype)initWithText:(NSString *)msg;
+
+- (instancetype)initWithText:(nullable NSString *)msg
+                    envelope:(nullable id<DKDEnvelope>)env
+                          sn:(NSUInteger)num
+                   signature:(nullable NSString *)sig;
 
 @end
 

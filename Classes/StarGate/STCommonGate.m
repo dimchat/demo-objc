@@ -35,6 +35,8 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import "STStreamDocker.h"
+
 #import "STCommonGate.h"
 
 @implementation STBaseGate
@@ -165,9 +167,9 @@
 // Override
 - (id<STDocker>)createDockerWithConnection:(id<STConnection>)conn
                               advanceParty:(NSArray<NSData *> *)data {
-    // TODO: create docker
-    NSAssert(false, @"override me!");
-    return nil;
+    STPlainDocker *docker = [[STPlainDocker alloc] initWithConnection:conn];
+    [docker setDelegate:self.delegate];
+    return docker;
 }
 
 // Override

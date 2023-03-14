@@ -28,27 +28,36 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMClientSession.h
+//  DIMClientFacebook.h
 //  DIMP
 //
-//  Created by Albert Moky on 2023/3/10.
+//  Created by Albert Moky on 2023/3/13.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMBaseSession.h>
+#import <DIMP/DIMCommonFacebook.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMClientSession : DIMSession
+/**
+ *  Client Facebook with Address Name Service
+ */
+@interface DIMClientFacebook : DIMCommonFacebook
 
-@property(nonatomic, readonly) __kindof id<MKMStation> station;
+- (NSString *)nameForID:(id<MKMID>)ID;
 
-// session key
-- (void)setKey:(nullable NSString *)key;
++ (__kindof DIMAddressNameServer *)ans;
++ (void)setANS:(DIMAddressNameServer *)ans;
 
-- (instancetype)initWithDatabase:(id<DIMSessionDBI>)db station:(id<MKMStation>)server;
++ (void)prepare;
 
-- (void)start;
+@end
+
+@interface DIMFacebook (Membership)
+
+// compatible
+- (BOOL)isFounder:(id<MKMID>)member group:(id<MKMID>)group;
+- (BOOL)isOwner:(id<MKMID>)member group:(id<MKMID>)group;
 
 @end
 

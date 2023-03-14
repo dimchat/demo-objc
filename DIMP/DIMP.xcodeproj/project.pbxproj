@@ -15,6 +15,10 @@
 		E97816D02223EAFC00BCE3AD /* DIMP.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816CF2223EAFC00BCE3AD /* DIMP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D32223EB4700BCE3AD /* DIMTerminal.h in Headers */ = {isa = PBXBuildFile; fileRef = E97816D12223EB4700BCE3AD /* DIMTerminal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */ = {isa = PBXBuildFile; fileRef = E97816D22223EB4700BCE3AD /* DIMTerminal.m */; };
+		E9AE7F1B29BDE9CC008D9F33 /* DIMUploadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AE7F1929BDE9CC008D9F33 /* DIMUploadTask.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AE7F1C29BDE9CC008D9F33 /* DIMUploadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AE7F1A29BDE9CC008D9F33 /* DIMUploadTask.m */; };
+		E9AE7F1F29BDE9DE008D9F33 /* DIMDownloadTask.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AE7F1D29BDE9DE008D9F33 /* DIMDownloadTask.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9AE7F2029BDE9DE008D9F33 /* DIMDownloadTask.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AE7F1E29BDE9DE008D9F33 /* DIMDownloadTask.m */; };
 		E9AEFADD29BB3C9D00B97E7E /* STCommonGate.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AEFADB29BB3C9D00B97E7E /* STCommonGate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9AEFADE29BB3C9D00B97E7E /* STCommonGate.m in Sources */ = {isa = PBXBuildFile; fileRef = E9AEFADC29BB3C9D00B97E7E /* STCommonGate.m */; };
 		E9AEFAE129BB3F0C00B97E7E /* STStreamHub.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AEFADF29BB3F0C00B97E7E /* STStreamHub.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -113,6 +117,8 @@
 		E9D71F3C25BB2DC700773ED1 /* hulk_profile.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0625BB298900773ED1 /* hulk_profile.js */; };
 		E9D71F3E25BB2DC900773ED1 /* moki_meta.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0725BB298900773ED1 /* moki_meta.js */; };
 		E9D71F4025BB2DCC00773ED1 /* moki_profile.js in Resources */ = {isa = PBXBuildFile; fileRef = E9D71F0825BB298900773ED1 /* moki_profile.js */; };
+		E9DBAD0329BEDEF10077C513 /* DIMClientFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = E9DBAD0129BEDEF10077C513 /* DIMClientFacebook.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		E9DBAD0429BEDEF10077C513 /* DIMClientFacebook.m in Sources */ = {isa = PBXBuildFile; fileRef = E9DBAD0229BEDEF10077C513 /* DIMClientFacebook.m */; };
 		E9E8248522475AFD00A029F1 /* NSObject+Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = E9E8248322475AFD00A029F1 /* NSObject+Threading.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E9E8248622475AFD00A029F1 /* NSObject+Threading.m in Sources */ = {isa = PBXBuildFile; fileRef = E9E8248422475AFD00A029F1 /* NSObject+Threading.m */; };
 		FF8E301DE5B385B0EE4E97BD /* libPods-DIMP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A910FE34C3ED5B4F0E89CC81 /* libPods-DIMP.a */; };
@@ -156,6 +162,10 @@
 		E97816CF2223EAFC00BCE3AD /* DIMP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMP.h; sourceTree = "<group>"; };
 		E97816D12223EB4700BCE3AD /* DIMTerminal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIMTerminal.h; sourceTree = "<group>"; };
 		E97816D22223EB4700BCE3AD /* DIMTerminal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIMTerminal.m; sourceTree = "<group>"; };
+		E9AE7F1929BDE9CC008D9F33 /* DIMUploadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMUploadTask.h; sourceTree = "<group>"; };
+		E9AE7F1A29BDE9CC008D9F33 /* DIMUploadTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMUploadTask.m; sourceTree = "<group>"; };
+		E9AE7F1D29BDE9DE008D9F33 /* DIMDownloadTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMDownloadTask.h; sourceTree = "<group>"; };
+		E9AE7F1E29BDE9DE008D9F33 /* DIMDownloadTask.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMDownloadTask.m; sourceTree = "<group>"; };
 		E9AEFADB29BB3C9D00B97E7E /* STCommonGate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STCommonGate.h; sourceTree = "<group>"; };
 		E9AEFADC29BB3C9D00B97E7E /* STCommonGate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STCommonGate.m; sourceTree = "<group>"; };
 		E9AEFADF29BB3F0C00B97E7E /* STStreamHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STStreamHub.h; sourceTree = "<group>"; };
@@ -254,6 +264,8 @@
 		E9D71F0625BB298900773ED1 /* hulk_profile.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = hulk_profile.js; sourceTree = "<group>"; };
 		E9D71F0725BB298900773ED1 /* moki_meta.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = moki_meta.js; sourceTree = "<group>"; };
 		E9D71F0825BB298900773ED1 /* moki_profile.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = moki_profile.js; sourceTree = "<group>"; };
+		E9DBAD0129BEDEF10077C513 /* DIMClientFacebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DIMClientFacebook.h; sourceTree = "<group>"; };
+		E9DBAD0229BEDEF10077C513 /* DIMClientFacebook.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DIMClientFacebook.m; sourceTree = "<group>"; };
 		E9E8248322475AFD00A029F1 /* NSObject+Threading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Threading.h"; sourceTree = "<group>"; };
 		E9E8248422475AFD00A029F1 /* NSObject+Threading.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Threading.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -398,6 +410,10 @@
 				E9AEFAE929BB45F500B97E7E /* DIMGateKeeper.m */,
 				E9AEFAEC29BB461A00B97E7E /* DIMBaseSession.h */,
 				E9AEFAED29BB461A00B97E7E /* DIMBaseSession.m */,
+				E9AE7F1929BDE9CC008D9F33 /* DIMUploadTask.h */,
+				E9AE7F1A29BDE9CC008D9F33 /* DIMUploadTask.m */,
+				E9AE7F1D29BDE9DE008D9F33 /* DIMDownloadTask.h */,
+				E9AE7F1E29BDE9DE008D9F33 /* DIMDownloadTask.m */,
 				E9B0285E29BC426C003A4271 /* DIMFileServer.h */,
 				E9B0285F29BC426C003A4271 /* DIMFileServer.m */,
 			);
@@ -418,6 +434,8 @@
 				E9AEFB7729BB9B9B00B97E7E /* DIMClientMessageProcessor.m */,
 				E9AEFB7A29BB9B9B00B97E7E /* DIMClientMessenger.h */,
 				E9AEFB7829BB9B9B00B97E7E /* DIMClientMessenger.m */,
+				E9DBAD0129BEDEF10077C513 /* DIMClientFacebook.h */,
+				E9DBAD0229BEDEF10077C513 /* DIMClientFacebook.m */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -561,6 +579,7 @@
 				E9AEFB3129BB774300B97E7E /* DIMReceiptCommand.h in Headers */,
 				E9AEFAEA29BB45F500B97E7E /* DIMGateKeeper.h in Headers */,
 				E9B0285C29BC2B83003A4271 /* DIMClientSession+State.h in Headers */,
+				E9DBAD0329BEDEF10077C513 /* DIMClientFacebook.h in Headers */,
 				E9AEFB7429BB786700B97E7E /* DIMAnsCommandProcessor.h in Headers */,
 				E9AEFB2D29BB774300B97E7E /* DIMBlockCommand.h in Headers */,
 				E9AEFB6129BB786700B97E7E /* DIMQuitCommandProcessor.h in Headers */,
@@ -575,6 +594,8 @@
 				E9AEFB2929BB774300B97E7E /* DIMCommonFacebook.h in Headers */,
 				E9AEFB3629BB774300B97E7E /* DIMReportCommand.h in Headers */,
 				E9B0285429BC1ADE003A4271 /* STStreamDeparture.h in Headers */,
+				E9AE7F1B29BDE9CC008D9F33 /* DIMUploadTask.h in Headers */,
+				E9AE7F1F29BDE9DE008D9F33 /* DIMDownloadTask.h in Headers */,
 				E9AEFAF729BB4C1F00B97E7E /* DIMClientSession.h in Headers */,
 				E9AEFB7529BB786700B97E7E /* DIMGroupCommandProcessor.h in Headers */,
 				E9AEFB7129BB786700B97E7E /* DIMHistoryProcessor.h in Headers */,
@@ -750,6 +771,7 @@
 				E9B0286529BC4A1D003A4271 /* DIMClientMessagePacker.m in Sources */,
 				E9AEFB3C29BB774300B97E7E /* DIMCommonFacebook.m in Sources */,
 				E9AEFB3729BB774300B97E7E /* DIMLoginCommand.m in Sources */,
+				E9AE7F2029BDE9DE008D9F33 /* DIMDownloadTask.m in Sources */,
 				E9AEFB3929BB774300B97E7E /* DIMMuteCommand.m in Sources */,
 				E9AEFB3029BB774300B97E7E /* DIMReportCommand.m in Sources */,
 				E9AEFB7329BB786700B97E7E /* DIMCreator.m in Sources */,
@@ -757,6 +779,7 @@
 				E9B0285929BC1AF2003A4271 /* STStreamDocker.m in Sources */,
 				E9AEFB5F29BB786700B97E7E /* DIMHistoryProcessor.m in Sources */,
 				E9AEFB6929BB786700B97E7E /* DIMInviteCommandProcessor.m in Sources */,
+				E9AE7F1C29BDE9CC008D9F33 /* DIMUploadTask.m in Sources */,
 				E9AEFB2C29BB774300B97E7E /* DIMHandshakeCommand.m in Sources */,
 				E9AEFB6729BB786700B97E7E /* DIMQuitCommandProcessor.m in Sources */,
 				E9AEFB6F29BB786700B97E7E /* DIMReceiptCommandProcessor.m in Sources */,
@@ -764,6 +787,7 @@
 				E9AEFB6229BB786700B97E7E /* DIMResetCommandProcessor.m in Sources */,
 				E91FE16C2588C5F700B45E68 /* NSDictionary+Binary.m in Sources */,
 				E9AEFB3829BB774300B97E7E /* DIMReceiptCommand.m in Sources */,
+				E9DBAD0429BEDEF10077C513 /* DIMClientFacebook.m in Sources */,
 				E97816D42223EB4700BCE3AD /* DIMTerminal.m in Sources */,
 				E9AEFB6B29BB786700B97E7E /* DIMGroupCommandProcessor.m in Sources */,
 				E9AEFB2329BB774300B97E7E /* DIMAccountDBI.m in Sources */,

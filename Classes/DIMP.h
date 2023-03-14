@@ -139,6 +139,7 @@ FOUNDATION_EXPORT const unsigned char DIMPVersionString[];
 #import <DIMP/DIMClientMessagePacker.h>
 #import <DIMP/DIMClientMessageProcessor.h>
 #import <DIMP/DIMClientMessenger.h>
+#import <DIMP/DIMClientFacebook.h>
 
 
 #import <DIMP/MKMAnonymous.h>

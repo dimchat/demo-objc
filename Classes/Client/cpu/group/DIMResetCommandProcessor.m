@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMClientFacebook.h"
+
 #import "DIMResetCommandProcessor.h"
 
 @implementation DIMResetGroupCommandProcessor
@@ -55,7 +57,7 @@
         if (![facebook metaForID:item]) {
             // TODO: waiting for member's meta?
             continue;
-        } else if (![facebook group:group isOwner:item]) {
+        } else if (![facebook isOwner:item group:group]) {
             // not owner, skip it
             continue;
         }

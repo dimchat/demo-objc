@@ -28,27 +28,37 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMClientSession.h
+//  DIMUploadTask.h
 //  DIMP
 //
-//  Created by Albert Moky on 2023/3/10.
+//  Created by Albert Moky on 2023/3/12.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMBaseSession.h>
+#import <StarTrek/StarTrek.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMClientSession : DIMSession
+@interface DIMUploadTask : NSURLSessionUploadTask <FSMRunnable>
 
-@property(nonatomic, readonly) __kindof id<MKMStation> station;
-
-// session key
-- (void)setKey:(nullable NSString *)key;
-
-- (instancetype)initWithDatabase:(id<DIMSessionDBI>)db station:(id<MKMStation>)server;
-
-- (void)start;
+//@property(nonatomic, readonly) NSString *url;  // URL string
+//@property(nonatomic, readonly) NSString *var;  // var name
+//@property(nonatomic, readonly) NSString *filename;
+//@property(nonatomic, readonly) NSData   *data; // file data
+//
+///**
+// *  Upload data to URL with filename and variable name in form
+// *
+// * @param url      - API
+// * @param name     - variable name in form
+// * @param filename - file name
+// * @param data     - file data
+// */
+//- (instancetype)initWithURL:(NSString *)url
+//                        var:(NSString *)name
+//                   filename:(NSString *)filename
+//                       data:(NSData *)data
+//NS_DESIGNATED_INITIALIZER;
 
 @end
 

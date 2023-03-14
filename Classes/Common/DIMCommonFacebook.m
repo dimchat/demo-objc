@@ -35,9 +35,6 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "MKMAnonymous.h"
-#import "DIMRegister.h"
-
 #import "DIMCommonFacebook.h"
 
 @interface DIMCommonFacebook () {
@@ -174,7 +171,7 @@
         return nil;
     }
     /*/
-    return [_database documentForID:ID withType:type];
+    return [_database documentForID:ID type:type];
 }
 
 //
@@ -183,7 +180,7 @@
 
 // Override
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user {
-    return [_database contactsForUser:user];
+    return [_database contactsOfUser:user];
 }
 
 // Override
@@ -243,81 +240,6 @@
         return bots;
     }
     return [super assistantsOfGroup:group];
-}
-
-@end
-
-#pragma mark - IDFactory
-
-static DIMAddressNameServer *_ans = nil;
-static id<MKMIDFactory> _idFactory = nil;
-
-@interface IDFactory : NSObject <MKMIDFactory>
-
-@end
-
-@implementation IDFactory
-
-- (nonnull id<MKMID>)createID:(nullable NSString *)name
-                      address:(id<MKMAddress>)address
-                     terminal:(nullable NSString *)location {
-    return [_idFactory createID:name address:address terminal:location];
-}
-
-- (nonnull id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta
-                                   type:(MKMEntityType)network
-                               terminal:(nullable NSString *)location {
-    return [_idFactory generateIDWithMeta:meta type:network terminal:location];
-}
-
-- (nullable id<MKMID>)parseID:(nonnull NSString *)identifier {
-    // try ANS record
-    id<MKMID> ID = [_ans getID:identifier];
-    if (ID) {
-        return ID;
-    }
-    // parse by original factory
-    return [_idFactory parseID:identifier];
-}
-
-@end
-
-#pragma mark - Client Facebook
-
-@implementation DIMCommonFacebook (Client)
-
-- (NSString *)nameForID:(id<MKMID>)ID {
-    // get name from document
-    id<MKMDocument> doc = [self documentForID:ID type:@"*"];
-    if (doc) {
-        NSString *name = [doc name];
-        if ([name length] > 0) {
-            return name;
-        }
-    }
-    // get name from ID
-    return [MKMAnonymous name:ID];
-}
-
-+ (DIMAddressNameServer *)ans {
-    return _ans;
-}
-
-+ (void)setANS:(DIMAddressNameServer *)ans {
-    _ans = ans;
-}
-
-+ (void)prepare {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-
-        // load plugins
-        [DIMRegister prepare];
-        
-        _idFactory = MKMIDGetFactory();
-        MKMIDSetFactory([[IDFactory alloc] init]);
-        
-    });
 }
 
 @end
