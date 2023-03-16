@@ -32,9 +32,9 @@ Pod::Spec.new do |s|
     s.dependency 'DaoKeDao', '~> 0.6.3'
     s.dependency 'MingKeMing', '~> 0.6.3'
 
-    s.dependency 'StarTrek', '~> 0.1.1'
-    s.dependency 'FiniteStateMachine', '~> 2.2.3'
-    s.dependency 'ObjectKey', '~> 0.1.2'
+    s.dependency 'StarTrek', '~> 0.1.2'
+    s.dependency 'FiniteStateMachine', '~> 2.2.4'
+    s.dependency 'ObjectKey', '~> 0.1.3'
 
     # s.vendored_frameworks    = 'Frameworks/MarsGate.framework'
 end

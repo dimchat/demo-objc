@@ -39,6 +39,74 @@
 
 #import "DIMClientSession.h"
 
+static NSData *sn_start = nil;
+static NSData *sn_end = nil;
+
+static inline NSData *fetch_sn(NSData *data) {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sn_start = MKMUTF8Encode(@"Mars SN:");
+        sn_end = MKMUTF8Encode(@"\n");
+    });
+
+    NSData *sn = nil;
+    NSRange range = NSMakeRange(0, sn_start.length);
+    if (data.length > sn_start.length && [[data subdataWithRange:range] isEqualToData:sn_start]) {
+        range = NSMakeRange(0, data.length);
+        range = [data rangeOfData:sn_end options:0 range:range];
+        if (range.location > sn_start.length) {
+            range = NSMakeRange(0, range.location + range.length);
+            sn = [data subdataWithRange:range];
+        }
+    }
+    return sn;
+}
+
+static inline NSData *merge_data(NSData *data1, NSData *data2) {
+    NSUInteger len1 = data1.length;
+    NSUInteger len2 = data2.length;
+    if (len1 == 0) {
+        return data2;
+    } else if (len2 == 0) {
+        return data1;
+    }
+    NSMutableData *mData = [[NSMutableData alloc] initWithCapacity:(len1 + len2)];
+    [mData appendData:data1];
+    [mData appendData:data2];
+    return mData;
+}
+
+static inline bool starts_with(NSData *data, unsigned char b) {
+    if ([data length] == 0) {
+        return false;
+    }
+    unsigned char *buffer = (unsigned char *)[data bytes];
+    return buffer[0] == b;
+}
+
+static inline NSArray<NSData *> *split_lines(NSData *data) {
+    NSMutableArray *mArray = [[NSMutableArray alloc] init];
+    [data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *stop) {
+        unsigned char *buffer = (unsigned char *)bytes;
+        NSUInteger pos1 = byteRange.location, pos2;
+        while (pos1 < byteRange.length) {
+            pos2 = pos1;
+            while (pos2 < byteRange.length) {
+                if (buffer[pos2] == '\n') {
+                    break;
+                } else {
+                    ++pos2;
+                }
+            }
+            if (pos2 > pos1) {
+                [mArray addObject:[data subdataWithRange:NSMakeRange(pos1, pos2 - pos1)]];
+            }
+            pos1 = pos2 + 1;  // skip '\n'
+        }
+    }];
+    return mArray;
+}
+
 @interface DIMClientSession () {
     
     NSString *_key;
@@ -125,47 +193,59 @@
 // Override
 - (void)docker:(id<STDocker>)worker receivedShip:(id<STArrival>)arrival {
     //[super docker:worker receivedShip:arrival];
-    NSMutableArray<NSData *> *allResponses = [[NSMutableArray alloc] init];
+    STStreamArrival *ship = (STStreamArrival *)arrival;
+    NSData *data = [ship payload];
+    
+    // 0. fetch SN from data head
+    NSData *head = fetch_sn(data);
+    if (head.length > 0) {
+        NSRange range = NSMakeRange(head.length, data.length - head.length);
+        data = [data subdataWithRange:range];
+    }
+    
+    // 1. split data when multi packages received one time
+    NSArray<NSData *> *packages;
+    if ([data length] == 0) {
+        packages = @[];
+    } else if (starts_with(data, '{')) {
+        // JSON format
+        //     the data buffer may contain multi messages (separated by '\n'),
+        //     so we should split them here.
+        packages = split_lines(data);
+    } else {
+        // FIXME: other format?
+        packages = @[data];
+    }
+    
     DIMMessenger *messenger = [self messenger];
-    // 1. get data packages from arrival ship's payload
-    NSArray<NSData *> *packages = [self dataPackagesFromArrivalShip:arrival];
+    // 2. process package data one by one
+    NSData *SEPARATOR = MKMUTF8Encode(@"\n");
+    NSMutableData *mData = [[NSMutableData alloc] init];
     NSArray<NSData *> *responses;
     for (NSData *pack in packages) {
-        @try {
-            // 2. process each data package
-            responses = [messenger processData:pack];
-            for (NSData *res in responses) {
-                if ([res length] == 0) {
-                    // should not happen
-                    continue;
-                }
-                [allResponses addObject:res];
-            }
-        } @catch (NSException *ex) {
-            NSLog(@"process error: %@", ex);
-        } @finally {
+        responses = [messenger processData:pack];
+        // combine responses
+        for (NSData *res in responses) {
+            [mData appendData:res];
+            [mData appendData:SEPARATOR];
         }
     }
-    STCommonGate *gate = [self gate];
-    id<NIOSocketAddress> source = [worker remoteAddress];
-    id<NIOSocketAddress> destination = [worker localAddress];
-    // 3. send responses separately
-    for (NSData *res in responses) {
-        [gate sendResponse:res forArrivalShip:arrival
-             remoteAddress:source localAddress:destination];
-    }
-}
-
-// private
-- (NSArray<NSData *> *)dataPackagesFromArrivalShip:(id<STArrival>)arrival {
-    STStreamArrival *ship = (STStreamArrival *)arrival;
-    NSData *payload = [ship payload];
-    // check payload
-    if ([payload length] == 0) {
-        return nil;
+    if ([mData length] > 0) {
+        // drop last '\n'
+        data = [mData subdataWithRange:NSMakeRange(0, [mData length] - 1)];
     } else {
-        // TODO: split lines
-        return @[payload];
+        data = nil;
+    }
+    if (head.length > 0 || [data length] > 0) {
+        // NOTICE: sending 'SN' back to the server for confirming
+        //         that the client have received the pushing message
+        STCommonGate *gate = [self gate];
+        id<NIOSocketAddress> source = [worker remoteAddress];
+        id<NIOSocketAddress> destination = [worker localAddress];
+        [gate sendResponse:merge_data(head, data)
+            forArrivalShip:arrival
+             remoteAddress:source
+              localAddress:destination];
     }
 }
 

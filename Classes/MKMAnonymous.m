@@ -89,6 +89,9 @@ static inline NSString *name_from_type(MKMEntityType network) {
 }
 
 + (UInt32)number:(id<MKMAddress>)address {
+    if ([address isBroadcast]) {
+        return 0;
+    }
     if ([address isKindOfClass:[MKMAddressBTC class]]) {
         return btc_number(address.string);
     }

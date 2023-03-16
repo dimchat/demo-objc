@@ -151,13 +151,12 @@
 - (BOOL)sendResponse:(NSData *)payload forArrivalShip:(id<STArrival>)income
        remoteAddress:(id<NIOSocketAddress>)remote
         localAddress:(id<NIOSocketAddress>)local {
-    // TODO: pack payload and call docker to send out
-//    id<STDocker> docker = [self dockerForAdvanceParty:nil
-//                                        remoteAddress:remote
-//                                         localAddress:local];
-//    //NSAssert([docker isKindOfClass:[STStreamDocker class]], @"docker error: %@", docker);
-    NSAssert(false, @"override me!");
-    return NO;
+    // pack payload and call docker to send out
+    id<STDocker> docker = [self dockerForAdvanceParty:nil
+                                        remoteAddress:remote
+                                         localAddress:local];
+    NSAssert([docker isKindOfClass:[STStreamDocker class]], @"docker error: %@", docker);
+    return [docker sendData:payload];
 }
 
 @end
@@ -167,7 +166,7 @@
 // Override
 - (id<STDocker>)createDockerWithConnection:(id<STConnection>)conn
                               advanceParty:(NSArray<NSData *> *)data {
-    STPlainDocker *docker = [[STPlainDocker alloc] initWithConnection:conn];
+    STStreamDocker *docker = [[STStreamDocker alloc] initWithConnection:conn];
     [docker setDelegate:self.delegate];
     return docker;
 }
