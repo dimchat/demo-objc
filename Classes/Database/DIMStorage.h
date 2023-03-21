@@ -35,30 +35,19 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMP.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMStorage : NSObject
 
-@property (readonly, strong, nonatomic) NSString *documentDirectory;
-@property (readonly, strong, nonatomic) NSString *cachesDirectory;
-@property (readonly, strong, nonatomic) NSString *temporaryDirectory;
-
-- (nullable NSDictionary *)dictionaryWithContentsOfFile:(NSString *)path;
-- (BOOL)dictionary:(NSDictionary *)dict writeToBinaryFile:(NSString *)path;
-
-- (nullable NSArray *)arrayWithContentsOfFile:(NSString *)path;
-- (BOOL)array:(NSArray *)list writeToFile:(NSString *)path;
-
-@end
-
-@interface DIMStorage (Application)
-
+// "{HOME}/Documents"
 + (NSString *)documentDirectory;
 
+// "{HOME}/Library/Caches"
 + (NSString *)cachesDirectory;
 
+// "{HOME}/tmp"
 + (NSString *)temporaryDirectory;
 
 @end
@@ -74,6 +63,53 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath;
 
 + (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath;
+
+@end
+
+@interface DIMStorage (Serialization)
+
++ (nullable NSDictionary *)dictionaryWithContentsOfFile:(NSString *)path;
++ (BOOL)dictionary:(NSDictionary *)dict writeToBinaryFile:(NSString *)path;
+
++ (nullable NSArray *)arrayWithContentsOfFile:(NSString *)path;
++ (BOOL)array:(NSArray *)list writeToFile:(NSString *)path;
+
+@end
+
+@interface DIMStorage (LocalCache)
+
+/**
+ *  Avatar image file path
+ *
+ * @param filename - image filename: hex(md5(data)) + ext
+ * @return "Library/Caches/avatar/{AA}/{BB}/{filename}"
+ */
++ (NSString *)avatarPathWithFilename:(NSString *)filename;
+
+/**
+ *  Cached file path
+ *  (image, audio, video, ...)
+ *
+ * @param filename - messaged filename: hex(md5(data)) + ext
+ * @return "Library/Caches/files/{AA}/{BB}/{filename}"
+ */
++ (NSString *)cachePathWithFilename:(NSString *)filename;
+
+/**
+ *  Encrypted data file path
+ *
+ * @param filename - messaged filename: hex(md5(data)) + ext
+ * @return "tmp/upload/{filename}"
+ */
++ (NSString *)uploadPathWithFilename:(NSString *)filename;
+
+/**
+ *  Encrypted data file path
+ *
+ * @param filename - messaged filename: hex(md5(data)) + ext
+ * @return "tmp/download/{filename}"
+ */
++ (NSString *)downloadPathWithFilename:(NSString *)filename;
 
 @end
 

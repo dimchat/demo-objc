@@ -37,7 +37,7 @@
 
 #import "DIMFileTask.h"
 
-static const NSTimeInterval TASK_EXPIRES = 30.0;
+static const NSTimeInterval TASK_EXPIRES = 300.0;
 
 @interface DIMFileTransferTask () {
     
@@ -103,29 +103,6 @@ static const NSTimeInterval TASK_EXPIRES = 30.0;
     if (_flag == 1) {
         _flag = 2;
     }
-}
-
-// Override
-- (void)run {
-    NSAssert(false, @"override me!");
-}
-
-// Override
-- (BOOL)isEqual:(id)object {
-    if ([object isKindOfClass:[DIMFileTransferTask class]]) {
-        if (self == object) {
-            // same object
-            return YES;
-        }
-        DIMFileTransferTask *other = (DIMFileTransferTask *)object;
-        return [other.url isEqual:_url] && [other.path isEqualToString:_path];
-    }
-    return NO;
-}
-
-// Override
-- (NSUInteger)hash {
-    return [_url hash] * 13 + [_path hash];
 }
 
 // "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1";

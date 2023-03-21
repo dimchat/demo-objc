@@ -39,6 +39,70 @@
 
 #import "DIMUploadTask.h"
 
+@interface DIMUploadRequest ()
+
+@property(nonatomic, strong) NSData *secret;
+
+@property(nonatomic, strong) const NSString *name;
+
+@property(nonatomic, strong) id<MKMID> sender;
+
+@property(nonatomic, weak) id<DIMUploadDelegate> delegate;
+
+@end
+
+@implementation DIMUploadRequest
+
+- (instancetype)initWithURL:(NSURL *)url
+                       path:(NSString *)path
+                     secret:(NSData *)key
+                       name:(const NSString *)var
+                     sender:(id<MKMID>)from
+                   delegate:(id<DIMUploadDelegate>)callback {
+    if (self = [super initWithURL:url path:path]) {
+        self.secret = key;
+        self.name = var;
+        self.sender = from;
+        self.delegate = callback;
+    }
+    return self;
+}
+
+// Override
+- (BOOL)isEqual:(id)object {
+    if ([object isKindOfClass:[DIMUploadRequest class]]) {
+        if (self == object) {
+            // same object
+            return YES;
+        }
+        DIMUploadRequest *other = (DIMUploadRequest *)object;
+        return [other.path isEqualToString:self.path];
+    }
+    return NO;
+}
+
+// Override
+- (NSUInteger)hash {
+    return [self.path hash];
+}
+
+static NSString *format = @"<%@ api=\"%@\" sender=\"%@\" name=\"%@\" path=\"%@\" />";
+
+// Override
+- (NSString *)description {
+    return [NSString stringWithFormat:format,
+            [self class], [self url], [self sender], [self name], [self path]];
+}
+
+// Override
+- (NSString *)debugDescription {
+    return [self description];
+}
+
+@end
+
+#pragma mark -
+
 //-------- HTTP --------
 #define C_BOUNDARY              "BU1kUJ19yLYPqv5xoT3sbKYbHwjUu1JU7roix"
 #define C_CONTENT_TYPE          "multipart/form-data; boundary=" C_BOUNDARY
@@ -76,9 +140,8 @@ static inline NSURLRequest *http_request(NSURL *url) {
 
 @interface DIMUploadTask ()
 
-@property(nonatomic, strong) const NSString *name;  // variable name in form
-
-@property(nonatomic, weak) id<DIMUploadDelegate> delegate;
+@property(nonatomic, strong) NSString *filename;
+@property(nonatomic, strong) NSData *data;
 
 @property(nonatomic, strong) NSURLSessionUploadTask *sessionTask;
 
@@ -87,12 +150,21 @@ static inline NSURLRequest *http_request(NSURL *url) {
 @implementation DIMUploadTask
 
 - (instancetype)initWithURL:(NSURL *)url
-                       path:(NSString *)path
-                       name:(const NSString *)name
+                       name:(const NSString *)var
+                   filename:(NSString *)filename
+                       data:(NSData *)data
                    delegate:(id<DIMUploadDelegate>)delegate {
-    if (self = [super initWithURL:url path:path]) {
-        self.name = name;
-        self.delegate = delegate;
+    NSString *path = nil;
+    NSData *secret = nil;
+    id<MKMID> sender = nil;
+    if (self = [super initWithURL:url
+                             path:path
+                           secret:secret
+                             name:var
+                           sender:sender
+                         delegate:delegate]) {
+        self.filename = filename;
+        self.data = data;
         self.sessionTask = nil;
     }
     return self;
@@ -117,11 +189,25 @@ static inline NSURLRequest *http_request(NSURL *url) {
         NSLog(@"HTTP upload task complete: %@, %@, %@", res, error, MKMUTF8Decode(data));
         if (error) {
             [strongSelf onError];
-            [strongSelf.delegate uploadTask:strongSelf successWithResponse:data];
-        } else {
-            [strongSelf onSuccess];
-            [strongSelf.delegate uploadTask:strongSelf failedWithError:error];
+            [strongSelf.delegate uploadTask:strongSelf onError:error];
+            [strongSelf onFinished];
+            return;
         }
+        NSURL *url;
+        @try {
+            NSString *json = MKMUTF8Decode(data);
+            NSDictionary *info = MKMJSONDecode(json);
+            NSString *urlString = [info objectForKey:@"url"];
+            url = [[NSURL alloc] initWithString:urlString];
+        } @catch (NSException *e) {
+            [strongSelf onError];
+            [strongSelf.delegate uploadTask:strongSelf onFailed:e];
+            [strongSelf onFinished];
+            return;
+        } @finally {
+        }
+        [strongSelf onSuccess];
+        [strongSelf.delegate uploadTask:strongSelf onSuccess:url];
         [strongSelf onFinished];
     }];
     
@@ -133,13 +219,9 @@ static inline NSURLRequest *http_request(NSURL *url) {
 // Override
 - (void)run {
     [self touch];
-    
-    NSString *path = [self path];
-    NSString *filename = [path lastPathComponent];
-    NSData *data = [[NSData alloc] initWithContentsOfFile:path];
 
     // start upload task
-    [self post:data filename:filename formVar:self.name url:self.url];
+    [self post:self.data filename:self.filename formVar:self.name url:self.url];
 }
 
 #pragma mark NSURLSessionTaskDelegate

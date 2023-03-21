@@ -39,7 +39,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMDownloadTask : DIMFileTransferTask
+/**
+ *  Download Request
+ *  ~~~~~~~~~~~~~~~~
+ *  waiting task
+ *
+ *  properties:
+ *      url      - remote URL
+ *      path     - temporary file path
+ *      delegate - callback
+ */
+@interface DIMDownloadRequest : DIMFileTransferTask
 
 @property(nonatomic, readonly, weak) id<DIMDownloadDelegate> delegate;
 
@@ -54,6 +64,20 @@ NS_ASSUME_NONNULL_BEGIN
                        path:(NSString *)path
                    delegate:(id<DIMDownloadDelegate>)delegate
 NS_DESIGNATED_INITIALIZER;
+
+@end
+
+/**
+ *  Download Task
+ *  ~~~~~~~~~~~~~
+ *  running task
+ *
+ *  properties:
+ *      url      - remote URL
+ *      path     - temporary file path
+ *      delegate - HTTP client
+ */
+@interface DIMDownloadTask : DIMDownloadRequest <FSMRunnable>
 
 @end
 

@@ -39,25 +39,63 @@
 
 #import "DIMDownloadTask.h"
 
-@interface DIMDownloadTask ()
+@interface DIMDownloadRequest ()
 
 @property(nonatomic, weak) id<DIMDownloadDelegate> delegate;
 
-@property(nonatomic, strong) NSURLSessionDownloadTask *sessionTask;
-
 @end
 
-@implementation DIMDownloadTask
+@implementation DIMDownloadRequest
 
 - (instancetype)initWithURL:(NSURL *)url
                        path:(NSString *)path
                    delegate:(id<DIMDownloadDelegate>)delegate {
     if (self = [super initWithURL:url path:path]) {
         self.delegate = delegate;
-        self.sessionTask = nil;
     }
-    return self;;
+    return self;
 }
+
+// Override
+- (BOOL)isEqual:(id)object {
+    if ([object isKindOfClass:[DIMDownloadRequest class]]) {
+        if (self == object) {
+            // same object
+            return YES;
+        }
+        DIMDownloadRequest *other = (DIMDownloadRequest *)object;
+        return [other.url isEqual:self.url];
+    }
+    return NO;
+}
+
+// Override
+- (NSUInteger)hash {
+    return [self.url hash];
+}
+
+// Override
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@ url=\"%@\" path=\"%@\" />",
+            [self class], [self url], [self path]];
+}
+
+// Override
+- (NSString *)debugDescription {
+    return [self description];
+}
+
+@end
+
+#pragma mark -
+
+@interface DIMDownloadTask ()
+
+@property(nonatomic, strong) NSURLSessionDownloadTask *sessionTask;
+
+@end
+
+@implementation DIMDownloadTask
 
 // private
 - (void)get:(NSURL *)url {
@@ -77,7 +115,9 @@
         if (error) {
             // connection error
             [strongSelf onError];
-            [strongSelf.delegate downloadTask:strongSelf failedWithError:error];
+            [strongSelf.delegate downloadTask:strongSelf onError:error];
+            [strongSelf onFinished];
+            return;
         } else if ([res.MIMEType isEqualToString:@"text/html"]) {
             // server respond error
             NSData *data = [NSData dataWithContentsOfURL:loc];
@@ -86,25 +126,26 @@
             // TODO: get error code
             NSInteger code = 404;
             NSDictionary *info = @{
-                NSDebugDescriptionErrorKey: html,
+                @"html": html,
             };
             error = [NSError errorWithDomain:NSNetServicesErrorDomain
                                         code:code
                                     userInfo:info];
             [strongSelf onError];
-            [strongSelf.delegate downloadTask:strongSelf failedWithError:error];
+            [strongSelf.delegate downloadTask:strongSelf onError:error];
+            [strongSelf onFinished];
+            return;
+        }
+        // move to caches directory
+        NSString *path = self.path;
+        NSURL *dst = [NSURL fileURLWithPath:path];
+        NSFileManager *fm = [NSFileManager defaultManager];
+        if ([fm moveItemAtURL:loc toURL:dst error:&error]) {
+            [strongSelf onSuccess];
+            [strongSelf.delegate downloadTask:strongSelf onSuccess:path];
         } else {
-            // move to caches directory
-            NSString *path = self.path;
-            NSURL *dst = [NSURL fileURLWithPath:path];
-            NSFileManager *fm = [NSFileManager defaultManager];
-            if ([fm moveItemAtURL:loc toURL:dst error:&error]) {
-                [strongSelf onSuccess];
-                [strongSelf.delegate downloadTask:strongSelf successWithPath:path];
-            } else {
-                [strongSelf onError];
-                [strongSelf.delegate downloadTask:strongSelf failedWithError:error];
-            }
+            [strongSelf onError];
+            [strongSelf.delegate downloadTask:strongSelf onError:error];
         }
         [strongSelf onFinished];
     }];

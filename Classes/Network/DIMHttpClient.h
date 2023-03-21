@@ -35,6 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <DIMSDK/DIMSDK.h>
+
 #import <DIMP/DIMFileTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -44,58 +46,46 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMHttpClient : FSMRunner <DIMUploadDelegate, DIMDownloadDelegate>
 
-// @"https://sechat.dim.chat/{ID}/upload?md5={MD5}&salt={SALT}"
-@property(nonatomic, strong) NSString *uploadAPI;
-
-@property(nonatomic, strong) NSData *uploadSecret;  // md5(data + secret + salt)
-
-@property(nonatomic, readonly) NSString *avatarDirectory;  // "Library/Caches/.mkm/avatar"
-@property(nonatomic, readonly) NSString *cachesDirectory;  // "Library/Caches/.dkd/caches"
-
-@property(nonatomic, readonly) NSString *uploadDirectory;    // "tmp/.dkd/upload"
-@property(nonatomic, readonly) NSString *downloadDirectory;  // "tmp/.dkd/download"
-
-+ (instancetype)sharedInstance;
-
 - (void)start;
 
+// protected
+- (void)cleanup;
+
 @end
 
-@interface DIMHttpClient (EncryptedData)
-
-/*
- *  Try to upload encrypted file data for sending file message
- *
- * @param data     - encrypted file data
- * @param filename - filename, format: md5(data) + ext
- * @param from     - sender
- * @return download URL if it's already uploaded before, or just add a task and return nil
- */
-- (nullable NSURL *)uploadEncryptedData:(NSData *)data
-                               filename:(NSString *)filename
-                                 sender:(id<MKMID>)from
-                               delegate:(id<DIMUploadDelegate>)delegate;
+@interface DIMHttpClient (Common)
 
 /**
- *  Try to download encrypted file data for received file message
+ *  Add an upload task
  *
- * @param url - CDN URL
- * @return file data if it's already downloaded before, or just add a task and return nil
+ * @param api      - remote URL
+ * @param key      - authentication algorithm: hex(md5(data + secret + salt))
+ * @param data     - file data
+ * @param path     - temporary file path
+ * @param var      - form variable
+ * @param from     - message sender
+ * @param delegate - callback
+ * @return remote URL for downloading when same file already uploaded to CDN
  */
-- (nullable NSData *)downloadEncryptedDataFromURL:(NSURL *)url
-                                         delegate:(id<DIMDownloadDelegate>)delegate;
+- (nullable NSURL *)upload:(NSURL *)api
+                    secret:(NSData *)key
+                      data:(NSData *)data
+                      path:(NSString *)path
+                      name:(NSString *)var
+                    sender:(id<MKMID>)from
+                  delegate:(id<DIMUploadDelegate>)delegate;
 
-@end
-
-@interface DIMHttpClient (Avatar)
-
-- (nullable NSURL *)uploadAvatar:(NSData *)image
-                        filename:(NSString *)filename
-                          sender:(id<MKMID>)from
-                        delegate:(id<DIMUploadDelegate>)delegate;
-
-- (nullable NSData *)downloadAvatarFromURL:(NSURL *)url
-                                  delegate:(id<DIMDownloadDelegate>)delegate;
+/**
+ *  Add a download task
+ *
+ * @param url      - remote URL
+ * @param path     - temporary file path
+ * @param delegate - callback
+ * @return temporary file path when same file already downloaded from CDN
+ */
+- (nullable NSString *)download:(NSURL *)url
+                           path:(NSString *)path
+                       delegate:(id<DIMDownloadDelegate>)delegate;
 
 @end
 

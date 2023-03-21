@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, DIMFileTransferStatus) {
 /**
  *  Base Task
  */
-@interface DIMFileTransferTask : NSObject <FSMRunnable, NSURLSessionTaskDelegate>
+@interface DIMFileTransferTask : NSObject <NSURLSessionTaskDelegate>
 
 @property(nonatomic, readonly) NSURL *url;      // remote URL
 @property(nonatomic, readonly) NSString *path;  // local path
@@ -75,57 +75,62 @@ typedef NS_ENUM(NSInteger, DIMFileTransferStatus) {
 
 #pragma mark -
 
-@class DIMUploadTask;
-@class DIMDownloadTask;
+@class DIMUploadRequest;
+@class DIMDownloadRequest;
 
 @protocol DIMUploadDelegate <NSObject>
 
 /**
  *  Callback when upload task success
  *
- * @param task - upload task
- * @param html - server response
+ * @param req - upload task
+ * @param url - download URL responded by the server
  */
-- (void)uploadTask:(DIMUploadTask *)task successWithResponse:(NSData *)html;
+- (void)uploadTask:(__kindof DIMUploadRequest *)req onSuccess:(NSURL *)url;
 
 /**
  *  Callback when upload task failed
  *
- * @param task  - upload task
- * @param error - error info
+ * @param req - upload task
+ * @param e   - error info
  */
-- (void)uploadTask:(DIMUploadTask *)task failedWithError:(NSError *)error;
+- (void)uploadTask:(__kindof DIMUploadRequest *)req onFailed:(NSException *)e;
+
+/**
+ *  Callback when upload task error
+ *
+ * @param req - upload task
+ * @param e   - error info
+ */
+- (void)uploadTask:(__kindof DIMUploadRequest *)req onError:(NSError *)e;
 
 @end
 
-/**
- *  HTTP Delegate
- */
 @protocol DIMDownloadDelegate <NSObject>
 
 /**
  *  Callback when download task success
  *
- * @param task - download task
+ * @param req  - download task
  * @param path - temporary file path
  */
-- (void)downloadTask:(DIMDownloadTask *)task successWithPath:(NSString *)path;
+- (void)downloadTask:(__kindof DIMDownloadRequest *)req onSuccess:(NSString *)path;
 
 /**
  *  Callback when download task failed
  *
- * @param task  - download task
- * @param error - error info
+ * @param req - download task
+ * @param e   - error info
  */
-- (void)downloadTask:(DIMDownloadTask *)task failedWithError:(NSError *)error;
+- (void)downloadTask:(__kindof DIMDownloadRequest *)req onFailed:(NSException *)e;
 
 /**
  *  Callback when download task error
  *
- * @param task - download task
- * @param html - server response
+ * @param req - download task
+ * @param e   - server response
  */
-- (void)downloadTask:(DIMDownloadTask *)task errorWithResponse:(NSData *)html;
+- (void)downloadTask:(__kindof DIMDownloadRequest *)req onError:(NSError *)e;
 
 @end
 

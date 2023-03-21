@@ -35,65 +35,13 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <ObjectKey/ObjectKey.h>
+
+#import "NSDictionary+Binary.h"
+
 #import "DIMStorage.h"
 
 @implementation DIMStorage
-
-- (NSString *)documentDirectory {
-    return [DIMStorage documentDirectory];
-}
-
-- (NSString *)cachesDirectory {
-    return [DIMStorage cachesDirectory];
-}
-
-- (NSString *)temporaryDirectory {
-    return [DIMStorage temporaryDirectory];
-}
-
-- (nullable NSDictionary *)dictionaryWithContentsOfFile:(NSString *)path {
-    BOOL ok = [DIMStorage fileExistsAtPath:path];
-    if (!ok) {
-        NSLog(@"file not found: %@", path);
-        return nil;
-    }
-    return [NSDictionary dictionaryWithContentsOfFile:path];
-}
-
-- (BOOL)dictionary:(NSDictionary *)dict writeToBinaryFile:(NSString *)path {
-    // prepare directory
-    NSString *dir = [path stringByDeletingLastPathComponent];
-    BOOL ok = [DIMStorage createDirectoryAtPath:dir];
-    if (!ok) {
-        NSAssert(false, @"failed to create directory: %@", dir);
-        return NO;
-    }
-    return [dict writeToBinaryFile:path atomically:YES];
-}
-
-- (nullable NSArray *)arrayWithContentsOfFile:(NSString *)path {
-    BOOL ok = [DIMStorage fileExistsAtPath:path];
-    if (!ok) {
-        NSLog(@"file not found: %@", path);
-        return nil;
-    }
-    return [NSArray arrayWithContentsOfFile:path];
-}
-
-- (BOOL)array:(NSArray *)list writeToFile:(NSString *)path {
-    // prepare directory
-    NSString *dir = [path stringByDeletingLastPathComponent];
-    BOOL ok = [DIMStorage createDirectoryAtPath:dir];
-    if (!ok) {
-        NSAssert(false, @"failed to create directory: %@", dir);
-        return NO;
-    }
-    return [list writeToFile:path atomically:YES];
-}
-
-@end
-
-@implementation DIMStorage (Application)
 
 static NSString *s_documentDirectory = nil;
 
@@ -227,6 +175,78 @@ static NSString *s_temporaryDirectory = nil;
     }
     // Done!
     return YES;
+}
+
+@end
+
+@implementation DIMStorage (Serialization)
+
++ (nullable NSDictionary *)dictionaryWithContentsOfFile:(NSString *)path {
+    BOOL ok = [DIMStorage fileExistsAtPath:path];
+    if (!ok) {
+        NSLog(@"file not found: %@", path);
+        return nil;
+    }
+    return [NSDictionary dictionaryWithContentsOfFile:path];
+}
+
++ (BOOL)dictionary:(NSDictionary *)dict writeToBinaryFile:(NSString *)path {
+    // prepare directory
+    NSString *dir = [path stringByDeletingLastPathComponent];
+    BOOL ok = [DIMStorage createDirectoryAtPath:dir];
+    if (!ok) {
+        NSAssert(false, @"failed to create directory: %@", dir);
+        return NO;
+    }
+    return [dict writeToBinaryFile:path atomically:YES];
+}
+
++ (nullable NSArray *)arrayWithContentsOfFile:(NSString *)path {
+    BOOL ok = [DIMStorage fileExistsAtPath:path];
+    if (!ok) {
+        NSLog(@"file not found: %@", path);
+        return nil;
+    }
+    return [NSArray arrayWithContentsOfFile:path];
+}
+
++ (BOOL)array:(NSArray *)list writeToFile:(NSString *)path {
+    // prepare directory
+    NSString *dir = [path stringByDeletingLastPathComponent];
+    BOOL ok = [DIMStorage createDirectoryAtPath:dir];
+    if (!ok) {
+        NSAssert(false, @"failed to create directory: %@", dir);
+        return NO;
+    }
+    return [list writeToFile:path atomically:YES];
+}
+
+@end
+
+@implementation DIMStorage (LocalCache)
+
++ (NSString *)avatarPathWithFilename:(NSString *)filename {
+    NSString *dir = [self cachesDirectory];
+    NSString *AA = [filename substringWithRange:NSMakeRange(0, 2)];
+    NSString *BB = [filename substringWithRange:NSMakeRange(2, 4)];
+    return [NSString stringWithFormat:@"%@/avatar/%@/%@/%@", dir, AA, BB, filename];
+}
+
++ (NSString *)cachePathWithFilename:(NSString *)filename {
+    NSString *dir = [self cachesDirectory];
+    NSString *AA = [filename substringWithRange:NSMakeRange(0, 2)];
+    NSString *BB = [filename substringWithRange:NSMakeRange(2, 4)];
+    return [NSString stringWithFormat:@"%@/files/%@/%@/%@", dir, AA, BB, filename];
+}
+
++ (NSString *)uploadPathWithFilename:(NSString *)filename {
+    NSString *dir = [self temporaryDirectory];
+    return [NSString stringWithFormat:@"%@/upload/%@", dir, filename];
+}
+
++ (NSString *)downloadPathWithFilename:(NSString *)filename {
+    NSString *dir = [self temporaryDirectory];
+    return [NSString stringWithFormat:@"%@/download/%@", dir, filename];
 }
 
 @end

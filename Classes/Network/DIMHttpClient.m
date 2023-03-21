@@ -36,37 +36,10 @@
 //
 
 #import "DIMStorage.h"
+#import "DIMUploadTask.h"
+#import "DIMDownloadTask.h"
 
 #import "DIMHttpClient.h"
-
-@interface UploadReq : NSObject
-
-@property(nonatomic, strong) NSString *path;      // temporary path
-
-//@property(nonatomic, strong) NSData *data;        // encrypted file data
-@property(nonatomic, strong) NSString *filename;  // filename
-@property(nonatomic, strong) id<MKMID> sender;    // message sender
-@property(nonatomic, weak) id<DIMUploadDelegate> delegate;
-
-@property(nonatomic, strong) const NSString *name;      // form var
-@end
-
-@implementation UploadReq
-
-@end
-
-@interface DownloadReq : NSObject
-
-@property(nonatomic, strong) NSString *path;      // cache path
-
-@property(nonatomic, strong) NSURL *url;          // remote URL
-@property(nonatomic, weak) id<DIMDownloadDelegate> delegate;
-
-@end
-
-@implementation DownloadReq
-
-@end
 
 static inline NSData *random_data(NSUInteger size) {
     unsigned char *buf = malloc(size * sizeof(unsigned char));
@@ -75,13 +48,13 @@ static inline NSData *random_data(NSUInteger size) {
 }
 
 // hex(md5(data + secret + salt))
-static inline NSString *hash_data(NSData *data, NSData *secret, NSData *salt) {
+static inline NSData *hash_data(NSData *data, NSData *secret, NSData *salt) {
     NSUInteger len = data.length + secret.length + salt.length;
     NSMutableData *hash = [[NSMutableData alloc] initWithCapacity:len];
     [hash appendData:data];
     [hash appendData:secret];
     [hash appendData:salt];
-    return MKMHexEncode(MKMMD5Digest(hash));
+    return MKMMD5Digest(hash);
 }
 
 static inline NSString *make_filepath(NSString *dir, NSString *filename, BOOL autoCreate) {
@@ -123,12 +96,6 @@ static inline NSString *create_filename(NSData *data, NSString *filename) {
     }
 }
 
-// temporary filename for uploading data:
-//      hex(md5(data)) + ext
-static inline NSString *filename_from_data(NSData *data, NSString *filename) {
-    return create_filename(data, filename);
-}
-
 // cached filename for downloaded URL:
 //      hex(md5(url)) + ext
 static inline NSString *filename_from_url(NSURL *url) {
@@ -143,109 +110,74 @@ static inline NSString *filename_from_url(NSURL *url) {
     
     // cache for uploaded file's URL
     NSMutableDictionary<NSString *, NSURL *> *_cdn;     // filename => URL
-    // cache for downloaded file's path
-    NSMutableDictionary<NSURL *, NSString *> *_caches;  // URL => local path
 
     // requests waiting to upload/download
-    NSMutableArray<UploadReq *> *_uploads;
-    NSMutableArray<DownloadReq *> *_downloads;
+    NSMutableArray<DIMUploadRequest *>   *_uploads;
+    NSMutableArray<DIMDownloadRequest *> *_downloads;
     
     // tasks running
-    DIMUploadTask *_uploading;
-    DIMDownloadTask *_downloading;
+    DIMUploadTask      *_uploadingTask;
+    DIMUploadRequest   *_uploadingRequest;
+    DIMDownloadTask    *_downloadingTask;
+    DIMDownloadRequest *_downloadingRequest;
+    
+    id<FSMThread> _daemon;
 }
-
-@property(nonatomic, retain) id<FSMThread> daemon;
-
-@property(nonatomic, strong) NSString *avatarDirectory;
-@property(nonatomic, strong) NSString *cachesDirectory;
-
-@property(nonatomic, strong) NSString *uploadDirectory;
-@property(nonatomic, strong) NSString *downloadDirectory;
 
 @end
 
 @implementation DIMHttpClient
 
-OKSingletonImplementations(DIMHttpClient, sharedInstance)
-
 - (instancetype)init {
     if (self = [super init]) {
-        _cdn         = [[NSMutableDictionary alloc] init];
-        _caches      = [[NSMutableDictionary alloc] init];
+        _cdn       = [[NSMutableDictionary alloc] init];
         
-        _uploads     = [[NSMutableArray alloc] init];
-        _downloads   = [[NSMutableArray alloc] init];
+        _uploads   = [[NSMutableArray alloc] init];
+        _downloads = [[NSMutableArray alloc] init];
         
-        _uploading   = nil;
-        _downloading = nil;
+        _uploadingTask      = nil;
+        _uploadingRequest   = nil;
+        _downloadingTask    = nil;
+        _downloadingRequest = nil;
         
-        self.daemon = nil;
-        
-        self.avatarDirectory   = nil;
-        self.cachesDirectory   = nil;
-        self.uploadDirectory   = nil;
-        self.downloadDirectory = nil;
+        _daemon = nil;
     }
     return self;
 }
 
-- (NSString *)avatarDirectory {
-    if (!_avatarDirectory) {
-        NSString *dir = [DIMStorage cachesDirectory];
-        dir = [dir stringByAppendingPathComponent:@".mkm"];
-        dir = [dir stringByAppendingPathComponent:@"avatar"];
-        _avatarDirectory = dir;
-    }
-    return _avatarDirectory;
-}
-
-- (NSString *)cachesDirectory {
-    if (!_cachesDirectory) {
-        NSString *dir = [DIMStorage cachesDirectory];
-        dir = [dir stringByAppendingPathComponent:@".dkd"];
-        dir = [dir stringByAppendingPathComponent:@"caches"];
-        _cachesDirectory = dir;
-    }
-    return _cachesDirectory;
-}
-
-- (NSString *)uploadDirectory {
-    if (!_uploadDirectory) {
-        NSString *dir = [DIMStorage cachesDirectory];
-        dir = [dir stringByAppendingPathComponent:@".dkd"];
-        dir = [dir stringByAppendingPathComponent:@"upload"];
-        _uploadDirectory = dir;
-    }
-    return _uploadDirectory;
-}
-
-- (NSString *)downloadDirectory {
-    if (!_downloadDirectory) {
-        NSString *dir = [DIMStorage cachesDirectory];
-        dir = [dir stringByAppendingPathComponent:@".dkd"];
-        dir = [dir stringByAppendingPathComponent:@"download"];
-        _downloadDirectory = dir;
-    }
-    return _downloadDirectory;
-}
-
 - (void)start {
-    FSMThread *thread = [self daemon];
-    if (!thread) {
-        thread = [[FSMThread alloc] initWithTarget:self];
-        [thread start];
+    [self stop];
+    // start new thread
+    FSMThread *thread = [[FSMThread alloc] initWithTarget:self];
+    [thread start];
+    _daemon = thread;
+}
+
+// Override
+- (void)stop {
+    [super stop];
+    // wait for thread stop
+    FSMThread *thread = _daemon;
+    if (thread) {
+        [thread cancel];
+        [NSThread sleepForTimeInterval:1.0];
+        _daemon = nil;
     }
 }
 
 // Override
 - (BOOL)process {
     @try {
-        BOOL ok1 = [self driveUpload];
-        BOOL ok2 = [self driveDownload];
-        return ok1 || ok2;
+        // drive upload tasks as priority
+        if ([self driveUpload] || [self driveDownload]) {
+            // it's buszy
+            return YES;
+        } else {
+            // nothing to do now, cleanup temporary files
+            [self cleanup];
+        }
     } @catch (NSException *exception) {
-        
+        NSLog(@"HTTP Client error: %@", exception);
     } @finally {
         
     }
@@ -253,22 +185,47 @@ OKSingletonImplementations(DIMHttpClient, sharedInstance)
     return NO;
 }
 
+- (void)cleanup {
+    // clean expired temporary files for upload/download
+    NSAssert(false, @"override me!");
+}
+
 // private
 - (BOOL)driveUpload {
     // 1. check current task
-    DIMUploadTask *task = _uploading;
+    DIMUploadTask *task = _uploadingTask;
     if (task) {
         DIMFileTransferStatus status = [task status];
-        if (status == DIMFileTransferRunning || status == DIMFileTransferSuccess) {
-            // current task is still running (or calling delegate
-            return YES;
+        switch (status) {
+            case DIMFileTransferError:
+                NSLog(@"task error: %@", task);
+                break;
+                
+            case DIMFileTransferRunning:
+            case DIMFileTransferSuccess:
+                // task is busy now
+                return YES;
+                
+            case DIMFileTransferExpired:
+                NSLog(@"task expired: %@", task);
+                break;
+                
+            case DIMFileTransferFinished:
+                NSLog(@"task finished: %@", task);
+                break;
+                
+            default:
+                NSAssert(status == DIMFileTransferWaiting, @"unknown status: %lu", status);
+                NSLog(@"task status error: %@", task);
+                break;
         }
-        NSAssert(status != DIMFileTransferWaiting, @"status error: %ld", status);
-        _uploads = nil;
+        // remove task
+        _uploadingTask = nil;
+        _uploadingRequest = nil;
     }
     
     // 2. get next request
-    UploadReq *req;
+    DIMUploadRequest *req;
     @synchronized (_uploads) {
         req = [_uploads firstObject];
     }
@@ -277,37 +234,112 @@ OKSingletonImplementations(DIMHttpClient, sharedInstance)
         return NO;
     }
     
-    // 3. load data
+    // 3. check previous upload
     NSString *path = [req path];
+    NSString *filename = [path lastPathComponent];
+    NSURL *url;
+    @synchronized (_cdn) {
+        url = [_cdn objectForKey:filename];
+    }
+    if (url) {
+        id<DIMUploadDelegate> delegate = [req delegate];
+        [delegate uploadTask:req onSuccess:url];
+        // uploaded previously
+        return YES;
+    }
+    
     NSData *data = [[NSData alloc] initWithContentsOfFile:path];
-
-    NSData *secret = [self uploadSecret];
+    NSData *secret = [req secret];
     NSData *salt = random_data(16);
     // hex(md5(data + secret + salt))
-    NSString *hash = hash_data(data, secret, salt);
+    NSData *hash = hash_data(data, secret, salt);
 
-    id<MKMID> ID = [req sender];
-    
     // 4. build upload task
-    NSString *url = [self uploadAPI];
-    url = [url stringByReplacingOccurrencesOfString:@"{ID}" withString:[ID.address string]];
-    url = [url stringByReplacingOccurrencesOfString:@"{MD5}" withString:hash];
-    url = [url stringByReplacingOccurrencesOfString:@"{SALT}" withString:MKMHexEncode(salt)];
-    
-    task = [[DIMUploadTask alloc] initWithURL:[NSURL URLWithString:url]
-                                         path:req.path
+    NSString *string = [req.url absoluteString];
+    // "https://sechat.dim.chat/{ID}/upload?md5={MD5}&salt={SALT}"
+    id<MKMAddress> address = [req.sender address];
+    string = [string stringByReplacingOccurrencesOfString:@"{ID}"
+                                               withString:address.string];
+    string = [string stringByReplacingOccurrencesOfString:@"{MD5}"
+                                               withString:MKMHexEncode(hash)];
+    string = [string stringByReplacingOccurrencesOfString:@"{SALT}"
+                                               withString:MKMHexEncode(salt)];
+    task = [[DIMUploadTask alloc] initWithURL:[NSURL URLWithString:string]
                                          name:req.name
-                                     delegate:req.delegate];
-    _uploading = task;
+                                     filename:filename
+                                         data:data
+                                     delegate:self];
     
     // 5. run it
+    _uploadingRequest = req;
+    _uploadingTask = task;
     [task run];
     return YES;
 }
 
 // private
 - (BOOL)driveDownload {
-    return NO;
+    // 1. check running task
+    DIMDownloadTask *task = _downloadingTask;
+    if (task) {
+        DIMFileTransferStatus status = [task status];
+        switch (status) {
+            case DIMFileTransferError:
+                NSLog(@"task error: %@", task);
+                break;
+                
+            case DIMFileTransferRunning:
+            case DIMFileTransferSuccess:
+                // task is busy now
+                return YES;
+                
+            case DIMFileTransferExpired:
+                NSLog(@"task expired: %@", task);
+                break;
+                
+            case DIMFileTransferFinished:
+                NSLog(@"task finished: %@", task);
+                break;
+                
+            default:
+                NSAssert(status == DIMFileTransferWaiting, @"unknown status: %lu", status);
+                NSLog(@"task status error: %@", task);
+                break;
+        }
+        // remove task
+        _downloadingTask = nil;
+        _downloadingRequest = nil;
+    }
+    
+    // 2. get next request
+    DIMDownloadRequest *req;
+    @synchronized (_downloads) {
+        req = [_downloads firstObject];
+    }
+    if (!req) {
+        // nothing to download now
+        return NO;
+    }
+    
+    // 3. check previous download
+    NSString *path = [req path];
+    if ([DIMStorage fileExistsAtPath:path]) {
+        id<DIMDownloadDelegate> delegate = [req delegate];
+        [delegate downloadTask:req onSuccess:path];
+        // download previously
+        return YES;
+    }
+    
+    // 4. build download task
+    task = [[DIMDownloadTask alloc] initWithURL:req.url
+                                           path:req.path
+                                       delegate:req.delegate];
+    
+    // 5. run it
+    _downloadingRequest = req;
+    _downloadingTask = task;
+    [task run];
+    return YES;
 }
 
 // private
@@ -318,8 +350,9 @@ OKSingletonImplementations(DIMHttpClient, sharedInstance)
     NSString *filename = [task.path lastPathComponent];
     @synchronized (_uploads) {
         [_uploads enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                   usingBlock:^(UploadReq *req, NSUInteger idx, BOOL *stop) {
-            if ([filename isEqualToString:req.filename]) {
+                                   usingBlock:^(DIMUploadRequest *req, NSUInteger idx, BOOL *stop) {
+            NSString *target = [req.path lastPathComponent];
+            if ([filename isEqualToString:target]) {
                 [listeners addObject:req.delegate];
             }
         }];
@@ -332,11 +365,12 @@ OKSingletonImplementations(DIMHttpClient, sharedInstance)
     NSMutableSet<id<DIMDownloadDelegate>> *listeners = [[NSMutableSet alloc] init];
     [listeners addObject:task.delegate];
     // check other requests with same URL
-    NSURL *url = task.url;
+    NSString *filename = filename_from_url([task url]);
     @synchronized (_downloads) {
         [_downloads enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                   usingBlock:^(DownloadReq *req, NSUInteger idx, BOOL *stop) {
-            if ([url isEqual:req.url]) {
+                                   usingBlock:^(DIMDownloadRequest *req, NSUInteger idx, BOOL *stop) {
+            NSString *target = filename_from_url([req url]);
+            if ([filename isEqualToString:target]) {
                 [listeners addObject:req.delegate];
             }
         }];
@@ -346,45 +380,63 @@ OKSingletonImplementations(DIMHttpClient, sharedInstance)
 
 #pragma mark DIMUploadDelegate
 
-- (void)uploadTask:(DIMUploadTask *)task successWithResponse:(NSData *)html {
+- (void)uploadTask:(DIMUploadTask *)task onSuccess:(NSURL *)url {
+    // 1. cache upload result
+    if (url) {
+        [_cdn setObject:url forKey:task.filename];
+    }
     NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
+    // 2. callback
     [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
                                 usingBlock:^(id<DIMUploadDelegate> delegate, BOOL *stop) {
-        [delegate uploadTask:task successWithResponse:html];
+        [delegate uploadTask:task onSuccess:url];
     }];
 }
 
-- (void)uploadTask:(DIMUploadTask *)task failedWithError:(NSError *)error {
+- (void)uploadTask:(DIMUploadTask *)task onFailed:(NSException *)error {
     NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
+    // callback
     [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
                                 usingBlock:^(id<DIMUploadDelegate> delegate, BOOL *stop) {
-        [delegate uploadTask:task failedWithError:error];
+        [delegate uploadTask:task onFailed:error];
+    }];
+}
+
+- (void)uploadTask:(DIMUploadTask *)task onError:(NSError *)error {
+    NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
+    // callback
+    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
+                                usingBlock:^(id<DIMUploadDelegate> delegate, BOOL *stop) {
+        [delegate uploadTask:task onError:error];
     }];
 }
 
 #pragma mark DIMDownloadDelegate
 
-- (void)downloadTask:(DIMDownloadTask *)task successWithPath:(NSString *)filepath {
+- (void)downloadTask:(DIMDownloadTask *)task onSuccess:(NSString *)path {
     NSSet<id<DIMDownloadDelegate>> *listeners = [self listenersForDownload:task];
+    // callback
     [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
                                 usingBlock:^(id<DIMDownloadDelegate> delegate, BOOL *stop) {
-        [delegate downloadTask:task successWithPath:filepath];
+        [delegate downloadTask:task onSuccess:path];
     }];
 }
 
-- (void)downloadTask:(DIMDownloadTask *)task failedWithError:(NSError *)error {
+- (void)downloadTask:(DIMDownloadTask *)task onFailed:(NSException *)error {
     NSSet<id<DIMDownloadDelegate>> *listeners = [self listenersForDownload:task];
+    // callback
     [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
                                 usingBlock:^(id<DIMDownloadDelegate> delegate, BOOL *stop) {
-        [delegate downloadTask:task failedWithError:error];
+        [delegate downloadTask:task onFailed:error];
     }];
 }
 
-- (void)downloadTask:(DIMDownloadTask *)task errorWithResponse:(NSData *)html {
+- (void)downloadTask:(DIMDownloadTask *)task onError:(NSError *)error {
     NSSet<id<DIMDownloadDelegate>> *listeners = [self listenersForDownload:task];
+    // callback
     [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
                                 usingBlock:^(id<DIMDownloadDelegate> delegate, BOOL *stop) {
-        [delegate downloadTask:task errorWithResponse:html];
+        [delegate downloadTask:task onError:error];
     }];
 }
 
@@ -394,110 +446,68 @@ OKSingletonImplementations(DIMHttpClient, sharedInstance)
 
 @implementation DIMHttpClient (Common)
 
-- (nullable NSURL *)uploadFileData:(NSData *)data
-                     fromDirectory:(NSString *)dir
-                      withFilename:(NSString *)filename
-                              name:(const NSString *)var
-                            sender:(id<MKMID>)from
-                          delegate:(id<DIMUploadDelegate>)delegate {
+- (nullable NSURL *)upload:(NSURL *)api
+                    secret:(NSData *)key
+                      data:(NSData *)data
+                      path:(NSString *)path
+                      name:(NSString *)var
+                    sender:(id<MKMID>)from
+                  delegate:(id<DIMUploadDelegate>)delegate {
     // 1. check previous upload
+    NSString *filename = [path lastPathComponent];
+    NSURL *url;
     @synchronized (_cdn) {
-        NSURL *url = [_cdn objectForKey:filename];
-        if (url) {
-            // already uploaded
-            return url;
-        }
+        // filename in format: hex(md5(data)) + ext
+        url = [_cdn objectForKey:filename];
     }
+    if (url) {
+        // already uploaded
+        return url;
+    }
+    NSString *dir = [path stringByDeletingLastPathComponent];
+    
     // 2. save file data to the local path
-    NSString *path = make_filepath(dir, filename, YES);
-    [data writeToFile:path atomically:YES];
+    if (!make_filepath(dir, filename, YES)) {
+        NSAssert(false, @"failed to create directory: %@", dir);
+        return nil;
+    }
+    if (![data writeToFile:path atomically:YES]) {
+        NSAssert(false, @"failed to save binary: %@", path);
+        return nil;
+    }
+    
     // 3. build request
-    UploadReq *req = [[UploadReq alloc] init];
-    req.path = path;
-    req.filename = filename;
-    req.sender = from;
-    req.delegate = delegate;
-    req.name = var;
-    // 4. add task
+    DIMUploadRequest *req;
+    req = [[DIMUploadRequest alloc] initWithURL:api
+                                           path:path
+                                         secret:key
+                                           name:var
+                                         sender:from
+                                       delegate:delegate];
     @synchronized (_uploads) {
         [_uploads addObject:req];
     }
     return nil;
 }
 
-- (nullable NSData *)downloadFileDataFromURL:(NSURL *)url
-                                 toDirectory:(NSString *)dir
-                                withFilename:(NSString *)filename
-                                    delegate:(id<DIMDownloadDelegate>)delegate {
-    NSString *path = make_filepath(dir, filename, NO);
+- (nullable NSString *)download:(NSURL *)url
+                           path:(NSString *)path
+                       delegate:(id<DIMDownloadDelegate>)delegate {
     // 1. check previous download
     if ([DIMStorage fileExistsAtPath:path]) {
-        // already downloaded before
-        return [[NSData alloc] initWithContentsOfFile:path];
+        // already downloaded
+        return path;
     }
+    
     // 2. build request
-    DownloadReq *req = [[DownloadReq alloc] init];
-    req.url = url;
-    req.path = path;
-    req.delegate = delegate;
-    // 3. add task
+    DIMDownloadRequest *req;
+    req = [[DIMDownloadRequest alloc] initWithURL:url
+                                             path:path
+                                         delegate:delegate];
     @synchronized (_downloads) {
         [_downloads addObject:req];
     }
     return nil;
-}
-
-@end
-
-static const NSString *FORM_AVATAR = @"avatar";
-static const NSString *FORM_FILE   = @"file";
-
-@implementation DIMHttpClient (EncryptedData)
-
-- (nullable NSURL *)uploadEncryptedData:(NSData *)data
-                               filename:(NSString *)filename
-                                 sender:(id<MKMID>)from
-                               delegate:(id<DIMUploadDelegate>)delegate {
-    // save data to the temporary directory, and then upload it from there;
-    // after upload task success, the temporary file should be removed.
-    filename = filename_from_data(data, filename);
-    NSString *dir = [self uploadDirectory];
-    return [self uploadFileData:data fromDirectory:dir withFilename:filename
-                           name:FORM_FILE sender:from delegate:delegate];
-}
-
-- (nullable NSData *)downloadEncryptedDataFromURL:(NSURL *)url
-                                         delegate:(id<DIMDownloadDelegate>)delegate {
-    // download to the temporary directory, the delegate should decrypt it
-    // and move to caches directory
-    NSString *filename = filename_from_url(url);
-    NSString *dir = [self downloadDirectory];
-    return [self downloadFileDataFromURL:url toDirectory:dir
-                            withFilename:filename delegate:delegate];
-}
-
-@end
-
-@implementation DIMHttpClient (Avatar)
-
-- (nullable NSURL *)uploadAvatar:(NSData *)image
-                        filename:(NSString *)filename
-                          sender:(id<MKMID>)from
-                        delegate:(id<DIMUploadDelegate>)delegate {
-    // save data to the avatar directory, and then upload it from there.
-    filename = filename_from_data(image, filename);
-    NSString *dir = [self avatarDirectory];
-    return [self uploadFileData:image fromDirectory:dir withFilename:filename
-                           name:FORM_AVATAR sender:from delegate:delegate];
-}
-
-- (nullable NSData *)downloadAvatarFromURL:(NSURL *)url
-                                  delegate:(id<DIMDownloadDelegate>)delegate {
-    // download to the avatar directory directly
-    NSString *filename = filename_from_url(url);
-    NSString *dir = [self avatarDirectory];
-    return [self downloadFileDataFromURL:url toDirectory:dir
-                            withFilename:filename delegate:delegate];
 }
 
 @end

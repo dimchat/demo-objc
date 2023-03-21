@@ -35,29 +35,69 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import <MingKeMing/MingKeMing.h>
+
 #import <DIMP/DIMFileTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMUploadTask : DIMFileTransferTask
+/**
+ *  Upload Request
+ *  ~~~~~~~~~~~~~~
+ *  waiting task
+ *
+ *  properties:
+ *      url      - upload API
+ *      path     - temporary file path
+ *      secret   - authentication key
+ *      name     - form var name ('avatar' or 'file')
+ *      sender   - message sender
+ *      delegate - callback
+ */
+@interface DIMUploadRequest : DIMFileTransferTask
 
-@property(nonatomic, readonly) const NSString *name;  // form variable
+@property(nonatomic, readonly) NSData *secret;  // authentication algorithm: hex(md5(data + secret + salt))
+
+@property(nonatomic, readonly) const NSString *name;  // form var
+
+@property(nonatomic, readonly) id<MKMID> sender;  // message sender
 
 @property(nonatomic, readonly, weak) id<DIMUploadDelegate> delegate;
 
-/*
- *  Upload data to URL with filename and variable name in HTTP form
- *
- * @param url      - upload API
- * @param name     - variable in form
- * @param path     - temporary file to read data
- * @param delegate - callback
- */
 - (instancetype)initWithURL:(NSURL *)url
                        path:(NSString *)path
-                       name:(const NSString *)name
-                   delegate:(id<DIMUploadDelegate>)delegate
-NS_DESIGNATED_INITIALIZER;
+                     secret:(NSData *)key
+                       name:(const NSString *)var
+                     sender:(id<MKMID>)from
+                   delegate:(id<DIMUploadDelegate>)callback;
+
+@end
+
+/**
+ *  Upload Task
+ *  ~~~~~~~~~~~
+ *  running task
+ *
+ *  properties:
+ *      url      - remote URL
+ *      path     -
+ *      secret   -
+ *      name     - form var name ('avatar' or 'file')
+ *      filename - form file name
+ *      data     - form file data
+ *      sender   -
+ *      delegate - HTTP client
+ */
+@interface DIMUploadTask : DIMUploadRequest <FSMRunnable>
+
+@property(nonatomic, readonly) NSString *filename;  // file name
+@property(nonatomic, readonly) NSData *data;        // file data
+
+- (instancetype)initWithURL:(NSURL *)url
+                       name:(const NSString *)var
+                   filename:(NSString *)filename
+                       data:(NSData *)data
+                   delegate:(id<DIMUploadDelegate>)delegate;
 
 @end
 
