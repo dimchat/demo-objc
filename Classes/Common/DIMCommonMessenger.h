@@ -58,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
                         database:(id<DIMMessageDBI>)db
 NS_DESIGNATED_INITIALIZER;
 
+@end
+
+// protected
+@interface DIMCommonMessenger (Querying)
+
 /**
  *  Request for meta with entity ID
  *
@@ -73,6 +78,19 @@ NS_DESIGNATED_INITIALIZER;
  * @return false on duplicated
  */
 - (BOOL)queryDocumentForID:(id<MKMID>)ID;
+
+/**
+ *  Request for group members with group ID
+ *
+ * @param group - group ID
+ * @return false on duplicated
+ */
+- (BOOL)queryMembersForID:(id<MKMID>)group;
+
+@end
+
+// protected
+@interface DIMCommonMessenger (Waiting)
 
 /**
  *  Add income message in a queue for waiting sender's visa
@@ -92,13 +110,26 @@ NS_DESIGNATED_INITIALIZER;
 - (void)suspendInstantMessage:(id<DKDInstantMessage>)iMsg
                     errorInfo:(NSDictionary<NSString *, id> *)info;
 
+@end
+
+// protected
+@interface DIMCommonMessenger (Checking)
+
+// for checking whether user's ready
+- (id<MKMEncryptKey>)visaKeyForID:(id<MKMID>)user;
+
+// for checking whether group's ready
+- (NSArray<id<MKMID>> *)membersForID:(id<MKMID>)group;
+
 /**
  *  Check sender before verifying received message
  *
  * @param rMsg - network message
  * @return false on verify key not found
  */
-- (BOOL)checkSenderForMessage:(id<DKDReliableMessage>)rMsg;
+- (BOOL)checkSenderForReliableMessage:(id<DKDReliableMessage>)rMsg;
+
+- (BOOL)checkReceiverForSecureMessage:(id<DKDSecureMessage>)sMsg;
 
 /**
  *  Check receiver before encrypting message
@@ -106,7 +137,7 @@ NS_DESIGNATED_INITIALIZER;
  * @param iMsg - plain message
  * @return false on encrypt key not found
  */
-- (BOOL)checkReceiverForMessage:(id<DKDInstantMessage>)iMsg;
+- (BOOL)checkReceiverForInstantMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 

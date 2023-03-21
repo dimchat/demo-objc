@@ -35,38 +35,28 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "DIMFileServer.h"
+#import <MingKeMing/MingKeMing.h>
 
 #import "DIMUploadTask.h"
 
-//-------- HTTP Body --------
-static const char *BOUNDARY = "BU1kUJ19yLYPqv5xoT3sbKYbHwjUu1JU7roix";
-static const char *CONTENT_TYPE = "multipart/form-data; boundary=%@";
-static const char *BEGIN = "--%@\r\n"
-                "Content-Disposition: form-data; name=%@; filename=%@\r\n"
-                "Content-Type: application/octet-stream\r\n\r\n";
-static const char *END = "\r\n--%@";
+//-------- HTTP --------
+#define C_BOUNDARY              "BU1kUJ19yLYPqv5xoT3sbKYbHwjUu1JU7roix"
+#define C_CONTENT_TYPE          "multipart/form-data; boundary=" C_BOUNDARY
+#define C_BOUNDARY_BEGIN        "--" C_BOUNDARY "\r\n"                         \
+                "Content-Disposition: form-data; name=%@; filename=%@\r\n"     \
+                "Content-Type: application/octet-stream\r\n\r\n"
+#define C_BOUNDARY_END          "\r\n--" C_BOUNDARY "--"
 
-static inline NSString *content_type(void) {
-    NSString *format = [NSString stringWithCString:CONTENT_TYPE
-                                          encoding:NSUTF8StringEncoding];
-    return [NSString stringWithFormat:format, BOUNDARY];
-}
+#define C_STRING(S)     [NSString stringWithCString:(S)                        \
+                                           encoding:NSUTF8StringEncoding]
 
-static inline NSString *body_begin(NSString *var, NSString *filename) {
-    NSString *format = [NSString stringWithCString:BEGIN
-                                          encoding:NSUTF8StringEncoding];
-    return [NSString stringWithFormat:format, BOUNDARY, var, filename];
-}
-static inline NSString *body_end(void) {
-    NSString *format = [NSString stringWithCString:END
-                                          encoding:NSUTF8StringEncoding];
-    return [NSString stringWithFormat:format, BOUNDARY];
-}
+#define CONTENT_TYPE    C_STRING(C_CONTENT_TYPE)
+#define BOUNDARY_BEGIN  C_STRING(C_BOUNDARY_BEGIN)
+#define BOUNDARY_END    C_STRING(C_BOUNDARY_END)
 
-static inline NSData *http_body(NSString *var, NSString *filename, NSData *data) {
-    NSString *begin = body_begin(var, filename);
-    NSString *end = body_end();
+static inline NSData *http_body(const NSString *var, NSString *filename, NSData *data) {
+    NSString *begin = [NSString stringWithFormat:BOUNDARY_BEGIN, var, filename];
+    NSString *end = BOUNDARY_END;
     
     NSUInteger len = [begin length] + [data length] + [end length];
     NSMutableData *body = [[NSMutableData alloc] initWithCapacity:len];
@@ -75,116 +65,99 @@ static inline NSData *http_body(NSString *var, NSString *filename, NSData *data)
     [body appendData:MKMUTF8Encode(end)];
     return body;
 }
-//-------- HTTP Body --------
+
+static inline NSURLRequest *http_request(NSURL *url) {
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    [request setValue:CONTENT_TYPE forHTTPHeaderField:@"Content-Type"];
+    request.HTTPMethod = @"POST";
+    return request;
+}
+//-------- HTTP --------
 
 @interface DIMUploadTask ()
 
-@property(nonatomic, strong) NSString *url;  // URL string
-@property(nonatomic, strong) NSString *var;  // var name
-@property(nonatomic, strong) NSString *filename;
-@property(nonatomic, strong) NSData   *data; // file data
+@property(nonatomic, strong) const NSString *name;  // variable name in form
 
-@property(nonatomic, strong) NSURLSession *urlSession;
+@property(nonatomic, weak) id<DIMUploadDelegate> delegate;
+
 @property(nonatomic, strong) NSURLSessionUploadTask *sessionTask;
 
 @end
 
 @implementation DIMUploadTask
 
-//- (instancetype)init {
-//    NSAssert(false, @"DON'T call me");
-//    NSString *url = nil;
-//    NSString *var = nil;
-//    NSString *filename = nil;
-//    NSData *data = nil;
-//    id<DIMFileServerDelegate> delegate = nil;
-//    return [self initWithURL:url
-//                         var:var
-//                    filename:filename
-//                        data:data
-//                    delegate:delegate];
-//}
-//
-///* designated initializer */
-//- (instancetype)initWithURL:(NSString *)url
-//                        var:(NSString *)var
-//                   filename:(NSString *)filename
-//                       data:(NSData *)data
-//                   delegate:(id<DIMFileServerDelegate>)delegate {
-//    if (self = [super init]) {
-//        self.url = url;
-//        self.var = var;
-//        self.filename = filename;
-//        self.data = data;
-//        self.delegate = delegate;
-//    }
-//    return self;
-//}
-//
-//// Override
-//- (BOOL)isEqual:(id)object {
-//    if ([object isKindOfClass:[DIMUploadTask class]]) {
-//        if (self == object) {
-//            // same object
-//            return YES;
-//        }
-//        DIMUploadTask *other = (DIMUploadTask *)object;
-//        return [_url isEqualToString:other.url] && [_data isEqualToData:other.data];
-//    }
-//    return NO;
-//}
-//
-//// Override
-//- (NSUInteger)hash {
-//    return [_url hash] * 13 + [_data hash];
-//}
-//
-//- (NSURLSession *)urlSession {
-//    if (!_urlSession) {
-//        NSURLSessionConfiguration *config;
-//        config = [NSURLSessionConfiguration defaultSessionConfiguration];
-//        config.timeoutIntervalForRequest = 30.0f;
-//        config.requestCachePolicy = NSURLRequestUseProtocolCachePolicy;
-//        if (_userAgent.length > 0) {
-//            config.HTTPAdditionalHeaders = @{@"User-Agent": _userAgent};
-//        }
-//
-//        NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-//        _urlSession = [NSURLSession sessionWithConfiguration:config
-//                                                    delegate:self
-//                                               delegateQueue:queue];
-//    }
-//    return _urlSession;
-//}
-//
-//#pragma mark - NSURLSessionTaskDelegate
-//
-//- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
-//
-//}
-//
-//- (void)postToURL:(NSURL *)url
-//              var:(NSString *)name
-//         filename:(NSString *)filename
-//             data:(NSData *)data {
-//    // URL request
-//    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
-//    [request setValue:content_type() forKey:@"Content-Type"];
-//    [request setHTTPMethod:@"POST"];
-//
-//    // HTTP body
-//    NSData *body = http_body(name, filename, data);
-//
-//    // upload task
-//    NSURLSession *session = [self urlSession];
-//    NSURLSessionUploadTask *task;
-//    task = [session uploadTaskWithRequest:request
-//                                 fromData:body
-//                        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-//        <#code#>
-//    }];
-//    self.sessionTask = task;
-//    [task resume];
-//}
+- (instancetype)initWithURL:(NSURL *)url
+                       path:(NSString *)path
+                       name:(const NSString *)name
+                   delegate:(id<DIMUploadDelegate>)delegate {
+    if (self = [super initWithURL:url path:path]) {
+        self.name = name;
+        self.delegate = delegate;
+        self.sessionTask = nil;
+    }
+    return self;
+}
+
+// private
+- (void)post:(NSData *)data filename:(NSString *)filename formVar:(const NSString *)var
+         url:(NSURL *)url {
+    
+    NSURLRequest *request = http_request(url);
+    NSData *body = http_body(var, filename, data);
+    
+    NSURLSession *session = [self urlSession];
+    NSURLSessionUploadTask *task;
+
+    // create task
+    __weak DIMUploadTask *weakSelf = self;
+    task = [session uploadTaskWithRequest:request fromData:body
+                        completionHandler:^(NSData *data, NSURLResponse *res, NSError *error) {
+        __strong DIMUploadTask *strongSelf = weakSelf;
+        //[strongSelf touch];
+        NSLog(@"HTTP upload task complete: %@, %@, %@", res, error, MKMUTF8Decode(data));
+        if (error) {
+            [strongSelf onError];
+            [strongSelf.delegate uploadTask:strongSelf successWithResponse:data];
+        } else {
+            [strongSelf onSuccess];
+            [strongSelf.delegate uploadTask:strongSelf failedWithError:error];
+        }
+        [strongSelf onFinished];
+    }];
+    
+    // start task
+    [task resume];
+    self.sessionTask = task;
+}
+
+// Override
+- (void)run {
+    [self touch];
+    
+    NSString *path = [self path];
+    NSString *filename = [path lastPathComponent];
+    NSData *data = [[NSData alloc] initWithContentsOfFile:path];
+
+    // start upload task
+    [self post:data filename:filename formVar:self.name url:self.url];
+}
+
+#pragma mark NSURLSessionTaskDelegate
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
+                                didSendBodyData:(int64_t)bytesSent
+                                 totalBytesSent:(int64_t)totalBytesSent
+                       totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
+    [self touch];
+    // upload progress
+    float progress = (float)totalBytesSent / totalBytesExpectedToSend;
+    NSLog(@"upload progress [%f%%] %lld/%lld byte(s) from %@",
+          progress * 100, totalBytesSent, totalBytesExpectedToSend, self.path);
+    
+    // finished
+    if (totalBytesSent == totalBytesExpectedToSend) {
+        NSLog(@"task finished: %@", task);
+    }
+}
 
 @end

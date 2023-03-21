@@ -53,12 +53,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DIMFacebook (Membership)
-
-// compatible
-- (BOOL)isFounder:(id<MKMID>)member group:(id<MKMID>)group;
-- (BOOL)isOwner:(id<MKMID>)member group:(id<MKMID>)group;
-
-@end
-
 NS_ASSUME_NONNULL_END

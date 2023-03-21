@@ -40,6 +40,10 @@
 @implementation NSDictionary (Binary)
 
 - (BOOL)writeToBinaryFile:(NSString *)path {
+    return [self writeToBinaryFile:path atomically:YES];
+}
+
+- (BOOL)writeToBinaryFile:(NSString *)path atomically:(BOOL)atomically {
     NSData *data;
     NSPropertyListFormat fmt = NSPropertyListBinaryFormat_v1_0;
     NSPropertyListWriteOptions opt = 0;
@@ -52,7 +56,7 @@
         NSAssert(false, @"serialize failed: %@", err);
         return NO;
     }
-    return [data writeToFile:path atomically:YES];
+    return [data writeToFile:path atomically:atomically];
 }
 
 @end

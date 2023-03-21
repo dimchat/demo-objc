@@ -37,6 +37,7 @@
 
 #import "MKMAnonymous.h"
 #import "DIMRegister.h"
+#import "DIMGroupManager.h"
 
 #import "DIMClientFacebook.h"
 
@@ -88,6 +89,20 @@ static id<MKMIDFactory> _idFactory = nil;
     return [MKMAnonymous name:ID];
 }
 
+// Override
+- (id<MKMGroup>)createGroup:(id<MKMID>)ID {
+    id<MKMGroup> grp = [super createGroup:ID];
+    if ([grp dataSource] == self) {
+        // replace group's data souce
+        DIMGroupManager *manager = [DIMGroupManager sharedInstance];
+        [grp setDataSource:manager];
+    }
+    return grp;
+}
+
+//
+//  Address Name Service
+//
 + (DIMAddressNameServer *)ans {
     return _ans;
 }
@@ -107,18 +122,6 @@ static id<MKMIDFactory> _idFactory = nil;
         MKMIDSetFactory([[IDFactory alloc] init]);
         
     });
-}
-
-@end
-
-@implementation DIMFacebook (Membership)
-
-- (BOOL)isFounder:(id<MKMID>)member group:(id<MKMID>)group {
-    return [self group:group isFounder:member];
-}
-
-- (BOOL)isOwner:(id<MKMID>)member group:(id<MKMID>)group {
-    return [self group:group isOwner:member];
 }
 
 @end

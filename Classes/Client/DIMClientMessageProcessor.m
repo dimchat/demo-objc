@@ -75,7 +75,7 @@
     if ([responses count] == 0) {
         // respond nothing
         return nil;
-    } else if ([[responses objectAtIndex:0] conformsToProtocol:@protocol(DKDHandshakeCommand)]) {
+    } else if ([[responses firstObject] conformsToProtocol:@protocol(DKDHandshakeCommand)]) {
         // urgent command
         return responses;
     }

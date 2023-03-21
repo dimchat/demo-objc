@@ -28,55 +28,52 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMFileServer.h
+//  DIMStorage.h
 //  DIMP
 //
-//  Created by Albert Moky on 2019/4/4.
+//  Created by Albert Moky on 2019/9/6.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMCore/DIMCore.h>
+#import <DIMP/DIMP.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMFileServer : NSObject <NSURLSessionDelegate, NSURLSessionTaskDelegate>
+@interface DIMStorage : NSObject
 
-@property (strong, nonatomic, nullable) NSString *userAgent; // default is nil
+@property (readonly, strong, nonatomic) NSString *documentDirectory;
+@property (readonly, strong, nonatomic) NSString *cachesDirectory;
+@property (readonly, strong, nonatomic) NSString *temporaryDirectory;
 
-// @"https://sechat.dim.chat/{ID}}/upload"
-@property (strong, nonatomic) NSString *uploadAPI;
+- (nullable NSDictionary *)dictionaryWithContentsOfFile:(NSString *)path;
+- (BOOL)dictionary:(NSDictionary *)dict writeToBinaryFile:(NSString *)path;
 
-// @"https://sechat.dim.chat/download/{ID}/{filename}"
-@property (strong, nonatomic) NSString *downloadAPI;
+- (nullable NSArray *)arrayWithContentsOfFile:(NSString *)path;
+- (BOOL)array:(NSArray *)list writeToFile:(NSString *)path;
 
-// @"https://sechat.dim.chat/avatar/{ID}/{filename}"
-@property (strong, nonatomic) NSString *avatarAPI;
+@end
 
-+ (instancetype)sharedInstance;
+@interface DIMStorage (Application)
 
-- (NSURL *)uploadEncryptedData:(NSData *)data
-                      filename:(nullable NSString *)name
-                        sender:(id<MKMID>)from;
++ (NSString *)documentDirectory;
 
-- (nullable NSData *)downloadEncryptedDataFromURL:(NSURL *)url;
++ (NSString *)cachesDirectory;
 
-- (nullable NSData *)decryptDataFromURL:(NSURL *)url
-                               filename:(NSString *)name
-                                wityKey:(id<MKMSymmetricKey>)key;
++ (NSString *)temporaryDirectory;
 
-- (BOOL)saveData:(NSData *)data filename:(NSString *)name;
-- (NSData *)loadDataWithFilename:(NSString *)name;
+@end
 
-- (BOOL)saveThumbnail:(NSData *)data filename:(NSString *)name;
-- (NSData *)loadThumbnailWithFilename:(NSString *)name;
+@interface DIMStorage (FileManager)
 
--(NSString *)cachePathForFilename:(NSString *)filename;
++ (BOOL)createDirectoryAtPath:(NSString *)directory;
 
-#pragma mark Avatar
++ (BOOL)fileExistsAtPath:(NSString *)path;
 
-- (NSURL *)uploadAvatar:(NSData *)data
-               filename:(nullable NSString *)name
-                 sender:(id<MKMID>)ID;
++ (BOOL)removeItemAtPath:(NSString *)path;
+
++ (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath;
+
++ (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath;
 
 @end
 

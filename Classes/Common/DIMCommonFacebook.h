@@ -54,15 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithDatabase:(id<DIMAccountDBI>)db
 NS_DESIGNATED_INITIALIZER;
 
-/**
- *  Save members of group
- *
- * @param bots - assistant ID list
- * @param ID - group ID
- * @return true on success
- */
-- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)ID;
-
 @end
 
 NS_ASSUME_NONNULL_END

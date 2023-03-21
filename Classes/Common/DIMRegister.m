@@ -172,7 +172,7 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
     dispatch_once(&onceToken, ^{
 
         // load plugins
-        [DIMFacebook loadPlugins];
+        [MKMPlugins loadPlugins];
         
         // load message/content factories
         DIMRegisterAllFactories();  // core factories

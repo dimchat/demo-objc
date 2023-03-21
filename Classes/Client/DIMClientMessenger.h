@@ -76,14 +76,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)reportOfflineForID:(id<MKMID>)sender;
 
-/**
- *  Request for group members with group ID
- *
- * @param group - group ID
- * @return false on duplicated
- */
-- (BOOL)queryMembersForID:(id<MKMID>)group;
-
 @end
 
 NS_ASSUME_NONNULL_END

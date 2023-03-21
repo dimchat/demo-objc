@@ -39,6 +39,7 @@
 #import "DIMHandshakeCommand.h"
 #import "DIMReportCommand.h"
 #import "DIMClientSession.h"
+#import "DIMGroupManager.h"
 
 #import "DIMClientMessenger.h"
 
@@ -58,7 +59,11 @@
     if (sessionKey) {
         // handshake again
         cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:sessionKey];
-        [self sendContent:cmd sender:nil receiver:sid priority:-1];
+        [self sendContent:cmd
+                   sender:nil
+                 receiver:sid
+                 priority:STDeparturePriorityUrgent];
+        NSLog(@"shake hands again with session key %@, %@", sessionKey, station);
     } else {
         // first handshake
         DIMCommonFacebook *facebook = [self facebook];
@@ -70,12 +75,14 @@
         id<DKDEnvelope> env = DKDEnvelopeCreate(uid, sid, nil);
         cmd = [[DIMHandshakeCommand alloc] initWithSessionKey:nil];
         // send first handshake command as broadcast message
-        [cmd setGroup:MKMAnyStation()];
+        [cmd setGroup:MKMEveryStations()];
         // create instant message with meta & visa
         id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
         [iMsg setObject:meta.dictionary forKey:@"meta"];
         [iMsg setObject:visa.dictionary forKey:@"visa"];
-        [self sendInstantMessage:iMsg priority:-1];
+        [self sendInstantMessage:iMsg
+                        priority:STDeparturePriorityUrgent];
+        NSLog(@"shaking hands with %@", station);
     }
 }
 
@@ -95,7 +102,10 @@
                                                            meta:meta
                                                        document:visa];
     // broadcast to 'everyone@everywhere'
-    [self sendContent:cmd sender:uid receiver:MKMEveryone() priority:1];
+    [self sendContent:cmd
+               sender:uid
+             receiver:MKMEveryone()
+             priority:STDeparturePrioritySlower];
 }
 
 - (void)broadcastLoginForID:(id<MKMID>)sender userAgent:(nullable NSString *)ua {
@@ -106,7 +116,10 @@
     [cmd setAgent:ua];
     [cmd copyStationInfo:station];
     // broadcast to 'everyone@everywhere'
-    [self sendContent:cmd sender:sender receiver:MKMEveryone() priority:1];
+    [self sendContent:cmd
+               sender:sender
+             receiver:MKMEveryone()
+             priority:STDeparturePrioritySlower];
 }
 
 - (void)reportOnlineForID:(id<MKMID>)sender {
@@ -116,7 +129,10 @@
         NSTimeInterval ti = OKGetTimeInterval(offlineTime);
         [cmd setObject:@(ti) forKey:@"last_time"];
     }
-    [self sendContent:cmd sender:sender receiver:MKMAnyStation() priority:1];
+    [self sendContent:cmd
+               sender:sender
+             receiver:MKMAnyStation()
+             priority:STDeparturePrioritySlower];
 }
 
 - (void)reportOfflineForID:(id<MKMID>)sender {
@@ -125,7 +141,10 @@
     if (offlineTime) {
         self.offlineTime = offlineTime;
     }
-    [self sendContent:cmd sender:sender receiver:MKMAnyStation() priority:1];
+    [self sendContent:cmd
+               sender:sender
+             receiver:MKMAnyStation()
+             priority:STDeparturePrioritySlower];
 }
 
 // Override
@@ -136,7 +155,10 @@
         return NO;
     }
     id<DKDCommand> cmd = [[DIMMetaCommand alloc] initWithID:ID];
-    [self sendContent:cmd sender:nil receiver:MKMAnyStation() priority:1];
+    [self sendContent:cmd
+               sender:nil
+             receiver:MKMAnyStation()
+             priority:STDeparturePrioritySlower];
     return YES;
 }
 
@@ -148,7 +170,10 @@
         return NO;
     }
     id<DKDCommand> cmd = [[DIMDocumentCommand alloc] initWithID:ID];
-    [self sendContent:cmd sender:nil receiver:MKMAnyStation() priority:1];
+    [self sendContent:cmd
+               sender:nil
+             receiver:MKMAnyStation()
+             priority:STDeparturePrioritySlower];
     return NO;
 }
 
@@ -159,7 +184,8 @@
         return NO;
     }
     NSAssert(MKMIDIsGroup(group), @"group ID error: %@", group);
-    NSArray<id<MKMID>> *bots = [self.facebook assistantsOfGroup:group];
+    DIMGroupManager *manager = [DIMGroupManager sharedInstance];
+    NSArray<id<MKMID>> *bots = [manager assistantsOfGroup:group];
     if ([bots count] == 0) {
         // group assistants not found
         return NO;
@@ -167,7 +193,10 @@
     // querying members from bots
     id<DKDCommand> cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
     for (id<MKMID> assistant in bots) {
-        [self sendContent:cmd sender:nil receiver:assistant priority:1];
+        [self sendContent:cmd
+                   sender:nil
+                 receiver:assistant
+                 priority:STDeparturePrioritySlower];
     }
     return YES;
 }
@@ -179,31 +208,12 @@
         // broadcast message
         return YES;
     } else if (MKMIDIsGroup(receiver)) {
-        DIMCommonFacebook *facebook = [self facebook];
-        // check group's meta
-        id<MKMMeta> meta = [facebook metaForID:receiver];
-        if (!meta) {
-            // group not ready, try to query meta for it
-            if ([self queryMetaForID:receiver]) {
-                NSLog(@"querying meta for group: %@", receiver);
-            }
+        // check group's meta & members
+        NSArray<id<MKMID>> *allMembers = [self membersForID:receiver];
+        if ([allMembers count] == 0) {
+            // group not ready, suspend message for waiting meta/members
             NSDictionary *error = @{
-                @"message": @"group meta not found",
-                @"group": receiver.string,
-            };
-            [self suspendInstantMessage:iMsg errorInfo:error];
-            //[iMsg setObject:error forKey:@"error"];
-            return NO;
-        }
-        // check group members
-        NSArray<id<MKMID>> *members = [facebook membersOfGroup:receiver];
-        if ([members count] == 0) {
-            // group not ready, try to query members for it
-            if ([self queryMembersForID:receiver]) {
-                NSLog(@"querying members for group: %@", receiver);
-            }
-            NSDictionary *error = @{
-                @"message": @"members not found",
+                @"message": @"group not ready",
                 @"group": receiver.string,
             };
             [self suspendInstantMessage:iMsg errorInfo:error];
@@ -211,18 +221,16 @@
             return NO;
         }
         NSMutableArray<id<MKMID>> *waiting = [[NSMutableArray alloc] init];
-        id<MKMEncryptKey> visaKey;
-        for (id<MKMID> item in members) {
-            visaKey = [facebook publicKeyForEncryption:item];
-            if (!visaKey) {
-                // group member not ready, try to query document for it
-                if ([self queryDocumentForID:item]) {
-                    NSLog(@"querying visa for %@ in group %@", item, receiver);
-                }
-                [waiting addObject:item];
+        for (id<MKMID> item in allMembers) {
+            if ([self visaKeyForID:item]) {
+                // member is OK
+                continue;
             }
+            // member not ready
+            [waiting addObject:item];
         }
         if ([waiting count] > 0) {
+            // member(s) not ready, suspend message for waiting document
             NSDictionary *error = @{
                 @"message": @"encrypt keys not found",
                 @"group": receiver.string,
@@ -235,7 +243,7 @@
         // receiver is OK
         return YES;
     }
-    return [super checkReceiverForMessage:iMsg];
+    return [super checkReceiverForInstantMessage:iMsg];
 }
 
 @end

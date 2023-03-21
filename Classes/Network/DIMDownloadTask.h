@@ -35,11 +35,25 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMP/DIMFileTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMDownloadTask : NSObject
+@interface DIMDownloadTask : DIMFileTransferTask
+
+@property(nonatomic, readonly, weak) id<DIMDownloadDelegate> delegate;
+
+/*
+ *  Download data from the URL and save content into the cachePath
+ *
+ * @param url      - download URL
+ * @param path     - temporary file to write data
+ * @param delegate - callback
+ */
+- (instancetype)initWithURL:(NSURL *)url
+                       path:(NSString *)path
+                   delegate:(id<DIMDownloadDelegate>)delegate
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

@@ -35,7 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMClientFacebook.h"
+#import "DIMGroupManager.h"
 
 #import "DIMResetCommandProcessor.h"
 
@@ -45,8 +45,9 @@
     // TODO: send 'query' group command to owner
 }
 
-- (NSArray<id<DKDContent>> *)temporarySave:(id<DKDGroupCommand>)content sender:(id<MKMID>)sender {
-    DIMFacebook *facebook = self.facebook;
+- (NSArray<id<DKDContent>> *)temporarySave:(id<DKDGroupCommand>)content
+                                    sender:(id<MKMID>)sender {
+    DIMGroupManager *manager = [DIMGroupManager sharedInstance];
     id<MKMID> group = content.group;
     // check whether the owner contained in the new members
     NSArray<id<MKMID>> *newMembers = [self membersFromCommand:content];
@@ -54,15 +55,15 @@
         return [self respondText:@"Reset command error." withGroup:group];
     }
     for (id<MKMID> item in newMembers) {
-        if (![facebook metaForID:item]) {
+        if (![manager metaForID:item]) {
             // TODO: waiting for member's meta?
             continue;
-        } else if (![facebook isOwner:item group:group]) {
+        } else if (![manager isOwner:item group:group]) {
             // not owner, skip it
             continue;
         }
         // it's a full list, save it now
-        if ([facebook saveMembers:newMembers group:group]) {
+        if ([manager saveMembers:newMembers group:group]) {
             if (![item isEqual:sender]) {
                 // NOTICE: to prevent counterfeit,
                 //         query the owner for newest member-list
@@ -84,12 +85,12 @@
              [content conformsToProtocol:@protocol(DKDInviteGroupCommand)],
              @"invite command error: %@", content);
     id<DKDGroupCommand> command = (id<DKDGroupCommand>)content;
-    DIMFacebook *facebook = self.facebook;
+    DIMGroupManager *manager = [DIMGroupManager sharedInstance];
 
     // 0. check group
     id<MKMID> group = command.group;
-    id<MKMID> owner = [facebook ownerOfGroup:group];
-    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    id<MKMID> owner = [manager ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [manager membersOfGroup:group];
     if (!owner || members.count == 0) {
         // FIXME: group info lost?
         // FIXME: how to avoid strangers impersonating group member?
@@ -100,7 +101,7 @@
     id<MKMID> sender = rMsg.sender;
     if (![owner isEqual:sender]) {
         // not the owner? check assistants
-        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
+        NSArray<id<MKMID>> *assistants = [manager assistantsOfGroup:group];
         if (![assistants containsObject:sender]) {
             return [self respondText:@"Sorry, you are not allowed to reset this group."
                            withGroup:group];

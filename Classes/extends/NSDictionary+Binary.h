@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)writeToBinaryFile:(NSString *)path;
 
+- (BOOL)writeToBinaryFile:(NSString *)path atomically:(BOOL)atomically;
+
 @end
 
 NS_ASSUME_NONNULL_END

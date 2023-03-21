@@ -35,8 +35,110 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import <MingKeMing/MingKeMing.h>
+
 #import "DIMDownloadTask.h"
+
+@interface DIMDownloadTask ()
+
+@property(nonatomic, weak) id<DIMDownloadDelegate> delegate;
+
+@property(nonatomic, strong) NSURLSessionDownloadTask *sessionTask;
+
+@end
 
 @implementation DIMDownloadTask
 
+- (instancetype)initWithURL:(NSURL *)url
+                       path:(NSString *)path
+                   delegate:(id<DIMDownloadDelegate>)delegate {
+    if (self = [super initWithURL:url path:path]) {
+        self.delegate = delegate;
+        self.sessionTask = nil;
+    }
+    return self;;
+}
+
+// private
+- (void)get:(NSURL *)url {
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+
+    NSURLSession *session = [self urlSession];
+    NSURLSessionDownloadTask *task;
+    
+    // create task
+    __weak DIMDownloadTask *weakSelf = self;
+    task = [session downloadTaskWithRequest:request
+                          completionHandler:^(NSURL *loc, NSURLResponse *res, NSError *error) {
+        __strong DIMDownloadTask *strongSelf = weakSelf;
+        //[strongSelf touch];
+        NSLog(@"HTTP download task complete: %@, %@, %@", res, error, loc);
+        if (error) {
+            // connection error
+            [strongSelf onError];
+            [strongSelf.delegate downloadTask:strongSelf failedWithError:error];
+        } else if ([res.MIMEType isEqualToString:@"text/html"]) {
+            // server respond error
+            NSData *data = [NSData dataWithContentsOfURL:loc];
+            NSString *html = MKMUTF8Decode(data);
+            NSLog(@"download %@ error: %@", url, html);
+            // TODO: get error code
+            NSInteger code = 404;
+            NSDictionary *info = @{
+                NSDebugDescriptionErrorKey: html,
+            };
+            error = [NSError errorWithDomain:NSNetServicesErrorDomain
+                                        code:code
+                                    userInfo:info];
+            [strongSelf onError];
+            [strongSelf.delegate downloadTask:strongSelf failedWithError:error];
+        } else {
+            // move to caches directory
+            NSString *path = self.path;
+            NSURL *dst = [NSURL fileURLWithPath:path];
+            NSFileManager *fm = [NSFileManager defaultManager];
+            if ([fm moveItemAtURL:loc toURL:dst error:&error]) {
+                [strongSelf onSuccess];
+                [strongSelf.delegate downloadTask:strongSelf successWithPath:path];
+            } else {
+                [strongSelf onError];
+                [strongSelf.delegate downloadTask:strongSelf failedWithError:error];
+            }
+        }
+        [strongSelf onFinished];
+    }];
+    
+    // start task
+    [task resume];
+    self.sessionTask = task;
+}
+
+// Override
+- (void)run {
+    [self touch];
+    
+    NSURL *url = [self url];
+
+    // start download task
+    [self get:url];
+}
+
+#pragma mark NSURLSessionDownloadDelegate
+
+- (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)task
+                                           didWriteData:(int64_t)bytesWritten
+                                      totalBytesWritten:(int64_t)totalBytesWritten
+                              totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
+    [self touch];
+    // download progress
+    float progress = (float)totalBytesWritten / totalBytesExpectedToWrite;
+    NSLog(@"download progress +%lld [%f%%] %lld/%lld byte(s) from %@", bytesWritten,
+          progress * 100, totalBytesWritten, totalBytesExpectedToWrite, self.path);
+    
+    // finished
+    if (totalBytesWritten == totalBytesExpectedToWrite) {
+        NSLog(@"task finished: %@", task);
+    }
+}
 @end

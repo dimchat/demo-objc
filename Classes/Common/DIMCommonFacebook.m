@@ -69,7 +69,7 @@
     if (user == nil) {
         NSArray<id<MKMUser>> *localUsers = [self localUsers];
         if ([localUsers count] > 0) {
-            user = [localUsers objectAtIndex:0];
+            user = [localUsers firstObject];
             _currentUser = user;
         }
     }
@@ -98,7 +98,7 @@
     } else {
         user = _currentUser;
         if (user == nil) {
-            allUsers = nil;
+            allUsers = [[NSMutableArray alloc] init];
         } else {
             allUsers = [[NSMutableArray alloc] initWithCapacity:1];
             [allUsers addObject:user];
@@ -115,15 +115,6 @@
 // Override
 - (BOOL)saveDocument:(id<MKMDocument>)doc {
     return [_database saveDocument:doc];
-}
-
-// Override
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)ID {
-    return [_database saveMembers:members group:ID];
-}
-
-- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)ID {
-    return [_database saveAssistants:bots group:ID];
 }
 
 // Override

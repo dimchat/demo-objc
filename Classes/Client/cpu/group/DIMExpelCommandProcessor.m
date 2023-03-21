@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMGroupManager.h"
+
 #import "DIMExpelCommandProcessor.h"
 
 @implementation DIMExpelGroupCommandProcessor
@@ -44,12 +46,12 @@
     NSAssert([content conformsToProtocol:@protocol(DKDExpelGroupCommand)],
              @"expel command error: %@", content);
     id<DKDExpelGroupCommand> command = (id<DKDExpelGroupCommand>)content;
-    DIMFacebook *facebook = self.facebook;
+    DIMGroupManager *manager = [DIMGroupManager sharedInstance];
     
     // 0. check group
     id<MKMID> group = command.group;
-    id<MKMID> owner = [facebook ownerOfGroup:group];
-    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
+    id<MKMID> owner = [manager ownerOfGroup:group];
+    NSArray<id<MKMID>> *members = [manager membersOfGroup:group];
     if (!owner || members.count == 0) {
         return [self respondText:@"Group empty." withGroup:group];
     }
@@ -58,7 +60,7 @@
     id<MKMID> sender = rMsg.sender;
     if (![owner isEqual:sender]) {
         // not the owner? check assistants
-        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
+        NSArray<id<MKMID>> *assistants = [manager assistantsOfGroup:group];
         if (![assistants containsObject:sender]) {
             return [self respondText:@"Sorry, you are not allowed to expel member from this group."
                            withGroup:group];
@@ -87,7 +89,7 @@
     }
     // 2.3. do expel
     if ([removedList count] > 0) {
-        if ([facebook saveMembers:mArray group:group]) {
+        if ([manager saveMembers:mArray group:group]) {
             [command setObject:MKMIDRevert(removedList) forKey:@"removed"];
         }
     }

@@ -97,6 +97,12 @@ FOUNDATION_EXPORT const unsigned char DIMPVersionString[];
 #import <DIMP/DIMCommonMessenger.h>
 
 //
+//  Database
+//
+
+#import <DIMP/DIMStorage.h>
+
+//
 //  StarGate
 //
 
@@ -114,7 +120,10 @@ FOUNDATION_EXPORT const unsigned char DIMPVersionString[];
 #import <DIMP/DIMWrapperQueue.h>
 #import <DIMP/DIMGateKeeper.h>
 #import <DIMP/DIMBaseSession.h>
-#import <DIMP/DIMFileServer.h>
+#import <DIMP/DIMFileTask.h>
+#import <DIMP/DIMHttpClient.h>
+#import <DIMP/DIMUploadTask.h>
+#import <DIMP/DIMDownloadTask.h>
 
 //
 //  Client

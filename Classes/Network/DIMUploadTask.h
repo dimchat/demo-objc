@@ -35,30 +35,29 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <StarTrek/StarTrek.h>
+#import <DIMP/DIMFileTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMUploadTask : NSURLSessionUploadTask <FSMRunnable>
+@interface DIMUploadTask : DIMFileTransferTask
 
-//@property(nonatomic, readonly) NSString *url;  // URL string
-//@property(nonatomic, readonly) NSString *var;  // var name
-//@property(nonatomic, readonly) NSString *filename;
-//@property(nonatomic, readonly) NSData   *data; // file data
-//
-///**
-// *  Upload data to URL with filename and variable name in form
-// *
-// * @param url      - API
-// * @param name     - variable name in form
-// * @param filename - file name
-// * @param data     - file data
-// */
-//- (instancetype)initWithURL:(NSString *)url
-//                        var:(NSString *)name
-//                   filename:(NSString *)filename
-//                       data:(NSData *)data
-//NS_DESIGNATED_INITIALIZER;
+@property(nonatomic, readonly) const NSString *name;  // form variable
+
+@property(nonatomic, readonly, weak) id<DIMUploadDelegate> delegate;
+
+/*
+ *  Upload data to URL with filename and variable name in HTTP form
+ *
+ * @param url      - upload API
+ * @param name     - variable in form
+ * @param path     - temporary file to read data
+ * @param delegate - callback
+ */
+- (instancetype)initWithURL:(NSURL *)url
+                       path:(NSString *)path
+                       name:(const NSString *)name
+                   delegate:(id<DIMUploadDelegate>)delegate
+NS_DESIGNATED_INITIALIZER;
 
 @end
 

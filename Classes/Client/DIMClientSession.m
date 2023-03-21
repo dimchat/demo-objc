@@ -201,6 +201,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     if (head.length > 0) {
         NSRange range = NSMakeRange(head.length, data.length - head.length);
         data = [data subdataWithRange:range];
+        NSLog(@"got data with head [%@] body: %lu byte(s)", MKMUTF8Decode(head), [data length]);
     }
     
     // 1. split data when multi packages received one time

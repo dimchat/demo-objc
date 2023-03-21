@@ -35,6 +35,8 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMGroupManager.h"
+
 #import "DIMInviteCommandProcessor.h"
 
 @implementation DIMInviteGroupCommandProcessor
