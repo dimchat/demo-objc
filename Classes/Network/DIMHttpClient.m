@@ -450,7 +450,7 @@ static inline NSString *filename_from_url(NSURL *url) {
                     secret:(NSData *)key
                       data:(NSData *)data
                       path:(NSString *)path
-                      name:(NSString *)var
+                      name:(const NSString *)var
                     sender:(id<MKMID>)from
                   delegate:(id<DIMUploadDelegate>)delegate {
     // 1. check previous upload

@@ -74,6 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSArray *)arrayWithContentsOfFile:(NSString *)path;
 + (BOOL)array:(NSArray *)list writeToFile:(NSString *)path;
 
++ (nullable NSData *)dataWithContentsOfFile:(NSString *)path;
++ (BOOL)data:(NSData *)data writeToFile:(NSString *)path;
+
 @end
 
 @interface DIMStorage (LocalCache)

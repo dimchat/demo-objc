@@ -221,6 +221,26 @@ static NSString *s_temporaryDirectory = nil;
     return [list writeToFile:path atomically:YES];
 }
 
++ (nullable NSData *)dataWithContentsOfFile:(NSString *)path {
+    BOOL ok = [DIMStorage fileExistsAtPath:path];
+    if (!ok) {
+        NSLog(@"file not found: %@", path);
+        return nil;
+    }
+    return [NSData dataWithContentsOfFile:path];
+}
+
++ (BOOL)data:(NSData *)data writeToFile:(NSString *)path {
+    // prepare directory
+    NSString *dir = [path stringByDeletingLastPathComponent];
+    BOOL ok = [DIMStorage createDirectoryAtPath:dir];
+    if (!ok) {
+        NSAssert(false, @"failed to create directory: %@", dir);
+        return NO;
+    }
+    return [data writeToFile:path atomically:YES];
+}
+
 @end
 
 @implementation DIMStorage (LocalCache)

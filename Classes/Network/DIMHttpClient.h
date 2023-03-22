@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
                     secret:(NSData *)key
                       data:(NSData *)data
                       path:(NSString *)path
-                      name:(NSString *)var
+                      name:(const NSString *)var
                     sender:(id<MKMID>)from
                   delegate:(id<DIMUploadDelegate>)delegate;
 
