@@ -87,6 +87,9 @@ static NSString *s_temporaryDirectory = nil;
 @implementation DIMStorage (FileManager)
 
 + (BOOL)createDirectoryAtPath:(NSString *)directory {
+    return [self createDirectoryAtPath:directory error:nil];
+}
++ (BOOL)createDirectoryAtPath:(NSString *)directory error:(NSError **)error {
     // check base directory exists
     NSFileManager *fm = [NSFileManager defaultManager];
     BOOL isDir;
@@ -95,16 +98,10 @@ static NSString *s_temporaryDirectory = nil;
         NSAssert(isDir, @"path exists but not a directory: %@", directory);
         return YES;
     }
-    NSError *error = nil;
-    BOOL ok = [fm createDirectoryAtPath:directory
-            withIntermediateDirectories:YES
-                             attributes:nil
-                                  error:&error];
-    if (error) {
-        NSLog(@"failed to create dir: %@, error: %@", directory, error);
-        return NO;
-    }
-    return ok;
+    return [fm createDirectoryAtPath:directory
+         withIntermediateDirectories:YES
+                          attributes:nil
+                               error:error];
 }
 
 + (BOOL)fileExistsAtPath:(NSString *)path {
@@ -113,23 +110,23 @@ static NSString *s_temporaryDirectory = nil;
 }
 
 + (BOOL)removeItemAtPath:(NSString *)path {
+    return [self removeItemAtPath:path error:nil];
+}
++ (BOOL)removeItemAtPath:(NSString *)path error:(NSError **)error {
     NSFileManager *fm = [NSFileManager defaultManager];
     BOOL ok = [fm fileExistsAtPath:path];
     if (!ok) {
         // file not found
         return YES;
     }
-    NSError *error = nil;
-    [fm removeItemAtPath:path error:&error];
-    if (error) {
-        NSLog(@"failed to remove file: %@, error: %@", path, error);
-        return NO;
-    }
-    // Done!
-    return YES;
+    return [fm removeItemAtPath:path error:error];
 }
 
 + (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+    return [self moveItemAtPath:srcPath toPath:dstPath error:nil];
+}
++ (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath
+                 error:(NSError **)error {
     NSFileManager *fm = [NSFileManager defaultManager];
     BOOL ok = [fm fileExistsAtPath:srcPath];
     if (!ok) {
@@ -143,17 +140,13 @@ static NSString *s_temporaryDirectory = nil;
         NSAssert(false, @"failed to create directory: %@", dir);
         return NO;
     }
-    NSError *error = nil;
-    [fm moveItemAtPath:srcPath toPath:dstPath error:&error];
-    if (error) {
-        NSLog(@"failed to move file: %@ => %@, error: %@", srcPath, dstPath, error);
-        return NO;
-    }
-    // Done!
-    return YES;
+    return [fm moveItemAtPath:srcPath toPath:dstPath error:error];
 }
 
 + (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+    return [self copyItemAtPath:srcPath toPath:dstPath error:nil];
+}
++ (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath error:(NSError **)error {
     NSFileManager *fm = [NSFileManager defaultManager];
     BOOL ok = [fm fileExistsAtPath:srcPath];
     if (!ok) {
@@ -167,14 +160,7 @@ static NSString *s_temporaryDirectory = nil;
         NSAssert(false, @"failed to create directory: %@", dir);
         return NO;
     }
-    NSError *error = nil;
-    [fm copyItemAtPath:srcPath toPath:dstPath error:&error];
-    if (error) {
-        NSLog(@"failed to move file: %@ => %@, error: %@", srcPath, dstPath, error);
-        return NO;
-    }
-    // Done!
-    return YES;
+    return [fm copyItemAtPath:srcPath toPath:dstPath error:error];
 }
 
 @end

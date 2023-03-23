@@ -55,14 +55,20 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DIMStorage (FileManager)
 
 + (BOOL)createDirectoryAtPath:(NSString *)directory;
++ (BOOL)createDirectoryAtPath:(NSString *)directory error:(NSError **)error;
 
 + (BOOL)fileExistsAtPath:(NSString *)path;
 
 + (BOOL)removeItemAtPath:(NSString *)path;
++ (BOOL)removeItemAtPath:(NSString *)path error:(NSError **)error;
 
 + (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath;
++ (BOOL)moveItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath
+                 error:(NSError **)error;
 
 + (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath;
++ (BOOL)copyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath
+                 error:(NSError **)error;
 
 @end
 

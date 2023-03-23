@@ -57,51 +57,13 @@ static inline NSData *hash_data(NSData *data, NSData *secret, NSData *salt) {
     return MKMMD5Digest(hash);
 }
 
-static inline NSString *make_filepath(NSString *dir, NSString *filename, BOOL autoCreate) {
+static inline NSString *make_filepath(NSString *dir, NSString *filename,
+                                      BOOL autoCreate) {
     if (autoCreate && ![DIMStorage createDirectoryAtPath:dir]) {
         // failed to create directory
         return nil;
     }
     return [dir stringByAppendingPathComponent:filename];
-}
-
-static inline BOOL is_hex(NSString *string) {
-    static NSString *regex = @"[0-9A-Fa-f]+";
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-    return [pred evaluateWithObject:string];
-}
-static inline BOOL is_md5(NSString *filename, NSUInteger pos) {
-    if (pos != 32) {
-        return NO;
-    }
-    if (pos < [filename length]) {
-        filename = [filename substringToIndex:pos];
-    }
-    return is_hex(filename);
-}
-
-static inline NSString *create_filename(NSData *data, NSString *filename) {
-    NSString *ext = [filename pathExtension];
-    // check md5 filename
-    NSUInteger pos = ext ? filename.length - ext.length - 1 : filename.length;
-    if (is_md5(filename, pos)) {
-        return filename;
-    }
-    // build md5 filename from data
-    filename = MKMHexEncode(MKMMD5Digest(data));
-    if (ext) {
-        return [filename stringByAppendingPathExtension:ext];
-    } else {
-        return filename;
-    }
-}
-
-// cached filename for downloaded URL:
-//      hex(md5(url)) + ext
-static inline NSString *filename_from_url(NSURL *url) {
-    NSData *data = MKMUTF8Encode([url absoluteString]);
-    NSString *filename = [url lastPathComponent];
-    return create_filename(data, filename);
 }
 
 #pragma mark -

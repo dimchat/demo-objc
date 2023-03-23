@@ -37,6 +37,8 @@
 
 #import <MingKeMing/MingKeMing.h>
 
+#import "DIMStorage.h"
+
 #import "DIMDownloadTask.h"
 
 @interface DIMDownloadRequest ()
@@ -137,10 +139,9 @@
             return;
         }
         // move to caches directory
+        NSString *src = [loc isFileURL] ? [loc path] : [loc absoluteString];
         NSString *path = self.path;
-        NSURL *dst = [NSURL fileURLWithPath:path];
-        NSFileManager *fm = [NSFileManager defaultManager];
-        if ([fm moveItemAtURL:loc toURL:dst error:&error]) {
+        if ([DIMStorage moveItemAtPath:src toPath:path error:&error]) {
             [strongSelf onSuccess];
             [strongSelf.delegate downloadTask:strongSelf onSuccess:path];
         } else {

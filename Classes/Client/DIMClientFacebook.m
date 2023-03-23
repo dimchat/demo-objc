@@ -92,7 +92,8 @@ static id<MKMIDFactory> _idFactory = nil;
 // Override
 - (id<MKMGroup>)createGroup:(id<MKMID>)ID {
     id<MKMGroup> grp = [super createGroup:ID];
-    if ([grp dataSource] == self) {
+    id<MKMEntityDataSource> delegate = [grp dataSource];
+    if (delegate == nil || delegate == self) {
         // replace group's data souce
         DIMGroupManager *manager = [DIMGroupManager sharedInstance];
         [grp setDataSource:manager];
