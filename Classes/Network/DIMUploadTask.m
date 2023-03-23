@@ -86,12 +86,12 @@
     return [self.path hash];
 }
 
-static NSString *format = @"<%@ api=\"%@\" sender=\"%@\" name=\"%@\" path=\"%@\" />";
+static NSString *format = @"<%@ status=%ld api=\"%@\" sender=\"%@\" name=\"%@\" path=\"%@\" />";
 
 // Override
 - (NSString *)description {
     return [NSString stringWithFormat:format,
-            [self class], [self url], [self sender], [self name], [self path]];
+            [self class], [self status], [self url], [self sender], [self name], [self path]];
 }
 
 // Override

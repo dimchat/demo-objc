@@ -76,8 +76,8 @@
 
 // Override
 - (NSString *)description {
-    return [NSString stringWithFormat:@"<%@ url=\"%@\" path=\"%@\" />",
-            [self class], [self url], [self path]];
+    return [NSString stringWithFormat:@"<%@ status=%ld url=\"%@\" path=\"%@\" />",
+            [self class], [self status], [self url], [self path]];
 }
 
 // Override

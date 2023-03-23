@@ -198,9 +198,6 @@ static inline NSString *filename_from_url(NSURL *url) {
         DIMFileTransferStatus status = [task status];
         switch (status) {
             case DIMFileTransferError:
-                NSLog(@"task error: %@", task);
-                break;
-                
             case DIMFileTransferRunning:
             case DIMFileTransferSuccess:
                 // task is busy now
@@ -245,12 +242,11 @@ static inline NSString *filename_from_url(NSURL *url) {
         url = [_cdn objectForKey:filename];
     }
     if (url) {
-        if ([req status] == DIMFileTransferWaiting) {
-            [req onSuccess];
-            [req.delegate uploadTask:req onSuccess:url];
-            [req onFinished];
-        }
         // uploaded previously
+        NSAssert([req status] == DIMFileTransferWaiting, @"status error: %@", req);
+        [req onSuccess];
+        [req.delegate uploadTask:req onSuccess:url];
+        [req onFinished];
         return YES;
     }
     
@@ -333,12 +329,11 @@ static inline NSString *filename_from_url(NSURL *url) {
     // 3. check previous download
     NSString *path = [req path];
     if ([DIMStorage fileExistsAtPath:path]) {
-        if ([req status] == DIMFileTransferWaiting) {
-            [req onSuccess];
-            [req.delegate downloadTask:req onSuccess:path];
-            [req onFinished];
-        }
         // download previously
+        NSAssert([req status] == DIMFileTransferWaiting, @"status error: %@", req);
+        [req onSuccess];
+        [req.delegate downloadTask:req onSuccess:path];
+        [req onFinished];
         return YES;
     }
     
@@ -354,106 +349,68 @@ static inline NSString *filename_from_url(NSURL *url) {
     return YES;
 }
 
-// private
-- (NSSet<id<DIMUploadDelegate>> *)listenersForUpload:(DIMUploadTask *)task {
-    NSMutableSet<id<DIMUploadDelegate>> *listeners = [[NSMutableSet alloc] init];
-    [listeners addObject:task.delegate];
-    // check other requests with same filename
-    NSString *filename = [task.path lastPathComponent];
-    @synchronized (_uploads) {
-        [_uploads enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                   usingBlock:^(DIMUploadRequest *req, NSUInteger idx, BOOL *stop) {
-            NSString *target = [req.path lastPathComponent];
-            if ([filename isEqualToString:target]) {
-                [req touch];
-                [listeners addObject:req.delegate];
-            }
-        }];
-    }
-    return listeners;
-}
-
-// private
-- (NSSet<id<DIMDownloadDelegate>> *)listenersForDownload:(DIMDownloadTask *)task {
-    NSMutableSet<id<DIMDownloadDelegate>> *listeners = [[NSMutableSet alloc] init];
-    [listeners addObject:task.delegate];
-    // check other requests with same URL
-    NSString *filename = filename_from_url([task url]);
-    @synchronized (_downloads) {
-        [_downloads enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                   usingBlock:^(DIMDownloadRequest *req, NSUInteger idx, BOOL *stop) {
-            NSString *target = filename_from_url([req url]);
-            if ([filename isEqualToString:target]) {
-                [req touch];
-                [listeners addObject:req.delegate];
-            }
-        }];
-    }
-    return listeners;
-}
-
 #pragma mark DIMUploadDelegate
 
 - (void)uploadTask:(DIMUploadTask *)task onSuccess:(NSURL *)url {
+    DIMUploadRequest *req = _uploadingRequest;
+    NSAssert(task == _uploadingTask, @"upload not match: %@, %@", task, _uploadingTask);
+    NSAssert([req.path hasSuffix:task.filename], @"upload error: %@, %@", task, req);
     // 1. cache upload result
     if (url) {
         @synchronized (_cdn) {
             [_cdn setObject:url forKey:task.filename];
         }
     }
-    NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
     // 2. callback
-    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                usingBlock:^(id<DIMUploadDelegate> delegate, BOOL *stop) {
-        [delegate uploadTask:task onSuccess:url];
-    }];
+    id<DIMUploadDelegate> delegate = [req delegate];
+    [delegate uploadTask:req onSuccess:url];
 }
 
 - (void)uploadTask:(DIMUploadTask *)task onFailed:(NSException *)error {
-    NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
+    DIMUploadRequest *req = _uploadingRequest;
+    NSAssert(task == _uploadingTask, @"upload not match: %@, %@", task, _uploadingTask);
+    NSAssert([req.path hasSuffix:task.filename], @"upload error: %@, %@", task, req);
     // callback
-    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                usingBlock:^(id<DIMUploadDelegate> delegate, BOOL *stop) {
-        [delegate uploadTask:task onFailed:error];
-    }];
+    id<DIMUploadDelegate> delegate = [req delegate];
+    [delegate uploadTask:req onFailed:error];
 }
 
 - (void)uploadTask:(DIMUploadTask *)task onError:(NSError *)error {
-    NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
+    DIMUploadRequest *req = _uploadingRequest;
+    NSAssert(task == _uploadingTask, @"upload not match: %@, %@", task, _uploadingTask);
+    NSAssert([req.path hasSuffix:task.filename], @"upload error: %@, %@", task, req);
     // callback
-    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                usingBlock:^(id<DIMUploadDelegate> delegate, BOOL *stop) {
-        [delegate uploadTask:task onError:error];
-    }];
+    id<DIMUploadDelegate> delegate = [req delegate];
+    [delegate uploadTask:req onError:error];
 }
 
 #pragma mark DIMDownloadDelegate
 
 - (void)downloadTask:(DIMDownloadTask *)task onSuccess:(NSString *)path {
-    NSSet<id<DIMDownloadDelegate>> *listeners = [self listenersForDownload:task];
+    DIMDownloadRequest *req = _downloadingRequest;
+    NSAssert(task == _downloadingTask, @"download not match: %@, %@", task, _downloadingTask);
+    NSAssert([req.url isEqual:task.url], @"download error: %@, %@", task, req);
     // callback
-    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                usingBlock:^(id<DIMDownloadDelegate> delegate, BOOL *stop) {
-        [delegate downloadTask:task onSuccess:path];
-    }];
+    id<DIMDownloadDelegate> delegate = [req delegate];
+    [delegate downloadTask:req onSuccess:path];
 }
 
 - (void)downloadTask:(DIMDownloadTask *)task onFailed:(NSException *)error {
-    NSSet<id<DIMDownloadDelegate>> *listeners = [self listenersForDownload:task];
+    DIMDownloadRequest *req = _downloadingRequest;
+    NSAssert(task == _downloadingTask, @"download not match: %@, %@", task, _downloadingTask);
+    NSAssert([req.url isEqual:task.url], @"download error: %@, %@", task, req);
     // callback
-    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                usingBlock:^(id<DIMDownloadDelegate> delegate, BOOL *stop) {
-        [delegate downloadTask:task onFailed:error];
-    }];
+    id<DIMDownloadDelegate> delegate = [req delegate];
+    [delegate downloadTask:req onFailed:error];
 }
 
 - (void)downloadTask:(DIMDownloadTask *)task onError:(NSError *)error {
-    NSSet<id<DIMDownloadDelegate>> *listeners = [self listenersForDownload:task];
+    DIMDownloadRequest *req = _downloadingRequest;
+    NSAssert(task == _downloadingTask, @"download not match: %@, %@", task, _downloadingTask);
+    NSAssert([req.url isEqual:task.url], @"download error: %@, %@", task, req);
     // callback
-    [listeners enumerateObjectsWithOptions:NSEnumerationConcurrent
-                                usingBlock:^(id<DIMDownloadDelegate> delegate, BOOL *stop) {
-        [delegate downloadTask:task onError:error];
-    }];
+    id<DIMDownloadDelegate> delegate = [req delegate];
+    [delegate downloadTask:req onError:error];
 }
 
 @end

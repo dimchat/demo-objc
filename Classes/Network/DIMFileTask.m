@@ -70,6 +70,15 @@ static const NSTimeInterval TASK_EXPIRES = 300.0;
 }
 
 - (DIMFileTransferStatus)status {
+    if (_lastActive >= 1) {  // > 0
+        // task started, check for expired
+        NSTimeInterval now = OKGetCurrentTimeInterval();
+        NSTimeInterval expired = _lastActive + TASK_EXPIRES;
+        if (now > expired) {
+            // TODO: send it again?
+            return DIMFileTransferExpired;
+        }
+    }
     if (_flag == -1) {
         return DIMFileTransferError;
     } else if (_flag == 1) {
@@ -78,13 +87,8 @@ static const NSTimeInterval TASK_EXPIRES = 300.0;
         return DIMFileTransferFinished;
     } else if (_lastActive < 1) {  // == 0
         return DIMFileTransferWaiting;
-    }
-    NSTimeInterval now = OKGetCurrentTimeInterval();
-    NSTimeInterval expired = _lastActive + TASK_EXPIRES;
-    if (now < expired) {
-        return DIMFileTransferRunning;
     } else {
-        return DIMFileTransferExpired;
+        return DIMFileTransferRunning;
     }
 }
 
@@ -99,10 +103,8 @@ static const NSTimeInterval TASK_EXPIRES = 300.0;
 }
 
 - (void)onFinished {
-    NSAssert(_flag != 0, @"flag error");
-    if (_flag == 1) {
-        _flag = 2;
-    }
+    NSAssert(_flag == -1 || _flag == 1, @"flag error: %ld", _flag);
+    _flag = 2;
 }
 
 // "DIMP/1.0 (iPad; U; iOS 11.4; zh-CN) DIMCoreKit/1.0 (Terminal, like WeChat) DIM-by-GSP/1.0.1";
