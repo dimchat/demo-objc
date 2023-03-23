@@ -108,6 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)containsMember:(id<MKMID>)uid group:(id<MKMID>)gid;
 - (BOOL)addMember:(id<MKMID>)uid group:(id<MKMID>)gid;
+- (BOOL)removeMember:(id<MKMID>)uid group:(id<MKMID>)gid;
 
 // private
 - (NSArray<id<MKMID>> *)addMembers:(NSArray<id<MKMID>> *)newMembers

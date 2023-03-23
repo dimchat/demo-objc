@@ -422,6 +422,19 @@ OKSingletonImplementations(DIMGroupManager, sharedInstance)
     return [self saveMembers:mArray group:group];
 }
 
+- (BOOL)removeMember:(id<MKMID>)member group:(id<MKMID>)group {
+    NSAssert(MKMIDIsUser(member) && MKMIDIsGroup(group), @"ID error: %@, %@", member, group);
+    NSArray<id<MKMID>> *allMembers = [self membersOfGroup:group];
+    NSUInteger pos = [allMembers indexOfObject:member];
+    if (pos == NSNotFound) {
+        // not exists
+        return NO;
+    }
+    NSMutableArray *mArray = mutable_array(allMembers);
+    [mArray removeObject:member];
+    return [self saveMembers:mArray group:group];
+}
+
 // private
 - (NSArray<id<MKMID>> *)addMembers:(NSArray<id<MKMID>> *)newMembers
                              group:(id<MKMID>)group {

@@ -114,6 +114,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)downloadPathWithFilename:(NSString *)filename;
 
+/**
+ *  Delete expired files in this directory cyclically
+ *
+ * @param dir     - directory
+ * @param expired - expired time (milliseconds, from Jan 1, 1970 UTC)
+ */
++ (void)cleanupDirectory:(NSString *)dir beforeTime:(NSTimeInterval)expired;
+
 @end
 
 NS_ASSUME_NONNULL_END

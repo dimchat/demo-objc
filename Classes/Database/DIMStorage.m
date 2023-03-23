@@ -269,4 +269,8 @@ static NSString *s_temporaryDirectory = nil;
     return [NSString stringWithFormat:@"%@/download/%@", dir, filename];
 }
 
++ (void)cleanupDirectory:(NSString *)dir beforeTime:(NSTimeInterval)expired {
+    // TODO: Delete expired files in this directory cyclically
+}
+
 @end

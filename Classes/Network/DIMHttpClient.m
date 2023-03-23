@@ -225,9 +225,12 @@ static inline NSString *filename_from_url(NSURL *url) {
     }
     
     // 2. get next request
-    DIMUploadRequest *req;
+    DIMUploadRequest *req = nil;
     @synchronized (_uploads) {
-        req = [_uploads firstObject];
+        if ([_uploads count] > 0) {
+            req = [_uploads firstObject];
+            [_uploads removeObjectAtIndex:0];
+        }
     }
     if (!req) {
         // nothing to upload now
@@ -242,8 +245,11 @@ static inline NSString *filename_from_url(NSURL *url) {
         url = [_cdn objectForKey:filename];
     }
     if (url) {
-        id<DIMUploadDelegate> delegate = [req delegate];
-        [delegate uploadTask:req onSuccess:url];
+        if ([req status] == DIMFileTransferWaiting) {
+            [req onSuccess];
+            [req.delegate uploadTask:req onSuccess:url];
+            [req onFinished];
+        }
         // uploaded previously
         return YES;
     }
@@ -312,9 +318,12 @@ static inline NSString *filename_from_url(NSURL *url) {
     }
     
     // 2. get next request
-    DIMDownloadRequest *req;
+    DIMDownloadRequest *req = nil;
     @synchronized (_downloads) {
-        req = [_downloads firstObject];
+        if ([_downloads count] > 0) {
+            req = [_downloads firstObject];
+            [_downloads removeObjectAtIndex:0];
+        }
     }
     if (!req) {
         // nothing to download now
@@ -324,8 +333,11 @@ static inline NSString *filename_from_url(NSURL *url) {
     // 3. check previous download
     NSString *path = [req path];
     if ([DIMStorage fileExistsAtPath:path]) {
-        id<DIMDownloadDelegate> delegate = [req delegate];
-        [delegate downloadTask:req onSuccess:path];
+        if ([req status] == DIMFileTransferWaiting) {
+            [req onSuccess];
+            [req.delegate downloadTask:req onSuccess:path];
+            [req onFinished];
+        }
         // download previously
         return YES;
     }
@@ -353,6 +365,7 @@ static inline NSString *filename_from_url(NSURL *url) {
                                    usingBlock:^(DIMUploadRequest *req, NSUInteger idx, BOOL *stop) {
             NSString *target = [req.path lastPathComponent];
             if ([filename isEqualToString:target]) {
+                [req touch];
                 [listeners addObject:req.delegate];
             }
         }];
@@ -371,6 +384,7 @@ static inline NSString *filename_from_url(NSURL *url) {
                                    usingBlock:^(DIMDownloadRequest *req, NSUInteger idx, BOOL *stop) {
             NSString *target = filename_from_url([req url]);
             if ([filename isEqualToString:target]) {
+                [req touch];
                 [listeners addObject:req.delegate];
             }
         }];
@@ -383,7 +397,9 @@ static inline NSString *filename_from_url(NSURL *url) {
 - (void)uploadTask:(DIMUploadTask *)task onSuccess:(NSURL *)url {
     // 1. cache upload result
     if (url) {
-        [_cdn setObject:url forKey:task.filename];
+        @synchronized (_cdn) {
+            [_cdn setObject:url forKey:task.filename];
+        }
     }
     NSSet<id<DIMUploadDelegate>> *listeners = [self listenersForUpload:task];
     // 2. callback
