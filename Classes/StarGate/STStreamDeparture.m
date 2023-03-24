@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  STStreamDeparture.m
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/11.
 //  Copyright © 2023 DIM Group. All rights reserved.

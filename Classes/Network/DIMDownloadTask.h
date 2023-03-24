@@ -29,13 +29,13 @@
 // =============================================================================
 //
 //  DIMDownloadTask.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/12.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMFileTask.h>
+#import <DIMClient/DIMFileTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

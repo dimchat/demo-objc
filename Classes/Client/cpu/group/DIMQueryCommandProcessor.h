@@ -35,7 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMP/DIMGroupCommandProcessor.h>
+#import <DIMClient/DIMGroupCommandProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

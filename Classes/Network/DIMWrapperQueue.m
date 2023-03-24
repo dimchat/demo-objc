@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMWrapperQueue.m
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/10.
 //  Copyright © 2023 DIM Group. All rights reserved.
@@ -194,6 +194,9 @@ typedef OKArrayList<DIMMessageWrapper *> WrapperList;
 }
 
 - (void)purge {
+    // FIXME: runtime exception
+    //        -[__NSArrayM removeObjectsInRange:]: range {1, 1} extends beyond bounds [0 .. 0]
+    //        -[__NSCFString characterAtIndex:].cold.1 + 0
     @synchronized (self) {
         OKArrayList<NSNumber *> *emptyPositions = [[OKArrayList alloc] init];
         [_priorities enumerateObjectsWithOptions:NSEnumerationConcurrent

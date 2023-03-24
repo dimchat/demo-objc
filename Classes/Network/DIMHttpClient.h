@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMHttpClient.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2019/4/4.
 //  Copyright © 2019 DIM Group. All rights reserved.
@@ -37,7 +37,7 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import <DIMP/DIMFileTask.h>
+#import <DIMClient/DIMFileTask.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

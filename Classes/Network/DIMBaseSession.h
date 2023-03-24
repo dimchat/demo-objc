@@ -29,16 +29,16 @@
 // =============================================================================
 //
 //  DIMBaseSession.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/10.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMGateKeeper.h>
-#import <DIMP/DIMSession.h>
-#import <DIMP/DIMSessionDBI.h>
-#import <DIMP/DIMCommonMessenger.h>
+#import <DIMClient/DIMGateKeeper.h>
+#import <DIMClient/DIMSession.h>
+#import <DIMClient/DIMSessionDBI.h>
+#import <DIMClient/DIMCommonMessenger.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

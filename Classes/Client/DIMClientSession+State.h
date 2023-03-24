@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMClientSession+State.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/11.
 //  Copyright © 2023 DIM Group. All rights reserved.
@@ -37,7 +37,7 @@
 
 #import <FiniteStateMachine/FiniteStateMachine.h>
 
-#import <DIMP/DIMClientSession.h>
+#import <DIMClient/DIMClientSession.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

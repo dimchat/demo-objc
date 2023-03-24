@@ -29,13 +29,13 @@
 // =============================================================================
 //
 //  DIMClientFacebook.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/13.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMCommonFacebook.h>
+#import <DIMClient/DIMCommonFacebook.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  MKMAnonymous.m
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2021/2/18.
 //  Copyright © 2021 DIM Group. All rights reserved.

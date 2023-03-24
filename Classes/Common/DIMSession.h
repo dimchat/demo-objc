@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMSession.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/5.
 //  Copyright © 2023 DIM Group. All rights reserved.
@@ -37,7 +37,7 @@
 
 #import <StarTrek/StarTrek.h>
 
-#import <DIMP/DIMSessionDBI.h>
+#import <DIMClient/DIMSessionDBI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

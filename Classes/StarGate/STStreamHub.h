@@ -29,13 +29,13 @@
 // =============================================================================
 //
 //  STStreamHub.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/10.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/STStreamChannel.h>
+#import <DIMClient/STStreamChannel.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMReceiptCommand.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2019/3/28.
 //  Copyright © 2019 DIM Group. All rights reserved.

@@ -29,14 +29,14 @@
 // =============================================================================
 //
 //  DIMGateKeeper.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/10.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/STCommonGate.h>
-#import <DIMP/DIMWrapperQueue.h>
+#import <DIMClient/STCommonGate.h>
+#import <DIMClient/DIMWrapperQueue.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

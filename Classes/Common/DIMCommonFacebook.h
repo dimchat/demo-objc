@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMCommonFacebook.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/4.
 //  Copyright © 2023 DIM Group. All rights reserved.
@@ -37,8 +37,8 @@
 
 #import <DIMSDK/DIMSDK.h>
 
-#import <DIMP/DIMAccountDBI.h>
-#import <DIMP/DIMAddressNameServer.h>
+#import <DIMClient/DIMAccountDBI.h>
+#import <DIMClient/DIMAddressNameServer.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

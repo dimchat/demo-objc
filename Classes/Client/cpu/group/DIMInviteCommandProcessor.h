@@ -35,7 +35,7 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import <DIMP/DIMResetCommandProcessor.h>
+#import <DIMClient/DIMResetCommandProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

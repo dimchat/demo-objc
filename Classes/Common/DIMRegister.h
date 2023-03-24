@@ -29,13 +29,13 @@
 // =============================================================================
 //
 //  DIMRegister.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2019/12/20.
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMAccountDBI.h>
+#import <DIMClient/DIMAccountDBI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

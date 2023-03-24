@@ -29,15 +29,15 @@
 // =============================================================================
 //
 //  DIMCommonMessenger.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/5.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMMessageDBI.h>
-#import <DIMP/DIMSession.h>
-#import <DIMP/DIMCommonFacebook.h>
+#import <DIMClient/DIMMessageDBI.h>
+#import <DIMClient/DIMSession.h>
+#import <DIMClient/DIMCommonFacebook.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMSessionDBI.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/3.
 //  Copyright © 2023 DIM Group. All rights reserved.
@@ -37,7 +37,7 @@
 
 #import <ObjectKey/ObjectKey.h>
 
-#import <DIMP/DIMLoginCommand.h>
+#import <DIMClient/DIMLoginCommand.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -1,6 +1,6 @@
 //
 //  NSDate+Extension.m
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2019/3/18.
 //  Copyright © 2019 DIM Group. All rights reserved.

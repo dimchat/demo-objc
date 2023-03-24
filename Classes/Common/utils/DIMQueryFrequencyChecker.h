@@ -29,13 +29,13 @@
 // =============================================================================
 //
 //  DIMQueryFrequencyChecker.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/4.
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMP/DIMFrequencyChecker.h>
+#import <DIMClient/DIMFrequencyChecker.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

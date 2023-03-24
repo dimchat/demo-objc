@@ -29,7 +29,7 @@
 // =============================================================================
 //
 //  DIMAnsCommand.h
-//  DIMP
+//  DIMClient
 //
 //  Created by Albert Moky on 2023/3/2.
 //  Copyright © 2023 DIM Group. All rights reserved.
