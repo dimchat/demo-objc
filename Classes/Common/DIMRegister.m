@@ -35,6 +35,8 @@
 //  Copyright © 2019 DIM Group. All rights reserved.
 //
 
+#import <ObjectKey/ObjectKey.h>
+
 #import "DIMHandshakeCommand.h"
 #import "DIMReceiptCommand.h"
 #import "DIMLoginCommand.h"
@@ -168,8 +170,7 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
 @implementation DIMRegister (Plugins)
 
 + (void)prepare {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    OKSingletonDispatchOnce(^{
 
         // load plugins
         [MKMPlugins loadPlugins];

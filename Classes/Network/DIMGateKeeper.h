@@ -40,7 +40,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMGateKeeper : FSMRunner <STDockerDelegate>
+@interface DIMGateKeeper : SMRunner <STDockerDelegate>
 
 @property(nonatomic, readonly) id<NIOSocketAddress> remoteAddress;
 

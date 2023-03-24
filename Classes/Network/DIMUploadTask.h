@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      sender   -
  *      delegate - HTTP client
  */
-@interface DIMUploadTask : DIMUploadRequest <FSMRunnable>
+@interface DIMUploadTask : DIMUploadRequest <SMRunnable>
 
 @property(nonatomic, readonly) NSString *filename;  // file name
 @property(nonatomic, readonly) NSData *data;        // file data

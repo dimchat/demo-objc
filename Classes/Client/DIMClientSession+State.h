@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  *      +--------------+                +------------------+
  *
  */
-@interface DIMSessionStateMachine : FSMAutoMachine <FSMContext>
+@interface DIMSessionStateMachine : SMAutoMachine <SMContext>
 
 @property(nonatomic, readonly) DIMClientSession *session;
 
@@ -104,7 +104,7 @@ typedef NS_ENUM(UInt8, DIMSessionStateOrder) {
  *      RUNNING     - handshake accepted
  *      ERROR       - network error
  */
-@interface DIMSessionState : FSMState
+@interface DIMSessionState : SMState
 
 @property(nonatomic, readonly) NSTimeInterval enterTime;
 
@@ -116,7 +116,7 @@ typedef NS_ENUM(UInt8, DIMSessionStateOrder) {
  *
  *  callback when session state changed
  */
-@protocol DIMSessionStateDelegate <FSMDelegate>
+@protocol DIMSessionStateDelegate <SMDelegate>
 
 @end
 
@@ -163,7 +163,7 @@ typedef NS_ENUM(UInt8, DIMSessionStateOrder) {
  *
  *      5.0 - when connection reset, change state 'error' to 'default'.
  */
-@interface DIMSessionStateTransition : FSMBlockTransition
+@interface DIMSessionStateTransition : SMBlockTransition
 
 @end
 

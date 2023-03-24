@@ -83,7 +83,7 @@ static inline NSString *make_filepath(NSString *dir, NSString *filename,
     DIMDownloadTask    *_downloadingTask;
     DIMDownloadRequest *_downloadingRequest;
     
-    id<FSMThread> _daemon;
+    id<SMThread> _daemon;
 }
 
 @end
@@ -110,7 +110,7 @@ static inline NSString *make_filepath(NSString *dir, NSString *filename,
 - (void)start {
     [self stop];
     // start new thread
-    FSMThread *thread = [[FSMThread alloc] initWithTarget:self];
+    SMThread *thread = [[SMThread alloc] initWithTarget:self];
     [thread start];
     _daemon = thread;
 }
@@ -119,7 +119,7 @@ static inline NSString *make_filepath(NSString *dir, NSString *filename,
 - (void)stop {
     [super stop];
     // wait for thread stop
-    FSMThread *thread = _daemon;
+    SMThread *thread = _daemon;
     if (thread) {
         [thread cancel];
         [NSThread sleepForTimeInterval:1.0];
@@ -219,7 +219,7 @@ static inline NSString *make_filepath(NSString *dir, NSString *filename,
     NSData *hash = hash_data(data, secret, salt);
 
     // 4. build upload task
-    NSString *string = [req.url absoluteString];
+    NSString *string = NSStringFromURL([req url]);
     // "https://sechat.dim.chat/{ID}/upload?md5={MD5}&salt={SALT}"
     id<MKMAddress> address = [req.sender address];
     string = [string stringByReplacingOccurrencesOfString:@"{ID}"
@@ -228,7 +228,8 @@ static inline NSString *make_filepath(NSString *dir, NSString *filename,
                                                withString:MKMHexEncode(hash)];
     string = [string stringByReplacingOccurrencesOfString:@"{SALT}"
                                                withString:MKMHexEncode(salt)];
-    task = [[DIMUploadTask alloc] initWithURL:[NSURL URLWithString:string]
+    
+    task = [[DIMUploadTask alloc] initWithURL:NSURLFromString(string)
                                          name:req.name
                                      filename:filename
                                          data:data

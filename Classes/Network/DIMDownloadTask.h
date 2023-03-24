@@ -77,7 +77,7 @@ NS_DESIGNATED_INITIALIZER;
  *      path     - temporary file path
  *      delegate - HTTP client
  */
-@interface DIMDownloadTask : DIMDownloadRequest <FSMRunnable>
+@interface DIMDownloadTask : DIMDownloadRequest <SMRunnable>
 
 @end
 

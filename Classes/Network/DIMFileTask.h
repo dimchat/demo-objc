@@ -134,4 +134,16 @@ typedef NS_ENUM(NSInteger, DIMFileTransferStatus) {
 
 @end
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+NSURL *NSURLFromString(NSString *string);
+
+NSString *NSStringFromURL(NSURL *url);
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
+
 NS_ASSUME_NONNULL_END

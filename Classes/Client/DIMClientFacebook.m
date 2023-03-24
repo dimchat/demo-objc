@@ -113,8 +113,7 @@ static id<MKMIDFactory> _idFactory = nil;
 }
 
 + (void)prepare {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    OKSingletonDispatchOnce(^{
 
         // load plugins
         [DIMRegister prepare];

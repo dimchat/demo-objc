@@ -198,7 +198,7 @@ static inline NSURLRequest *http_request(NSURL *url) {
             NSString *json = MKMUTF8Decode(data);
             NSDictionary *info = MKMJSONDecode(json);
             NSString *urlString = [info objectForKey:@"url"];
-            url = [[NSURL alloc] initWithString:urlString];
+            url = NSURLFromString(urlString);
         } @catch (NSException *e) {
             [strongSelf onError];
             [strongSelf.delegate uploadTask:strongSelf onFailed:e];

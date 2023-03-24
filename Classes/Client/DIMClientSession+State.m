@@ -67,7 +67,7 @@
 }
 
 // Override
-- (id<FSMContext>)context {
+- (id<SMContext>)context {
     return self;
 }
 
@@ -95,8 +95,7 @@
 static NSArray *s_names = nil;
 
 static inline NSString *get_name(DIMSessionStateOrder order) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    OKSingletonDispatchOnce((^{
         s_names = @[
             @"DIMSessionStateOrderDefault",
             @"DIMSessionStateOrderConnecting",
@@ -105,7 +104,7 @@ static inline NSString *get_name(DIMSessionStateOrder order) {
             @"DIMSessionStateOrderRunning",
             @"DIMSessionStateOrderError",
         ];
-    });
+    }));
     return [s_names objectAtIndex:order];
 }
 
@@ -155,30 +154,30 @@ static inline NSString *get_name(DIMSessionStateOrder order) {
 //
 
 // Override
-- (void)onEnter:(id<FSMState>)previous machine:(id<FSMContext>)ctx
+- (void)onEnter:(id<SMState>)previous machine:(id<SMContext>)ctx
            time:(NSTimeInterval)now {
     _enterTime = now;
 }
 
 // Override
-- (void)onExit:(id<FSMState>)next machine:(id<FSMContext>)ctx
+- (void)onExit:(id<SMState>)next machine:(id<SMContext>)ctx
           time:(NSTimeInterval)now {
     _enterTime = 0;
 }
 
 // Override
-- (void)onPaused:(id<FSMContext>)ctx time:(NSTimeInterval)now {
+- (void)onPaused:(id<SMContext>)ctx time:(NSTimeInterval)now {
     //
 }
 
 // Override
-- (void)onResume:(id<FSMContext>)ctx time:(NSTimeInterval)now {
+- (void)onResume:(id<SMContext>)ctx time:(NSTimeInterval)now {
     //
 }
 
 @end
 
-static inline id<FSMState> create_state(NSUInteger index, NSUInteger capacity) {
+static inline id<SMState> create_state(NSUInteger index, NSUInteger capacity) {
     return [[DIMSessionState alloc] initWithIndex:index capacity:capacity];
 }
 
@@ -262,9 +261,9 @@ static inline BOOL state_expired(DIMSessionState *state, NSTimeInterval now) {
     return 0 < enterTime && enterTime < (now - 30);
 }
 
-static inline id<FSMTransition> create_transition(NSUInteger stateIndex,
-                                                  FSMBlock block) {
-    return [[FSMBlockTransition alloc] initWithTarget:stateIndex block:block];
+static inline id<SMTransition> create_transition(NSUInteger stateIndex,
+                                                 SMBlock block) {
+    return [[DIMSessionStateTransition alloc] initWithTarget:stateIndex block:block];
 }
 
 @implementation DIMSessionStateTransitionBuilder

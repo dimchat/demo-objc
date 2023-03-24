@@ -142,3 +142,21 @@ static const NSTimeInterval TASK_EXPIRES = 300.0;
 }
 
 @end
+
+#pragma mark URL
+
+static NSString * const chars = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=";
+
+NSURL *NSURLFromString(NSString *string) {
+    static NSCharacterSet *set;
+    OKSingletonDispatchOnce(^{
+        set = [NSCharacterSet characterSetWithCharactersInString:chars];
+    });
+    string = [string stringByAddingPercentEncodingWithAllowedCharacters:set];
+    return [NSURL URLWithString:string];
+}
+
+NSString *NSStringFromURL(NSURL *url) {
+    NSString *str = [url isFileURL] ? [url path] : [url absoluteString];
+    return [str stringByRemovingPercentEncoding];
+}

@@ -139,8 +139,8 @@
             return;
         }
         // move to caches directory
-        NSString *src = [loc isFileURL] ? [loc path] : [loc absoluteString];
-        NSString *path = self.path;
+        NSString *src = NSStringFromURL(loc);
+        NSString *path = [self path];
         if ([DIMStorage moveItemAtPath:src toPath:path error:&error]) {
             [strongSelf onSuccess];
             [strongSelf.delegate downloadTask:strongSelf onSuccess:path];

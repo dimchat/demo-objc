@@ -43,8 +43,7 @@ static NSData *sn_start = nil;
 static NSData *sn_end = nil;
 
 static inline NSData *fetch_sn(NSData *data) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    OKSingletonDispatchOnce(^{
         sn_start = MKMUTF8Encode(@"Mars SN:");
         sn_end = MKMUTF8Encode(@"\n");
     });
@@ -114,7 +113,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 
 @property(nonatomic, strong) __kindof id<MKMStation> station;
 
-@property(nonatomic, strong) FSMThread *thread;
+@property(nonatomic, strong) SMThread *thread;
 
 @end
 
@@ -145,7 +144,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 
 - (void)start {
     NSAssert(!_thread, @"already started");
-    FSMThread *thr = [[FSMThread alloc] initWithTarget:self];
+    SMThread *thr = [[SMThread alloc] initWithTarget:self];
     [thr start];
     self.thread = thr;
 }
@@ -154,7 +153,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 - (void)stop {
     [super stop];
     NSAssert(_thread, @"not start yet");
-    FSMThread *thr = self.thread;
+    SMThread *thr = self.thread;
     [thr cancel];
     self.thread = nil;
 }

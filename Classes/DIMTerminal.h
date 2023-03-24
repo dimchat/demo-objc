@@ -39,7 +39,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMTerminal : FSMRunner <DIMSessionStateDelegate>
+@interface DIMTerminal : SMRunner <DIMSessionStateDelegate>
 
 @property(nonatomic, readonly) __kindof id<DIMSessionDBI> database;
 

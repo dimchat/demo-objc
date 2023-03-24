@@ -44,8 +44,9 @@
 @implementation __StreamChannelReader
 
 // Override
-- (id<NIOSocketAddress>)receiveWithBuffer:(NIOByteBuffer *)dst {
-    if ([self readWithBuffer:dst] > 0) {
+- (id<NIOSocketAddress>)receiveWithBuffer:(NIOByteBuffer *)dst throws:(NIOException **)error {
+    NSInteger cnt = [self readWithBuffer:dst throws:error];
+    if (cnt > 0) {
         return [self remoteAddress];
     }
     return nil;
@@ -60,11 +61,12 @@
 @implementation __StreamChannelWriter
 
 // Override
-- (NSInteger)sendWithBuffer:(NIOByteBuffer *)src remoteAddress:(id<NIOSocketAddress>)target {
+- (NSInteger)sendWithBuffer:(NIOByteBuffer *)src remoteAddress:(id<NIOSocketAddress>)target
+                     throws:(NIOException **)error {
     // TCP channel will be always connected
     // so the target address must be the remote address
     NSAssert(!target || [target isEqual:self.remoteAddress], @"target error: %@, remote: %@", target, self.remoteAddress);
-    return [self writeWithBuffer:src];
+    return [self writeWithBuffer:src throws:error];
 }
 
 @end

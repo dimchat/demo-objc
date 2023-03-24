@@ -46,6 +46,7 @@
 #import "DIMClientMessagePacker.h"
 #import "DIMClientMessageProcessor.h"
 #import "DIMClientMessenger.h"
+#import "DIMGroupManager.h"
 
 #import "DIMTerminal.h"
 
@@ -61,7 +62,7 @@
 
 @property(nonatomic, strong) DIMSessionStateMachine *fsm;
 
-@property(nonatomic, strong) FSMThread *thread;
+@property(nonatomic, strong) SMThread *thread;
 
 @end
 
@@ -109,7 +110,7 @@
 
 // Override
 - (void)idle {
-    [FSMRunner idle:16.0];
+    [SMRunner idle:16.0];
 }
 
 // protected
@@ -154,13 +155,13 @@
 //
 
 // Override
-- (void)machine:(id<FSMContext>)ctx enterState:(id<FSMState>)next
+- (void)machine:(id<SMContext>)ctx enterState:(id<SMState>)next
            time:(NSTimeInterval)now {
     // called before state changed
 }
 
 // Override
-- (void)machine:(DIMSessionStateMachine *)ctx exitState:(id<FSMState>)previous
+- (void)machine:(DIMSessionStateMachine *)ctx exitState:(id<SMState>)previous
            time:(NSTimeInterval)now {
     DIMSessionState *current = [ctx currentState];
     if (!current) {
@@ -178,13 +179,13 @@
 }
 
 // Override
-- (void)machine:(id<FSMContext>)ctx pauseState:(id<FSMState>)current
+- (void)machine:(id<SMContext>)ctx pauseState:(id<SMState>)current
            time:(NSTimeInterval)now {
     
 }
 
 // Override
-- (void)machine:(id<FSMContext>)ctx resumeState:(id<FSMState>)current
+- (void)machine:(id<SMContext>)ctx resumeState:(id<SMState>)current
            time:(NSTimeInterval)now {
     // TODO: clear session key for re-login?
 }
@@ -288,6 +289,7 @@
     [machine start];
     self.fsm = machine;
     self.messenger = messenger;
+    [DIMGroupManager sharedInstance].messenger = messenger;
     return messenger;
 }
 
@@ -357,9 +359,9 @@
 }
 
 - (void)start {
-    FSMThread *thr = self.thread;
+    SMThread *thr = self.thread;
     if (!thr) {
-        thr = [[FSMThread alloc] initWithTarget:self];
+        thr = [[SMThread alloc] initWithTarget:self];
         [thr start];
         self.thread = thr;
     }

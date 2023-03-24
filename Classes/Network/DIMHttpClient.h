@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  HTTP Client
  */
-@interface DIMHttpClient : FSMRunner <DIMUploadDelegate, DIMDownloadDelegate>
+@interface DIMHttpClient : SMRunner <DIMUploadDelegate, DIMDownloadDelegate>
 
 - (void)start;
 
