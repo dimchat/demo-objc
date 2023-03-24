@@ -236,6 +236,7 @@
         return nil;
     }
     id<MKMGroup> grp = [_facebook groupWithID:group];
+    NSAssert(grp, @"group not ready: %@", group);
     NSArray<id<MKMID>> *members = [grp members];
     if ([members count] == 0) {
         // group not ready, try to query members for it

@@ -159,8 +159,7 @@
         receiver = [rMsg receiver];
     }
     id<DIMMessageDBI> db = [_messenger database];
-    // TODO: removeReliableMessage(rMsg, receiver)
-    //[db removeReliableMessage:rMsg receiver:receiver];
+    [db removeReliableMessage:rMsg forReceiver:receiver];
 }
 
 @end

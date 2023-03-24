@@ -35,6 +35,7 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import <ObjectKey/ObjectKey.h>
 #import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -43,7 +44,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol DIMMessageDBI <DIMCipherKeyDBI>
+// partial messages and remaining count, 0 means there are all messages cached
+typedef OKPair<NSArray<id<DKDReliableMessage>> *, NSNumber *> DIMReliableMessageResult;
+
+@protocol DIMReliableMessageDBI <NSObject>
+
+/*
+ *  Get network messages
+ *
+ * @param receiver - actual receiver
+ * @param range    - (start, length) for loading message
+ * @return message result
+ */
+- (DIMReliableMessageResult *)reliableMessageForReceiver:(id<MKMID>)receiver
+                                                   range:(NSRange)range;
+
+- (BOOL)cacheReliableMessage:(id<DKDReliableMessage>)rMsg
+                 forReceiver:(id<MKMID>)receiver;
+
+- (BOOL)removeReliableMessage:(id<DKDReliableMessage>)rMsg
+                  forReceiver:(id<MKMID>)receiver;
+
+@end
+
+@protocol DIMMessageDBI <DIMCipherKeyDBI, DIMReliableMessageDBI>
 
 @end
 
