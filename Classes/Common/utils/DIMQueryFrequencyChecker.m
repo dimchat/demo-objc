@@ -45,6 +45,8 @@
 @property(nonatomic, strong) DIMFrequencyChecker<id<MKMID>> *docQueries;
 @property(nonatomic, strong) DIMFrequencyChecker<id<MKMID>> *grpQueries;
 
+@property(nonatomic, strong) DIMFrequencyChecker<id<MKMID>> *docResponses;
+
 @end
 
 @implementation DIMQueryFrequencyChecker
@@ -58,6 +60,8 @@ OKSingletonImplementations(DIMQueryFrequencyChecker, sharedInstance)
         self.metaQueries = [[DIMFrequencyChecker alloc] initWithLifeSpan:QUERY_EXPIRES];
         self.docQueries  = [[DIMFrequencyChecker alloc] initWithLifeSpan:QUERY_EXPIRES];
         self.grpQueries  = [[DIMFrequencyChecker alloc] initWithLifeSpan:QUERY_EXPIRES];
+
+        self.docResponses = [[DIMFrequencyChecker alloc] initWithLifeSpan:QUERY_EXPIRES];
     }
     return self;
 }
@@ -78,6 +82,13 @@ OKSingletonImplementations(DIMQueryFrequencyChecker, sharedInstance)
 
 - (BOOL)checkMembersForID:(id<MKMID>)ID isExpired:(NSTimeInterval)now {
     DIMFrequencyChecker<id<MKMID>> *checker = self.grpQueries;
+    @synchronized (checker) {
+        return [checker checkKey:ID isExpired:now];
+    }
+}
+
+- (BOOL)checkDocumentToUser:(id<MKMID>)ID isExpired:(NSTimeInterval)now {
+    DIMFrequencyChecker<id<MKMID>> *checker = self.docResponses;
     @synchronized (checker) {
         return [checker checkKey:ID isExpired:now];
     }

@@ -40,10 +40,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol DIMCipherKeyDBI <DIMCipherKeyDelegate>
-
-@end
-
 // partial messages and remaining count, 0 means there are all messages cached
 typedef OKPair<NSArray<id<DKDReliableMessage>> *, NSNumber *> DIMReliableMessageResult;
 
@@ -67,7 +63,11 @@ typedef OKPair<NSArray<id<DKDReliableMessage>> *, NSNumber *> DIMReliableMessage
 
 @end
 
-@protocol DIMMessageDBI <DIMCipherKeyDBI, DIMReliableMessageDBI>
+@protocol DIMCipherKeyDBI <DIMCipherKeyDelegate>
+
+@end
+
+@protocol DIMMessageDBI <DIMReliableMessageDBI, DIMCipherKeyDBI>
 
 @end
 

@@ -88,7 +88,7 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
  * @param user - user ID
  * @return first key marked for signature
  */
-- (id<MKMPrivateKey>)privateKeyForSignature:(id<MKMID>)user;
+- (nullable id<MKMPrivateKey>)privateKeyForSignature:(id<MKMID>)user;
 
 /**
  *  Get private key for user
@@ -96,7 +96,7 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
  * @param user - user ID
  * @return the private key matched with meta.key
  */
-- (id<MKMPrivateKey>)privateKeyForVisaSignature:(id<MKMID>)user;
+- (nullable id<MKMPrivateKey>)privateKeyForVisaSignature:(id<MKMID>)user;
 
 @end
 
@@ -122,9 +122,22 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 
 - (BOOL)saveLocalUsers:(NSArray<id<MKMID>> *)users;
 
+- (BOOL)addUser:(id<MKMID>)user;
+- (BOOL)removeUser:(id<MKMID>)user;
+
+- (BOOL)setCurrentUser:(id<MKMID>)user;
+- (id<MKMID>)currentUser;
+
+@end
+
+@protocol DIMContactDBI <NSObject>
+
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user;
 
 - (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)user;
+
+- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user;
+- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user;
 
 @end
 
@@ -137,6 +150,11 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 - (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group;
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
 
+- (BOOL)addMember:(id<MKMID>)uid group:(id<MKMID>)gid;
+- (BOOL)removeMember:(id<MKMID>)uid group:(id<MKMID>)gid;
+
+- (BOOL)removeGroup:(id<MKMID>)gid;
+
 - (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group;
 - (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)gid;
 
@@ -145,7 +163,7 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 /**
  *  Account DBI
  */
-@protocol DIMAccountDBI <DIMPrivateKeyDBI, DIMMetaDBI, DIMDocumentDBI, DIMUserDBI, DIMGroupDBI>
+@protocol DIMAccountDBI <DIMPrivateKeyDBI, DIMMetaDBI, DIMDocumentDBI, DIMUserDBI, DIMContactDBI, DIMGroupDBI>
 
 @end
 

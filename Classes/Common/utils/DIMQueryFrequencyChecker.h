@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)checkDocumentForID:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
 - (BOOL)checkMembersForID:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
 
+- (BOOL)checkDocumentToUser:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -150,7 +150,7 @@
 // Override
 - (BOOL)queryMetaForID:(id<MKMID>)ID {
     DIMQueryFrequencyChecker *checker = [DIMQueryFrequencyChecker sharedInstance];
-    if ([checker checkMetaForID:ID isExpired:0]) {
+    if (![checker checkMetaForID:ID isExpired:0]) {
         // query not expired yet
         return NO;
     }
@@ -165,7 +165,7 @@
 // Override
 - (BOOL)queryDocumentForID:(id<MKMID>)ID {
     DIMQueryFrequencyChecker *checker = [DIMQueryFrequencyChecker sharedInstance];
-    if ([checker checkDocumentForID:ID isExpired:0]) {
+    if (![checker checkDocumentForID:ID isExpired:0]) {
         // query not expired yet
         return NO;
     }
@@ -174,12 +174,12 @@
                sender:nil
              receiver:MKMAnyStation()
              priority:STDeparturePrioritySlower];
-    return NO;
+    return YES;
 }
 
 - (BOOL)queryMembersForID:(id<MKMID>)group {
     DIMQueryFrequencyChecker *checker = [DIMQueryFrequencyChecker sharedInstance];
-    if ([checker checkMembersForID:group isExpired:0]) {
+    if (![checker checkMembersForID:group isExpired:0]) {
         // query not expired yet
         return NO;
     }
