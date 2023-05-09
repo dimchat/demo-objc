@@ -36,6 +36,7 @@
 //
 
 #import "STStreamArrival.h"
+#import "DIMClientSession+State.h"
 
 #import "DIMClientSession.h"
 
@@ -113,6 +114,10 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 
 @property(nonatomic, strong) __kindof id<MKMStation> station;
 
+@property(nonatomic, strong) DIMSessionStateMachine *fsm;
+
+@property(nonatomic, strong) NSString *key;
+
 @property(nonatomic, strong) SMThread *thread;
 
 @end
@@ -127,11 +132,21 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     if (self = [super initWithDatabase:db
                          remoteAddress:remote
                          socketChannel:nil]) {
-        self.station = server;
-        self.key = nil;
-        self.thread = nil;
+        _station = server;
+        _fsm = [[DIMSessionStateMachine alloc] initWithSession:self];
+        _thread = nil;
+        _key = nil;
+        _thread = nil;
     }
     return self;
+}
+
+- (id<MKMStation>)station {
+    return _station;
+}
+
+- (DIMSessionState *)state {
+    return [_fsm currentState];
 }
 
 - (NSString *)key {
@@ -142,20 +157,38 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
     _key = key;
 }
 
-- (void)start {
+- (void)startWithStateDelegate:(id<DIMSessionStateDelegate>) delegate {
+//    [self stop];
+    
     NSAssert(!_thread, @"already started");
     SMThread *thr = [[SMThread alloc] initWithTarget:self];
     [thr start];
-    self.thread = thr;
+    _thread = thr;
+    
+    // start state machine
+    _fsm.delegate = delegate;
+    [_fsm start];
+}
+
+- (void)pause {
+    [_fsm pause];
+}
+
+- (void)resume {
+    [_fsm resume];
 }
 
 // Override
 - (void)stop {
     [super stop];
+    
+    // stop state machine
+    [_fsm stop];
+    
     NSAssert(_thread, @"not start yet");
-    SMThread *thr = self.thread;
+    SMThread *thr = _thread;
     [thr cancel];
-    self.thread = nil;
+    _thread = nil;
 }
 
 // Override
@@ -216,14 +249,14 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
         // FIXME: other format?
         packages = @[data];
     }
-    
-    DIMMessenger *messenger = [self messenger];
+    id<NIOSocketAddress> source = [worker remoteAddress];
+
     // 2. process package data one by one
     NSData *SEPARATOR = MKMUTF8Encode(@"\n");
     NSMutableData *mData = [[NSMutableData alloc] init];
     NSArray<NSData *> *responses;
     for (NSData *pack in packages) {
-        responses = [messenger processData:pack];
+        responses = [self processData:pack fromRemote:source];
         // combine responses
         for (NSData *res in responses) {
             [mData appendData:res];
@@ -240,13 +273,38 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
         // NOTICE: sending 'SN' back to the server for confirming
         //         that the client have received the pushing message
         STCommonGate *gate = [self gate];
-        id<NIOSocketAddress> source = [worker remoteAddress];
         id<NIOSocketAddress> destination = [worker localAddress];
         [gate sendResponse:merge_data(head, data)
             forArrivalShip:arrival
              remoteAddress:source
               localAddress:destination];
     }
+}
+
+@end
+
+@implementation DIMClientSession (Pack)
+
++ (NSArray<NSData *> *)fetchDataPackages:(id<STArrival>)arrival {
+    STStreamArrival *ship = (STStreamArrival *)arrival;
+    NSData *payload = [ship payload];
+    // check payload
+    if (payload.length == 0) {
+        return @[];
+    } else {
+        // TODO: split JsON in lines
+        return @[payload];
+    }
+}
+
+@end
+
+@implementation DIMClientSession (Process)
+
+- (NSArray<NSData *> *)processData:(NSData *)pack
+                        fromRemote:(id<NIOSocketAddress>)source {
+    DIMMessenger *messenger = [self messenger];
+    return [messenger processData:pack];
 }
 
 @end

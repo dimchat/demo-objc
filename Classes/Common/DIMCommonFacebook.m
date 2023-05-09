@@ -77,6 +77,9 @@
 }
 
 - (void)setCurrentUser:(id<MKMUser>)currentUser {
+    if (!currentUser.dataSource) {
+        currentUser.dataSource = self;
+    }
     _currentUser = currentUser;
 }
 

@@ -47,8 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) __kindof DIMClientMessenger *messenger;
 @property(nonatomic, readonly) __kindof DIMClientSession *session;
 
-@property(nonatomic, readonly, nullable) DIMSessionState *state;
-
 - (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack database:(id<DIMSessionDBI>)sdb;
 
 @end

@@ -39,16 +39,37 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMSessionState;
+@protocol DIMSessionStateDelegate;
+
 @interface DIMClientSession : DIMSession
 
 @property(nonatomic, readonly) __kindof id<MKMStation> station;
+
+@property(nonatomic, readonly, nullable) DIMSessionState *state;
 
 // session key
 - (void)setKey:(nullable NSString *)key;
 
 - (instancetype)initWithDatabase:(id<DIMSessionDBI>)db station:(id<MKMStation>)server;
 
-- (void)start;
+- (void)startWithStateDelegate:(id<DIMSessionStateDelegate>) delegate;
+
+- (void)pause;
+- (void)resume;
+
+@end
+
+@interface DIMClientSession (Pack)
+
++ (NSArray<NSData *> *)fetchDataPackages:(id<STArrival>)arrival;
+
+@end
+
+@interface DIMClientSession (Process)
+
+- (NSArray<NSData *> *)processData:(NSData *)pack
+                        fromRemote:(id<NIOSocketAddress>)source;
 
 @end
 

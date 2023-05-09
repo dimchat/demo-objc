@@ -234,14 +234,14 @@ static NSString *s_temporaryDirectory = nil;
 + (NSString *)avatarPathWithFilename:(NSString *)filename {
     NSString *dir = [self cachesDirectory];
     NSString *AA = [filename substringWithRange:NSMakeRange(0, 2)];
-    NSString *BB = [filename substringWithRange:NSMakeRange(2, 4)];
+    NSString *BB = [filename substringWithRange:NSMakeRange(2, 2)];
     return [NSString stringWithFormat:@"%@/avatar/%@/%@/%@", dir, AA, BB, filename];
 }
 
 + (NSString *)cachePathWithFilename:(NSString *)filename {
     NSString *dir = [self cachesDirectory];
     NSString *AA = [filename substringWithRange:NSMakeRange(0, 2)];
-    NSString *BB = [filename substringWithRange:NSMakeRange(2, 4)];
+    NSString *BB = [filename substringWithRange:NSMakeRange(2, 2)];
     return [NSString stringWithFormat:@"%@/files/%@/%@/%@", dir, AA, BB, filename];
 }
 

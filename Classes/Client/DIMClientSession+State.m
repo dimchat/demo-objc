@@ -37,9 +37,10 @@
 
 #import "DIMClientSession+State.h"
 
-@interface DIMSessionStateMachine ()
-
-@property(nonatomic, strong) DIMClientSession *session;
+@interface DIMSessionStateMachine () {
+    
+    __weak DIMClientSession *_session;
+}
 
 @end
 
@@ -47,7 +48,7 @@
 
 - (instancetype)initWithSession:(DIMClientSession *)session {
     if (self = [super init]) {
-        self.session = session;
+        _session = session;
         // init states
         DIMSessionStateBuilder *builder = [self createStateBuilder];
         [self addState:builder.defaultState];
@@ -69,6 +70,10 @@
 // Override
 - (id<SMContext>)context {
     return self;
+}
+
+- (DIMClientSession *)session {
+    return _session;
 }
 
 - (NSString *)sessionKey {

@@ -60,10 +60,6 @@
 @property(nonatomic, strong) DIMCommonFacebook *facebook;
 @property(nonatomic, strong) DIMClientMessenger *messenger;
 
-@property(nonatomic, strong) DIMSessionStateMachine *fsm;
-
-@property(nonatomic, strong) SMThread *thread;
-
 @end
 
 @implementation DIMTerminal
@@ -74,8 +70,6 @@
         self.facebook = barrack;
         self.database = sdb;
         self.messenger = nil;
-        self.fsm = nil;
-        self.thread = nil;
         _lastOnlineTime = 0;
         
     }
@@ -86,18 +80,8 @@
     return [_messenger session];
 }
 
-- (DIMSessionState *)state {
-    return [_fsm currentState];
-}
-
 // Override
 - (void)finish {
-    // stop state machine
-    DIMSessionStateMachine *machine = [self fsm];
-    if (machine) {
-        [machine stop];
-        self.fsm = nil;
-    }
     // stop session in messenger
     DIMMessenger *messenger = [self messenger];
     if (messenger) {
@@ -135,7 +119,8 @@
     }
     DIMClientSession *session = [messenger session];
     id<MKMID> uid = [session ID];
-    if (!uid || [self state].index != DIMSessionStateOrderRunning) {
+    DIMSessionState *state = session.state;
+    if (!uid || state.index != DIMSessionStateOrderRunning) {
         // handshake not accepted
         return NO;
     }
@@ -224,7 +209,7 @@
     if (user) {
         [session setID:user.ID];
     }
-    [session start];
+    [session startWithStateDelegate:self];
     return session;
 }
 
@@ -262,12 +247,7 @@
                 return messenger;
             }
         }
-    }
-    // stop the machine & remove old messenger
-    DIMSessionStateMachine *machine = [self fsm];
-    if (machine) {
-        [machine stop];
-        self.fsm = nil;
+        [session stop];
     }
     DIMCommonFacebook *facebook = [self facebook];
     
@@ -283,11 +263,6 @@
                                                     messenger:messenger]];
     // set weak reference to messenger
     [session setMessenger:messenger];
-    // create & start state machine
-    machine = [[DIMSessionStateMachine alloc] initWithSession:session];
-    [machine setDelegate:self];
-    [machine start];
-    self.fsm = machine;
     self.messenger = messenger;
     [DIMGroupManager sharedInstance].messenger = messenger;
     return messenger;
@@ -312,8 +287,7 @@
 
 - (void)enterBackground {
     DIMClientMessenger *messenger = [self messenger];
-    DIMSessionStateMachine *machine = [self fsm];
-    if (!messenger || !machine) {
+    if (!messenger) {
         // not connect
         return;
     }
@@ -322,7 +296,7 @@
     id<MKMID> uid = [session ID];
     if (uid) {
         // already signed in, check session state
-        DIMSessionState *state = [machine currentState];
+        DIMSessionState *state = [session state];
         if (state.index == DIMSessionStateOrderRunning) {
             // report client state
             [messenger reportOfflineForID:uid];
@@ -330,26 +304,25 @@
         }
     }
     // pause the session
-    [machine pause];
+    [session pause];
 }
 
 - (void)enterForeground {
     DIMClientMessenger *messenger = [self messenger];
-    DIMSessionStateMachine *machine = [self fsm];
-    if (!messenger || !machine) {
+    if (!messenger) {
         // not connect
         return;
     }
     // resume the session
-    [machine resume];
+    DIMClientSession *session = [messenger session];
+    [session resume];
 
     // check signed in user
-    DIMClientSession *session = [messenger session];
     id<MKMID> uid = [session ID];
     if (uid) {
         // already signed in, wait a while to check session state
         [NSObject performBlockInBackground:^{
-            DIMSessionState *state = [machine currentState];
+            DIMSessionState *state = [session state];
             if (state.index == DIMSessionStateOrderRunning) {
                 // report client state
                 [messenger reportOnlineForID:uid];
@@ -359,12 +332,8 @@
 }
 
 - (void)start {
-    SMThread *thr = self.thread;
-    if (!thr) {
-        thr = [[SMThread alloc] initWithTarget:self];
-        [thr start];
-        self.thread = thr;
-    }
+    SMThread *thr = [[SMThread alloc] initWithTarget:self];
+    [thr start];
 }
 
 @end
