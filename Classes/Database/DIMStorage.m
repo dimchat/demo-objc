@@ -233,26 +233,30 @@ static NSString *s_temporaryDirectory = nil;
 
 + (NSString *)avatarPathWithFilename:(NSString *)filename {
     NSString *dir = [self cachesDirectory];
+    dir = [dir stringByAppendingPathComponent:@"avatar"];
     NSString *AA = [filename substringWithRange:NSMakeRange(0, 2)];
     NSString *BB = [filename substringWithRange:NSMakeRange(2, 2)];
-    return [NSString stringWithFormat:@"%@/avatar/%@/%@/%@", dir, AA, BB, filename];
+    return [NSString stringWithFormat:@"%@/%@/%@/%@", dir, AA, BB, filename];
 }
 
 + (NSString *)cachePathWithFilename:(NSString *)filename {
     NSString *dir = [self cachesDirectory];
+    dir = [dir stringByAppendingPathComponent:@"files"];
     NSString *AA = [filename substringWithRange:NSMakeRange(0, 2)];
     NSString *BB = [filename substringWithRange:NSMakeRange(2, 2)];
-    return [NSString stringWithFormat:@"%@/files/%@/%@/%@", dir, AA, BB, filename];
+    return [NSString stringWithFormat:@"%@/%@/%@/%@", dir, AA, BB, filename];
 }
 
 + (NSString *)uploadPathWithFilename:(NSString *)filename {
     NSString *dir = [self temporaryDirectory];
-    return [NSString stringWithFormat:@"%@/upload/%@", dir, filename];
+    dir = [dir stringByAppendingPathComponent:@"upload"];
+    return [NSString stringWithFormat:@"%@/%@", dir, filename];
 }
 
 + (NSString *)downloadPathWithFilename:(NSString *)filename {
     NSString *dir = [self temporaryDirectory];
-    return [NSString stringWithFormat:@"%@/download/%@", dir, filename];
+    dir = [dir stringByAppendingPathComponent:@"download"];
+    return [NSString stringWithFormat:@"%@/%@", dir, filename];
 }
 
 + (void)cleanupDirectory:(NSString *)dir beforeTime:(NSTimeInterval)expired {

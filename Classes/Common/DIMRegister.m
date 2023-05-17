@@ -36,6 +36,7 @@
 //
 
 #import <ObjectKey/ObjectKey.h>
+#import <DIMPlugins/MKMPlugins.h>
 
 #import "DIMHandshakeCommand.h"
 #import "DIMReceiptCommand.h"

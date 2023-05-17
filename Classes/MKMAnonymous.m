@@ -35,7 +35,8 @@
 //  Copyright © 2021 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <DIMPlugins/MKMAddressBTC.h>
+#import <DIMPlugins/MKMAddressETH.h>
 
 #import "MKMAnonymous.h"
 

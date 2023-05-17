@@ -113,13 +113,11 @@
                           completionHandler:^(NSURL *loc, NSURLResponse *res, NSError *error) {
         __strong DIMDownloadTask *strongSelf = weakSelf;
         //[strongSelf touch];
-        NSLog(@"HTTP download task complete: %@, %@, %@", res, error, loc);
+        NSLog(@"HTTP download task complete: %@, %@, %@", loc, res, error);
         if (error) {
             // connection error
             [strongSelf onError];
             [strongSelf.delegate downloadTask:strongSelf onError:error];
-            [strongSelf onFinished];
-            return;
         } else if ([res.MIMEType isEqualToString:@"text/html"]) {
             // server respond error
             NSData *data = [NSData dataWithContentsOfURL:loc];
@@ -135,18 +133,17 @@
                                     userInfo:info];
             [strongSelf onError];
             [strongSelf.delegate downloadTask:strongSelf onError:error];
-            [strongSelf onFinished];
-            return;
-        }
-        // move to caches directory
-        NSString *src = NSStringFromURL(loc);
-        NSString *path = [self path];
-        if ([DIMStorage moveItemAtPath:src toPath:path error:&error]) {
-            [strongSelf onSuccess];
-            [strongSelf.delegate downloadTask:strongSelf onSuccess:path];
         } else {
-            [strongSelf onError];
-            [strongSelf.delegate downloadTask:strongSelf onError:error];
+            // move to caches directory
+            NSString *src = NSStringFromURL(loc);
+            NSString *path = [self path];
+            if ([DIMStorage moveItemAtPath:src toPath:path error:&error]) {
+                [strongSelf onSuccess];
+                [strongSelf.delegate downloadTask:strongSelf onSuccess:path];
+            } else {
+                [strongSelf onError];
+                [strongSelf.delegate downloadTask:strongSelf onError:error];
+            }
         }
         [strongSelf onFinished];
     }];
