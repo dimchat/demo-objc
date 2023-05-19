@@ -66,6 +66,23 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 #if !defined(__DIM_CLIENT__)
 #define __DIM_CLIENT__ 1
 
+
+//
+//  DIMPlugins
+//
+#import <DIMPlugins/MKMBaseKey.h>
+#import <DIMPlugins/MKMSymmetricKey+Password.h>
+#import <DIMPlugins/MKMPrivateKey+Store.h>
+#import <DIMPlugins/MKMAddressBTC.h>
+#import <DIMPlugins/MKMAddressETH.h>
+
+#import <DIMPlugins/MKMPlugins.h>
+
+
+//
+//  Extensions
+//
+
 #import <DIMClient/NSObject+Compare.h>
 #import <DIMClient/NSObject+Threading.h>
 #import <DIMClient/NSDate+Extension.h>
