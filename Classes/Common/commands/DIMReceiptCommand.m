@@ -126,10 +126,10 @@
         NSString *sig2 = [iMsg stringForKey:@"signature"];
         if (sig2) {
             if ([sig1 length] > 8) {
-                sig1 = [sig1 substringFromIndex:8];
+                sig1 = [sig1 substringFromIndex:([sig1 length] - 8)];
             }
             if ([sig2 length] > 8) {
-                sig2 = [sig2 substringFromIndex:8];
+                sig2 = [sig2 substringFromIndex:([sig2 length] - 8)];
             }
             return [sig1 isEqualToString:sig2];
         }

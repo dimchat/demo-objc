@@ -134,8 +134,7 @@ typedef OKArrayList<DIMMessageWrapper *> WrapperList;
             NSAssert(signature, @"signature not found: %@", rMsg);
             [array enumerateObjectsUsingBlock:^(DIMMessageWrapper *wrapper, NSUInteger idx, BOOL *stop) {
                 id<DKDReliableMessage> item = [wrapper message];
-                id sig = [item objectForKey:@"signature"];
-                if ([signature isEqual:sig]) {
+                if ([self isDuplicated:item message:rMsg]) {
                     NSLog(@"[QUEUE] duplicated message: %@", signature);
                     ok = NO;
                     *stop = YES;
@@ -151,6 +150,22 @@ typedef OKArrayList<DIMMessageWrapper *> WrapperList;
         }
     }
     return ok;
+}
+
+// private
+- (BOOL)isDuplicated:(id<DKDReliableMessage>)msg1 message:(id<DKDReliableMessage>)msg2 {
+    id sig1 = [msg1 objectForKey:@"signature"];
+    id sig2 = [msg2 objectForKey:@"signature"];
+    NSAssert(sig1 && sig2, @"signature should not empty here: %@, %@", msg1, msg2);
+    if (![sig1 isEqual:sig2]) {
+        return NO;
+    }
+    // maybe it's a group message split for every members,
+    // so we still need to check receiver here.
+    id<MKMID> to1 = [msg1 receiver];
+    id<MKMID> to2 = [msg2 receiver];
+    NSAssert(to1 && to2, @"receiver should not empty here: %@, %@", msg1, msg2);
+    return [to1 isEqual:to2];
 }
 
 // private
