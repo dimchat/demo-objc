@@ -1,6 +1,6 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
 //                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
@@ -28,34 +28,27 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCommonMessenger.h
+//  DIMCompatible.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/5.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/11.
 //
 
-#import <DIMClient/DIMMessageDBI.h>
-#import <DIMClient/DIMSession.h>
-#import <DIMClient/DIMCommonFacebook.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- *  Common Messenger with Session & Database
- */
-@interface DIMCommonMessenger : DIMMessenger <DIMTransmitter>
+@interface DIMCompatible : NSObject
 
-@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
-@property (strong, nonatomic, readonly) __kindof id<DIMSession> session;
++ (void)fixMetaAttachment:(id<DKDReliableMessage>)rMsg;
 
-@property (strong, nonatomic) id<DIMPacker> packer;
-@property (strong, nonatomic) id<DIMProcessor> processor;
++ (void)fixMetaVersion:(NSMutableDictionary<NSString *, id> *)meta;
 
-- (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack
-                         session:(id<DIMSession>)session
-                        database:(id<DIMCipherKeyDelegate>)db
-NS_DESIGNATED_INITIALIZER;
++ (id<DKDCommand>)fixCommand:(id<DKDCommand>)content;
+
++ (id<DKDCommand>)fixCmd:(id<DKDCommand>)content;
+
++ (void)fixReceiptCommand:(id<DKDReceiptCommand>)content;
 
 @end
 

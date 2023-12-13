@@ -28,35 +28,14 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCommonMessenger.h
+//  DIMGroupHistoryBuilder.m
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/5.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/13.
 //
 
-#import <DIMClient/DIMMessageDBI.h>
-#import <DIMClient/DIMSession.h>
-#import <DIMClient/DIMCommonFacebook.h>
+#import "DIMGroupHistoryBuilder.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-/**
- *  Common Messenger with Session & Database
- */
-@interface DIMCommonMessenger : DIMMessenger <DIMTransmitter>
-
-@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
-@property (strong, nonatomic, readonly) __kindof id<DIMSession> session;
-
-@property (strong, nonatomic) id<DIMPacker> packer;
-@property (strong, nonatomic) id<DIMProcessor> processor;
-
-- (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack
-                         session:(id<DIMSession>)session
-                        database:(id<DIMCipherKeyDelegate>)db
-NS_DESIGNATED_INITIALIZER;
+@implementation DIMGroupHistoryBuilder
 
 @end
-
-NS_ASSUME_NONNULL_END

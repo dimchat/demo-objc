@@ -56,8 +56,16 @@
     NSAssert([content conformsToProtocol:@protocol(DKDGroupCommand)],
              @"group command error: %@", content);
     id<DKDGroupCommand> command = (id<DKDGroupCommand>)content;
-    NSString *text = [NSString stringWithFormat:@"Group command (name: %@) not support yet!", command.cmd];
-    return [self respondText:text withGroup:command.group];
+    NSDictionary *info = @{
+        @"template": @"Group command (name: ${command}) not support yet!",
+        @"replacements": @{
+            @"command": command.cmd,
+        },
+    };
+    return [self respondReceipt:@"Command not support."
+                       envelope:rMsg.envelope
+                        content:command
+                          extra:info];
 }
 
 @end

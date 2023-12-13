@@ -28,26 +28,17 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMQueryFrequencyChecker.h
+//  DIMGroupEmitter.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/4.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/13.
 //
 
-#import <DIMClient/DIMFrequencyChecker.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMQueryFrequencyChecker : NSObject
-
-+ (instancetype)sharedInstance;
-
-- (BOOL)checkMetaForID:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
-- (BOOL)checkDocumentForID:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
-- (BOOL)checkMembersForID:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
-
-- (BOOL)checkDocumentToUser:(id<MKMID>)ID isExpired:(NSTimeInterval)now;
+@interface DIMGroupEmitter : NSObject
 
 @end
 

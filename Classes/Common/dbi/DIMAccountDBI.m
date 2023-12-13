@@ -82,11 +82,11 @@ NSArray<id<MKMPrivateKey>> *DIMUnshiftPrivateKey(id<MKMPrivateKey> key, NSMutabl
 }
 
 NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *privateKeys) {
-    NSString *data = [key stringForKey:@"data"];
+    NSString *data = [key stringForKey:@"data" defaultValue:nil];
     assert(data.length > 0);
     NSInteger index = 0;
     for (id<MKMPrivateKey> item in privateKeys) {
-        if ([[item stringForKey:@"data"] isEqualToString:data]) {
+        if ([[item stringForKey:@"data" defaultValue:nil] isEqualToString:data]) {
             return index;
         } else {
             index += 1;

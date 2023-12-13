@@ -35,7 +35,8 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <ObjectKey/ObjectKey.h>
+#import <DIMCore/DIMCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -112,7 +113,7 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 
 - (BOOL)saveDocument:(id<MKMDocument>)doc;
 
-- (nullable id<MKMDocument>)documentForID:(id<MKMID>)entity type:(nullable NSString *)type;
+- (NSArray<id<MKMDocument>> *)documentsForID:(id<MKMID>)entity;
 
 @end
 
@@ -122,12 +123,6 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 
 - (BOOL)saveLocalUsers:(NSArray<id<MKMID>> *)users;
 
-- (BOOL)addUser:(id<MKMID>)user;
-- (BOOL)removeUser:(id<MKMID>)user;
-
-- (BOOL)setCurrentUser:(id<MKMID>)user;
-- (id<MKMID>)currentUser;
-
 @end
 
 @protocol DIMContactDBI <NSObject>
@@ -135,9 +130,6 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 - (NSArray<id<MKMID>> *)contactsOfUser:(id<MKMID>)user;
 
 - (BOOL)saveContacts:(NSArray<id<MKMID>> *)contacts user:(id<MKMID>)user;
-
-- (BOOL)addContact:(id<MKMID>)contact user:(id<MKMID>)user;
-- (BOOL)removeContact:(id<MKMID>)contact user:(id<MKMID>)user;
 
 @end
 
@@ -150,20 +142,90 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 - (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group;
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
 
-- (BOOL)addMember:(id<MKMID>)uid group:(id<MKMID>)gid;
-- (BOOL)removeMember:(id<MKMID>)uid group:(id<MKMID>)gid;
-
-- (BOOL)removeGroup:(id<MKMID>)gid;
-
 - (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group;
 - (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)gid;
+
+- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)group;
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid;
+
+@end
+
+typedef OKPair<id<DKDGroupCommand>, id<DKDReliableMessage>> DIMHistoryCmdMsg;
+typedef OKPair<id<DKDReceiptCommand>, id<DKDReliableMessage>> DIMResetCmdMsg;
+
+@protocol DIMGroupHistoryDBI <NSObject>
+
+/**
+ *  Save group commands
+ *      1. invite
+ *      2. expel (deprecated)
+ *      3. join
+ *      4. quit
+ *      5. reset
+ *      6. resign
+ *
+ * @param content - group command
+ * @param rMsg    - group command message
+ * @param gid     - group ID
+ * @return false on failed
+ */
+- (BOOL)saveGroupHistory:(id<DKDGroupCommand>)content
+             withMessage:(id<DKDReliableMessage>)rMsg
+                   group:(id<MKMID>)gid;
+
+/**
+ *  Load group commands
+ *      1. invite
+ *      2. expel (deprecated)
+ *      3. join
+ *      4. quit
+ *      5. reset
+ *      6. resign
+ *
+ * @param group - group ID
+ * @return history list
+ */
+- (NSArray<DIMHistoryCmdMsg *> *)historiesForGroup:(id<MKMID>)group;
+
+/**
+ *  Load last 'reset' group command
+ *
+ * @param group - group ID
+ * @return reset command message
+ */
+- (DIMResetCmdMsg *)resetCommandMessageForGroup:(id<MKMID>)group;
+
+/**
+ *  Clean group commands for members:
+ *      1. invite
+ *      2. expel (deprecated)
+ *      3. join
+ *      4. quit
+ *      5. reset
+ *
+ * @param group - group ID
+ * @return false on failed
+ */
+- (BOOL)clearMemberHistoriesForGroup:(id<MKMID>)group;
+
+/**
+ *  Clean group commands for administrators
+ *      1. resign
+ *
+ * @param group - group ID
+ * @return false on failed
+ */
+- (BOOL)clearAdminHistoriesForGroup:(id<MKMID>)group;
 
 @end
 
 /**
  *  Account DBI
  */
-@protocol DIMAccountDBI <DIMPrivateKeyDBI, DIMMetaDBI, DIMDocumentDBI, DIMUserDBI, DIMContactDBI, DIMGroupDBI>
+@protocol DIMAccountDBI <DIMPrivateKeyDBI,
+                         DIMMetaDBI, DIMDocumentDBI,
+                         DIMUserDBI, DIMContactDBI,
+                         DIMGroupDBI, DIMGroupHistoryDBI>
 
 @end
 

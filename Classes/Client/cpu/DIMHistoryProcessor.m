@@ -44,8 +44,16 @@
     NSAssert([content conformsToProtocol:@protocol(DKDHistoryCommand)],
              @"history error: %@", content);
     id<DKDHistoryCommand> command = (id<DKDHistoryCommand>)content;
-    NSString *text = [NSString stringWithFormat:@"History command (name: %@) not support yet!", command.cmd];
-    return [self respondText:text withGroup:command.group];
+    NSDictionary *info = @{
+        @"template": @"History command (name: ${command}) not support yet!",
+        @"replacements": @{
+            @"command": command.cmd,
+        },
+    };
+    return [self respondReceipt:@"Command not support."
+                       envelope:rMsg.envelope
+                        content:command
+                          extra:info];
 }
 
 @end

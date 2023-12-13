@@ -28,51 +28,18 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMFrequencyChecker.m
+//  DIMGroupDelegate.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/4.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/13.
 //
 
-#import "DIMFrequencyChecker.h"
+#import <Foundation/Foundation.h>
 
-@interface DIMFrequencyChecker () {
-    
-    NSTimeInterval _expires;
-    
-    NSMutableDictionary<id, NSNumber *> *_records;
-}
+NS_ASSUME_NONNULL_BEGIN
+
+@interface DIMGroupDelegate : NSObject
 
 @end
 
-@implementation DIMFrequencyChecker
-
-- (instancetype)init {
-    NSAssert(false, @"DON'T call me");
-    return [self initWithLifeSpan:600];
-}
-
-/* designated initializer */
-- (instancetype)initWithLifeSpan:(NSTimeInterval)lifeSpan {
-    if (self = [super init]) {
-        _expires = lifeSpan;
-        _records = [[NSMutableDictionary alloc] init];
-    }
-    return self;
-}
-
-- (BOOL)checkKey:(id)key isExpired:(NSTimeInterval)now {
-    if (now < 1) {
-        now = [[NSDate date] timeIntervalSince1970];
-    }
-    NSNumber *value = [_records objectForKey:key];
-    if ([value doubleValue] > now) {
-        // record exists and not expired yet
-        return false;
-    }
-    [_records setObject:@(now + _expires) forKey:key];
-    return true;
-}
-
-@end
+NS_ASSUME_NONNULL_END

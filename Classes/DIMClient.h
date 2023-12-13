@@ -68,18 +68,6 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 
 
 //
-//  DIMPlugins
-//
-#import <DIMPlugins/MKMBaseKey.h>
-#import <DIMPlugins/MKMSymmetricKey+Password.h>
-#import <DIMPlugins/MKMPrivateKey+Store.h>
-#import <DIMPlugins/MKMAddressBTC.h>
-#import <DIMPlugins/MKMAddressETH.h>
-
-#import <DIMPlugins/MKMPlugins.h>
-
-
-//
 //  Extensions
 //
 
@@ -92,8 +80,11 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 //  Common
 //
 
-#import <DIMClient/DIMFrequencyChecker.h>
-#import <DIMClient/DIMQueryFrequencyChecker.h>
+#import <DIMClient/DIMNetworkID.h>
+#import <DIMClient/DIMAddressBTC.h>
+#import <DIMClient/DIMEntityID.h>
+#import <DIMClient/DIMMetaC.h>
+#import <DIMClient/DIMCompatible.h>
 
 #import <DIMClient/DIMAccountDBI.h>
 #import <DIMClient/DIMMessageDBI.h>
@@ -102,13 +93,14 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 #import <DIMClient/DIMAnsCommand.h>
 #import <DIMClient/DIMHandshakeCommand.h>
 #import <DIMClient/DIMLoginCommand.h>
-#import <DIMClient/DIMReceiptCommand.h>
 #import <DIMClient/DIMReportCommand.h>
 #import <DIMClient/DIMMuteCommand.h>
 #import <DIMClient/DIMBlockCommand.h>
 
+#import <DIMClient/MKMAnonymous.h>
 #import <DIMClient/DIMRegister.h>
 #import <DIMClient/DIMAddressNameServer.h>
+#import <DIMClient/DIMCommonArchivist.h>
 #import <DIMClient/DIMCommonFacebook.h>
 #import <DIMClient/DIMSession.h>
 #import <DIMClient/DIMCommonMessenger.h>
@@ -143,6 +135,18 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 #import <DIMClient/DIMDownloadTask.h>
 
 //
+//  Group
+//
+
+#import <DIMClient/DIMGroupDelegate.h>
+#import <DIMClient/DIMGroupCommonHelper.h>
+#import <DIMClient/DIMGroupHistoryBuilder.h>
+#import <DIMClient/DIMGroupPacker.h>
+#import <DIMClient/DIMGroupEmitter.h>
+#import <DIMClient/DIMGroupManager.h>
+#import <DIMClient/DIMGroupAdminManager.h>
+
+//
 //  Client
 //
 
@@ -166,10 +170,6 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 #import <DIMClient/DIMClientMessageProcessor.h>
 #import <DIMClient/DIMClientMessenger.h>
 #import <DIMClient/DIMClientFacebook.h>
-
-
-#import <DIMClient/MKMAnonymous.h>
-#import <DIMClient/DIMGroupManager.h>
 #import <DIMClient/DIMTerminal.h>
 
 #endif /* ! __DIM_CLIENT__ */

@@ -50,14 +50,22 @@
 
 static inline id<MKMVisa> create_visa(id<MKMID> ID,
                                       NSString *nickname,
-                                      NSString *avatarUrl,
+                                      _Nullable id<MKMPortableNetworkFile> avatarUrl,
                                       id<MKMEncryptKey> visaKey,
                                       id<MKMSignKey> idKey) {
-    assert(MKMIDIsUser(ID));
+    assert([ID isUser]);
     id<MKMVisa> visa = [[DIMVisa alloc] initWithID:ID];
+    // App ID
+    [visa setProperty:@"chat.dim.tarsier" forKey:@"app_id"];
+    // nickname
     [visa setName:nickname];
-    [visa setAvatar:avatarUrl];
-    [visa setKey:visaKey];
+    // avatar
+    if (avatarUrl) {
+        [visa setAvatar:avatarUrl];
+    }
+    // public key
+    [visa setPublicKey:visaKey];
+    // sign it
     NSData *sig = [visa sign:idKey];
     assert(sig);
     return visa;
@@ -65,19 +73,25 @@ static inline id<MKMVisa> create_visa(id<MKMID> ID,
 
 static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
                                               NSString *title,
-                                              id<MKMSignKey> sKey) {
-    assert(MKMIDIsGroup(ID));
+                                              id<MKMSignKey> sKey,
+                                              id<MKMID> founder) {
+    assert([ID isGroup]);
     id<MKMBulletin> doc = [[DIMBulletin alloc] initWithID:ID];
+    // App ID
+    [doc setProperty:@"chat.dim.tarsier" forKey:@"app_id"];
+    // group founder
+    [doc setProperty:founder.string forKey:@"founder"];
+    // group name
     [doc setName:title];
+    // sign it
     NSData *sig = [doc sign:sKey];
     assert(sig);
     return doc;
 }
 
-@interface DIMRegister () {
-    
-    id<DIMAccountDBI> _database;
-}
+@interface DIMRegister ()
+
+@property (strong, nonatomic) id<DIMAccountDBI> database;
 
 @end
 
@@ -91,17 +105,17 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
 
 - (instancetype)initWithDatabase:(id<DIMAccountDBI>)db {
     if (self = [super init]) {
-        _database = db;
+        self.database = db;
     }
     return self;
 }
 
 - (id<MKMID>)createUserWithName:(NSString *)nickname
-                         avatar:(nullable NSString *)url {
+                         avatar:(nullable id<MKMPortableNetworkFile>)url {
     //
     //  Step 1: generate private key (with asymmetric algorithm)
     //
-    id<MKMPrivateKey> idKey = MKMPrivateKeyGenerate(MKMAlgorithmECC);
+    id<MKMPrivateKey> idKey = MKMPrivateKeyGenerate(MKMAlgorithm_ECC);
     //
     //  Step 2: generate meta with private key (and meta seed)
     //
@@ -113,7 +127,7 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
     //
     //  Step 4: generate visa with ID and sign with private key
     //
-    id<MKMPrivateKey> msgKey = MKMPrivateKeyGenerate(MKMAlgorithmRSA);
+    id<MKMPrivateKey> msgKey = MKMPrivateKeyGenerate(MKMAlgorithm_RSA);
     id<MKMEncryptKey> visaKey = (id<MKMEncryptKey>)[msgKey publicKey];
     id<MKMVisa> visa = create_visa(ID, nickname, url, visaKey, idKey);
     //
@@ -151,7 +165,7 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
     //
     //  Step 4: generate bulletin with ID and sign with founder's private key
     //
-    id<MKMBulletin> doc = create_bulletin(ID, name, sKey);
+    id<MKMBulletin> doc = create_bulletin(ID, name, sKey, founder);
     //
     //  Step 5: save meta & bulletin in local storage
     //          don't forget to upload then onto the DIM station
@@ -181,8 +195,6 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
         
         // Handshake
         DIMCommandRegisterClass(DIMCommand_Handshake, DIMHandshakeCommand);
-        // Receipt
-        DIMCommandRegisterClass(DIMCommand_Receipt, DIMReceiptCommand);
         // Login
         DIMCommandRegisterClass(DIMCommand_Login, DIMLoginCommand);
         // Report

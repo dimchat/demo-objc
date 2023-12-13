@@ -47,12 +47,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMCommonFacebook : DIMFacebook
 
-@property(nonatomic, readonly) id<DIMAccountDBI> database;
-
 @property(nonatomic, strong, nullable) id<MKMUser> currentUser;  // 1st local user
 
-- (instancetype)initWithDatabase:(id<DIMAccountDBI>)db
-NS_DESIGNATED_INITIALIZER;
+- (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID
+                                 withType:(nullable NSString *)type;
+
+- (NSString *)nameForID:(id<MKMID>)ID;
 
 @end
 

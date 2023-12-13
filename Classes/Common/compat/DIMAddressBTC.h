@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2020 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2020 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,34 +28,49 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCommonMessenger.h
-//  DIMClient
+//  DIMAddressBTC.h
+//  DIMPlugins
 //
-//  Created by Albert Moky on 2023/3/5.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/12.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMClient/DIMMessageDBI.h>
-#import <DIMClient/DIMSession.h>
-#import <DIMClient/DIMCommonFacebook.h>
+#import <DIMPlugins/DIMPlugins.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- *  Common Messenger with Session & Database
+/*
+ *  Address like BitCoin
+ *
+ *      data format: "network+digest+code"
+ *          network    --  1 byte
+ *          digest     -- 20 bytes
+ *          code       --  4 bytes
+ *
+ *      algorithm:
+ *          fingerprint = sign(seed, SK);  // public key data
+ *          digest      = ripemd160(sha256(fingerprint));
+ *          code        = sha256(sha256(network + digest)).prefix(4);
+ *          address     = base58_encode(network + digest + code);
  */
-@interface DIMCommonMessenger : DIMMessenger <DIMTransmitter>
+@interface DIMAddressBTC : MKMAddressBTC
 
-@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
-@property (strong, nonatomic, readonly) __kindof id<DIMSession> session;
+/**
+ *  Generate address with fingerprint and network ID
+ *
+ * @param fingerprint = meta.fingerprint or key.data
+ * @param network - address type
+ * @return Address object
+ */
++ (instancetype)generate:(NSData *)fingerprint type:(MKMEntityType)network;
 
-@property (strong, nonatomic) id<DIMPacker> packer;
-@property (strong, nonatomic) id<DIMProcessor> processor;
-
-- (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack
-                         session:(id<DIMSession>)session
-                        database:(id<DIMCipherKeyDelegate>)db
-NS_DESIGNATED_INITIALIZER;
+/**
+ *  Parse a string for BTC address
+ *
+ * @param string - address string
+ * @return null on error
+ */
++ (instancetype)parse:(NSString *)string;
 
 @end
 

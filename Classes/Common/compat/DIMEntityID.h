@@ -1,13 +1,13 @@
 // license: https://mit-license.org
 //
-//  DIM-SDK : Decentralized Instant Messaging Software Development Kit
+//  Ming-Ke-Ming : Decentralized User Identity Authentication
 //
-//                               Written in 2023 by Moky <albert.moky@gmail.com>
+//                               Written in 2022 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Albert Moky
+// Copyright (c) 2022 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,35 +28,27 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMCommonMessenger.h
+//  DIMEntityID.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/5.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2020/12/12.
+//  Copyright © 2020 Albert Moky. All rights reserved.
 //
 
-#import <DIMClient/DIMMessageDBI.h>
-#import <DIMClient/DIMSession.h>
-#import <DIMClient/DIMCommonFacebook.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- *  Common Messenger with Session & Database
- */
-@interface DIMCommonMessenger : DIMMessenger <DIMTransmitter>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
-@property (strong, nonatomic, readonly) __kindof id<DIMSession> session;
+void DIMRegisterEntityIDFactory(void);
 
-@property (strong, nonatomic) id<DIMPacker> packer;
-@property (strong, nonatomic) id<DIMProcessor> processor;
+void DIMRegisterCompatibleAddressFactory(void);
 
-- (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack
-                         session:(id<DIMSession>)session
-                        database:(id<DIMCipherKeyDelegate>)db
-NS_DESIGNATED_INITIALIZER;
-
-@end
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
 
 NS_ASSUME_NONNULL_END

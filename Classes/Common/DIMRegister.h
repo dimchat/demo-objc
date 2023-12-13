@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMRegister : NSObject
 
+@property (strong, nonatomic, readonly) id<DIMAccountDBI> database;
+
 - (instancetype)initWithDatabase:(id<DIMAccountDBI>)db
 NS_DESIGNATED_INITIALIZER;
 
@@ -52,7 +54,7 @@ NS_DESIGNATED_INITIALIZER;
  * @return User ID
  */
 - (id<MKMID>)createUserWithName:(NSString *)nickname
-                         avatar:(nullable NSString *)url;
+                         avatar:(nullable id<MKMPortableNetworkFile>)url;
 
 /**
  *  Generate group account (Polylogue)

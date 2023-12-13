@@ -35,17 +35,20 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
+#import "DIMCompatible.h"
+
 #import "DIMCommonMessenger.h"
 
 @interface DIMCommonMessenger () {
     
     id<DIMPacker> _packer;
     id<DIMProcessor> _processor;
+    
+    id<DIMCipherKeyDelegate> _database;
 }
 
 @property(nonatomic, strong) DIMCommonFacebook *facebook;
 @property(nonatomic, strong) id<DIMSession> session;
-@property(nonatomic, strong) id<DIMMessageDBI> database;
 
 @end
 
@@ -62,11 +65,11 @@
 /* designated initializer */
 - (instancetype)initWithFacebook:(DIMCommonFacebook *)barrack
                          session:(id<DIMSession>)session
-                        database:(id<DIMMessageDBI>)db {
+                        database:(id<DIMCipherKeyDelegate>)db {
     if (self = [super init]) {
-        self.facebook = barrack;
-        self.session = session;
-        self.database = db;
+        _facebook = barrack;
+        _session = session;
+        _database = db;
     }
     return self;
 }
@@ -99,31 +102,71 @@
     _processor = processor;
 }
 
-#pragma mark DIMPacker
+#pragma mark DKDInstantMessageDelegate
 
 // Override
-- (id<DKDSecureMessage>)encryptMessage:(id<DKDInstantMessage>)iMsg {
-    if (![self checkReceiverForInstantMessage:iMsg]) {
-        // receiver not ready
-        NSLog(@"receiver not ready: %@", [iMsg receiver]);
-        return nil;
+- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
+                  encryptKey:(NSData *)data
+                 forReceiver:(id<MKMID>)receiver {
+    @try {
+        return [super message:iMsg encryptKey:data forReceiver:receiver];
+    } @catch (NSException *exception) {
+        // FIXME:
+        NSLog(@"failed to encrypt key for receiver: %@, error: %@", receiver, exception);
+    } @finally {
+        //
     }
-    return [super encryptMessage:iMsg];
 }
 
 // Override
-- (id<DKDSecureMessage>)verifyMessage:(id<DKDReliableMessage>)rMsg {
-    if (![self checkReceiverForSecureMessage:rMsg]) {
-        // receiver (group) not ready
-        NSLog(@"receiver (group) not ready: %@", [rMsg receiver]);
-        return nil;
+- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
+                serializeKey:(id<MKMSymmetricKey>)password {
+    // TODO: reuse message key
+    
+    // 0. check message key
+    id reused = [password objectForKey:@"reused"];
+    id digest = [password objectForKey:@"digest"];
+    if (!reused && !digest) {
+        // flags not exist, serialize it directly
+        return [super message:iMsg serializeKey:password];
     }
-    if (![self checkSenderForReliableMessage:rMsg]) {
-        // sender not ready
-        NSLog(@"sender not ready: %@", [rMsg sender]);
-        return nil;
+    // 1. remove before serializing key
+    [password removeObjectForKey:@"reused"];
+    [password removeObjectForKey:@"digest"];
+    // 2. serialize key without flags
+    NSData *data = [super message:iMsg serializeKey:password];
+    // 3. put them back after serialized
+    if (MKMConverterGetBool(reused, NO)) {
+        [password setObject:@(YES) forKey:@"reused"];
     }
-    return [super verifyMessage:rMsg];
+    if (digest) {
+        [password setObject:digest forKey:@"digest"];
+    }
+    // OK
+    return data;
+}
+
+- (NSData *)message:(id<DKDInstantMessage>)iMsg
+   serializeContent:(id<DKDContent>)content
+            withKey:(id<MKMSymmetricKey>)password {
+    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
+        id<DKDCommand> command = (id<DKDCommand>)content;
+        content = [DIMCompatible fixCommand:command];
+    }
+    return [super message:iMsg serializeContent:content withKey:password];
+}
+
+- (id<DKDContent>)message:(id<DKDSecureMessage>)sMsg
+       deserializeContent:(NSData *)data
+                  withKey:(id<MKMSymmetricKey>)password {
+    id<DKDContent> content = [super message:sMsg
+                         deserializeContent:data
+                                    withKey:password];
+    if ([content conformsToProtocol:@protocol(DKDCommand)]) {
+        id<DKDCommand> command = (id<DKDCommand>)content;
+        content = [DIMCompatible fixCommand:command];
+    }
+    return content;
 }
 
 #pragma mark DIMTransmitter
@@ -145,18 +188,29 @@
 
 - (id<DKDReliableMessage>)sendInstantMessage:(id<DKDInstantMessage>)iMsg
                                     priority:(NSInteger)prior {
-    // send message (secured + certified) to target station
+    // 0. check cycled message
+    if ([iMsg.sender isEqual:iMsg.receiver]) {
+        NSLog(@"drop cycled message: %@, %@ => %@, %@", iMsg.content,
+              iMsg.sender, iMsg.receiver, iMsg.group);
+        return nil;
+    } else {
+        NSLog(@"send instant message (type=%u): %@ => %@, %@", iMsg.content.type,
+              iMsg.sender, iMsg.receiver, iMsg.group);
+    }
+    // 1. encrypt message
     id<DKDSecureMessage> sMsg = [self encryptMessage:iMsg];
     if (!sMsg) {
         // public key not found?
         return nil;
     }
+    // 2. sign message
     id<DKDReliableMessage> rMsg = [self signMessage:sMsg];
     if (!rMsg) {
         // TODO: set msg.state = error
         NSAssert(false, @"failed to sign message: %@", sMsg);
         return nil;
     }
+    // 3. send message
     BOOL ok = [self sendReliableMessage:rMsg priority:prior];
     if (ok) {
         return rMsg;
@@ -168,6 +222,12 @@
 
 - (BOOL)sendReliableMessage:(id<DKDReliableMessage>)rMsg
                    priority:(NSInteger)prior {
+    // 0. check cycled message
+    if ([rMsg.sender isEqual:rMsg.receiver]) {
+        NSLog(@"drop cycled message: %@ => %@, %@",
+              rMsg.sender, rMsg.receiver, rMsg.group);
+        return nil;
+    }
     // 1. serialize message
     NSData *data = [self serializeMessage:rMsg];
     NSAssert(data, @"failed to serialize message: %@", rMsg);
@@ -175,169 +235,5 @@
     //    put message package into the waiting queue of current session
     return [_session queueMessage:rMsg package:data priority:prior];
 }
-
-@end
-
-@implementation DIMCommonMessenger (Querying)
-
-- (BOOL)queryMetaForID:(id<MKMID>)ID {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-- (BOOL)queryDocumentForID:(id<MKMID>)ID {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-- (BOOL)queryMembersForID:(id<MKMID>)group {
-    NSAssert(false, @"override me!");
-    return NO;
-}
-
-@end
-
-@implementation DIMCommonMessenger (Waiting)
-
-- (void)suspendReliableMessage:(id<DKDReliableMessage>)rMsg
-                     errorInfo:(NSDictionary<NSString *, id> *)info {
-    NSAssert(false, @"override me!");
-}
-
-- (void)suspendInstantMessage:(id<DKDInstantMessage>)iMsg
-                    errorInfo:(NSDictionary<NSString *, id> *)info {
-    NSAssert(false, @"override me!");
-}
-
-@end
-
-@implementation DIMCommonMessenger (Checking)
-
-- (id<MKMEncryptKey>)visaKeyForID:(id<MKMID>)user {
-    id<MKMEncryptKey> visaKey = [_facebook publicKeyForEncryption:user];
-    if (visaKey) {
-        // user is ready
-        return visaKey;
-    }
-    // user not ready, try to query document for it
-    if ([self queryDocumentForID:user]) {
-        NSLog(@"querying document for user: %@", user);
-    }
-    return nil;
-}
-
-- (NSArray<id<MKMID>> *)membersForID:(id<MKMID>)group {
-    id<MKMMeta> meta = [_facebook metaForID:group];
-    if (!meta/* || !meta.key*/) {
-        // group not ready, try to query meta for it
-        if ([self queryMetaForID:group]) {
-            NSLog(@"querying meta for group: %@", group);
-        }
-        return nil;
-    }
-    id<MKMGroup> grp = [_facebook groupWithID:group];
-    NSAssert(grp, @"group not ready: %@", group);
-    NSArray<id<MKMID>> *members = [grp members];
-    if ([members count] == 0) {
-        // group not ready, try to query members for it
-        if ([self queryMembersForID:group]) {
-            NSLog(@"querying members for group: %@", group);
-        }
-        return nil;
-    }
-    // group is ready
-    return members;
-}
-
-- (BOOL)checkSenderForReliableMessage:(id<DKDReliableMessage>)rMsg {
-    id<MKMID> sender = [rMsg sender];
-    NSAssert(MKMIDIsUser(sender), @"sender error: %@", sender);
-    // check sender's meta & document
-    id<MKMVisa> visa = [rMsg visa];
-    if (visa) {
-        // first handshake?
-        NSAssert([visa.ID isEqual:sender], @"visa ID not match: %@", sender);
-        //NSAssert(MKMMetaMatchID(sender, rMsg.meta), @"meta error: %@", rMsg);
-        return YES;
-    } else if ([self visaKeyForID:sender]) {
-        // sender is OK
-        return YES;
-    }
-    // sender not ready, suspend message for waiting document
-    NSDictionary *error = @{
-        @"message": @"verify key not found",
-        @"user": [sender string],
-    };
-    [self suspendReliableMessage:rMsg errorInfo:error];
-    //[rMsg setObject:error forKey:@"error"];
-    return NO;
-}
-
-- (BOOL)checkReceiverForSecureMessage:(id<DKDSecureMessage>)sMsg {
-    id<MKMID> receiver = [sMsg receiver];
-    if (MKMIDIsBroadcast(receiver)) {
-        // broadcast message
-        return YES;
-    } else if (MKMIDIsGroup(receiver)) {
-        // check for received group message
-        NSArray<id<MKMID>> *members = [self membersForID:receiver];
-        return members != nil;
-    }
-    // the facebook will select a user from local users to match this receiver,
-    // if no user matched (private key not found), this message will be ignored.
-    return YES;
-}
-
-- (BOOL)checkReceiverForInstantMessage:(id<DKDInstantMessage>)iMsg {
-    id<MKMID> receiver = [iMsg receiver];
-    if (MKMIDIsBroadcast(receiver)) {
-        // broadcast message
-        return YES;
-    } else if (MKMIDIsGroup(receiver)) {
-        // NOTICE: station will never send group message, so
-        //         we don't need to check group info here; and
-        //         if a client wants to send group message,
-        //         that should be sent to a group bot first,
-        //         and the bot will separate it for all members.
-        return NO;
-    } else if ([self visaKeyForID:receiver]) {
-        // receiver is OK
-        return YES;
-    }
-    // receiver not ready, suspend message for waiting document
-    NSDictionary *error = @{
-        @"message": @"encrypt key not found",
-        @"user": [receiver string],
-    };
-    [self suspendInstantMessage:iMsg errorInfo:error];
-    //[iMsg setObject:error forKey:@"error"];
-    return NO;
-}
-
-#pragma mark DKDInstantMessageDelegate
-
-/*/
-// Override
-- (nullable NSData *)message:(id<DKDInstantMessage>)iMsg
-                serializeKey:(id<MKMSymmetricKey>)password {
-    // try to reuse message key
-    id reused = [password objectForKey:@"reused"];
-    if (reused) {
-        id<MKMID> receiver = [iMsg receiver];
-        if (MKMIDIsGroup(receiver)) {
-            // reuse key for grouped message
-            return nil;
-        }
-        // remove before serialize key
-        [password removeObjectForKey:@"reused"];
-    }
-    NSData *data = [super message:iMsg serializeKey:password];
-    if (reused) {
-        // put it back
-        [password setObject:reused forKey:@"reused"];
-    }
-    return data;
-}
-/*/
 
 @end

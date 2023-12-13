@@ -28,23 +28,17 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMFrequencyChecker.h
+//  DIMGroupPacker.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/4.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/13.
 //
 
-#import <DIMSDK/DIMSDK.h>
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMFrequencyChecker<__covariant KeyType> : NSObject
-
-- (instancetype)initWithLifeSpan:(NSTimeInterval)lifeSpan
-NS_DESIGNATED_INITIALIZER;
-
-- (BOOL)checkKey:(KeyType)key isExpired:(NSTimeInterval)now;
+@interface DIMGroupPacker : NSObject
 
 @end
 

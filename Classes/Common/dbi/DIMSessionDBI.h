@@ -41,6 +41,99 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+id<MKMID> DIMGSP(void);  // "gsp@everywhere"
+
+#ifdef __cplusplus
+} /* end of extern "C" */
+#endif
+
+@interface DIMProviderInfo : NSObject
+
+@property (strong, nonatomic, readonly) id<MKMID> ID;
+@property (nonatomic) NSInteger chosen;
+
+- (instancetype)initWithID:(id<MKMID>)PID chosen:(NSInteger)order;
+
++ (instancetype)providerWithID:(id<MKMID>)PID chosen:(NSInteger)order;
+
++ (NSArray<DIMProviderInfo *> *)convert:(NSArray<NSDictionary *> *)array;
+
++ (NSArray<NSDictionary *> *)revert:(NSArray<DIMProviderInfo *> *)providers;
+
+@end
+
+@interface DIMStationInfo : NSObject
+
+@property (strong, nonatomic) id<MKMID> ID;
+@property (nonatomic) NSInteger chosen;
+
+@property (strong, nonatomic, readonly) NSString *host;
+@property (nonatomic, readonly) UInt16 port;
+
+@property (strong, nonatomic, nullable) id<MKMID> provider;
+
+- (instancetype)initWithID:(nullable id<MKMID>)SID
+                    chosen:(NSInteger)order
+                      host:(NSString *)IP
+                      port:(UInt16)port
+                  provider:(nullable id<MKMID>)PID;
+
++ (instancetype)stationWithID:(nullable id<MKMID>)SID
+                       chosen:(NSInteger)order
+                         host:(NSString *)IP
+                         port:(UInt16)port
+                     provider:(nullable id<MKMID>)PID;
+
++ (NSArray<DIMStationInfo *> *)convert:(NSArray<NSDictionary *> *)array;
+
++ (NSArray<NSDictionary *> *)revert:(NSArray<DIMStationInfo *> *)stations;
+
+@end
+
+#pragma mark -
+
+@protocol DIMProviderDBI <NSObject>
+
+- (NSArray<DIMProviderInfo *> *)allProviders;
+
+- (BOOL)addProvider:(id<MKMID>)PID chosen:(NSInteger)order;
+
+- (BOOL)updateProvider:(id<MKMID>)PID chosen:(NSInteger)order;
+
+- (BOOL)removeProvider:(id<MKMID>)PID;
+
+@end
+
+@protocol DIMStationDBI <NSObject>
+
+- (NSArray<DIMStationInfo *> *)allStations:(id<MKMID>)PID;
+
+- (BOOL)addStation:(id<MKMID>)SID
+            chosen:(NSInteger)order
+              host:(NSString *)IP
+              port:(UInt16)port
+          provider:(id<MKMID>)PID;
+
+- (BOOL)updateStation:(id<MKMID>)SID
+               chosen:(NSInteger)order
+                 host:(NSString *)IP
+                 port:(UInt16)port
+             provider:(id<MKMID>)PID;
+
+- (BOOL)removeStationWithHost:(NSString *)IP
+                         port:(UInt16)port
+                     provider:(id<MKMID>)PID;
+
+- (BOOL)removeAllStations:(id<MKMID>)PID;
+
+@end
+
+typedef OKPair<id<DKDLoginCommand>, id<DKDReliableMessage>> DIMLoginCmdMsg;
+
 @protocol DIMLoginDBI <NSObject>
 
 /**
@@ -49,34 +142,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param user - login user ID
  * @return DKDLoginCommand & DKDReliableMessage
  */
-- (OKPair<id<DKDLoginCommand>, id<DKDReliableMessage>> *)loginCommandMessageForID:(id<MKMID>)user;
+- (DIMLoginCmdMsg *)loginCommandMessageForID:(id<MKMID>)user;
 
-- (BOOL)saveLoginCommand:(id<DKDLoginCommand>)cmd withMessage:(id<DKDReliableMessage>)msg forID:(id<MKMID>)user;
-
-@end
-
-@interface DIMStationParams : NSObject
-
-@property(nonatomic, readonly) NSString  *host;
-@property(nonatomic, readonly) NSUInteger port;
-@property(nonatomic, readonly) id<MKMID>  ID;
-
-- (instancetype)initWithID:(id<MKMID>)ID host:(NSString *)ip port:(NSUInteger)port;
+- (BOOL)saveLoginCommand:(id<DKDLoginCommand>)cmd
+             withMessage:(id<DKDReliableMessage>)msg
+                   forID:(id<MKMID>)user;
 
 @end
 
-@protocol DIMProviderDBI <NSObject>
-
-- (NSSet<DIMStationParams *> *)neighborStations;
-
-- (DIMStationParams *)stationWithHost:(NSString *)ip port:(NSUInteger)port;
-
-- (BOOL)addStationWithID:(id<MKMID>)ID host:(NSString *)ip port:(NSUInteger)port;
-- (BOOL)removeStationWithHost:(NSString *)ip port:(NSUInteger)port;
-
-@end
-
-@protocol DIMSessionDBI <DIMLoginDBI, DIMProviderDBI>
+@protocol DIMSessionDBI <DIMLoginDBI, DIMProviderDBI, DIMStationDBI>
 
 @end
 

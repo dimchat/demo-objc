@@ -35,39 +35,23 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import <ObjectKey/ObjectKey.h>
 #import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-// partial messages and remaining count, 0 means there are all messages cached
-typedef OKPair<NSArray<id<DKDReliableMessage>> *, NSNumber *> DIMReliableMessageResult;
-
-@protocol DIMReliableMessageDBI <NSObject>
-
-/*
- *  Get network messages
- *
- * @param receiver - actual receiver
- * @param range    - (start, length) for loading message
- * @return message result
- */
-- (DIMReliableMessageResult *)reliableMessageForReceiver:(id<MKMID>)receiver
-                                                   range:(NSRange)range;
-
-- (BOOL)cacheReliableMessage:(id<DKDReliableMessage>)rMsg
-                 forReceiver:(id<MKMID>)receiver;
-
-- (BOOL)removeReliableMessage:(id<DKDReliableMessage>)rMsg
-                  forReceiver:(id<MKMID>)receiver;
-
-@end
 
 @protocol DIMCipherKeyDBI <DIMCipherKeyDelegate>
 
 @end
 
-@protocol DIMMessageDBI <DIMReliableMessageDBI, DIMCipherKeyDBI>
+@protocol DIMGroupKeysDBI <NSObject>
+
+- (NSDictionary *)cipherKeysForGroup:(id<MKMID>)gid from:(id<MKMID>)sender;
+
+- (BOOL)saveCipherKeys:(NSDictionary *)keys forGroup:(id<MKMID>)gid from:(id<MKMID>)sender;
+
+@end
+
+@protocol DIMMessageDBI <DIMCipherKeyDBI, DIMGroupKeysDBI>
 
 @end
 

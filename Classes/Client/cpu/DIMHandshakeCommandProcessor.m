@@ -55,7 +55,7 @@
     id<MKMStation> station = [session station];
     id<MKMID> old = [station ID];
     id<MKMID> sender = [rMsg sender];
-    if (!old || MKMIDIsBroadcast(old)) {
+    if (!old || [old isBroadcast]) {
         station.ID = sender;
     } else {
         NSAssert([old isEqual:sender], @"station ID not match: %@, %@", old, sender);
