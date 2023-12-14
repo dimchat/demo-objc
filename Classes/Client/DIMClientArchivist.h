@@ -28,18 +28,31 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMClientMessagePacker.h
+//  DIMClientArchivist.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/11.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/15.
 //
 
-#import <DIMClient/DIMCommonPacker.h>
+#import <DIMClient/DIMCommonArchivist.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMClientMessagePacker : DIMCommonPacker
+@class DIMCommonFacebook;
+@class DIMCommonMessenger;
+
+// each respond will be expired after 10 minutes
+#define DIMArchivist_RespondExpires 600.0 /* seconds */
+
+@interface DIMClientArchivist : DIMCommonArchivist
+
+@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
+@property (strong, nonatomic, readonly) __kindof DIMCommonMessenger *messenger;
+
+// protected
+- (BOOL)isDocumentResponseExpired:(id<MKMID>)ID force:(BOOL)updated;
+
+- (void)setLastActiveMember:(id<MKMID>)member group:(id<MKMID>)group;
 
 @end
 

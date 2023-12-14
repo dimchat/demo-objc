@@ -304,7 +304,7 @@ static inline NSArray<NSData *> *split_lines(NSData *data) {
 - (NSArray<NSData *> *)processData:(NSData *)pack
                         fromRemote:(id<NIOSocketAddress>)source {
     DIMMessenger *messenger = [self messenger];
-    return [messenger processData:pack];
+    return [messenger processPackage:pack];
 }
 
 @end

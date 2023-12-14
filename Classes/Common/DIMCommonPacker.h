@@ -28,18 +28,67 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMClientMessagePacker.h
+//  DIMCommonPacker.h
 //  DIMClient
 //
-//  Created by Albert Moky on 2023/3/11.
-//  Copyright © 2023 DIM Group. All rights reserved.
+//  Created by Albert Moky on 2023/12/15.
 //
 
-#import <DIMClient/DIMCommonPacker.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMClientMessagePacker : DIMCommonPacker
+@interface DIMCommonPacker : DIMMessagePacker
+
+@end
+
+// protected
+@interface DIMCommonPacker (Suspend)
+
+/**
+ *  Add income message in a queue for waiting sender's visa
+ *
+ * @param rMsg - incoming message
+ * @param info - error info
+ */
+- (void)suspendReliableMessage:(id<DKDReliableMessage>)rMsg
+                         error:(NSDictionary *)info;
+
+/**
+ *  Add outgo message in a queue for waiting receiver's visa
+ *
+ * @param iMsg - outgo message
+ * @param info - error info
+ */
+- (void)suspendInstantMessage:(id<DKDInstantMessage>)iMsg
+                        error:(NSDictionary *)info;
+
+@end
+
+// protected
+@interface DIMCommonPacker (Checking)
+
+- (nullable id<MKMEncryptKey>)visaKeyForID:(id<MKMID>)user;
+
+- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group;
+
+/**
+ *  Check sender before verifying received message
+ *
+ * @param rMsg - network message
+ * @return false on verify key not found
+ */
+- (BOOL)checkSenderInReliableMessage:(id<DKDReliableMessage>)rMsg;
+
+- (BOOL)checkReceiverInReliableMessage:(id<DKDReliableMessage>)sMsg;
+
+/**
+ *  Check receiver before encrypting message
+ *
+ * @param iMsg - plain message
+ * @return false on encrypt key not found
+ */
+- (BOOL)checkReceiverInInstantMessage:(id<DKDInstantMessage>)iMsg;
 
 @end
 

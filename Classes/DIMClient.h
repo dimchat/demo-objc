@@ -103,6 +103,7 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 #import <DIMClient/DIMCommonArchivist.h>
 #import <DIMClient/DIMCommonFacebook.h>
 #import <DIMClient/DIMSession.h>
+#import <DIMClient/DIMCommonPacker.h>
 #import <DIMClient/DIMCommonMessenger.h>
 
 //
@@ -169,6 +170,7 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 #import <DIMClient/DIMClientMessagePacker.h>
 #import <DIMClient/DIMClientMessageProcessor.h>
 #import <DIMClient/DIMClientMessenger.h>
+#import <DIMClient/DIMClientArchivist.h>
 #import <DIMClient/DIMClientFacebook.h>
 #import <DIMClient/DIMTerminal.h>
 
