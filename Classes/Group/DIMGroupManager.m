@@ -48,16 +48,6 @@
 
 #import "DIMGroupManager.h"
 
-static inline NSMutableArray *mutable_array(NSArray *array) {
-    if (!array) {
-        return [[NSMutableArray alloc] init];
-    } else if ([array isKindOfClass:[NSMutableArray class]]) {
-        return (NSMutableArray *)array;
-    } else {
-        return [array mutableCopy];
-    }
-}
-
 typedef NSMutableArray<id<MKMID>> UserList;
 
 @interface DIMGroupManager ()
@@ -121,12 +111,12 @@ typedef NSMutableArray<id<MKMID>> UserList;
     NSUInteger pos = [members indexOfObject:founder];
     if (pos == NSNotFound) {
         // put me in the first position
-        NSMutableArray *mArray = mutable_array(members);
+        NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
         [mArray insertObject:founder atIndex:0];
         members = mArray;
     } else if (pos > 0) {
         // move me to the front
-        NSMutableArray *mArray = mutable_array(members);
+        NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
         [mArray removeObjectAtIndex:pos];
         [mArray insertObject:founder atIndex:0];
         members = mArray;
@@ -284,7 +274,12 @@ typedef NSMutableArray<id<MKMID>> UserList;
     if (canReset) {
         // You are the owner/admin, then
         // append new members and 'reset' the group
-        NSMutableArray<id<MKMID>> *mArray = mutable_array(oldMembers);
+        NSMutableArray<id<MKMID>> *mArray;
+        if (oldMembers) {
+            mArray = [oldMembers mutableCopy];
+        } else {
+            mArray = [[NSMutableArray alloc] init];
+        }
         for (id<MKMID> item in newMembers) {
             if (![mArray containsObject:item]) {
                 [mArray addObject:item];
@@ -371,7 +366,7 @@ typedef NSMutableArray<id<MKMID>> UserList;
     //
     if (isMember) {
         NSLog(@"quitting group: %@, %@", gid, me);
-        NSMutableArray *mArray = mutable_array(members);
+        NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
         [mArray removeObject:me];
         BOOL ok = [self.delegate saveMembers:mArray group:gid];
         NSAssert(ok, @"failed to save members for group: %@", gid);

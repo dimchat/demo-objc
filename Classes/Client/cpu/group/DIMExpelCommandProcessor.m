@@ -35,66 +35,21 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMGroupManager.h"
-
 #import "DIMExpelCommandProcessor.h"
 
 @implementation DIMExpelGroupCommandProcessor
 
+//
+//  Main
+//
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDExpelGroupCommand)],
              @"expel command error: %@", content);
-    id<DKDExpelGroupCommand> command = (id<DKDExpelGroupCommand>)content;
-    DIMGroupManager *manager = [DIMGroupManager sharedInstance];
     
-    // 0. check group
-    id<MKMID> group = command.group;
-    id<MKMID> owner = [manager ownerOfGroup:group];
-    NSArray<id<MKMID>> *members = [manager membersOfGroup:group];
-    if (!owner || members.count == 0) {
-        return [self respondText:@"Group empty." withGroup:group];
-    }
+    NSAssert(false, @"'expel' group command is deprecated, use 'reset' instead.");
     
-    // 1. check permission
-    id<MKMID> sender = rMsg.sender;
-    if (![owner isEqual:sender]) {
-        // not the owner? check assistants
-        NSArray<id<MKMID>> *assistants = [manager assistantsOfGroup:group];
-        if (![assistants containsObject:sender]) {
-            return [self respondText:@"Sorry, you are not allowed to expel member from this group."
-                           withGroup:group];
-        }
-    }
-    
-    // 2. expelling members
-    NSArray<id<MKMID>> *expelList = [self membersFromCommand:command];
-    if ([expelList count] == 0) {
-        return [self respondText:@"Expel command error." withGroup:group];
-    }
-    // 2.1. check owner
-    if ([expelList containsObject:owner]) {
-        return [self respondText:@"Group owner cannot be expelled." withGroup:group];
-    }
-    // 2.2. build expelled-list
-    NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
-    NSMutableArray *removedList = [[NSMutableArray alloc] initWithCapacity:expelList.count];
-    for (id<MKMID> item in expelList) {
-        if (![members containsObject:item]) {
-            continue;
-        }
-        // removing member found
-        [removedList addObject:item];
-        [mArray removeObject:item];
-    }
-    // 2.3. do expel
-    if ([removedList count] > 0) {
-        if ([manager saveMembers:mArray group:group]) {
-            [command setObject:MKMIDRevert(removedList) forKey:@"removed"];
-        }
-    }
-    
-    // 3. respond nothing (DON'T respond group command directly)
+    // no need to response this group command
     return nil;
 }
 

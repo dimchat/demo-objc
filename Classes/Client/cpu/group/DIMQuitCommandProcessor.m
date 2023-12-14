@@ -35,45 +35,90 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMGroupManager.h"
-
 #import "DIMQuitCommandProcessor.h"
 
 @implementation DIMQuitGroupCommandProcessor
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+//
+//  Main
+//
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDQuitGroupCommand)],
              @"quit command error: %@", content);
-    id<DKDQuitGroupCommand> command = (id<DKDQuitGroupCommand>)content;
-    DIMFacebook *facebook = self.facebook;
+    id<DKDGroupCommand> command = content;
     
-    // 0. check group
-    id<MKMID> group = command.group;
-    id<MKMID> owner = [facebook ownerOfGroup:group];
-    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
-    if (!owner || members.count == 0) {
-        return [self respondText:@"Group empty." withGroup:group];
-    }
-
-    // 1. check permission
-    id<MKMID> sender = rMsg.sender;
-    if ([owner isEqual:sender]) {
-        return [self respondText:@"Sorry, owner cannot quit." withGroup:group];
-    }
-    NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
-    if ([assistants containsObject:sender]) {
-        return [self respondText:@"Sorry, assistant cannot quit." withGroup:group];
+    // 0. check command
+    DIMCommandExpiredResults *pair = [self checkCommandExpired:command
+                                                       message:rMsg];
+    id<MKMID> group = [pair first];
+    if (!group) {
+        // ignore expired command
+        return [pair second];
     }
     
-    // 2. remove the sender from group members
-    if ([members containsObject:sender]) {
+    // 1. check group
+    DIMGroupMembersResults *trip = [self checkGroupMembers:command
+                                                   message:rMsg];
+    id<MKMID> owner = [trip first];
+    DIMIDList *members = [trip second];
+    if (!owner || [members count] == 0) {
+        return [trip third];
+    }
+    
+    id<MKMID> sender = [rMsg sender];
+    DIMIDList *admins = [self administratorsOfGroup:group];
+    BOOL isOwner = [owner isEqual:sender];
+    BOOL isAdmin = [admins containsObject:sender];
+    BOOL isMember = [members containsObject:sender];
+    
+    // 2. check permission
+    if (isOwner) {
+        NSDictionary *info = @{
+            @"template": @"Owner cannot quit from group: ${ID}",
+            @"replacements": @{
+                @"ID": group.string,
+            },
+        };
+        return [self respondReceipt:@"Permission denied."
+                           envelope:rMsg.envelope
+                            content:command
+                              extra:info];
+    }
+    if (isAdmin) {
+        NSDictionary *info = @{
+            @"template": @"Administrator cannot quit from group: ${ID}",
+            @"replacements": @{
+                @"ID": group.string,
+            },
+        };
+        return [self respondReceipt:@"Permission denied."
+                           envelope:rMsg.envelope
+                            content:command
+                              extra:info];
+    }
+    
+    // 3. do quit
+    if (!isMember) {
+        // the sender is not a member now,
+        // shall we notify the sender that the member list was updated?
+    } else if (![self saveHistory:command withMessage:rMsg group:group]) {
+        // here try to append the 'quit' command to local storage as group history
+        // it should not failed unless the command is expired
+        NSLog(@"failed to save 'quit' command for group: %@", group);
+    } else {
         NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
         [mArray removeObject:sender];
-        [self.facebook saveMembers:mArray group:group];
+        if ([self saveMembers:mArray group:group]) {
+            // here try to remove the sender from member list
+            [command setObject:sender.string forKey:@"removed"];
+        } else {
+            // DB error:
+            NSAssert(false, @"failed to save members for group: %@", group);
+        }
     }
     
-    // 3. respond nothing (DON'T respond group command directly)
+    // no need to response this group command
     return nil;
 }
 

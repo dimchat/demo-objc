@@ -43,4 +43,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@class DIMGroupDelegate;
+@class DIMGroupCommandHelper;
+@class DIMGroupHistoryBuilder;
+
+@interface DIMHistoryCommandProcessor (Delegates)
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+
+@property (strong, nonatomic, readonly) DIMGroupCommandHelper *helper;
+@property (strong, nonatomic, readonly) DIMGroupHistoryBuilder *builder;
+
+// protected, override for customized data source
+- (DIMGroupDelegate *)createDelegate;
+
+// protected, override for customized helper
+- (DIMGroupCommandHelper *)createHelper;
+
+// protected, override for customized builder
+- (DIMGroupHistoryBuilder *)createBuilder;
+
+@end
+
 NS_ASSUME_NONNULL_END

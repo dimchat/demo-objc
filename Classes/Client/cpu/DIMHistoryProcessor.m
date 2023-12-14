@@ -35,10 +35,37 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import "DIMGroupDelegate.h"
+
+#import "DIMGroupCommandHelper.h"
+#import "DIMGroupHistoryBuilder.h"
+
 #import "DIMHistoryProcessor.h"
+
+@interface DIMHistoryCommandProcessor ()
+
+@property (strong, nonatomic) DIMGroupDelegate *delegate;
+
+@property (strong, nonatomic) DIMGroupCommandHelper *helper;
+@property (strong, nonatomic) DIMGroupHistoryBuilder *builder;
+
+@end
 
 @implementation DIMHistoryCommandProcessor
 
+- (instancetype)initWithFacebook:(DIMBarrack *)barrack
+                       messenger:(DIMTransceiver *)transceiver {
+    if (self = [super initWithFacebook:barrack messenger:transceiver]) {
+        self.delegate = [self createDelegate];
+        self.helper = [self createHelper];
+        self.builder = [self createBuilder];
+    }
+    return self;
+}
+
+//
+//  Main
+//
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDHistoryCommand)],
@@ -54,6 +81,23 @@
                        envelope:rMsg.envelope
                         content:command
                           extra:info];
+}
+
+@end
+
+@implementation DIMHistoryCommandProcessor (Delegates)
+
+- (DIMGroupDelegate *)createDelegate {
+    return [[DIMGroupDelegate alloc] initWithFacebook:self.facebook
+                                            messenger:self.messenger];
+}
+
+- (DIMGroupCommandHelper *)createHelper {
+    return [[DIMGroupCommandHelper alloc] initWithDelegate:self.delegate];
+}
+
+- (DIMGroupHistoryBuilder *)createBuilder {
+    return [[DIMGroupHistoryBuilder alloc] initWithDelegate:self.delegate];
 }
 
 @end

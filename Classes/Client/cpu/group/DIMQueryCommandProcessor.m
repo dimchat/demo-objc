@@ -35,55 +35,88 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
-#import "DIMCommonFacebook.h"
-
 #import "DIMQueryCommandProcessor.h"
 
 @implementation DIMQueryGroupCommandProcessor
 
-// Override
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+//
+//  Main
+//
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDQueryGroupCommand)],
              @"query group command error: %@", content);
-    id<DKDQueryGroupCommand> command = (id<DKDQueryGroupCommand>)content;
-    DIMFacebook *facebook = self.facebook;
+    id<DKDQueryGroupCommand> command = content;
     
-    // 0. check group
-    id<MKMID> group = command.group;
-    id<MKMID> owner = [facebook ownerOfGroup:group];
-    NSArray<id<MKMID>> *members = [facebook membersOfGroup:group];
-    if (!owner || members.count == 0) {
-        return [self respondText:@"Group empty." withGroup:group];
+    // 0. check command
+    DIMCommandExpiredResults *pair = [self checkCommandExpired:command
+                                                       message:rMsg];
+    id<MKMID> group = [pair first];
+    if (!group) {
+        // ignore expired command
+        return [pair second];
     }
-
-    // 1. check permission
-    id<MKMID> sender = rMsg.sender;
-    if (![members containsObject:sender]) {
-        // not a member? check assistants
-        NSArray<id<MKMID>> *assistants = [facebook assistantsOfGroup:group];
-        if (![assistants containsObject:sender]) {
-            return [self respondText:@"Sorry, you are not allowed to query this group." withGroup:group];
+    
+    // 1. check group
+    DIMGroupMembersResults *trip = [self checkGroupMembers:command
+                                                   message:rMsg];
+    id<MKMID> owner = [trip first];
+    DIMIDList *members = [trip second];
+    if (!owner || [members count] == 0) {
+        return [trip third];
+    }
+    
+    id<MKMID> sender = [rMsg sender];
+    DIMIDList *bots = [self assistantsOfGroup:group];
+    BOOL isMember = [members containsObject:sender];
+    BOOL isBot = [bots containsObject:sender];
+    
+    // 2. check permission
+    BOOL canQuery = isMember || isBot;
+    if (!canQuery) {
+        NSDictionary *info = @{
+            @"template": @"Not allowed to query members of group: ${ID}",
+            @"replacements": @{
+                @"ID": group.string,
+            },
+        };
+        return [self respondReceipt:@"Permission denied."
+                           envelope:rMsg.envelope
+                            content:command
+                              extra:info];
+    }
+    
+    // check last group time
+    NSDate *queryTime = [command lastTime];
+    if (queryTime) {
+        // check last group history time
+        DIMFacebook *facebook = [self facebook];
+        NSDate *lastTime = [facebook.archivist lastTimeOfHistoryForID:group];
+        NSTimeInterval lt = [lastTime timeIntervalSince1970];
+        if (lt < 1) {
+            NSAssert(false, @"group history error: %@", group);
+        } else if (lt <= [queryTime timeIntervalSince1970]) {
+            // group history not updated
+            NSDictionary *info = @{
+                @"template": @"history not updated: ${ID}, last time: ${time}",
+                @"replacements": @{
+                    @"ID": group.string,
+                    @"time": @(lt),
+                },
+            };
+            return [self respondReceipt:@"Group history not updated."
+                               envelope:rMsg.envelope
+                                content:command
+                                  extra:info];
         }
     }
     
-    // 2. respond
-    id<DKDContent> res = [self respondGroupMembers:members owner:owner group:group];
-    return [self respondContent:res];
-}
-
-// protected
-- (id<DKDContent>)respondGroupMembers:(NSArray<id<MKMID>> *)members
-                                owner:(id<MKMID>)owner
-                                group:(id<MKMID>)group {
-    DIMCommonFacebook *facebook = (DIMCommonFacebook *)[self facebook];
-    id<MKMUser> user = [facebook currentUser];
-    NSAssert(user, @"current user not set");
-    if ([user.ID isEqual:owner]) {
-        return [[DIMResetGroupCommand alloc] initWithGroup:group members:members];
-    } else {
-        return [[DIMInviteGroupCommand alloc] initWithGroup:group members:members];
-    }
+    // 3. send newest group history commands
+    BOOL ok = [self sendHistoriesTo:sender group:group];
+    NSAssert(ok, @"failed to send history for group: %@ => %@", group, sender);
+    
+    // no need to response this group command
+    return nil;
 }
 
 @end

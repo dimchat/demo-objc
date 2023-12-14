@@ -35,13 +35,61 @@
 //  Copyright © 2019 Albert Moky. All rights reserved.
 //
 
+#import <ObjectKey/ObjectKey.h>
+
 #import <DIMClient/DIMHistoryProcessor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DIMGroupCommandProcessor : DIMHistoryCommandProcessor
 
-- (nullable NSArray<id<MKMID>> *)membersFromCommand:(id<DKDGroupCommand>)content;
+/**
+ *  send a command list with newest members to the receiver
+ */
+- (BOOL)sendHistoriesTo:(id<MKMID>)receiver group:(id<MKMID>)gid;
+
+// protected
+- (BOOL)saveHistory:(id<DKDGroupCommand>)content
+        withMessage:(id<DKDReliableMessage>)rMsg
+              group:(id<MKMID>)gid;
+
+@end
+
+// protected
+@interface DIMGroupCommandProcessor (Membership)
+
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)gid;
+
+- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)gid;
+
+- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)gid;
+
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid;
+
+- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)gid;
+
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
+
+@end
+
+typedef NSArray<id<MKMID>> DIMIDList;
+typedef NSArray<id<DKDContent>> DIMContentList;
+
+typedef OKPair<id<MKMID>, DIMContentList *> DIMCommandExpiredResults;
+typedef OKPair<DIMIDList *, DIMContentList *> DIMCommandMembersResults;
+typedef OKTriplet<id<MKMID>, DIMIDList *, DIMContentList *> DIMGroupMembersResults;
+
+// protected
+@interface DIMGroupCommandProcessor (Checking)
+
+- (DIMCommandExpiredResults *)checkCommandExpired:(id<DKDGroupCommand>)content
+                                          message:(id<DKDReliableMessage>)rMsg;
+
+- (DIMCommandMembersResults *)checkCommandMembers:(id<DKDGroupCommand>)content
+                                          message:(id<DKDReliableMessage>)rMsg;
+
+- (DIMGroupMembersResults *)checkGroupMembers:(id<DKDGroupCommand>)content
+                                      message:(id<DKDReliableMessage>)rMsg;
 
 @end
 
