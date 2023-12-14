@@ -60,21 +60,32 @@ static inline UInt32 eth_number(NSString *address) {
 }
 
 static inline NSString *name_from_type(MKMEntityType network) {
-    if (MKMNetwork_IsBot(network)) {
-        return @"Bot";
+    switch (network) {
+        case MKMEntityType_Bot:
+            return @"Bot";
+            break;
+            
+        case MKMEntityType_Station:
+            return @"Station";
+            break;
+            
+        case MKMEntityType_ISP:
+            return @"ISP";
+            break;
+            
+        case MKMEntityType_ICP:
+            return @"ICP";
+            break;
+            
+        default:
+            break;
     }
-    if (MKMNetwork_IsStation(network)) {
-        return @"Station";
-    }
-    if (MKMNetwork_IsProvider(network)) {
-        return @"SP";
-    }
-    if (MKMEntity_IsUser(network)) {
+    if (MKMEntityTypeIsUser(network)) {
         return @"User";
-    }
-    if (MKMEntity_IsGroup(network)) {
+    } else if (MKMEntityTypeIsGroup(network)) {
         return @"Group";
     }
+    assert(false);
     return @"Unknown";
 }
 

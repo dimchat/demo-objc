@@ -35,7 +35,16 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import "DIMClientFacebook.h"
+#import "DIMCommonFacebook.h"
+#import "DIMCommonMessenger.h"
+
+#import "DIMRegister.h"
+
+#import "DIMGroupDelegate.h"
+#import "DIMGroupPacker.h"
+
+#import "DIMGroupCommandHelper.h"
+#import "DIMGroupHistoryBuilder.h"
 
 #import "DIMGroupManager.h"
 
@@ -51,485 +60,390 @@ static inline NSMutableArray *mutable_array(NSArray *array) {
 
 typedef NSMutableArray<id<MKMID>> UserList;
 
-@interface DIMGroupManager () {
-    
-    NSMutableDictionary<id<MKMID>, id<MKMID>>  *_cachedGroupFounders;
-    NSMutableDictionary<id<MKMID>, id<MKMID>>  *_cachedGroupOwners;
-    NSMutableDictionary<id<MKMID>, UserList *> *_cachedGroupMembers;
-    NSMutableDictionary<id<MKMID>, UserList *> *_cachedGroupAssistants;
-    UserList *_defaultAssistants;
-}
+@interface DIMGroupManager ()
+
+@property (strong, nonatomic) DIMGroupDelegate *delegate;
+@property (strong, nonatomic) DIMGroupPacker *packer;
+
+@property (strong, nonatomic) DIMGroupCommandHelper *helper;
+@property (strong, nonatomic) DIMGroupHistoryBuilder *builder;
 
 @end
 
 @implementation DIMGroupManager
 
-OKSingletonImplementations(DIMGroupManager, sharedInstance)
-
-- (instancetype)init {
-    if (self = [super init]) {
-        _cachedGroupFounders   = [[NSMutableDictionary alloc] init];
-        _cachedGroupOwners     = [[NSMutableDictionary alloc] init];
-        _cachedGroupMembers    = [[NSMutableDictionary alloc] init];
-        _cachedGroupAssistants = [[NSMutableDictionary alloc] init];
-        _defaultAssistants     = [[NSMutableArray alloc] init];
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate {
+    if (self = [self init]) {
+        self.delegate = delegate;
+        self.packer = [self createPacker];
+        self.helper = [self createHelper];
+        self.builder = [self createBuilder];
     }
     return self;
 }
 
+- (DIMGroupPacker *)createPacker {
+    return [[DIMGroupPacker alloc] initWithDelegate:self.delegate];
+}
+
+- (DIMGroupCommandHelper *)createHelper {
+    return [[DIMGroupCommandHelper alloc] initWithDelegate:self.delegate];
+}
+
+- (DIMGroupHistoryBuilder *)createBuilder {
+    return [[DIMGroupHistoryBuilder alloc] initWithDelegate:self.delegate];
+}
+
 - (DIMCommonFacebook *)facebook {
-    return [_messenger facebook];
+    return [self.delegate facebook];
 }
 
-- (BOOL)sendContent:(id<DKDContent>)content group:(id<MKMID>)group {
-    NSAssert(MKMIDIsGroup(group), @"group ID error: %@", group);
-    id<MKMID> gid = [content group];
-    if (gid) {
-        NSAssert([gid isEqual:group], @"group ID not match: %@, %@", gid, group);
-    } else {
-        [content setGroup:group];
-    }
-    NSArray<id<MKMID>> *assistants = [self assistantsOfGroup:group];
-    OKPair<id<DKDInstantMessage>, id<DKDReliableMessage>> *results;
-    for (id<MKMID> bot in assistants) {
-        // send to any bot
-        results = [_messenger sendContent:content
-                                   sender:nil
-                                 receiver:bot
-                                 priority:STDeparturePriorityNormal];
-        if (results.second != nil) {
-            // only send to one bot, let the bot to split and
-            // forward this message to all members
-            return YES;
-        }
-    }
-    return NO;
+- (DIMCommonMessenger *)messenger {
+    return [self.delegate messenger];
 }
 
-- (void)sendCommand:(id<DKDCommand>)content receiver:(id<MKMID>)to {
-    NSAssert(to, @"receiver should not be empty");
-    [_messenger sendContent:content
-                     sender:nil
-                   receiver:to
-                   priority:STDeparturePriorityNormal];
-}
-
-- (void)sendCommand:(id<DKDCommand>)content members:(NSArray<id<MKMID>> *)members {
-    NSAssert([members count] > 0, @"receivers should not be empty");
-    for (id<MKMID> item in members) {
-        [self sendCommand:content receiver:item];
-    }
-}
-
-- (BOOL)inviteMember:(id<MKMID>)member group:(id<MKMID>)gid {
-    return [self inviteMembers:@[member] group:gid];
-}
-
-- (BOOL)inviteMembers:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)group {
-    NSAssert(MKMIDIsGroup(group), @"group ID error: %@", group);
+- (id<MKMID>)createGroupWithMembers:(NSArray<id<MKMID>> *)members {
+    NSAssert([members count] > 1, @"not enough members: %@", members);
     
-    // TODO: make sure group meta exists
-    // TODO: make sure current user is a member
-
-    // 0. build 'meta/document' command
-    DIMCommonFacebook *facebook = [self facebook];
-    id<MKMMeta> meta = [facebook metaForID:group];
-    if (!meta) {
-        NSAssert(false, @"failed to get meta for group: %@", group);
-        return NO;
+    //
+    //  0. get current user
+    //
+    id<MKMUser> user = [self.facebook currentUser];
+    if (!user) {
+        NSAssert(false, @"failed to get current user");
+        return nil;
     }
-    id<MKMDocument> doc = [facebook documentForID:group type:@"*"];
-    id<DKDCommand> command;
+    id<MKMID> founder = [user ID];
+
+    //
+    //  1. check founder (owner)
+    //
+    NSUInteger pos = [members indexOfObject:founder];
+    if (pos == NSNotFound) {
+        // put me in the first position
+        NSMutableArray *mArray = mutable_array(members);
+        [mArray insertObject:founder atIndex:0];
+        members = mArray;
+    } else if (pos > 0) {
+        // move me to the front
+        NSMutableArray *mArray = mutable_array(members);
+        [mArray removeObjectAtIndex:pos];
+        [mArray insertObject:founder atIndex:0];
+        members = mArray;
+    }
+    NSString *groupName = [self.delegate buildGroupNameWithMembers:members];
+    
+    //
+    //  2. create group with name
+    //
+    DIMRegister *agent = [[DIMRegister alloc] initWithDatabase:self.database];
+    id<MKMID> group = [agent createGroupWithName:groupName founder:founder];
+    NSLog(@"new group: %@ (%@), founder: %@", group, groupName, founder);
+    
+    //
+    //  3. upload meta+document to neighbor station(s)
+    //  DISCUSS: should we let the neighbor stations know the group info?
+    //
+    id<MKMMeta> meta = [self.delegate metaForID:group];
+    id<MKMBulletin> doc = [self.delegate bulletinForID:group];
+    id<DKDCommand> content;
     if (doc) {
-        command = [[DIMDocumentCommand alloc] initWithID:group
-                                                    meta:meta
-                                                document:doc];
+        content = DIMDocumentCommandResponse(group, meta, doc);
+    } else if (meta) {
+        content = DIMMetaCommandResponse(group, meta);
     } else {
-        // empty document
-        command = [[DIMMetaCommand alloc] initWithID:group
-                                                meta:meta];
+        NSAssert(false, @"failed to get group info: %@", group);
+        return nil;
     }
-    NSArray<id<MKMID>> *bots = [facebook assistantsOfGroup:group];
-    // 1. send 'meta/document' command
-    [self sendCommand:command members:bots];            // to all assistants
+    BOOL ok = [self sendCommand:content receiver:MKMAnyStation()];  // to neighbor(s)
+    NSAssert(ok, @"failed to upload meta/document to neighbor station");
     
-    // 2. update local members and notice all bots & members
-    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
-    if ([members count] <= 2) { // new group?
-        // 2.0. update local storage
-        members = [self addMembers:newMembers group:group];
-        // 2.1. send 'meta/document' command
-        [self sendCommand:command members:members];     // to all members
-        // 2.2. send 'invite' command with all members
-        command = [[DIMInviteGroupCommand alloc] initWithGroup:group
-                                                       members:members];
-        [self sendCommand:command members:bots];        // to group assistants
-        [self sendCommand:command members:members];     // to all members
+    //
+    //  4. create & broadcast 'reset' group command with new members
+    //
+    if ([self resetMembers:members group:group]) {
+        NSLog(@"create group %@ with %lu members", group, members.count);
     } else {
-        // 2.1. send 'meta/document' command
-        //[self sendCommand:command members:members];   // to old members
-        [self sendCommand:command members:newMembers];  // to new members
-        // 2.2. send 'invite' command with new members only
-        command = [[DIMInviteGroupCommand alloc] initWithGroup:group
-                                                       members:newMembers];
-        [self sendCommand:command members:bots];        // to group assistants
-        [self sendCommand:command members:members];     // to old members
-        // 2.3. update local storage
-        members = [self addMembers:newMembers group:group];
-        // 2.4. send 'invite' command with all members
-        command = [[DIMInviteGroupCommand alloc] initWithGroup:group
-                                                       members:members];
-        [self sendCommand:command members:newMembers];  // to new members
+        NSLog(@"failed to create group %@ with %lu members", group, members.count);
     }
     
-    return YES;
+    return group;
 }
 
-- (BOOL)expelMember:(id<MKMID>)member group:(id<MKMID>)gid {
-    return [self expelMembers:@[member] group:gid];
-}
-
-- (BOOL)expelMembers:(NSArray<id<MKMID>> *)outMembers group:(id<MKMID>)group {
-    NSAssert(MKMIDIsGroup(group), @"group ID error: %@", group);
-    id<MKMID> owner = [self ownerOfGroup:group];
-    NSArray<id<MKMID>> *bots = [self assistantsOfGroup:group];
-
-    // TODO: make sure group meta exists
-    // TODO: make sure current user is the owner
-
-    // 0. check permission
-    for (id<MKMID> assistant in bots) {
-        if ([outMembers containsObject:assistant]) {
-            NSAssert(false, @"Cannot expel group assistant: %@", assistant);
-            return NO;
-        }
-    }
-    if ([outMembers containsObject:owner]) {
-        NSAssert(false, @"Cannot expel group owner: %@", owner);
-        return NO;
-    }
+- (BOOL)resetMembers:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)gid {
+    NSAssert([gid isGroup] && [newMembers count] > 0, @"params error: %@, %@", gid, newMembers);
     
-    // 1. update local storage
-    NSArray<id<MKMID>> *members = [self removeMembers:outMembers group:group];
-    
-    id<DKDCommand> command;
-    // 2. send 'expel' command
-    command = [[DIMExpelGroupCommand alloc] initWithGroup:group
-                                                  members:outMembers];
-    [self sendCommand:command members:bots];        // to assistants
-    [self sendCommand:command members:members];     // to new members
-    [self sendCommand:command members:outMembers];  // to expelled members
-
-    return YES;
-}
-
-- (BOOL)quitGroup:(id<MKMID>)group  {
-    NSAssert(MKMIDIsGroup(group), @"group ID error: %@", group);
-    
-    DIMCommonFacebook *facebook = [self facebook];
-    id<MKMUser> user = [facebook currentUser];
+    //
+    //  0. get current user
+    //
+    id<MKMUser> user = [self.facebook currentUser];
     if (!user) {
         NSAssert(false, @"failed to get current user");
         return NO;
     }
-    id<MKMID> me = user.ID;
-
-    id<MKMID> owner = [self ownerOfGroup:group];
-    NSArray<id<MKMID>> *bots = [self assistantsOfGroup:group];
-    NSArray<id<MKMID>> *members = [self membersOfGroup:group];
+    id<MKMID> me = [user ID];
     
-    // 0. check permission
-    if ([bots containsObject:me]) {
-        NSAssert(false, @"group assistant cannot quilt: %@, %@", me, group);
+    // check member list
+    id<MKMID> first = [newMembers firstObject];
+    BOOL ok = [self.delegate isOwner:first group:gid];
+    if (!ok) {
+        NSAssert(false, @"group owner must be the first member: %@", gid);
         return NO;
-    } else if ([me isEqual:owner]) {
-        NSAssert(false, @"group owner cannot quilt: %@, %@", me, group);
+    }
+    // member list OK, check expelled members
+    NSArray<id<MKMID>> *oldMembers = [self.delegate membersOfGroup:gid];
+    NSMutableArray<id<MKMID>> *expelList = [[NSMutableArray alloc] initWithCapacity:oldMembers.count];
+    for (id<MKMID> item in oldMembers) {
+        if (![newMembers containsObject:item]) {
+            [expelList addObject:item];
+        }
+    }
+    
+    //
+    //  1. check permission
+    //
+    BOOL isOwner = [me isEqual:first];
+    BOOL isAdmin = [self.delegate isAdministrator:me group:gid];
+    BOOL isBot = [self.delegate isAssistant:me group:gid];
+    BOOL canReset = isOwner || isAdmin;
+    if (!canReset) {
+        NSAssert(false, @"cannot reset members of group: %@", gid);
+        return NO;
+    }
+    // only the owner or admin can reset group members
+    NSAssert(!isBot, @"group bot cannot reset members: %@, %@", gid, me);
+    
+    //
+    //  2. build 'reset' command
+    //
+    DIMResetCmdMsg *pair = [self.builder buildResetCommandForGroup:gid members:newMembers];
+    id<DKDResetGroupCommand> reset = [pair first];
+    id<DKDReliableMessage> rMsg = [pair second];
+    if (!reset || !rMsg) {
+        NSAssert(false, @"failed to build 'reset' command for group: %@", gid);
         return NO;
     }
     
-    // 1. update local storage
-    if ([members containsObject:me]) {
-        NSMutableArray *mArray = mutable_array(members);
-        [mArray removeObject:me];
-        members = mArray;
-        
-        [self saveMembers:members group:group];
-    //} else {
-    //    // not a member now
-    //    return NO;
+    //
+    //  3. save 'reset' command, and update new members
+    //
+    if (![self.helper saveGroupHistory:reset message:rMsg group:gid]) {
+        NSAssert(false, @"failed to save 'reset' command for group: %@", gid);
+        return NO;
+    } else if (![self.delegate saveMembers:newMembers group:gid]) {
+        NSAssert(false, @"failed to update members of group: %@", gid);
+        return NO;
+    } else {
+        NSLog(@"group members updated: %@, %lu", gid, newMembers.count);
     }
     
-    id<DKDCommand> command;
-    // 2. send 'quit' command
-    command = [[DIMQuitGroupCommand alloc] initWithGroup:group];
-    [self sendCommand:command members:bots];     // to assistants
-    [self sendCommand:command members:members];  // to new members
-
+    //
+    //  4. forward all group history
+    //
+    NSArray<id<DKDReliableMessage>> *messages = [self.builder buildHistoryForGroup:gid];
+    id<DKDForwardContent> forward = DIMForwardContentCreate(messages);
+    
+    NSArray<id<MKMID>> *bots = [self.delegate assistantsOfGroup:gid];
+    if ([bots count] > 0) {
+        // let the group bots know the newest member ID list,
+        // so they can split group message correctly for us.
+        return [self sendCommand:forward members:bots];         // to all assistants
+    } else {
+        // group bots not exist,
+        // send the command to all members
+        [self sendCommand:forward members:newMembers];          // to new members
+        [self sendCommand:forward members:expelList];           // to removed members
+    }
+    
     return YES;
 }
 
-- (BOOL)queryGroup:(id<MKMID>)group  {
-    return [_messenger queryMembersForID:group];
-}
-
-#pragma mark Data Source
-
-// Override
-- (id<MKMMeta>)metaForID:(id<MKMID>)ID {
-    DIMCommonFacebook *facebook = [self facebook];
-    return [facebook metaForID:ID];
-}
-
-// Override
-- (id<MKMDocument>)documentForID:(id<MKMID>)ID type:(NSString *)type {
-    DIMCommonFacebook *facebook = [self facebook];
-    return [facebook documentForID:ID type:type];
-}
-
-// Override
-- (id<MKMID>)founderOfGroup:(id<MKMID>)group {
-    id<MKMID> founder = [_cachedGroupFounders objectForKey:group];
-    if (!founder) {
-        DIMCommonFacebook *facebook = [self facebook];
-        founder = [facebook founderOfGroup:group];
-        if (!founder) {
-            // place holder
-            founder = MKMFounder();
-        }
-        [_cachedGroupFounders setObject:founder forKey:group];
-    }
-    if (MKMIDIsBroadcast(founder)) {
-        return nil;
-    }
-    return founder;
-}
-
-// Override
-- (id<MKMID>)ownerOfGroup:(id<MKMID>)group {
-    id<MKMID> owner = [_cachedGroupOwners objectForKey:group];
-    if (!owner) {
-        DIMCommonFacebook *facebook = [self facebook];
-        owner = [facebook ownerOfGroup:group];
-        if (!owner) {
-            // place holder
-            owner = MKMAnyone();
-        }
-        [_cachedGroupOwners setObject:owner forKey:group];
-    }
-    if (MKMIDIsBroadcast(owner)) {
-        return nil;
-    }
-    return owner;
-}
-
-// Override
-- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
-    NSMutableArray<id<MKMID>> *members = [_cachedGroupMembers objectForKey:group];
-    if (!members) {
-        DIMCommonFacebook *facebook = [self facebook];
-        members = mutable_array([facebook membersOfGroup:group]);
-        if (!members) {
-            // place holder
-            members = [[NSMutableArray alloc] init];
-        }
-        [_cachedGroupMembers setObject:members forKey:group];
-    }
-    return members;
-}
-
-// Override
-- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
-    NSMutableArray<id<MKMID>> *assistants = [_cachedGroupAssistants objectForKey:group];
-    if (!assistants) {
-        DIMCommonFacebook *facebook = [self facebook];
-        assistants = mutable_array([facebook assistantsOfGroup:group]);
-        if (!assistants) {
-            // place holder
-            assistants = [[NSMutableArray alloc] init];
-        }
-        [_cachedGroupAssistants setObject:assistants forKey:group];
-    }
-    if ([assistants count] > 0) {
-        return assistants;
-    }
-    // get from global setting
-    if ([_defaultAssistants count] == 0) {
-        // get from ANS
-        id<MKMID> bot = [[DIMClientFacebook ans] getID:@"assistant"];
-        if (bot) {
-            [_defaultAssistants addObject:bot];
-        }
-    }
-    return _defaultAssistants;
-}
-
-@end
-
-@implementation DIMGroupManager (MemberShip)
-
-- (BOOL)isFounder:(id<MKMID>)member group:(id<MKMID>)group {
-    id<MKMID> founder = [self founderOfGroup:group];
-    if (founder) {
-        return [founder isEqual:member];
-    }
-    // check member's public key with group's meta.key
-    DIMCommonFacebook *facebook = [self facebook];
-    id<MKMMeta> gMeta = [facebook metaForID:group];
-    NSAssert(gMeta, @"failed to get meta for group: %@", group);
-    id<MKMMeta> mMeta = [facebook metaForID:member];
-    NSAssert(mMeta, @"failed to get meta for member: %@", member);
-    return MKMMetaMatchKey(mMeta.key, gMeta);
-}
-
-- (BOOL)isOwner:(id<MKMID>)member group:(id<MKMID>)group {
-    id<MKMID> owner = [self founderOfGroup:group];
-    if (owner) {
-        return [owner isEqual:member];
-    }
-    if (group.type == MKMEntityType_Group) {
-        // this is a polylogue
-        return [self isFounder:member group:group];
-    }
-    NSAssert(false, @"only Polylogue so far: %@", group);
-    return NO;
-}
-
-//
-//  members
-//
-
-- (BOOL)containsMember:(id<MKMID>)member group:(id<MKMID>)group {
-    NSAssert(MKMIDIsUser(member) && MKMIDIsGroup(group), @"ID error: %@, %@", member, group);
-    NSArray<id<MKMID>> *allMembers = [self membersOfGroup:group];
-    NSUInteger pos = [allMembers indexOfObject:member];
-    if (pos != NSNotFound) {
-        return YES;
-    }
-    id<MKMID> owner = [self ownerOfGroup:group];
-    return [owner isEqual:member];
-}
-
-- (BOOL)addMember:(id<MKMID>)member group:(id<MKMID>)group {
-    NSAssert(MKMIDIsUser(member) && MKMIDIsGroup(group), @"ID error: %@, %@", member, group);
-    NSArray<id<MKMID>> *allMembers = [self membersOfGroup:group];
-    NSUInteger pos = [allMembers indexOfObject:member];
-    if (pos != NSNotFound) {
-        // already exists
+- (BOOL)inviteMembers:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)gid {
+    NSAssert([gid isGroup] && [newMembers count] > 0, @"params error: %@, %@", gid, newMembers);
+    
+    //
+    //  0. get current user
+    //
+    id<MKMUser> user = [self.facebook currentUser];
+    if (!user) {
+        NSAssert(false, @"failed to get current user");
         return NO;
     }
-    NSMutableArray *mArray = mutable_array(allMembers);
-    [mArray addObject:member];
-    return [self saveMembers:mArray group:group];
-}
-
-- (BOOL)removeMember:(id<MKMID>)member group:(id<MKMID>)group {
-    NSAssert(MKMIDIsUser(member) && MKMIDIsGroup(group), @"ID error: %@, %@", member, group);
-    NSArray<id<MKMID>> *allMembers = [self membersOfGroup:group];
-    NSUInteger pos = [allMembers indexOfObject:member];
-    if (pos == NSNotFound) {
-        // not exists
+    id<MKMID> me = [user ID];
+    
+    NSArray<id<MKMID>> *oldMembers = [self.delegate membersOfGroup:gid];
+    
+    BOOL isOwner = [self.delegate isOwner:me group:gid];
+    BOOL isAdmin = [self.delegate isAdministrator:me group:gid];
+    BOOL isMember = [self.delegate isMember:me group:gid];
+    
+    //
+    //  1. check permission
+    //
+    BOOL canReset = isOwner || isAdmin;
+    if (canReset) {
+        // You are the owner/admin, then
+        // append new members and 'reset' the group
+        NSMutableArray<id<MKMID>> *mArray = mutable_array(oldMembers);
+        for (id<MKMID> item in newMembers) {
+            if (![mArray containsObject:item]) {
+                [mArray addObject:item];
+            }
+        }
+        return [self resetMembers:mArray group:gid];
+    } else if (!isMember) {
+        NSAssert(false, @"cannot invite member into group: %@", gid);
         return NO;
     }
-    NSMutableArray *mArray = mutable_array(allMembers);
-    [mArray removeObject:member];
-    return [self saveMembers:mArray group:group];
+    // invited by ordinary member
+
+    //
+    //  2. build 'invite' command
+    //
+    id<DKDInviteGroupCommand> invite = DIMGroupCommandInvite(gid, newMembers);
+    id<DKDReliableMessage> rMsg = [self.packer packMessageWithContent:invite sender:me];
+    if (!rMsg) {
+        NSAssert(false, @"failed to build 'invite' command for group: %@", gid);
+        return NO;
+    } else if (![self.helper saveGroupHistory:invite message:rMsg group:gid]) {
+        NSAssert(false, @"failed to save 'invite' command for group: %@", gid);
+        return NO;
+    }
+    id<DKDForwardContent> forward = DIMForwardContentCreate(@[rMsg]);
+    
+    //
+    //  3. forward group command(s)
+    //
+    NSArray<id<MKMID>> *bots = [self.delegate assistantsOfGroup:gid];
+    if ([bots count] > 0) {
+        // let the group bots know the newest member ID list,
+        // so they can split group message correctly for us.
+        [self sendCommand:forward members:bots];            // to all assistants
+    }
+    
+    // forward 'invite' to old members
+    [self sendCommand:forward members:oldMembers];          // to old members
+    
+    // forward all group history to new members
+    NSArray<id<DKDReliableMessage>> *messages = [self.builder buildHistoryForGroup:gid];
+    forward = DIMForwardContentCreate(messages);
+    
+    // TODO: remove that members already exist before sending?
+    [self sendCommand:forward members:newMembers];          // to new members
+    return YES;
+}
+
+- (BOOL)quitGroup:(id<MKMID>)gid {
+    NSAssert([gid isGroup], @"group ID error: %@", gid);
+    
+    //
+    //  0. get current user
+    //
+    id<MKMUser> user = [self.facebook currentUser];
+    if (!user) {
+        NSAssert(false, @"failed to get current user");
+        return NO;
+    }
+    id<MKMID> me = [user ID];
+    
+    NSArray<id<MKMID>> *members = [self.delegate membersOfGroup:gid];
+    NSAssert([members count] > 0, @"failed to get members for group: %@", gid);
+    
+    BOOL isOwner = [self.delegate isOwner:me group:gid];
+    BOOL isAdmin = [self.delegate isAdministrator:me group:gid];
+    BOOL isBot = [self.delegate isAssistant:me group:gid];
+    BOOL isMember = [members containsObject:me];
+    
+    //
+    //  1. check permission
+    //
+    if (isOwner) {
+        NSAssert(false, @"owner cannot quit from group: %@", gid);
+        return NO;
+    } else if (isAdmin) {
+        NSAssert(false, @"administrator cannot quit from group: %@", gid);
+        return NO;
+    }
+    NSAssert(!isBot, @"group bot cannot quit: %@, %@", gid, me);
+    
+    //
+    //  2. update local storage
+    //
+    if (isMember) {
+        NSLog(@"quitting group: %@, %@", gid, me);
+        NSMutableArray *mArray = mutable_array(members);
+        [mArray removeObject:me];
+        BOOL ok = [self.delegate saveMembers:mArray group:gid];
+        NSAssert(ok, @"failed to save members for group: %@", gid);
+    } else {
+        NSLog(@"member not in group: %@, %@", gid, me);
+    }
+    
+    //
+    //  3. build 'quit' command
+    //
+    id<DKDCommand> content = DIMGroupCommandQuit(gid);
+    id<DKDReliableMessage> rMsg = [self.packer packMessageWithContent:content sender:me];
+    if (!rMsg) {
+        NSAssert(false, @"failed to pack group message: %@", gid);
+        return NO;
+    }
+    id<DKDForwardContent> forward = DIMForwardContentCreate(@[rMsg]);
+    
+    //
+    //  4. forward 'quit' command
+    //
+    NSArray<id<MKMID>> *bots = [self.delegate assistantsOfGroup:gid];
+    if ([bots count] > 0) {
+        // let the group bots know the newest member ID list,
+        // so they can split group message correctly for us.
+        return [self sendCommand:forward members:bots];     // to group bots
+    } else {
+        // group bots not exist,
+        // send the command to all members directly
+        return [self sendCommand:forward members:members];  // to all members
+    }
 }
 
 // private
-- (NSArray<id<MKMID>> *)addMembers:(NSArray<id<MKMID>> *)newMembers
-                             group:(id<MKMID>)group {
-    NSMutableArray *allMembers = mutable_array([self membersOfGroup:group]);
-    NSUInteger count = 0;
-    for (id<MKMID> member in newMembers) {
-        if ([allMembers containsObject:member]) {
+- (BOOL)sendCommand:(id<DKDContent>)content receiver:(id<MKMID>)receiver {
+    // 1. get sender
+    id<MKMUser> user = [self.facebook currentUser];
+    if (!user) {
+        NSAssert(false, @"failed to get current user");
+        return NO;
+    }
+    id<MKMID> me = [user ID];
+    if ([me isEqual:receiver]) {
+        NSLog(@"skip cycled message: %@ => %@", me, receiver);
+        return NO;
+    }
+    // 2. send to receiver
+    DIMCommonMessenger *messenger = [self messenger];
+    DIMTransmitterResults *res;
+    res = [messenger sendContent:content sender:me receiver:receiver priority:1];
+    return res.second != nil;
+}
+
+// private
+- (BOOL)sendCommand:(id<DKDContent>)content members:(NSArray<id<MKMID>> *)members {
+    // 1. get sender
+    id<MKMUser> user = [self.facebook currentUser];
+    if (!user) {
+        NSAssert(false, @"failed to get current user");
+        return NO;
+    }
+    id<MKMID> me = [user ID];
+    // 2. send to all receivers
+    DIMCommonMessenger *messenger = [self messenger];
+    for (id<MKMID> receiver in members) {
+        if ([me isEqual:receiver]) {
+            NSLog(@"skip cycled message: %@ => %@", me, receiver);
             continue;
         }
-        [allMembers addObject:member];
-        ++count;
+        [messenger sendContent:content sender:me receiver:receiver priority:1];
     }
-    if (count > 0) {
-        [self saveMembers:allMembers group:group];
-    }
-    return allMembers;
-}
-
-- (NSArray<id<MKMID>> *)removeMembers:(NSArray<id<MKMID>> *)outMembers
-                                group:(id<MKMID>)group {
-    NSMutableArray *allMembers = mutable_array([self membersOfGroup:group]);
-    NSUInteger count = 0;
-    for (id<MKMID> member in outMembers) {
-        if (![allMembers containsObject:member]) {
-            continue;
-        }
-        [allMembers removeObject:member];
-        ++count;
-    }
-    if (count > 0) {
-        [self saveMembers:allMembers group:group];
-    }
-    return allMembers;
-}
-
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)group {
-    DIMCommonFacebook *facebook = [self facebook];
-    id<DIMAccountDBI> db = [facebook database];
-    if ([db saveMembers:members group:group]) {
-        // erase cache for reload
-        [_cachedGroupMembers removeObjectForKey:group];
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-//
-//  assistants
-//
-
-- (BOOL)containsAssistant:(id<MKMID>)bot group:(id<MKMID>)group {
-    NSArray<id<MKMID>> *assitants = [self assistantsOfGroup:group];
-    if (assitants == _defaultAssistants) {
-        // assistants not found
-        return NO;
-    }
-    return [assitants containsObject:bot];
-}
-
-- (BOOL)addAssistant:(id<MKMID>)bot group:(id<MKMID>)group {
-    if (!group) {
-        [_defaultAssistants insertObject:bot atIndex:0];
-        return YES;
-    }
-    NSMutableArray<id<MKMID>> *mArray;
-    NSArray<id<MKMID>> *assistants = [self assistantsOfGroup:group];
-    if (assistants == _defaultAssistants) {
-        // assistants not found
-        mArray = [[NSMutableArray alloc] init];
-    } else if ([assistants containsObject:bot]) {
-        // already exists
-        return NO;
-    } else {
-        mArray = mutable_array(assistants);
-    }
-    [mArray insertObject:bot atIndex:0];
-    return [self saveAssistants:mArray group:group];
-}
-
-- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)group {
-    DIMCommonFacebook *facebook = [self facebook];
-    id<DIMAccountDBI> db = [facebook database];
-    if ([db saveAssistants:bots group:group]) {
-        // erase cache for reload
-        [_cachedGroupAssistants removeObjectForKey:group];
-        return YES;
-    } else {
-        return NO;
-    }
-}
-
-- (BOOL)removeGroup:(id<MKMID>)group {
-    // TODO: remove group completely
-    return NO;
+    return YES;
 }
 
 @end

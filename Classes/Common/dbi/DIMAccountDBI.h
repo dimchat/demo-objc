@@ -151,7 +151,7 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 @end
 
 typedef OKPair<id<DKDGroupCommand>, id<DKDReliableMessage>> DIMHistoryCmdMsg;
-typedef OKPair<id<DKDReceiptCommand>, id<DKDReliableMessage>> DIMResetCmdMsg;
+typedef OKPair<id<DKDResetGroupCommand>, id<DKDReliableMessage>> DIMResetCmdMsg;
 
 @protocol DIMGroupHistoryDBI <NSObject>
 
@@ -185,7 +185,7 @@ typedef OKPair<id<DKDReceiptCommand>, id<DKDReliableMessage>> DIMResetCmdMsg;
  * @param group - group ID
  * @return history list
  */
-- (NSArray<DIMHistoryCmdMsg *> *)historiesForGroup:(id<MKMID>)group;
+- (NSArray<DIMHistoryCmdMsg *> *)historiesOfGroup:(id<MKMID>)group;
 
 /**
  *  Load last 'reset' group command
@@ -206,7 +206,7 @@ typedef OKPair<id<DKDReceiptCommand>, id<DKDReliableMessage>> DIMResetCmdMsg;
  * @param group - group ID
  * @return false on failed
  */
-- (BOOL)clearMemberHistoriesForGroup:(id<MKMID>)group;
+- (BOOL)clearMemberHistoriesOfGroup:(id<MKMID>)group;
 
 /**
  *  Clean group commands for administrators
@@ -215,7 +215,7 @@ typedef OKPair<id<DKDReceiptCommand>, id<DKDReliableMessage>> DIMResetCmdMsg;
  * @param group - group ID
  * @return false on failed
  */
-- (BOOL)clearAdminHistoriesForGroup:(id<MKMID>)group;
+- (BOOL)clearAdminHistoriesOfGroup:(id<MKMID>)group;
 
 @end
 

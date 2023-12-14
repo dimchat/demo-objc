@@ -35,120 +35,92 @@
 //  Copyright © 2020 DIM Group. All rights reserved.
 //
 
-#import <DIMClient/DIMClientMessenger.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DIMGroupManager : NSObject <MKMGroupDataSource>
+@class DIMGroupDelegate;
+@class DIMGroupPacker;
 
-@property(nonatomic, strong) __kindof DIMClientMessenger *messenger;
+@class DIMGroupCommandHelper;
+@class DIMGroupHistoryBuilder;
 
-+ (instancetype)sharedInstance;
+@class DIMCommonFacebook;
+@class DIMCommonMessenger;
+
+@protocol DIMAccountDBI;
+
+@interface DIMGroupManager : NSObject
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+@property (strong, nonatomic, readonly) DIMGroupPacker *packer;
+
+@property (strong, nonatomic, readonly) DIMGroupCommandHelper *helper;
+@property (strong, nonatomic, readonly) DIMGroupHistoryBuilder *builder;
+
+// protected, override for customized packer
+- (DIMGroupPacker *)createPacker;
+
+// protected, override for customized helper
+- (DIMGroupCommandHelper *)createHelper;
+
+// protected, override for customized builder
+- (DIMGroupHistoryBuilder *)createBuilder;
+
+@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
+@property (strong, nonatomic, readonly) __kindof DIMCommonMessenger *messenger;
+
+@property (strong, nonatomic, readonly) id<DIMAccountDBI> database;
+
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate;
 
 /**
- *  Send message content to this group
- *  (only existed member can do this)
+ *  Create new group with members
+ *  (broadcast document & members to all members and neighbor station)
  *
- * @param content - message content
+ * @param members - initial group members
+ * @return new group ID
+ */
+- (id<MKMID>)createGroupWithMembers:(NSArray<id<MKMID>> *)members;
+
+// DISCUSS: should we let the neighbor stations know the group info?
+//      (A) if we do this, it can provide a convenience that,
+//          when someone receive a message from an unknown group,
+//          it can query the group info from the neighbor immediately;
+//          and its potential risk is that anyone not in the group can also
+//          know the group info (only the group ID, name, and admins, ...)
+//      (B) but, if we don't let the station knows it,
+//          then we must shared the group info with our members themselves;
+//          and if none of them is online, you cannot get the newest info
+//          immediately until someone online again.
+
+/**
+ *  Reset group members
+ *  (broadcast new group history to all members)
+ *
  * @param gid - group ID
- * @return YES on success
-*/
-- (BOOL)sendContent:(id<DKDContent>)content group:(id<MKMID>)gid;
+ * @param members - new member list
+ * @return false on error
+ */
+- (BOOL)resetMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
 
 /**
  *  Invite new members to this group
- *  (only existed member/assistant can do this)
  *
- * @param newMembers - new members ID list
  * @param gid - group ID
- * @return YES on success
-*/
-- (BOOL)inviteMembers:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)gid;
-- (BOOL)inviteMember:(id<MKMID>)member group:(id<MKMID>)gid;
-
-/**
- *  Expel members from this group
- *  (only group owner/assistant can do this)
- *
- * @param outMembers - existed member ID list
- * @param gid - group ID
- * @return YES on success
-*/
-- (BOOL)expelMembers:(NSArray<id<MKMID>> *)outMembers group:(id<MKMID>)gid;
-- (BOOL)expelMember:(id<MKMID>)member group:(id<MKMID>)gid;
+ * @param members - inviting member list
+ * @return false on error
+ */
+- (BOOL)inviteMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
 
 /**
  *  Quit from this group
- *  (only group member can do this)
+ *  (broadcast a 'quit' command to all members)
  *
  * @param gid - group ID
- * @return YES on success
+ * @return false on error
  */
 - (BOOL)quitGroup:(id<MKMID>)gid;
-
-/**
- *  Query group info
- *  (only group member can do this)
- *
- * @param gid - group ID
- * @return YES on success
- */
-- (BOOL)queryGroup:(id<MKMID>)gid;
-
-@end
-
-@interface DIMGroupManager (MemberShip)
-
-- (BOOL)isFounder:(id<MKMID>)member group:(id<MKMID>)gid;
-- (BOOL)isOwner:(id<MKMID>)member group:(id<MKMID>)gid;
-
-//
-//  members
-//
-
-- (BOOL)containsMember:(id<MKMID>)uid group:(id<MKMID>)gid;
-- (BOOL)addMember:(id<MKMID>)uid group:(id<MKMID>)gid;
-- (BOOL)removeMember:(id<MKMID>)uid group:(id<MKMID>)gid;
-
-// private
-- (NSArray<id<MKMID>> *)addMembers:(NSArray<id<MKMID>> *)newMembers
-                             group:(id<MKMID>)gid;
-// private
-- (NSArray<id<MKMID>> *)removeMembers:(NSArray<id<MKMID>> *)outMembers
-                                group:(id<MKMID>)gid;
-
-/**
- *  Save members of group
- *
- * @param members - member ID list
- * @param gid - group ID
- * @return true on success
- */
-- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
-
-//
-//  assistants
-//
-
-- (BOOL)containsAssistant:(id<MKMID>)bot group:(id<MKMID>)gid;
-- (BOOL)addAssistant:(id<MKMID>)bot group:(nullable id<MKMID>)gid;
-
-/**
- *  Save members of group
- *
- * @param bots - assistant ID list
- * @param gid - group ID
- * @return true on success
- */
-- (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)gid;
-
-/**
- *  Remove group completely
- *
- * @param gid - group ID
- * @return true on success
- */
-- (BOOL)removeGroup:(id<MKMID>)gid;
 
 @end
 

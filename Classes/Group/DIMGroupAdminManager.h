@@ -34,11 +34,38 @@
 //  Created by Albert Moky on 2023/12/13.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMGroupDelegate;
+
+@class DIMCommonFacebook;
+@class DIMCommonMessenger;
+
 @interface DIMGroupAdminManager : NSObject
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+
+@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
+@property (strong, nonatomic, readonly) __kindof DIMCommonMessenger *messenger;
+
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate;
+
+/**
+ *  Update 'administrators' in bulletin document
+ *  (broadcast new document to all members and neighbor station)
+ *
+ * @param gid - group ID
+ * @param newAdmins - administrator list
+ * @return false on error
+ */
+- (BOOL)updateAdministrators:(NSArray<id<MKMID>> *)newAdmins group:(id<MKMID>)gid;
+
+/**
+ *  Broadcast group document
+ */
+- (BOOL)broadcastDocument:(id<MKMBulletin>)doc;
 
 @end
 

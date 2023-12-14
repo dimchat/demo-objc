@@ -34,11 +34,43 @@
 //  Created by Albert Moky on 2023/12/13.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMClient/DIMAccountDBI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMGroupDelegate;
+
 @interface DIMGroupCommandHelper : NSObject
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+
+@property (strong, nonatomic, readonly) id<DIMAccountDBI> database;
+
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate;
+
+//
+//  Group History Command
+//
+
+- (BOOL)saveGroupHistory:(id<DKDGroupCommand>)content
+                 message:(id<DKDReliableMessage>)rMsg
+                   group:(id<MKMID>)gid;
+
+- (NSArray<DIMHistoryCmdMsg *> *)historiesOfGroup:(id<MKMID>)gid;
+
+- (DIMResetCmdMsg *)resetCommandMessageForGroup:(id<MKMID>)gid;
+
+- (BOOL)clearMemberHistoriesOfGroup:(id<MKMID>)gid;
+
+- (BOOL)clearAdminHistoriesOfGroup:(id<MKMID>)gid;
+
+//
+//  command time
+//  (all group commands received must after the cached 'reset' command)
+//
+- (BOOL)isCommandExpired:(id<DKDGroupCommand>)content;
+
+- (NSArray<id<MKMID>> *)membersFromCommand:(id<DKDGroupCommand>)content;
 
 @end
 

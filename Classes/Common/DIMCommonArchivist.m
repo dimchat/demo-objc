@@ -56,7 +56,7 @@
 }
 
 - (NSDate *)lastTimeOfHistoryForID:(id<MKMID>)group {
-    NSArray<DIMHistoryCmdMsg *> *array = [_database historiesForGroup:group];
+    NSArray<DIMHistoryCmdMsg *> *array = [_database historiesOfGroup:group];
     if ([array count] == 0) {
         return nil;
     }

@@ -34,11 +34,50 @@
 //  Created by Albert Moky on 2023/12/13.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMClient/DIMAccountDBI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMGroupDelegate;
+@class DIMGroupCommandHelper;
+
+@class DIMCommonFacebook;
+@class DIMCommonMessenger;
+
 @interface DIMGroupHistoryBuilder : NSObject
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+@property (strong, nonatomic, readonly) DIMGroupCommandHelper *helper;
+
+// protected, override for customized helper
+- (DIMGroupCommandHelper *)createHelper;
+
+@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
+@property (strong, nonatomic, readonly) __kindof DIMCommonMessenger *messenger;
+
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate;
+
+/**
+ *  Build command list for group history
+ *      0. document command
+ *      1. reset group command
+ *      2. other group commands
+ *
+ * @param gid - group ID
+ * @return command list
+ */
+- (NSArray<id<DKDReliableMessage>> *)buildHistoryForGroup:(id<MKMID>)gid;
+
+/**
+ *  Create broadcast 'document' command
+ */
+- (OKPair<id<MKMDocument>, id<DKDReliableMessage>> *)buildDocumentCommandForGroup:(id<MKMID>)gid;
+
+/**
+ *  Create broadcast 'reset' group command with newest member list
+ */
+- (DIMResetCmdMsg *)buildResetCommandForGroup:(id<MKMID>)gid
+                                      members:(NSArray<id<MKMID>> *)members;
 
 @end
 

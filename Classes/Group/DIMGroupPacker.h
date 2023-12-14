@@ -34,11 +34,33 @@
 //  Created by Albert Moky on 2023/12/13.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DIMGroupDelegate;
+
 @interface DIMGroupPacker : NSObject
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+
+@property (strong, nonatomic, readonly) __kindof DIMMessenger *messenger;
+
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate;
+
+/**
+ *  Pack as broadcast message
+ */
+- (id<DKDReliableMessage>)packMessageWithContent:(id<DKDContent>)content
+                                          sender:(id<MKMID>)from;
+
+- (id<DKDReliableMessage>)encryptAndSignMessage:(id<DKDInstantMessage>)iMsg;
+
+- (NSArray<id<DKDInstantMessage>> *)splitInstantMessage:(id<DKDInstantMessage>)iMsg
+                                                members:(NSArray<id<MKMID>> *)members;
+
+- (NSArray<id<DKDReliableMessage>> *)splitReliableMessage:(id<DKDReliableMessage>)rMsg
+                                                  members:(NSArray<id<MKMID>> *)members;
 
 @end
 

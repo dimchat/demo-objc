@@ -34,11 +34,55 @@
 //  Created by Albert Moky on 2023/12/13.
 //
 
-#import <Foundation/Foundation.h>
+#import <DIMSDK/DIMSDK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+// NOTICE: group assistants (bots) can help the members to redirect messages
+//
+//      if members.length < POLYLOGUE_LIMIT,
+//          means it is a small polylogue group, let the members to split
+//          and send group messages by themselves, this can keep the group
+//          more secretive because no one else can know the group ID even;
+//      else,
+//          set 'assistants' in the bulletin document to tell all members
+//          that they can let the group bot to do the job for them.
+//
+#define DIM_POLYLOGUE_LIMIT    32
+
+// NOTICE: expose group ID to reduce encrypting time
+//
+//      if members.length < SECRET_GROUP_LIMIT,
+//          means it is a tiny group, you can choose to hide the group ID,
+//          that you can split and encrypt message one by one;
+//      else,
+//          you should expose group ID in the instant message level, then
+//          encrypt message by one symmetric key for this group, after that,
+//          split and send to all members directly.
+//
+#define DIM_SECRET_GROUP_LIMIT 16
+
+@class DIMGroupDelegate;
+@class DIMGroupPacker;
+
+@class DIMCommonFacebook;
+@class DIMCommonMessenger;
+
 @interface DIMGroupEmitter : NSObject
+
+@property (strong, nonatomic, readonly) DIMGroupDelegate *delegate;
+@property (strong, nonatomic, readonly) DIMGroupPacker *packer;
+
+// protected, override for customized packer
+- (DIMGroupPacker *)createPacker;
+
+@property (strong, nonatomic, readonly) __kindof DIMCommonFacebook *facebook;
+@property (strong, nonatomic, readonly) __kindof DIMCommonMessenger *messenger;
+
+- (instancetype)initWithDelegate:(DIMGroupDelegate *)delegate;
+
+- (id<DKDReliableMessage>)sendInstantMessage:(id<DKDInstantMessage>)iMsg
+                                    priority:(NSInteger)prior;
 
 @end
 

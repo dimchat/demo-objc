@@ -47,7 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMCommonFacebook : DIMFacebook
 
-@property(nonatomic, strong, nullable) id<MKMUser> currentUser;  // 1st local user
+// 1st local user
+@property(nonatomic, strong, nullable) __kindof id<MKMUser> currentUser;
 
 - (nullable id<MKMDocument>)documentForID:(id<MKMID>)ID
                                  withType:(nullable NSString *)type;
