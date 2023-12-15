@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
     s.homepage              = 'https://github.com/dimchat/demo-objc'
     s.license               = { :type => 'MIT', :file => 'LICENSE' }
     s.author                = { 'Albert Moky' => 'albert.moky@gmail.com' }
-    s.social_media_url      = "https://twitter.com/AlbertMoky"
+    # s.social_media_url    = "https://twitter.com/AlbertMoky"
     s.source                = { :git => 'https://github.com/dimchat/demo-objc.git', :tag => s.version.to_s }
     # s.platform            = :ios, "11.0"
     s.ios.deployment_target = '12.0'

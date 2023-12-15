@@ -44,7 +44,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DIMClientFacebook : DIMCommonFacebook
 
-- (NSString *)nameForID:(id<MKMID>)ID;
+//
+//  Organizational Structure
+//
+
+- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)gid;
+
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid;
+
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)gid;
+
+@end
+
+@interface DIMClientFacebook (ANS)
 
 + (__kindof DIMAddressNameServer *)ans;
 + (void)setANS:(DIMAddressNameServer *)ans;

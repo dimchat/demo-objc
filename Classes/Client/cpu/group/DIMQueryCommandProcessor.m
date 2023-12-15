@@ -113,7 +113,9 @@
     
     // 3. send newest group history commands
     BOOL ok = [self sendHistoriesTo:sender group:group];
-    NSAssert(ok, @"failed to send history for group: %@ => %@", group, sender);
+    if (!ok) {
+        NSAssert(false, @"failed to send history for group: %@ => %@", group, sender);
+    }
     
     // no need to response this group command
     return nil;

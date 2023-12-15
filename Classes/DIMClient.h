@@ -140,7 +140,7 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 //
 
 #import <DIMClient/DIMGroupDelegate.h>
-#import <DIMClient/DIMGroupCommonHelper.h>
+#import <DIMClient/DIMGroupCommandHelper.h>
 #import <DIMClient/DIMGroupHistoryBuilder.h>
 #import <DIMClient/DIMGroupPacker.h>
 #import <DIMClient/DIMGroupEmitter.h>

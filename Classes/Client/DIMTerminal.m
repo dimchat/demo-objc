@@ -126,7 +126,7 @@
     }
     // report every 5 minutes to keep user online
     @try {
-        [self keepOnlineForID:uid];
+        [self keepOnline:uid];
     } @catch (NSException *ex) {
     } @finally {
     }
@@ -264,11 +264,10 @@
     // set weak reference to messenger
     [session setMessenger:messenger];
     self.messenger = messenger;
-    [DIMGroupManager sharedInstance].messenger = messenger;
     return messenger;
 }
 
-- (BOOL)loginWithID:(id<MKMID>)user {
+- (BOOL)loginUser:(id<MKMID>)user {
     DIMClientSession *session = [self session];
     if (session) {
         [session setID:user];
@@ -278,11 +277,11 @@
     }
 }
 
-- (void)keepOnlineForID:(id<MKMID>)user {
+- (void)keepOnline:(id<MKMID>)user {
     // send login command to everyone to provide more information.
     // this command can keep the user online too.
     DIMClientMessenger *messenger = [self messenger];
-    [messenger broadcastLoginForID:user userAgent:self.userAgent];
+    [messenger broadcastLogin:user userAgent:self.userAgent];
 }
 
 - (void)enterBackground {
@@ -299,7 +298,7 @@
         DIMSessionState *state = [session state];
         if (state.index == DIMSessionStateOrderRunning) {
             // report client state
-            [messenger reportOfflineForID:uid];
+            [messenger reportOffline:uid];
             // TODO: idle(0.5)?
         }
     }
@@ -325,7 +324,7 @@
             DIMSessionState *state = [session state];
             if (state.index == DIMSessionStateOrderRunning) {
                 // report client state
-                [messenger reportOnlineForID:uid];
+                [messenger reportOnline:uid];
             }
         } afterDelay:2.0];
     }

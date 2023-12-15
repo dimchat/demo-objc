@@ -39,7 +39,159 @@
 #import "DIMRegister.h"
 #import "DIMGroupManager.h"
 
+#import "DIMCommonArchivist.h"
+
 #import "DIMClientFacebook.h"
+
+@implementation DIMClientFacebook
+
+- (BOOL)saveDocument:(id<MKMDocument>)doc {
+    BOOL ok = [super saveDocument:doc];
+    if (ok && [doc conformsToProtocol:@protocol(MKMBulletin)]) {
+        // check administrators
+        id array = [doc propertyForKey:@"administrators"];
+        if ([array isKindOfClass:[NSArray class]]) {
+            id<MKMID> group = [doc ID];
+            NSAssert([group isGroup], @"group ID error: %@", group);
+            NSArray<id<MKMID>> *admins = MKMIDConvert(array);
+            ok = [self saveAdministrators:admins group:group];
+        }
+    }
+    return ok;
+}
+
+//
+//  GroupDataSource
+//
+
+- (id<MKMID>)founderOfGroup:(id<MKMID>)group {
+    NSAssert([group isGroup], @"group ID error: %@", group);
+    // check broadcast group
+    if ([group isBroadcast]) {
+        // founder of broadcast group
+        return [DIMBroadcastHelper broadcastFounder:group];
+    }
+    // check bulletin document
+    id<MKMBulletin> doc = [self bulletinForID:group];
+    if (!doc) {
+        // the owner(founder) should be set in the bulletin document of group
+        return nil;
+    }
+    // check local storage
+    DIMCommonArchivist *archivist = [self archivist];
+    id<MKMID> user = [archivist founderOfGroup:group];
+    if (user) {
+        // got from local storage
+        return user;
+    }
+    // get from bulletin document
+    user = [doc founder];
+    NSAssert(user, @"founder not designated for group: %@", group);
+    return user;
+}
+
+- (id<MKMID>)ownerOfGroup:(id<MKMID>)group {
+    NSAssert([group isGroup], @"group ID error: %@", group);
+    // check broadcast group
+    if ([group isBroadcast]) {
+        // founder of broadcast group
+        return [DIMBroadcastHelper broadcastOwner:group];
+    }
+    // check bulletin document
+    id<MKMBulletin> doc = [self bulletinForID:group];
+    if (!doc) {
+        // the owner(founder) should be set in the bulletin document of group
+        return nil;
+    }
+    // check local storage
+    DIMCommonArchivist *archivist = [self archivist];
+    id<MKMID> user = [archivist ownerOfGroup:group];
+    if (user) {
+        // got from local storage
+        return user;
+    }
+    // check group type
+    if ([group type] == MKMEntityType_Group) {
+        // Polylogue owner is its founder
+        user = [archivist founderOfGroup:group];
+        if (!user) {
+            user = [doc founder];
+        }
+    }
+    NSAssert(user, @"owner not found for group: %@", group);
+    return user;
+}
+
+- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group {
+    NSAssert([group isGroup], @"group ID error: %@", group);
+    id<MKMID> owner = [self ownerOfGroup:group];
+    if (!owner) {
+        //NSAssert(false, @"group owner not found: %@", group);
+        return nil;
+    }
+    // check local storage
+    DIMCommonArchivist *archivist = [self archivist];
+    NSArray<id<MKMID>> *members = [archivist membersOfGroup:group];
+    [archivist checkMembers:members forID:group];
+    if ([members count] == 0) {
+        members = @[owner];
+    } else {
+        NSAssert([members.firstObject isEqual:owner], @"group owner must be the first member: %@", group);
+    }
+    return members;
+}
+
+- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group {
+    NSAssert([group isGroup], @"group ID error: %@", group);
+    // check bulletin document
+    id<MKMBulletin> doc = [self bulletinForID:group];
+    if (!doc) {
+        // the assistants should be set in the bulletin document of group
+        return nil;
+    }
+    // check local storage
+    DIMCommonArchivist *archivist = [self archivist];
+    NSArray<id<MKMID>> *bots = [archivist assistantsOfGroup:group];
+    if ([bots count] > 0) {
+        return bots;
+    }
+    // get from bulletin document
+    return [doc assistants];
+}
+
+//
+//  Organizational Structure
+//
+
+- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)group {
+    NSAssert([group isGroup], @"group ID error: %@", group);
+    // check bulletin document
+    id<MKMBulletin> doc = [self bulletinForID:group];
+    if (!doc) {
+        // the administrators should be set in the bulletin document of group
+        return nil;
+    }
+    // the 'administrators' should be saved into local storage
+    // when the newest bulletin document received,
+    // so we must get them from the local storage only,
+    // not from the bulletin document.
+    DIMCommonArchivist *archivist = [self archivist];
+    return [archivist administratorsOfGroup:group];
+}
+
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid {
+    DIMCommonArchivist *archivist = [self archivist];
+    return [archivist saveAdministrators:admins group:gid];
+}
+
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)newMembers group:(id<MKMID>)gid {
+    DIMCommonArchivist *archivist = [self archivist];
+    return [archivist saveMembers:newMembers group:gid];
+}
+
+@end
+
+#pragma mark - ANS
 
 static DIMAddressNameServer *_ans = nil;
 static id<MKMIDFactory> _idFactory = nil;
@@ -50,56 +202,33 @@ static id<MKMIDFactory> _idFactory = nil;
 
 @implementation IDFactory
 
-- (nonnull id<MKMID>)createID:(nullable NSString *)name
-                      address:(id<MKMAddress>)address
-                     terminal:(nullable NSString *)location {
-    return [_idFactory createID:name address:address terminal:location];
+- (nonnull id<MKMID>)createIdentifier:(NSString *)name
+                              address:(id<MKMAddress>)address
+                             terminal:(NSString *)location {
+    return [_idFactory createIdentifier:name address:address terminal:location];
 }
 
-- (nonnull id<MKMID>)generateIDWithMeta:(id<MKMMeta>)meta
-                                   type:(MKMEntityType)network
-                               terminal:(nullable NSString *)location {
-    return [_idFactory generateIDWithMeta:meta type:network terminal:location];
+- (nonnull id<MKMID>)generateIdentifierWithMeta:(id<MKMMeta>)meta
+                                           type:(MKMEntityType)network
+                                       terminal:(NSString *)location {
+    return [_idFactory generateIdentifierWithMeta:meta
+                                             type:network
+                                         terminal:location];
 }
 
-- (nullable id<MKMID>)parseID:(nonnull NSString *)identifier {
+- (nullable id<MKMID>)parseIdentifier:(NSString *)identifier {
     // try ANS record
     id<MKMID> ID = [_ans getID:identifier];
     if (ID) {
         return ID;
     }
     // parse by original factory
-    return [_idFactory parseID:identifier];
+    return [_idFactory parseIdentifier:identifier];
 }
 
 @end
 
-@implementation DIMClientFacebook
-
-- (NSString *)nameForID:(id<MKMID>)ID {
-    // get name from document
-    id<MKMDocument> doc = [self documentForID:ID type:@"*"];
-    if (doc) {
-        NSString *name = [doc name];
-        if ([name length] > 0) {
-            return name;
-        }
-    }
-    // get name from ID
-    return [MKMAnonymous name:ID];
-}
-
-// Override
-- (id<MKMGroup>)createGroup:(id<MKMID>)ID {
-    id<MKMGroup> grp = [super createGroup:ID];
-    id<MKMEntityDataSource> delegate = [grp dataSource];
-    if (delegate == nil || delegate == self) {
-        // replace group's data souce
-        DIMGroupManager *manager = [DIMGroupManager sharedInstance];
-        [grp setDataSource:manager];
-    }
-    return grp;
-}
+@implementation DIMClientFacebook (ANS)
 
 //
 //  Address Name Service

@@ -84,9 +84,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (DIMClientMessenger *)connectToHost:(NSString *)ip port:(UInt16)port;
 
-- (BOOL)loginWithID:(id<MKMID>)user;
+- (BOOL)loginUser:(id<MKMID>)user;
 
-- (void)keepOnlineForID:(id<MKMID>)user;
+- (void)keepOnline:(id<MKMID>)user;
 
 - (void)enterBackground;
 

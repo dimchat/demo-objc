@@ -35,11 +35,11 @@
 //  Copyright © 2023 DIM Group. All rights reserved.
 //
 
-#import "DIMQueryFrequencyChecker.h"
 #import "DIMHandshakeCommand.h"
 #import "DIMReportCommand.h"
-#import "DIMClientSession.h"
 #import "DIMGroupManager.h"
+#import "DIMClientSession.h"
+#import "DIMClientArchivist.h"
 
 #import "DIMClientMessenger.h"
 
@@ -78,8 +78,8 @@
         [cmd setGroup:MKMEveryStations()];
         // create instant message with meta & visa
         id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
-        [iMsg setObject:meta.dictionary forKey:@"meta"];
-        [iMsg setObject:visa.dictionary forKey:@"visa"];
+        [iMsg setDictionary:meta forKey:@"meta"];
+        [iMsg setDictionary:visa forKey:@"visa"];
         [self sendInstantMessage:iMsg
                         priority:STDeparturePriorityUrgent];
         NSLog(@"shaking hands with %@", station);
@@ -88,162 +88,83 @@
 
 - (void)handshakeSuccess {
     // broadcast current documents after handshake success
-    [self broadcastDocument];
+    [self broadcastDocument:NO];
 }
 
-- (void)broadcastDocument {
+- (void)broadcastDocument:(BOOL)updated {
     DIMCommonFacebook *facebook = [self facebook];
     id<MKMUser> user = [facebook currentUser];
     NSAssert(user, @"current user not found");
     id<MKMID> uid = [user ID];
     id<MKMMeta> meta = [user meta];
     id<MKMVisa> visa = [user visa];
-    id<DKDContent> cmd = [[DIMDocumentCommand alloc] initWithID:uid
-                                                           meta:meta
-                                                       document:visa];
-    // broadcast to 'everyone@everywhere'
-    [self sendContent:cmd
-               sender:uid
-             receiver:MKMEveryone()
-             priority:STDeparturePrioritySlower];
+    id<DKDContent> command = [[DIMDocumentCommand alloc] initWithID:uid
+                                                               meta:meta
+                                                           document:visa];
+    DIMClientArchivist *archivist = [self.facebook archivist];
+    //
+    //  send to all contacts
+    //
+    NSArray<id<MKMID>> *contacts = [self.facebook contactsOfUser:uid];
+    for (id<MKMID> item in contacts) {
+        if ([archivist isDocumentResponseExpired:item force:updated]) {
+            NSLog(@"sending visa to: %@", item);
+            [self sendContent:command sender:uid receiver:item priority:1];
+        } else {
+            // not expired yet
+            NSLog(@"visa response not expired yet: %@ => %@", uid, item);
+        }
+    }
+    //
+    //  broadcast to 'everyone@everywhere'
+    //
+    id<MKMID> everyone = MKMEveryone();
+    if ([archivist isDocumentResponseExpired:everyone force:updated]) {
+        NSLog(@"sending visa to %@", everyone);
+        [self sendContent:command sender:uid receiver:everyone priority:1];
+    } else {
+        // not expired yet
+        NSLog(@"visa response not expired yet: %@ => %@", uid, everyone);
+    }
 }
 
-- (void)broadcastLoginForID:(id<MKMID>)sender userAgent:(nullable NSString *)ua {
+- (void)broadcastLogin:(id<MKMID>)sender userAgent:(nullable NSString *)ua {
     DIMClientSession *session = [self session];
     DIMStation *station = [session station];
     // create login command
-    DIMLoginCommand *cmd = [[DIMLoginCommand alloc] initWithID:sender];
-    [cmd setAgent:ua];
-    [cmd copyStationInfo:station];
+    DIMLoginCommand *command = [[DIMLoginCommand alloc] initWithID:sender];
+    [command setAgent:ua];
+    [command copyStationInfo:station];
     // broadcast to 'everyone@everywhere'
-    [self sendContent:cmd
+    [self sendContent:command
                sender:sender
              receiver:MKMEveryone()
              priority:STDeparturePrioritySlower];
 }
 
-- (void)reportOnlineForID:(id<MKMID>)sender {
-    id<DKDContent> cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
+- (void)reportOnline:(id<MKMID>)sender {
+    id<DKDContent> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Online];
     NSDate *offlineTime = self.offlineTime;
     if (offlineTime) {
         NSTimeInterval ti = OKGetTimeInterval(offlineTime);
-        [cmd setObject:@(ti) forKey:@"last_time"];
+        [command setObject:@(ti) forKey:@"last_time"];
     }
-    [self sendContent:cmd
+    [self sendContent:command
                sender:sender
              receiver:MKMAnyStation()
              priority:STDeparturePrioritySlower];
 }
 
-- (void)reportOfflineForID:(id<MKMID>)sender {
-    id<DKDContent> cmd = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
-    NSDate *offlineTime = [cmd time];
+- (void)reportOffline:(id<MKMID>)sender {
+    id<DKDContent> command = [[DIMReportCommand alloc] initWithTitle:DIMCommand_Offline];
+    NSDate *offlineTime = [command time];
     if (offlineTime) {
         self.offlineTime = offlineTime;
     }
-    [self sendContent:cmd
+    [self sendContent:command
                sender:sender
              receiver:MKMAnyStation()
              priority:STDeparturePrioritySlower];
-}
-
-// Override
-- (BOOL)queryMetaForID:(id<MKMID>)ID {
-    DIMQueryFrequencyChecker *checker = [DIMQueryFrequencyChecker sharedInstance];
-    if (![checker checkMetaForID:ID isExpired:0]) {
-        // query not expired yet
-        return NO;
-    }
-    id<DKDCommand> cmd = [[DIMMetaCommand alloc] initWithID:ID];
-    [self sendContent:cmd
-               sender:nil
-             receiver:MKMAnyStation()
-             priority:STDeparturePrioritySlower];
-    return YES;
-}
-
-// Override
-- (BOOL)queryDocumentForID:(id<MKMID>)ID {
-    DIMQueryFrequencyChecker *checker = [DIMQueryFrequencyChecker sharedInstance];
-    if (![checker checkDocumentForID:ID isExpired:0]) {
-        // query not expired yet
-        return NO;
-    }
-    id<DKDCommand> cmd = [[DIMDocumentCommand alloc] initWithID:ID];
-    [self sendContent:cmd
-               sender:nil
-             receiver:MKMAnyStation()
-             priority:STDeparturePrioritySlower];
-    return YES;
-}
-
-- (BOOL)queryMembersForID:(id<MKMID>)group {
-    DIMQueryFrequencyChecker *checker = [DIMQueryFrequencyChecker sharedInstance];
-    if (![checker checkMembersForID:group isExpired:0]) {
-        // query not expired yet
-        return NO;
-    }
-    NSAssert(MKMIDIsGroup(group), @"group ID error: %@", group);
-    DIMGroupManager *manager = [DIMGroupManager sharedInstance];
-    NSArray<id<MKMID>> *bots = [manager assistantsOfGroup:group];
-    if ([bots count] == 0) {
-        // group assistants not found
-        return NO;
-    }
-    // querying members from bots
-    id<DKDCommand> cmd = [[DIMQueryGroupCommand alloc] initWithGroup:group];
-    for (id<MKMID> assistant in bots) {
-        [self sendContent:cmd
-                   sender:nil
-                 receiver:assistant
-                 priority:STDeparturePrioritySlower];
-    }
-    return YES;
-}
-
-// Override
-- (BOOL)checkReceiverForMessage:(id<DKDInstantMessage>)iMsg {
-    id<MKMID> receiver = [iMsg receiver];
-    if (MKMIDIsBroadcast(receiver)) {
-        // broadcast message
-        return YES;
-    } else if (MKMIDIsGroup(receiver)) {
-        // check group's meta & members
-        NSArray<id<MKMID>> *allMembers = [self membersForID:receiver];
-        if ([allMembers count] == 0) {
-            // group not ready, suspend message for waiting meta/members
-            NSDictionary *error = @{
-                @"message": @"group not ready",
-                @"group": receiver.string,
-            };
-            [self suspendInstantMessage:iMsg errorInfo:error];
-            //[iMsg setObject:error forKey:@"error"];
-            return NO;
-        }
-        NSMutableArray<id<MKMID>> *waiting = [[NSMutableArray alloc] init];
-        for (id<MKMID> item in allMembers) {
-            if ([self visaKeyForID:item]) {
-                // member is OK
-                continue;
-            }
-            // member not ready
-            [waiting addObject:item];
-        }
-        if ([waiting count] > 0) {
-            // member(s) not ready, suspend message for waiting document
-            NSDictionary *error = @{
-                @"message": @"encrypt keys not found",
-                @"group": receiver.string,
-                @"members": MKMIDRevert(waiting),
-            };
-            [self suspendInstantMessage:iMsg errorInfo:error];
-            //[iMsg setObject:error forKey:@"error"];
-            return NO;
-        }
-        // receiver is OK
-        return YES;
-    }
-    return [super checkReceiverForInstantMessage:iMsg];
 }
 
 @end

@@ -123,43 +123,43 @@
     return [_messenger sendReliableMessage:rMsg priority:prior];
 }
 
+////
+////  Docker Delegate
+////
 //
-//  Docker Delegate
+//// Override
+//- (void)docker:(id<STDocker>)worker sentShip:(id<STDeparture>)departure {
+//    if ([departure isKindOfClass:[DIMMessageWrapper class]]) {
+//        DIMMessageWrapper *wrapper = (DIMMessageWrapper *)departure;
+//        id<DKDReliableMessage> rMsg = [wrapper message];
+//        if (rMsg) {
+//            // remove from database for actual receiver
+//            [self removeReliableMessage:rMsg];
+//        }
+//    }
+//}
 //
-
-// Override
-- (void)docker:(id<STDocker>)worker sentShip:(id<STDeparture>)departure {
-    if ([departure isKindOfClass:[DIMMessageWrapper class]]) {
-        DIMMessageWrapper *wrapper = (DIMMessageWrapper *)departure;
-        id<DKDReliableMessage> rMsg = [wrapper message];
-        if (rMsg) {
-            // remove from database for actual receiver
-            [self removeReliableMessage:rMsg];
-        }
-    }
-}
-
-// private
-- (void)removeReliableMessage:(id<DKDReliableMessage>)rMsg {
-    // 0. if session ID is empty, means user not login;
-    //    this message must be a handshake command, and
-    //    its receiver must be the targeted user.
-    // 1. if this session is a station, check original receiver;
-    //    a message to station won't be stored.
-    // 2. if the msg.receiver is a different user ID, means it's
-    //    a roaming message, remove it for actual receiver.
-    // 3. if the original receiver is a group, it must had been
-    //    replaced to the group assistant ID by GroupDeliver.
-    id<MKMID> receiver = [self ID];
-    if (!receiver || [receiver type] == MKMEntityType_Station) {
-        //if ([[rMsg receiver] isEqual:receiver]) {
-        //    // staion message won't be stored
-        //    return;
-        //}
-        receiver = [rMsg receiver];
-    }
-    id<DIMMessageDBI> db = [_messenger database];
-    [db removeReliableMessage:rMsg forReceiver:receiver];
-}
+//// private
+//- (void)removeReliableMessage:(id<DKDReliableMessage>)rMsg {
+//    // 0. if session ID is empty, means user not login;
+//    //    this message must be a handshake command, and
+//    //    its receiver must be the targeted user.
+//    // 1. if this session is a station, check original receiver;
+//    //    a message to station won't be stored.
+//    // 2. if the msg.receiver is a different user ID, means it's
+//    //    a roaming message, remove it for actual receiver.
+//    // 3. if the original receiver is a group, it must had been
+//    //    replaced to the group assistant ID by GroupDeliver.
+//    id<MKMID> receiver = [self ID];
+//    if (!receiver || [receiver type] == MKMEntityType_Station) {
+//        //if ([[rMsg receiver] isEqual:receiver]) {
+//        //    // staion message won't be stored
+//        //    return;
+//        //}
+//        receiver = [rMsg receiver];
+//    }
+//    id<DIMMessageDBI> db = [_messenger database];
+//    [db removeReliableMessage:rMsg forReceiver:receiver];
+//}
 
 @end

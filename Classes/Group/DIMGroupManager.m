@@ -146,7 +146,9 @@ typedef NSMutableArray<id<MKMID>> UserList;
         return nil;
     }
     BOOL ok = [self sendCommand:content receiver:MKMAnyStation()];  // to neighbor(s)
-    NSAssert(ok, @"failed to upload meta/document to neighbor station");
+    if (!ok) {
+        NSAssert(false, @"failed to upload meta/document to neighbor station");
+    }
     
     //
     //  4. create & broadcast 'reset' group command with new members
@@ -201,7 +203,10 @@ typedef NSMutableArray<id<MKMID>> UserList;
         return NO;
     }
     // only the owner or admin can reset group members
-    NSAssert(!isBot, @"group bot cannot reset members: %@, %@", gid, me);
+    if (isBot) {
+        NSAssert(false, @"group bot cannot reset members: %@, %@", gid, me);
+        //return nil;
+    }
     
     //
     //  2. build 'reset' command
@@ -359,7 +364,9 @@ typedef NSMutableArray<id<MKMID>> UserList;
         NSAssert(false, @"administrator cannot quit from group: %@", gid);
         return NO;
     }
-    NSAssert(!isBot, @"group bot cannot quit: %@, %@", gid, me);
+    if (isBot) {
+        NSAssert(false, @"group bot cannot quit: %@, %@", gid, me);
+    }
     
     //
     //  2. update local storage
@@ -369,7 +376,9 @@ typedef NSMutableArray<id<MKMID>> UserList;
         NSMutableArray<id<MKMID>> *mArray = [members mutableCopy];
         [mArray removeObject:me];
         BOOL ok = [self.delegate saveMembers:mArray group:gid];
-        NSAssert(ok, @"failed to save members for group: %@", gid);
+        if (!ok) {
+            NSAssert(false, @"failed to save members for group: %@", gid);
+        }
     } else {
         NSLog(@"member not in group: %@, %@", gid, me);
     }

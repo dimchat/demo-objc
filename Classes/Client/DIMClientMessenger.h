@@ -59,22 +59,22 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Broadcast meta & visa document to all stations
  */
-- (void)broadcastDocument;
+- (void)broadcastDocument:(BOOL)updated;
 
 /**
  *  Send login command to keep roaming
  */
-- (void)broadcastLoginForID:(id<MKMID>)sender userAgent:(nullable NSString *)ua;
+- (void)broadcastLogin:(id<MKMID>)sender userAgent:(nullable NSString *)ua;
 
 /**
  *  Send report command to keep user online
  */
-- (void)reportOnlineForID:(id<MKMID>)sender;
+- (void)reportOnline:(id<MKMID>)sender;
 
 /**
  *  Send report command to let user offline
  */
-- (void)reportOfflineForID:(id<MKMID>)sender;
+- (void)reportOffline:(id<MKMID>)sender;
 
 @end
 

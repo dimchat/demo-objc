@@ -112,7 +112,9 @@
             // and if I am the owner, then send the group history commands
             // to update the sender's memory.
             BOOL ok = [self sendHistoriesTo:sender group:group];
-            NSAssert(ok, @"failed to send history for group: %@ => %@", group, sender);
+            if (!ok) {
+                NSAssert(false, @"failed to send history for group: %@ => %@", group, sender);
+            }
         }
     } else if (![self saveHistory:command withMessage:rMsg group:group]) {
         // here try to append the 'invite' command to local storage as group history

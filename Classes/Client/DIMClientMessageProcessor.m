@@ -40,38 +40,66 @@
 
 #import "DIMCreator.h"
 
+#import "DIMClientArchivist.h"
+#import "DIMClientFacebook.h"
 #import "DIMClientMessenger.h"
 
 #import "DIMClientMessageProcessor.h"
 
 @implementation DIMClientMessageProcessor
 
-- (id<DIMContentProcessorCreator>)createContentProcessorCreator {
-    DIMClientContentProcessorCreator *creator;
-    creator = [DIMClientContentProcessorCreator alloc];
-    creator = [creator initWithFacebook:self.facebook messenger:self.messenger];
-    return creator;
-}
-
-- (NSArray<id<DKDSecureMessage>> *)processSecure:(id<DKDSecureMessage>)sMsg
-                                     withMessage:(id<DKDReliableMessage>)rMsg {
-    @try {
-        return [super processSecure:sMsg withMessage:rMsg];
-    } @catch (NSException *e) {
-        NSString *errMsg = [e description];
-        if ([errMsg containsString:@"receiver error"]) {
-            // not mine? ignore it
-            NSLog(@"ignore message for: %@", [rMsg receiver]);
-            return nil;
-        } else {
-            @throw e;
+// private
+- (void)checkGroupTimes:(id<DKDContent>)content message:(id<DKDReliableMessage>)rMsg {
+    id<MKMID> group = [content group];
+    if (!group) {
+        return;
+    }
+    DIMClientFacebook *facebook = [self facebook];
+    DIMClientArchivist *archivist = [facebook archivist];
+    if (!archivist) {
+        NSAssert(false, @"should not happen");
+        return;
+    }
+    NSDate *now = [[NSDate alloc] init];
+    BOOL docUpdated = NO;
+    BOOL memUpdated = NO;
+    // check group document time
+    NSDate *lastDocTime = [rMsg dateForKey:@"GDT" defaultValue:nil];
+    if (lastDocTime) {
+        if ([lastDocTime timeIntervalSince1970] > [now timeIntervalSince1970]) {
+            // calibrate the clock
+            lastDocTime = now;
         }
+        docUpdated = [archivist setLastDocumentTime:lastDocTime forID:group];
+    }
+    // check group history time
+    NSDate *lastHisTime = [rMsg dateForKey:@"GHT" defaultValue:nil];
+    if (lastHisTime) {
+        if ([lastHisTime timeIntervalSince1970] > [now timeIntervalSince1970]) {
+            // calibrate the clock
+            lastHisTime = now;
+        }
+        docUpdated = [archivist setLastHistoryTime:lastHisTime forID:group];
+    }
+    // check whether needs update
+    if (docUpdated) {
+        [self.facebook documentsForID:group];
+    }
+    if (memUpdated) {
+        [archivist setLastActiveMember:rMsg.sender group:group];
+        [self.facebook membersOfGroup:group];
     }
 }
 
 - (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSArray<id<DKDContent>> *responses = [super processContent:content withMessage:rMsg];
+                 withReliableMessageMessage:(id<DKDReliableMessage>)rMsg {
+    NSArray<id<DKDContent>> *responses = [super processContent:content
+                                    withReliableMessageMessage:rMsg];
+    
+    // check group document & history times from the message
+    // to make sure the group info synchronized
+    [self checkGroupTimes:content message:rMsg];
+
     if ([responses count] == 0) {
         // respond nothing
         return nil;
@@ -112,6 +140,13 @@
     }
     // DON'T respond to station directly
     return nil;
+}
+
+- (id<DIMContentProcessorCreator>)createContentProcessorCreator {
+    DIMClientContentProcessorCreator *creator;
+    creator = [DIMClientContentProcessorCreator alloc];
+    creator = [creator initWithFacebook:self.facebook messenger:self.messenger];
+    return creator;
 }
 
 @end

@@ -47,6 +47,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<id<MKMID>> *)localUsers;
 
+//
+//  Organization Structure
+//
+
+- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)group;
+
+- (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid;
+
+- (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
+
 @end
 
 NS_ASSUME_NONNULL_END
