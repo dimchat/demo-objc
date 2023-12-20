@@ -45,10 +45,10 @@
 @implementation DIMHandshakeCommandProcessor
 
 // Override
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDHandshakeCommand)], @"handshake error: %@", content);
-    id<DKDHandshakeCommand> command = (id<DKDHandshakeCommand>)content;
+    id<DKDHandshakeCommand> command = content;
     DIMClientMessenger *messenger = [self messenger];
     DIMClientSession *session = [messenger session];
     // update station's default ID ('station@anywhere') to sender (real ID)

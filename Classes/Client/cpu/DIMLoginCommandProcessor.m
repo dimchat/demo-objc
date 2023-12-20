@@ -41,10 +41,10 @@
 
 @implementation DIMLoginCommandProcessor
 
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content isKindOfClass:[DIMLoginCommand class]], @"login error: %@", content);
-    DIMLoginCommand *command = (DIMLoginCommand *)content;
+    DIMLoginCommand *command = content;
     
     NSLog(@"[%@] %@ login: %@", command.time, command.ID, command.stationInfo);
     // TODO: update contact's login status

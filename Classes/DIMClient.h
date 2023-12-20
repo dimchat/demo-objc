@@ -111,6 +111,7 @@ FOUNDATION_EXPORT const unsigned char DIMPClientVersionString[];
 //
 
 #import <DIMClient/DIMStorage.h>
+#import <DIMClient/DIMPrivateKeyStore.h>
 
 //
 //  StarGate

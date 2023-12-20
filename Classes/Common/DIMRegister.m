@@ -46,6 +46,9 @@
 #import "DIMBlockCommand.h"
 #import "DIMAnsCommand.h"
 
+#import "DIMEntityID.h"
+#import "DIMMetaC.h"
+
 #import "DIMRegister.h"
 
 static inline id<MKMVisa> create_visa(id<MKMID> ID,
@@ -189,6 +192,9 @@ static inline id<MKMBulletin> create_bulletin(id<MKMID> ID,
 
         // load plugins
         [MKMPlugins loadPlugins];
+        DIMRegisterEntityIDFactory();
+        DIMRegisterCompatibleAddressFactory();
+        DIMRegisterCompatibleMetaFactory();
         
         // load message/content factories
         DIMRegisterAllFactories();  // core factories

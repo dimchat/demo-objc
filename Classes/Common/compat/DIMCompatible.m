@@ -84,7 +84,61 @@
 }
 
 + (void)fixReceiptCommand:(id<DKDReceiptCommand>)content {
-    // TODO: check for v2.0
+    // check for v2.0
+    id origin = [content objectForKey:@"origin"];
+    if (origin) {
+        // (v2.0)
+        // compatible with v1.0
+        [content setObject:origin forKey:@"envelope"];
+        // compatible with older version
+        [self copyReceiptValues:content fromOrigin:origin];
+    } else {
+        // check for v1.0
+        id envelope = [content objectForKey:@"envelope"];
+        if (envelope) {
+            // (v1.0)
+            // compatible with v2.0
+            [content setObject:envelope forKey:@"origin"];
+            // compatible with older version
+            [self copyReceiptValues:content fromOrigin:envelope];
+        } else {
+            // check for older version
+            if (![content objectForKey:@"sender"]) {
+                // this receipt contains no envelope info,
+                // no need to fix it.
+                return;
+            }
+            // older version
+            NSMutableDictionary *env = [[NSMutableDictionary alloc] initWithCapacity:5];
+            copy_value(env, content, @"sender");
+            copy_value(env, content, @"receiver");
+            copy_value(env, content, @"time");
+            copy_value(env, content, @"sn");
+            copy_value(env, content, @"signature");
+            [content setObject:env forKey:@"origin"];
+            [content setObject:env forKey:@"envelope"];
+        }
+    }
+}
+
++ (void)copyReceiptValues:(id<DKDReceiptCommand>)content fromOrigin:(NSDictionary *)origin {
+    for (NSString *name in origin) {
+        if ([name isEqualToString:@"type"]) {
+            continue;
+        } else if ([name isEqualToString:@"time"]) {
+            continue;
+        }
+        [content setObject:[origin objectForKey:name] forKey:name];
+    }
+}
+
+static inline void copy_value(NSMutableDictionary *env, id<DKDReceiptCommand> content, NSString *key) {
+    id value = [content objectForKey:key];
+    if (value) {
+        [env setObject:value forKey:key];
+    } else {
+        [env removeObjectForKey:key];
+    }
 }
 
 @end

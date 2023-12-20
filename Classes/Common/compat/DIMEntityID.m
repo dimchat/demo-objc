@@ -48,7 +48,8 @@
 
 // Override
 - (MKMEntityType)type {
-    MKMNetworkID network = [self.address type];
+    id<MKMAddress> address = [self address];
+    MKMNetworkID network = [address type];
     // compatible with MKM 0.9.*
     return MKMEntityTypeFromNetworkID(network);
 }

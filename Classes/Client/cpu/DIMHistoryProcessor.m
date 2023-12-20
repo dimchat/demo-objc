@@ -66,11 +66,11 @@
 //
 //  Main
 //
-- (NSArray<id<DKDContent>> *)processContent:(id<DKDContent>)content
+- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
                                 withMessage:(id<DKDReliableMessage>)rMsg {
     NSAssert([content conformsToProtocol:@protocol(DKDHistoryCommand)],
              @"history error: %@", content);
-    id<DKDHistoryCommand> command = (id<DKDHistoryCommand>)content;
+    id<DKDHistoryCommand> command = content;
     NSDictionary *info = @{
         @"template": @"History command (name: ${command}) not support yet!",
         @"replacements": @{

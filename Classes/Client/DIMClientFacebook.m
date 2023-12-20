@@ -202,10 +202,10 @@ static id<MKMIDFactory> _idFactory = nil;
 
 @implementation IDFactory
 
-- (nonnull id<MKMID>)createIdentifier:(NSString *)name
-                              address:(id<MKMAddress>)address
-                             terminal:(NSString *)location {
-    return [_idFactory createIdentifier:name address:address terminal:location];
+- (nonnull id<MKMID>)createIdentifierWithName:(NSString *)name
+                                      address:(id<MKMAddress>)address
+                                     terminal:(NSString *)location {
+    return [_idFactory createIdentifierWithName:name address:address terminal:location];
 }
 
 - (nonnull id<MKMID>)generateIdentifierWithMeta:(id<MKMMeta>)meta

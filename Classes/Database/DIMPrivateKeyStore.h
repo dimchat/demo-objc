@@ -2,12 +2,12 @@
 //
 //  DIM-SDK : Decentralized Instant Messaging Software Development Kit
 //
-//                               Written in 2019 by Moky <albert.moky@gmail.com>
+//                               Written in 2023 by Moky <albert.moky@gmail.com>
 //
 // =============================================================================
 // The MIT License (MIT)
 //
-// Copyright (c) 2019 Albert Moky
+// Copyright (c) 2023 Albert Moky
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,29 +28,20 @@
 // SOFTWARE.
 // =============================================================================
 //
-//  DIMExpelCommandProcessor.m
-//  DIMSDK
+//  DIMPrivateKeyStore.h
+//  DIMClient
 //
-//  Created by Albert Moky on 2019/11/29.
-//  Copyright © 2019 Albert Moky. All rights reserved.
+//  Created by Albert Moky on 2023/12/20.
 //
 
-#import "DIMExpelCommandProcessor.h"
+#import <DIMClient/DIMAccountDBI.h>
 
-@implementation DIMExpelGroupCommandProcessor
+NS_ASSUME_NONNULL_BEGIN
 
-//
-//  Main
-//
-- (NSArray<id<DKDContent>> *)processContent:(__kindof id<DKDContent>)content
-                                withMessage:(id<DKDReliableMessage>)rMsg {
-    NSAssert([content conformsToProtocol:@protocol(DKDExpelGroupCommand)],
-             @"expel command error: %@", content);
-    
-    NSAssert(false, @"'expel' group command is deprecated, use 'reset' instead.");
-    
-    // no need to response this group command
-    return nil;
-}
+@interface DIMPrivateKeyStore : NSObject <DIMPrivateKeyDBI>
+
++ (instancetype)sharedInstance;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -135,17 +135,17 @@ NSInteger DIMFindPrivateKey(id<MKMPrivateKey> key, NSArray<id<MKMPrivateKey>> *p
 
 @protocol DIMGroupDBI <NSObject>
 
-- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)group;
+- (nullable id<MKMID>)founderOfGroup:(id<MKMID>)gid;
 
-- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)group;
+- (nullable id<MKMID>)ownerOfGroup:(id<MKMID>)gid;
 
-- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)group;
+- (NSArray<id<MKMID>> *)membersOfGroup:(id<MKMID>)gid;
 - (BOOL)saveMembers:(NSArray<id<MKMID>> *)members group:(id<MKMID>)gid;
 
-- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)group;
+- (NSArray<id<MKMID>> *)assistantsOfGroup:(id<MKMID>)gid;
 - (BOOL)saveAssistants:(NSArray<id<MKMID>> *)bots group:(id<MKMID>)gid;
 
-- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)group;
+- (NSArray<id<MKMID>> *)administratorsOfGroup:(id<MKMID>)gid;
 - (BOOL)saveAdministrators:(NSArray<id<MKMID>> *)admins group:(id<MKMID>)gid;
 
 @end

@@ -78,8 +78,8 @@
         [cmd setGroup:MKMEveryStations()];
         // create instant message with meta & visa
         id<DKDInstantMessage> iMsg = DKDInstantMessageCreate(env, cmd);
-        [iMsg setDictionary:meta forKey:@"meta"];
-        [iMsg setDictionary:visa forKey:@"visa"];
+        DIMMessageSetMeta(meta, iMsg);
+        DIMMessageSetVisa(visa, iMsg);
         [self sendInstantMessage:iMsg
                         priority:STDeparturePriorityUrgent];
         NSLog(@"shaking hands with %@", station);
